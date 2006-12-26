@@ -1,0 +1,5 @@
+TODO list:
+----------
+ * in File, add FIO_B as binary flag
+ * in Config, don't allow [] sections
+ * add convinient Time class

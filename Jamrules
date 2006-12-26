@@ -1,0 +1,89 @@
+#
+# $Id$
+#
+# Part of edelib.
+# Copyright (c) 2005-2006 EDE Authors.
+#
+# This program is licenced under terms of the 
+# GNU General Public Licence version 2 or newer.
+# See COPYING for details.
+
+# tools
+DOXYGEN = doxygen ;
+PWD = pwd ;
+SED = sed ;
+DIRNAME = dirname ;
+
+# flags
+WALL = -Wall ;
+C++FLAGS = -g3 -D_DEBUG -I$(TOP) ;
+STDLIB = stdc++ ;
+OPTIM = ;
+
+# directories
+INCLUDEDIR = edelib ;
+LIBDIR = lib ;
+EDELIB_NAME = libedelib ;
+EDELIB = edelib ;
+
+rule MakeTest
+{
+	local elib = [ FDirName $(TOP) $(LIBDIR) $(EDELIB_NAME)$(SUFLIB) ] ;
+	local ldir = [ FDirName $(TOP) $(LIBDIR) ] ;
+	DEPENDS $(<) : $(elib) ;
+
+	LINKLIBS on $(<) = -L$(ldir) -l$(EDELIB) -l$(STDLIB) ;
+	Main $(<) : $(>) ;
+}
+
+rule MakeDocumentation
+{
+	DEPENDS doc : $(<) ;
+	DEPENDS all : doc ;
+	DEPENDS $(<) : $(>) ;
+
+	# dirname is used to compute path
+	# since doxygen command must be run where
+	# Doxyfile exists
+
+	if ! $(DIRNAME)
+	{
+		Echo "dirname is missing" ;
+		Exit "To make documentation, go to $(<:P) and run doxygen" ;
+	}
+
+	Cleandir clean : $(<) ;
+}
+
+actions MakeDocumentation
+{
+	dn=`$(DIRNAME) $(>)`
+	cd $dn
+	$(DOXYGEN) $(>:B)
+}
+
+# allow to be used as Cleandir cleandir
+actions piecemeal together existing Cleandir
+{
+    $(RM) -R $(>)
+}
+
+actions quietly Help
+{
+	echo ""
+	echo "Options:"
+	echo "   jam                build all"
+	echo "   jam lib            make library only"
+	echo "   jam doc            create documentation"
+	echo "   jam clean          clean compiled data"
+	echo "   jam distclean      better clean"
+	echo ""
+}
+Help help ;
+
+
+NOTFILE doc help ;
+ALWAYS  doc help ;
+
+#Cleandir distclean : autom4te.cache ;
+#Clean distclean : config.h config.log config.status configure ;

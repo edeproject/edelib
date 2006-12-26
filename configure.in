@@ -1,0 +1,31 @@
+dnl
+dnl $Id$
+dnl
+dnl Part of edelib.
+dnl Copyright (c) 2005-2006 EDE Authors.
+dnl
+dnl This program is licenced under terms of the 
+dnl GNU General Public Licence version 2 or newer.
+dnl See COPYING for details.
+
+dnl for now very base configure script
+
+AC_PREREQ(2.13)
+AC_INIT(edelib/Version.h.in)
+
+MAJOR_VERSION=2
+MINOR_VERSION=0
+PATCH_VERSION=0
+EDELIB_API_VERSION=${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}
+
+AC_CONFIG_HEADER(config.h:config.h.in)
+
+AC_SUBST(MAJOR_VERSION)
+AC_SUBST(MINOR_VERSION)
+AC_SUBST(PATCH_VERSION)
+AC_SUBST(EDELIB_API_VERSION)
+
+AC_OUTPUT([
+edelib/Version.h
+doc/Doxyfile
+])

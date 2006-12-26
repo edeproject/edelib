@@ -1,0 +1,77 @@
+//
+// A Front page 
+//
+
+/*! \mainpage
+
+
+\section Overview
+
+edelib is small and portable library designed for Equinox environment.
+Aims are to provide enough background for easier Equinox components design
+and development, not sacrifying size and speed. 
+
+edelib is designed with size, speed and development safety in mind, and second in 
+provided components.
+
+
+\section Installation
+
+To build library, you will need a following tools:
+ 
+ - descent C++ compiler
+ - autoconf
+ - FLTK 2.0 (including FLTK prerequisites)
+ - some Jam derivative
+
+Edelib is striving to support wide range of compilers, so main idea is where you can
+build FLTK, there edelib should be built too.
+
+<a href="http://www.fltk.org">FLTK</a> library, can be obtained from given link, and 
+make sure you use <b>2.x</b> not 1.x branch. These two versions are not compatible, and
+edelib can't be built with 1.x series.
+
+As build tool instead standard Make, Jam is used. Jam is Make-like tool with it's own
+syntax and can be found at <a href="http://www.perforce.com/jam/jam.html">Perforce jam pages</a>
+Currenty for development is used it's small modification called 
+<a href="http://www.freetype.org/jam/">ftjam</a>, based on little older official Jam version
+which gives us an option that edelib can be built on various Jam derivatives, like:
+
+ - original jam
+ - majam
+ - boost jam
+
+For manual building a Jam tool, please look at Jam's documentation. After you got binary,
+you can either install it at usuall paths or in edelib root directory.
+
+To build edelib, run standard:
+ \code
+  autoconf
+  ./configure
+ \endcode
+or inspect configure options with <i>./configure --help</i>. After that simply run:
+ \code
+  jam
+ \endcode
+or 
+ \code
+ ./jam
+ \endcode
+if you placed Jam in library root directory.
+
+When (hopefully) jam finished it's work, running:
+ \code
+ jam install
+ \endcode
+will install needed files at usuall places.
+
+
+\section License
+
+ edelib is licensed under GNU Lesser General Public License and
+ is based in part on the work of the FLTK project (http://www.fltk.org).
+
+\section Contact
+
+All bug reports and suggestions direct at: karijes@users.sf.net
+*/

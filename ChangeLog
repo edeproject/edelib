@@ -1,0 +1,18 @@
+2006-12-25  Sanel <karijes@users.sourceforge.net>
+
+	* Finished Config class. Probably needs more polishing,
+	but that is comming later.
+
+2006-12-24  Sanel <karijes@users.sourceforge.net>
+
+	* Finished str_trimright, and added test for it
+	* Now documentation can be built not only from doc
+	directory
+	* Added run.sh, script which should run tests.
+
+2006-12-23  Sanel <karijes@users.sourceforge.net>
+
+	* Basic structure, jam builds, doxygen documentatio
+	and not yet finished Config class
+	* Added StringUtils(.h,.cpp) with c string functions
+	* Added tests for StringUtils
