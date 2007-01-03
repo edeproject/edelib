@@ -15,6 +15,6 @@
 #ifdef _DEBUG
 	#include <assert.h>
 	#define EASSERT assert
-#endif
-
+#else
+	#define EASSERT(expr) ((void)0)
 #endif
