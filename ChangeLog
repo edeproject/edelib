@@ -1,3 +1,17 @@
+2007-01-03  Sanel <karijes@users.sourceforge.net>
+
+	* More work on File class.
+
+2007-01-01  The Carcass  <sanel@darkstar>
+
+	* test/run.sh - now files are run from this
+	directory explicit, so we don't call system wide
+	command with the same name
+
+2006-12-29  Sanel <karijes@users.sourceforge.net>
+
+	* Added checks if doxygen exists
+
 2006-12-25  Sanel <karijes@users.sourceforge.net>
 
 	* Finished Config class. Probably needs more polishing,

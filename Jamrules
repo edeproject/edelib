@@ -2,7 +2,7 @@
 # $Id$
 #
 # Part of edelib.
-# Copyright (c) 2005-2006 EDE Authors.
+# Copyright (c) 2005-2007 EDE Authors.
 #
 # This program is licenced under terms of the 
 # GNU General Public Licence version 2 or newer.
@@ -10,21 +10,93 @@
 
 # tools
 DOXYGEN = doxygen ;
-PWD = pwd ;
-SED = sed ;
 DIRNAME = dirname ;
+LINKCMD = ln -s ;
+SED     = sed ;
+AWK     = awk ;
 
 # flags
-WALL = -Wall ;
-C++FLAGS = -g3 -D_DEBUG -I$(TOP) ;
+FLAGS = -Wall -g3 -D_DEBUG -I$(TOP) ;
 STDLIB = stdc++ ;
+# clear flag, so we can set it elsewhere
 OPTIM = ;
+
+# extensions
+SOEXT = .so ;
+SOEXTFULL = $(SOEXT).2.0.1 ;
+SOFLAGS = -fPIC ;
 
 # directories
 INCLUDEDIR = edelib ;
 LIBDIR = lib ;
-EDELIB_NAME = libedelib ;
+
+# library names
 EDELIB = edelib ;
+EDELIB_NAME = libedelib ;
+
+JUNK = "> /dev/null" ;
+
+if $(SHARED)
+{
+	FLAGS += $(SOFLAGS) ;
+	SUFLIB = $(SOEXTFULL) ;
+}
+
+# this is used by jam
+CCFLAGS = $(FLAGS) $(LOCALFLAGS) ;
+C++FLAGS = $(FLAGS) $(LOCALFLAGS) ;
+
+# creates symlink
+rule SymLink
+{
+	if $(LINKCMD)
+	{
+		DEPENDS $(<) : $(>) ;
+		DEPENDS all : $(<) ;
+		SymLink1 $(<) : $(>) ;
+		Clean clean : $(<) ;
+	}
+}
+
+actions SymLink1
+{
+	$(LINKCMD) $(>) $(<) ;
+}
+
+# create either static of dynamic library
+rule MakeLibrary
+{
+	if $(SHARED)
+	{
+		if ! $(UNIX)
+		{
+			Exit "Dynamic libraries can't be built on this OS for now" ;
+		}
+
+		# NOT FINISHED !
+
+		local target tlink ;
+		target = $(<)$(SOEXTFULL) ;
+		tlink  = $(<)$(SOEXT) ;
+
+		LINKFLAGS on $(target) = -shared -Wl,-soname,$(<:D=)$(SOEXTFULL) -l$(STDLIB) ;
+
+		# clean default values so
+		# we don't get strange output
+		SUFEXE = ;
+		LOCATE_TARGET on $(target) = ;
+
+		Main $(target) : $(>) ;
+		SymLink $(tlink) : $(target) ;
+
+		DEPENDS lib : $(tlink) ;
+	}
+	else
+	{
+		# call builtin one
+		Library $(<) : $(>) ;
+	}
+}
 
 rule MakeTest
 {
@@ -38,52 +110,68 @@ rule MakeTest
 
 rule MakeDocumentation
 {
-	DEPENDS doc : $(<) ;
-	DEPENDS all : doc ;
-	DEPENDS $(<) : $(>) ;
+
+	# just return if doxygen is not found
+	# so we can build the rest
+	if ! $(DOXYGEN)
+	{
+		Echo "doxygen is missing" ;
+		Echo "To make documentation, you will need to install it" ;
+		return ;
+	}
 
 	# dirname is used to compute path
-	# since doxygen command must be run where
-	# Doxyfile exists
-
+	# since doxygen command must be run where Doxyfile exists
 	if ! $(DIRNAME)
 	{
 		Echo "dirname is missing" ;
-		Exit "To make documentation, go to $(<:P) and run doxygen" ;
+		Echo "To make documentation, go to $(<:P) and run doxygen" ;
+		return ;
 	}
+
+	DEPENDS doc : $(<) ;
+	DEPENDS $(<) : $(>) ;
+	DEPENDS all : doc ;
 
 	Cleandir clean : $(<) ;
 }
 
-actions MakeDocumentation
+actions piecemeal MakeDocumentation
 {
 	dn=`$(DIRNAME) $(>)`
 	cd $dn
-	$(DOXYGEN) $(>:B)
+	$(DOXYGEN) $(>:B) $(JUNK) ;
 }
+
+actions piecemeal Package
+{
+	nm=`cat $(TOP)/edelib/Version.h | $(SED) -ne '/EDELIB_VERSION/p' | $(AWK) '{print $3}' | $(SED) -e 's/"//g'`
+	tar -czpvf edelib-$nm.tar.gz $(TOP)/../edelib
+}
+Package archive ;
 
 # allow to be used as Cleandir cleandir
 actions piecemeal together existing Cleandir
 {
-    $(RM) -R $(>)
+	$(RM) -R $(>)
 }
 
 actions quietly Help
 {
 	echo ""
 	echo "Options:"
-	echo "   jam                build all"
-	echo "   jam lib            make library only"
-	echo "   jam doc            create documentation"
-	echo "   jam clean          clean compiled data"
-	echo "   jam distclean      better clean"
+	echo "	 jam				build all"
+	echo "	 jam lib			make library only"
+	echo "	 jam doc			create documentation"
+	echo "	 jam clean			clean compiled data"
+	echo "	 jam help			you already see it"
 	echo ""
 }
 Help help ;
 
 
-NOTFILE doc help ;
-ALWAYS  doc help ;
+NOTFILE doc help archive ;
+ALWAYS	doc help archive ;
 
 #Cleandir distclean : autom4te.cache ;
 #Clean distclean : config.h config.log config.status configure ;

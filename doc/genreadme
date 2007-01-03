@@ -1,0 +1,37 @@
+#!/usr/bin/python
+#
+# Creates README from index.dox
+
+import sys
+import re
+
+comment = re.compile("^\s*//")
+sect = re.compile("\\\section")
+doxcomment = re.compile("(/\*\!)|(\*\/)")
+code = re.compile("(\\\code)|(\\\endcode)")
+tags = re.compile("(<[a-z]>)|(<\/[a-z]>)")
+url = re.compile("<a href\s*=\s*\"(.*?)\">")
+
+def parse_index(f):
+	id = open(sys.argv[1])
+	for ln in id:
+		if sect.search(ln):
+			ln = sect.sub("", ln).strip()
+			print ln
+			print "-----------------------"
+		elif comment.search(ln) or doxcomment.search(ln) or code.search(ln):
+			continue
+		elif url.search(ln):
+			sobj = url.search(ln)
+			print sobj.group(1),
+		elif tags.search(ln):
+			print tags.sub("", ln),
+		else:
+			print ln,
+
+def main():
+	if len(sys.argv[1:]) != 1:
+		print "Usage: %s /path/index.dox" % sys.argv[0]
+		return
+	parse_index(sys.argv[1])
+main()

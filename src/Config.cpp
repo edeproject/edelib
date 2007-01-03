@@ -3,7 +3,7 @@
  *
  * Config file reader and writer
  * Part of edelib.
- * Copyright (c) 2005-2006 EDE Authors.
+ * Copyright (c) 2005-2007 EDE Authors.
  *
  * This program is licenced under terms of the 
  * GNU General Public Licence version 2 or newer.
@@ -190,7 +190,7 @@ ConfigEntry* ConfigSection::find_entry(const char* key)
 	EASSERT(key != NULL);
 
 	int klen = strlen(key);
-	long hh = do_hash(key, klen);
+	unsigned hh = do_hash(key, klen);
 	EntryList::iterator it = entry_list.begin();
 	for(; it != entry_list.end(); ++it)
 	{
@@ -360,7 +360,7 @@ ConfigSection* Config::find_section(const char* section)
 {
 	EASSERT(section != NULL);
 	int slen = strlen(section);
-	long hh = do_hash(section, slen);
+	unsigned hh = do_hash(section, slen);
 
 	SectionList::iterator it = section_list.begin();
 	for(; it != section_list.end(); ++it)

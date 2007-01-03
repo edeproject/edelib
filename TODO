@@ -1,5 +1,6 @@
 TODO list:
 ----------
- * in File, add FIO_B as binary flag
+ * seems File::readline() does not return 1 when line contains only '\n' char. Should return ?
+ * finish jam -sSHARED=1 option
  * in Config, don't allow [] sections
  * add convinient Time class
