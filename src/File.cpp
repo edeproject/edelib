@@ -60,10 +60,7 @@ File::File() : fobj(NULL), fname(NULL), fmode(0), errcode(FILE_ENOENT), opened(f
 
 File::~File()
 {
-	if(alloc)
-		delete [] fname;
-	if(opened)
-		fclose(fobj);
+	close();
 }
 
 File::File(const char* name, int mode)
@@ -142,8 +139,16 @@ bool File::open(const char* name, int mode)
 
 void File::close(void)
 {
+	if(alloc)
+	{
+		delete [] fname;
+		fname = NULL;
+		alloc = false;
+	}
+
 	if(!opened)
 		return;
+
 	fclose(fobj);
 	opened = false;
 }

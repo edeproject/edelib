@@ -1,3 +1,10 @@
+2007-01-04  Sanel <karijes@users.sourceforge.net>
+
+	* Finished jam -sSHARED=1 option, so shared library
+	be built.
+	* Small work on File class.
+	* Generator for README (usefull?)
+
 2007-01-03  Sanel <karijes@users.sourceforge.net>
 
 	* More work on File class.

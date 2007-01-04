@@ -1,5 +1,4 @@
 #!/usr/bin/python
-#
 # Creates README from index.dox
 
 import sys
@@ -9,8 +8,8 @@ comment = re.compile("^\s*//")
 sect = re.compile("\\\section")
 doxcomment = re.compile("(/\*\!)|(\*\/)")
 code = re.compile("(\\\code)|(\\\endcode)")
-tags = re.compile("(<[a-z]>)|(<\/[a-z]>)")
-url = re.compile("<a href\s*=\s*\"(.*?)\">")
+tags = re.compile("(<[b-z]>)|(<\/[b-z]>)")
+url = re.compile("<a href\s*=\s*\"(.*?)\">(.*?)</a>")
 
 def parse_index(f):
 	id = open(sys.argv[1])
@@ -23,7 +22,7 @@ def parse_index(f):
 			continue
 		elif url.search(ln):
 			sobj = url.search(ln)
-			print sobj.group(1),
+			print "%s (%s)" % (sobj.group(2), sobj.group(1)),
 		elif tags.search(ln):
 			print tags.sub("", ln),
 		else:

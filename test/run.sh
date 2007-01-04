@@ -27,11 +27,13 @@ help()
 	exit 1
 }
 
-print_once()
+# print header only once
+print_header()
 {
 	if [ "$pod" = "" ]; then
-		echo "$1"
 		pod="1"
+		echo "Test name       | Passed | Failed"
+		echo "=================================="
 	fi
 }
 
@@ -93,7 +95,7 @@ exec_file()
 		eflag="x"
 	fi
 
-	print_once "Test name       | Passed | Failed"
+	print_header
 	printf "%-16.16s    %-9s%-9s\n" "$target" "$pflag" "$eflag"
 }
 

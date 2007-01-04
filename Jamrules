@@ -12,18 +12,19 @@
 DOXYGEN = doxygen ;
 DIRNAME = dirname ;
 LINKCMD = ln -s ;
-SED     = sed ;
-AWK     = awk ;
+SED		= sed ;
+AWK		= awk ;
 
 # flags
 FLAGS = -Wall -g3 -D_DEBUG -I$(TOP) ;
 STDLIB = stdc++ ;
 # clear flag, so we can set it elsewhere
 OPTIM = ;
+#SHARED = ;
 
 # extensions
 SOEXT = .so ;
-SOEXTFULL = $(SOEXT).2.0.1 ;
+SOEXTFULL = $(SOEXT).2.0.0 ;
 SOFLAGS = -fPIC ;
 
 # directories
@@ -47,13 +48,16 @@ CCFLAGS = $(FLAGS) $(LOCALFLAGS) ;
 C++FLAGS = $(FLAGS) $(LOCALFLAGS) ;
 
 # creates symlink
+# SymLink [link] : [source] : [path for source]
 rule SymLink
 {
 	if $(LINKCMD)
 	{
+		# $(>) contains real path, not cheated one :-)
 		DEPENDS $(<) : $(>) ;
 		DEPENDS all : $(<) ;
-		SymLink1 $(<) : $(>) ;
+		# cheat, so we don't confuse LINKCMD
+		SymLink1 $(<) : $(>:D=$(3)) ;
 		Clean clean : $(<) ;
 	}
 }
@@ -62,6 +66,65 @@ actions SymLink1
 {
 	$(LINKCMD) $(>) $(<) ;
 }
+
+# a hacked version of LibraryFromObjects
+# so we can make shared library
+rule SharedLibraryFromObjects
+{
+	local _i _l _s ;
+
+	# Add grist to file names
+	_s = [ FGristFiles $(>) ] ;
+	_l = $(<:S=$(SUFLIB)) ;
+
+	# library depends on its member objects
+	if $(KEEPOBJS)
+	{
+		DEPENDS obj : $(_s) ;
+	}
+	else
+	{
+		DEPENDS lib : $(_l) ;
+	}
+
+	# Set LOCATE for the library and its contents.	The bound
+	# value shows up as $(NEEDLIBS) on the Link actions.
+	# For compatibility, we only do this if the library doesn't
+	# already have a path.
+	if ! $(_l:D)
+	{
+		MakeLocate $(_l) $(_l)($(_s:BS)) : $(LOCATE_TARGET) ;
+	}
+
+	if $(NOARSCAN) 
+	{ 
+		# If we can't scan the library to timestamp its contents,
+		# we have to just make the library depend directly on the
+		# on-disk object files.  
+
+		DEPENDS $(_l) : $(_s) ;
+	}
+	else
+	{
+		# If we can scan the library, we make the library depend
+		# on its members and each member depend on the on-disk
+		# object file.
+
+		DEPENDS $(_l) : $(_l)($(_s:BS)) ;
+
+		for _i in $(_s)
+		{
+			DEPENDS $(_l)($(_i:BS)) : $(_i) ;
+		}
+	}
+
+	Link $(_l) : $(_s) ;
+	Clean clean : $(_l) ;
+
+	# If we can't scan the library, we have to leave the .o's around.
+	if ! ( $(NOARSCAN) || $(KEEPOBJS) ) { RmTemps $(_l) : $(_s) ; }
+}
+
 
 # create either static of dynamic library
 rule MakeLibrary
@@ -73,22 +136,19 @@ rule MakeLibrary
 			Exit "Dynamic libraries can't be built on this OS for now" ;
 		}
 
-		# NOT FINISHED !
-
 		local target tlink ;
 		target = $(<)$(SOEXTFULL) ;
 		tlink  = $(<)$(SOEXT) ;
 
+		# we must have exact name or linking will fail
 		LINKFLAGS on $(target) = -shared -Wl,-soname,$(<:D=)$(SOEXTFULL) -l$(STDLIB) ;
 
-		# clean default values so
-		# we don't get strange output
-		SUFEXE = ;
-		LOCATE_TARGET on $(target) = ;
+		SUFLIB on $(<) = $(SOEXTFULL) ;
 
-		Main $(target) : $(>) ;
-		SymLink $(tlink) : $(target) ;
+		SharedLibraryFromObjects $(<) : $(>:S=$(SUFOBJ)) ;
+		Objects $(>) ;
 
+		SymLink $(tlink) : $(target) : "" ;
 		DEPENDS lib : $(tlink) ;
 	}
 	else
@@ -102,7 +162,8 @@ rule MakeTest
 {
 	local elib = [ FDirName $(TOP) $(LIBDIR) $(EDELIB_NAME)$(SUFLIB) ] ;
 	local ldir = [ FDirName $(TOP) $(LIBDIR) ] ;
-	DEPENDS $(<) : $(elib) ;
+	DEPENDS $(<)  : $(elib) ;
+	DEPENDS tests : $(<) ;
 
 	LINKLIBS on $(<) = -L$(ldir) -l$(EDELIB) -l$(STDLIB) ;
 	Main $(<) : $(>) ;
@@ -143,6 +204,28 @@ actions piecemeal MakeDocumentation
 	$(DOXYGEN) $(>:B) $(JUNK) ;
 }
 
+# similar to GenFile, except it run
+# a command on source
+# GenDocumentation [target] : [command] [source]
+rule GenDocumentation
+{
+	local target = $(<) ;
+	local cmd = $(>[1]) ;
+	local src = $(>[2]) ;
+
+	DEPENDS $(target) : $(src) ;
+	DEPENDS $(src) : $(cmd) ;
+	DEPENDS doc : $(target) ;
+
+	Clean clean : $(target) ;
+
+}
+
+actions GenDocumentation
+{
+	./$(>[1]) $(>[2]) > $(<) ;
+}
+
 actions piecemeal Package
 {
 	nm=`cat $(TOP)/edelib/Version.h | $(SED) -ne '/EDELIB_VERSION/p' | $(AWK) '{print $3}' | $(SED) -e 's/"//g'`
@@ -159,19 +242,23 @@ actions piecemeal together existing Cleandir
 actions quietly Help
 {
 	echo ""
-	echo "Options:"
-	echo "	 jam				build all"
-	echo "	 jam lib			make library only"
-	echo "	 jam doc			create documentation"
-	echo "	 jam clean			clean compiled data"
-	echo "	 jam help			you already see it"
+	echo "Build options:"
+	echo "   jam          build all"
+	echo "   jam lib      make library only"
+	echo "   jam doc      create documentation"
+	echo "   jam tests    make tests"
+	echo "   jam clean    clean compiled data"
+	echo "   jam help     you already see it"
+	echo ""
+	echo "Options can be grouped too so to make library"
+	echo "and tests, command is: 'jam lib tests'"
 	echo ""
 }
 Help help ;
 
 
-NOTFILE doc help archive ;
-ALWAYS	doc help archive ;
+NOTFILE doc help archive tests ;
+ALWAYS	doc help archive tests ;
 
 #Cleandir distclean : autom4te.cache ;
 #Clean distclean : config.h config.log config.status configure ;

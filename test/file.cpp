@@ -18,5 +18,8 @@ int main()
 		//printf("%i: %s", n, buff);
 	}
 	f.close();
+
+	TEST_EQUAL(f.name(), NULL);
+
 	return 0;
 }

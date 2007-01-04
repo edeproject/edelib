@@ -99,13 +99,15 @@ class File
 		bool open(const char* fname, int mode = FIO_READ);
 
 		/**
-		 * Close current open descriptor.
-		 * If is not opened, function will do nothing.
+		 * Close current open descriptor, and clean reserved data.
+		 * If is not opened, function will do nothing, except to
+		 * clean reserved data if needed.
 		 */
 		void close(void);
 
 		/**
-		 * Returns name of curent opened stream
+		 * Returns name of curent opened stream. If is called
+		 * close() before, it will return NULL.
 		 *
 		 * \return name of curent opened stream
 		 */
@@ -153,7 +155,7 @@ class File
 /*! \addtogroup functions
  * @{
  */
-/** Check if file exists */
+/** Check if file exists and is regular file */
 bool file_exists(const char* name);
 
 /** Check if file is readable */
