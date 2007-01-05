@@ -1,36 +1,68 @@
-#!/usr/bin/python
-# Creates README from index.dox
+#!/usr/bin/gawk -f
+# creates README from index.dox
 
-import sys
-import re
+function strip(str)
+{
+	sub(/^[ \t]+/, "", str)
+	sub(/[ \t]+$/, "", str)
+	return str
+}
 
-comment = re.compile("^\s*//")
-sect = re.compile("\\\section")
-doxcomment = re.compile("(/\*\!)|(\*\/)")
-code = re.compile("(\\\code)|(\\\endcode)")
-tags = re.compile("(<[b-z]>)|(<\/[b-z]>)")
-url = re.compile("<a href\s*=\s*\"(.*?)\">(.*?)</a>")
+function shouldskip(ln)
+{
+	# doxygen start-end tags
+	if((ln ~ /\*\!/) || (ln ~ /\*\//))
+		return 1
+	# comments
+	if(ln ~ /^[ \t]*\/\//)
+		return 1
+	# code-endcode
+	if((ln ~ /\\\code/) || (ln ~ /\\\endcode/))
+		return 1
+	return 0
+}
 
-def parse_index(f):
-	id = open(sys.argv[1])
-	for ln in id:
-		if sect.search(ln):
-			ln = sect.sub("", ln).strip()
-			print ln
-			print "-----------------------"
-		elif comment.search(ln) or doxcomment.search(ln) or code.search(ln):
-			continue
-		elif url.search(ln):
-			sobj = url.search(ln)
-			print "%s (%s)" % (sobj.group(2), sobj.group(1)),
-		elif tags.search(ln):
-			print tags.sub("", ln),
-		else:
-			print ln,
+function makeline(str,     ss, ln)
+{
+	ln = length(str)
+	ss = ""
+	for(i = 1; i < ln; i++)
+		ss = ss"-"
+	return ss
+}
 
-def main():
-	if len(sys.argv[1:]) != 1:
-		print "Usage: %s /path/index.dox" % sys.argv[0]
+function parseline(ln) 
+{
+	if(shouldskip(ln))
 		return
-	parse_index(sys.argv[1])
-main()
+
+	if(ln ~ /\\\section/) 
+	{
+		sub(/\\\section/, "", ln)
+		print strip(ln)
+		# make '---' line exacts size of 'ln'
+		print makeline(ln)
+	}
+	else 
+	{
+		# remove tags
+		gsub(/<[bi]>/, "", ln)
+		gsub(/<\/[bi]>/, "", ln)
+
+		# <a href="link">name</a> -> name (link)
+		# gensub returns a copy, so copy is
+		# everything modified till now
+		print gensub(/<a href="(.*?)">(.*?)<\/a>/, "\\2 (\\1)", "", ln)
+	}
+}
+
+BEGIN {
+	if(ARGC != 2) 
+	{
+		print "Usage: genreadme /path/index.dox"
+		exit(1)
+	}
+
+	while(getline ln < ARGV[1])
+		parseline(ln)
+}

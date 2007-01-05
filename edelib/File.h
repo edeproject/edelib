@@ -57,7 +57,7 @@ enum FileIOMode
  * \endcode
  */
 
-class File
+class EDELIB_API File
 {
 	private:
 		FILE* fobj;
