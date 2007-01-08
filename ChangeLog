@@ -1,3 +1,7 @@
+2007-01-08  Sanel <karijes@users.sourceforge.net>
+
+	* Assertion is now handled via optiona hanler.
+
 2007-01-04  Sanel <karijes@users.sourceforge.net>
 
 	* Finished jam -sSHARED=1 option, so shared library

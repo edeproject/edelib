@@ -12,7 +12,8 @@ SubDir TOP src ;
 
 SOURCE = Config.cpp 
 		 StrUtil.cpp
-		 File.cpp ;
+		 File.cpp
+		 Diagnose.cpp ;
 
 LPATH = [ FDirName $(TOP) $(LIBDIR) $(EDELIB_NAME) ] ;
 MakeLibrary $(LPATH) : $(SOURCE) ;

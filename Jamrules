@@ -9,18 +9,19 @@
 # See COPYING for details.
 
 # tools
-DOXYGEN = doxygen ;
-DIRNAME = dirname ;
-LINKCMD = ln -s ;
-SED		= sed ;
-AWK		= awk ;
+DOXYGEN ?= doxygen ;
+DIRNAME ?= dirname ;
+LINKCMD ?= ln -s ;
+SED		?= sed ;
+AWK		?= awk ;
 
 # flags
-FLAGS = -Wall -g3 -D_DEBUG -I$(TOP) ;
-STDLIB = stdc++ ;
+FLAGS  ?= -Wall -g3 -D_DEBUG -I$(TOP) ;
+STDLIB ?= stdc++ ;
+SHARED ?= ;
 # clear flag, so we can set it elsewhere
 OPTIM = ;
-#SHARED = ;
+
 
 # extensions
 SOEXT = .so ;

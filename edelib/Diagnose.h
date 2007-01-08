@@ -12,11 +12,38 @@
 #ifndef __DIAGNOSE_H__
 #define __DIAGNOSE_H__
 
+#include "econfig.h"
+
+/*
+ * they are not in namespace so we don't get
+ * strange output with preprocessor
+ */
+void EDebug(const char* fmt, ...);
+void EWarning(const char* fmt, ...);
+void EFatal(const char* fmt, ...);
+
 #ifdef _DEBUG
-	#include <assert.h>
-	#define EASSERT assert
+	#define EASSERT(expr) \
+	((expr) ? (void)0 : (EFatal("Assertion failed: \"%s\" in %s (%d)\n", #expr, __FILE__, __LINE__)))
 #else
 	#define EASSERT(expr) ((void)0)
 #endif
 
+#define EDEBUG   EDebug
+#define EWARNING EWarning
+#define EFATAL   EFatal
+
+EDELIB_NAMESPACE {
+
+enum MsgType
+{
+	MsgDebug = 0,
+	MsgWarn,
+	MsgFatal
+};
+
+typedef void (*MsgHandlerType)(MsgType t, const char* msg);
+void InstallMsgHandler(MsgHandlerType m);
+
+}
 #endif
