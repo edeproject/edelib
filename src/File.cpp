@@ -12,7 +12,7 @@
 
 #include <edelib/econfig.h>
 #include <edelib/File.h>
-#include <edelib/Diagnose.h>
+#include <edelib/Debug.h>
 
 #include <string.h> // strlen, strncpy
 

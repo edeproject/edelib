@@ -12,7 +12,7 @@
 
 #include <edelib/econfig.h>
 #include <edelib/Config.h>
-#include <edelib/Diagnose.h>
+#include <edelib/Debug.h>
 #include <edelib/StrUtil.h>
 #include <edelib/Nls.h>
 

@@ -11,7 +11,7 @@
  */
 
 #include <edelib/econfig.h>
-#include <edelib/Diagnose.h>
+#include <edelib/Debug.h>
 #include <edelib/StrUtil.h>
 
 #include <ctype.h>

@@ -1,7 +1,7 @@
 #ifndef __UTEST_H__
 #define __UTEST_H__
 
-#include <edelib/Diagnose.h>
+#include <edelib/Debug.h>
 #include <string.h>
 
 bool equal(char* c1, char* c2)

@@ -9,7 +9,7 @@
  * See COPYING for details.
  */
 
-#include <edelib/Diagnose.h>
+#include <edelib/Debug.h>
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>

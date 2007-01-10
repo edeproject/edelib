@@ -9,8 +9,8 @@
  * See COPYING for details.
  */
 
-#ifndef __DIAGNOSE_H__
-#define __DIAGNOSE_H__
+#ifndef __DEBUG_H__
+#define __DEBUG_H__
 
 #include "econfig.h"
 
