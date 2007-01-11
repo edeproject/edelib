@@ -375,5 +375,7 @@ class EDELIB_API Config
 		const char* strerror(int code);
 };
 
+
 } // _EDELIB_NAMESPACE
+
 #endif // __CONFIG_H__

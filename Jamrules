@@ -22,12 +22,6 @@ SHARED ?= ;
 # clear flag, so we can set it elsewhere
 OPTIM = ;
 
-
-# extensions
-SOEXT = .so ;
-SOEXTFULL = $(SOEXT).2.0.0 ;
-SOFLAGS = -fPIC ;
-
 # directories
 INCLUDEDIR = edelib ;
 LIBDIR = lib ;
@@ -35,6 +29,11 @@ LIBDIR = lib ;
 # library names
 EDELIB = edelib ;
 EDELIB_NAME = libedelib ;
+
+# extensions
+SOEXT = .so ;
+SOEXTFULL = $(SOEXT).2.0.0 ;
+SOFLAGS = -fPIC ;
 
 JUNK = "> /dev/null" ;
 
@@ -47,6 +46,12 @@ if $(SHARED)
 # this is used by jam
 CCFLAGS = $(FLAGS) $(LOCALFLAGS) ;
 C++FLAGS = $(FLAGS) $(LOCALFLAGS) ;
+
+# at least we differ for FDirName
+rule FFileName
+{
+	return [ FDirName $(<) ] ;
+}
 
 # creates symlink
 # SymLink [link] : [source] : [path for source]
@@ -161,7 +166,7 @@ rule MakeLibrary
 
 rule MakeTest
 {
-	local elib = [ FDirName $(TOP) $(LIBDIR) $(EDELIB_NAME)$(SUFLIB) ] ;
+	local elib = [ FFileName $(TOP) $(LIBDIR) $(EDELIB_NAME)$(SUFLIB) ] ;
 	local ldir = [ FDirName $(TOP) $(LIBDIR) ] ;
 	DEPENDS $(<)  : $(elib) ;
 	DEPENDS tests : $(<) ;
@@ -172,6 +177,14 @@ rule MakeTest
 
 rule MakeDocumentation
 {
+	if $(DOXYGEN) && $(DIRNAME)
+	{
+		DEPENDS doc : $(<) ;
+		DEPENDS $(<) : $(>) ;
+		DEPENDS all : doc ;
+
+		MakeDocumentation1 $(<) : $(>) ;
+	}
 
 	# just return if doxygen is not found
 	# so we can build the rest
@@ -191,14 +204,12 @@ rule MakeDocumentation
 		return ;
 	}
 
-	DEPENDS doc : $(<) ;
-	DEPENDS $(<) : $(>) ;
-	DEPENDS all : doc ;
-
 	Cleandir clean : $(<) ;
 }
 
-actions piecemeal MakeDocumentation
+# not used as MakeDocumentation because
+# we want to run it only if DOXYGEN is defined
+actions piecemeal MakeDocumentation1
 {
 	dn=`$(DIRNAME) $(>)`
 	cd $dn
@@ -219,7 +230,6 @@ rule GenDocumentation
 	DEPENDS doc : $(target) ;
 
 	Clean clean : $(target) ;
-
 }
 
 actions GenDocumentation

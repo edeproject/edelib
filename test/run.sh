@@ -87,7 +87,7 @@ exec_file()
 	pflag=""
 
 	# run it
-	`"./$target" >> $OUTTMP 2>> $ERRTMP`
+	`"./$target" 1>> $OUTTMP 2>> $ERRTMP`
 
 	if [ "$?" = "0" ]; then
 		pflag="x"

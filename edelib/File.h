@@ -121,16 +121,41 @@ class EDELIB_API File
 		bool eof(void);
 
 		/**
+		 * Read an character from stream.
+		 *
+		 * \return character or EOF.
+		 */
+		int getch(void);
+
+		/**
+		 * Read data from the stream, with specified size.
+		 *
+		 * \return number of read data
+		 * \param buff where to place data
+		 * \param typesz size of each item
+		 * \param buffsz size of buffer
+		 */
+		int read(void* buff, int typesz, int buffsz);
+
+		/**
 		 * Read line from stream in specified buffer, with given
 		 * size. If buffer size is less than read line, only
 		 * given size will be filled. A '\\0' is stored as last
-		 * character in buffer.
+		 * character in buffer. It will return EOF if end of stream
+		 * is reached.
 		 *
-		 * \return size of readed data
+		 * \return size of readed data or EOF for end.
 		 * \param buff where to place content
 		 * \param buffsz size of buffer
 		 */
 		int readline(char* buff, int buffsz);
+
+		/**
+		 * Write character to the stream.
+		 *
+		 * \return a character written, or EOF in case of error.
+		 */
+		int putch(int c);
 
 		/**
 		 * Write data to the stream, with specified size.
@@ -150,6 +175,13 @@ class EDELIB_API File
 		 * \param buffsz size of buffer
 		 */
 		int write(const char* buff, unsigned int buffsz);
+
+		/**
+		 * printf function on the stream.
+		 *
+		 * \return size of writen data
+		 */
+		int printf(const char* fmt, ...);
 };
 
 /*! \addtogroup functions

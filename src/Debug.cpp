@@ -17,10 +17,11 @@
 
 #define ERROR_BUFFLEN 1024
 
-#define EMsgHandlerType EDELIB_NS::MsgHandlerType
-#define EMsgDebug       EDELIB_NS::MsgDebug
-#define EMsgWarn        EDELIB_NS::MsgWarn
-#define EMsgFatal       EDELIB_NS::MsgFatal
+// in case we wan't to disable namespaces
+#define EMsgHandlerType   EDELIB_NS::MsgHandlerType
+#define EMsgDebug         EDELIB_NS::MsgDebug
+#define EMsgWarn          EDELIB_NS::MsgWarn
+#define EMsgFatal         EDELIB_NS::MsgFatal
 
 EMsgHandlerType default_msg_handler = 0;
 

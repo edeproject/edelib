@@ -10,6 +10,11 @@ int main()
 {
 	Config c;
 	c.load("ede.conf");
+	if(!c)
+	{
+		printf("No ede.conf\n");
+		return 1;
+	}
 	TEST_EQUAL(c, true);
 
 	char buff[128];
@@ -29,6 +34,20 @@ int main()
 	//TEST_EQUAL(dummy2, 3.4);
 
 	TEST_NOTEQUAL(c.get("Mojo", "Jojo", dummy, 33), true);
+
+	// test write
+	c.set("Panel", "AutoHide", 45);
+	c.set("Mouse", "Thresh", 65);
+	c.save(".ede.conf");
+	if(c.load(".ede.conf"))
+	{
+		int dd;
+		TEST_EQUAL(c.get("Panel", "AutoHide", dd, 0), true);
+		TEST_EQUAL(dd, 45);
+
+		TEST_EQUAL(c.get("Mouse", "Thresh", dd, 0), true);
+		TEST_EQUAL(dd, 65);
+	}
 
 	return 0;
 }

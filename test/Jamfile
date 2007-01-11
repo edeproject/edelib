@@ -16,5 +16,7 @@ MakeTest strutil : strutil.cpp ;
 MakeTest file : file.cpp ;
 MakeTest file2 : file2.cpp ;
 
-Clean clean : .output.stdout ;
-Clean clean : .output.stderr ;
+Clean clean : [ FFileName $(TOP) test .output.stdout ] ;
+Clean clean : [ FFileName $(TOP) test .output.stderr ] ;
+Clean clean : [ FFileName $(TOP) test .foo.txt ] ;
+Clean clean : [ FFileName $(TOP) test .ede.conf ] ;

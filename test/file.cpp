@@ -1,5 +1,6 @@
 #include <edelib/File.h>
 #include "Utest.h"
+#include <stdio.h>
 
 using namespace edelib;
 
@@ -11,15 +12,19 @@ int main()
 	File f;
 	f.open("Jamfile");
 	char buff[128];
-	int n;
-	while(!f.eof())
+	while(f.readline(buff, 128) >= 0 )
 	{
-		n = f.readline(buff, 128);
-		//printf("%i: %s", n, buff);
+		printf("%s", buff);	
 	}
 	f.close();
 
 	TEST_EQUAL(f.name(), NULL);
+	f.open(".foo.txt", FIO_WRITE);
+	f.putch('c');
+	f.close();
+	f.open(".foo.txt");
+	char cc = f.getch();
+	TEST_EQUAL(cc, 'c');
 
 	return 0;
 }

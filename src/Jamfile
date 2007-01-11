@@ -13,8 +13,8 @@ SubDir TOP src ;
 SOURCE = Config.cpp 
 		 StrUtil.cpp
 		 File.cpp
-		 Diagnose.cpp ;
+		 Debug.cpp ;
 
-LPATH = [ FDirName $(TOP) $(LIBDIR) $(EDELIB_NAME) ] ;
+LPATH = [ FFileName $(TOP) $(LIBDIR) $(EDELIB_NAME) ] ;
 MakeLibrary $(LPATH) : $(SOURCE) ;
 Clean clean : $(LPATH) ;

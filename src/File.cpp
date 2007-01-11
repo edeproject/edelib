@@ -15,6 +15,7 @@
 #include <edelib/Debug.h>
 
 #include <string.h> // strlen, strncpy
+#include <stdarg.h> // va_xxx stuff, vfprintf
 
 #include <sys/types.h> // stat
 #include <sys/stat.h>  // stat
@@ -122,8 +123,6 @@ bool File::open(const char* name, int mode)
 	fname = new char[sz+1];
 	strncpy(fname, name, sz+1);
 
-	EASSERT(fname[sz+1] == '\0' && "File buffer malformed");
-
 	fmode = mode;
 	alloc = true;
 	fobj = fopen(fname, flags);
@@ -164,6 +163,25 @@ bool File::eof(void)
 	return feof(fobj);
 }
 
+int File::getch(void)
+{
+	EASSERT(opened != false && "File stream not opened");
+	return fgetc(fobj);
+}
+
+int File::putch(int c)
+{
+	EASSERT(opened != false && "File stream not opened");
+	EASSERT(have_flag(FIO_WRITE, fmode)||have_flag(FIO_APPEND, fmode) && "File stream not in write mode");
+	return fputc(c, fobj);
+}
+int File::read(void* buff, int typesz, int buffsz)
+{
+	EASSERT(opened != false && "File stream not opened");
+	EASSERT(buff != NULL);
+	return fread(buff, typesz, buffsz, fobj);
+}
+
 /*
  * same sa fgets, but return len of line
  */
@@ -179,7 +197,10 @@ int File::readline(char* buff, int buffsz)
 	{
 		c = fgetc(fobj);
 		if(c == EOF)
+		{
+			i = EOF;
 			break;
+		}
 		*buffp++ = c;
 		if(c == '\n')
 			break;
@@ -204,4 +225,16 @@ int File::write(const char* buff, unsigned int buffsz)
 	return write(buff, 1, buffsz);
 }
 
+int File::printf(const char* fmt, ...)
+{
+	EASSERT(opened != false && "File stream not opened or not opened in write mode");
+	EASSERT(have_flag(FIO_WRITE, fmode)||have_flag(FIO_APPEND, fmode) && "File stream not in write mode");
+	EASSERT(fmt != NULL);
+
+	va_list ap;
+	va_start(ap, fmt);
+	int ret = vfprintf(fobj, fmt, ap);
+	va_end(ap);
+	return ret;
+}
 }

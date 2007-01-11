@@ -14,6 +14,7 @@
 #include <edelib/Config.h>
 #include <edelib/Debug.h>
 #include <edelib/StrUtil.h>
+#include <edelib/File.h>
 #include <edelib/Nls.h>
 
 #include <stdio.h>
@@ -215,9 +216,16 @@ Config::~Config()
 bool Config::load(const char* fname)
 {
 	EASSERT(fname != NULL);
-
+#if 0
 	FILE *f = fopen(fname, "r");
 	if(!f)
+	{
+		errcode = CONF_ERR_FILE;
+		return false;
+	}
+#endif
+	File f;
+	if(!f.open(fname))
 	{
 		errcode = CONF_ERR_FILE;
 		return false;
@@ -238,7 +246,8 @@ bool Config::load(const char* fname)
 	char *buffp;
 	ConfigSection* tsect = NULL;
 
-	while(fgets(buff, sizeof(buff)-1, f))
+	//while(fgets(buff, sizeof(buff)-1, f))
+	while(f.readline(buff, sizeof(buff)-1) >= 0)
 	{
 		++linenum;
 
@@ -302,24 +311,32 @@ bool Config::load(const char* fname)
 		}
 	}
 
-	fclose(f);
+	//fclose(f);
 	return status;
 }
 
 bool Config::save(const char* fname)
 {
 	EASSERT(fname != NULL);
+#if 0
 	FILE* f = fopen(fname, "w");
-	
 	if(!f)
 	{
 		errcode = CONF_ERR_FILE;
 		return false;
 	}
+#endif
+	File f;
+	if(!f.open(fname, FIO_WRITE))
+	{
+		errcode = CONF_ERR_FILE;
+		return false;
+	}
+			
 
 	SectionList::iterator sit = section_list.begin();
 	EntryList::iterator eit;
-
+#if 0
 	for(; sit != section_list.end(); ++sit)
 	{
 		fprintf(f, "[%s]\n", (*sit)->sname);
@@ -327,7 +344,16 @@ bool Config::save(const char* fname)
 			fprintf(f, "   %s = %s\n", (*eit)->key, (*eit)->value);
 		fprintf(f, "\n");
 	}
-	fclose(f);
+#endif
+	for(; sit != section_list.end(); ++sit)
+	{
+		f.printf("[%s]\n", (*sit)->sname);
+		for(eit = (*sit)->entry_list.begin(); eit != (*sit)->entry_list.end(); ++eit)
+			f.printf("   %s = %s\n", (*eit)->key, (*eit)->value);
+		f.printf("\n");
+	}
+
+	//fclose(f);
 	return true;
 }
 

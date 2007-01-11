@@ -1,3 +1,10 @@
+2007-01-11  Sanel <karijes@users.sourceforge.net>
+
+	* Cleaned and documented Debug.h
+	* Small addons to Jamrules
+	* File::readline returns EOF if end of stream is reached
+	* Added File::printf
+
 2007-01-08  Sanel <karijes@users.sourceforge.net>
 
 	* Assertion is now handled via optiona hanler.
