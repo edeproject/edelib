@@ -11,12 +11,12 @@
 
 SubDir TOP test ;
 
-MakeTest run_tests : UnitTest.cpp 
-					utest.cpp 
-					strutil.cpp 
-					file.cpp
-					conf.cpp
-					run_tests.cpp ;
+MakeTest conf : conf.cpp ;
+MakeTest strutil : strutil.cpp ;
+MakeTest file : file.cpp ;
+MakeTest file2 : file2.cpp ;
 
+Clean clean : [ FFileName $(TOP) test .output.stdout ] ;
+Clean clean : [ FFileName $(TOP) test .output.stderr ] ;
 Clean clean : [ FFileName $(TOP) test .foo.txt ] ;
 Clean clean : [ FFileName $(TOP) test .ede.conf ] ;
