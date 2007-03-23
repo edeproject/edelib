@@ -7,3 +7,4 @@ TODO list:
  * in Config, don't allow [] sections
  * add convinient Time class
  * maybe better SharedLibraryFromObjects in Jamrules
+ * finish and document String class

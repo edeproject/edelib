@@ -16,6 +16,7 @@ MakeTest run_tests : UnitTest.cpp
 					strutil.cpp 
 					file.cpp
 					conf.cpp
+					string.cpp
 					run_tests.cpp ;
 
 Clean clean : [ FFileName $(TOP) test .foo.txt ] ;

@@ -12,6 +12,7 @@ SubDir TOP src ;
 
 SOURCE = Config.cpp 
 		 StrUtil.cpp
+		 String.cpp
 		 File.cpp
 		 Debug.cpp ;
 
