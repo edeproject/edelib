@@ -24,7 +24,6 @@ class String
 		char* data;
 		unsigned int alloc;
 		unsigned int len;
-		void shrink(unsigned int sz);
 	public:
 		String();
 		String(const char* str);
@@ -35,9 +34,11 @@ class String
 		void append(const char* str);
 		void clear(void);
 		const char* c_str(void) const;
-		unsigned int length(void) { return len; }
-		unsigned int capacity(void) { return alloc; }
+		unsigned int length(void) const   { return len; }
+		unsigned int capacity(void) const { return alloc; }
 
+		char& operator[](const int i) { return data[i]; }
+		char  operator[](const int i) const { return data[i]; }
 		String& operator=(const char* str) { assign(str); return *this; }
 };
 
@@ -48,19 +49,21 @@ inline bool operator>=(const String& str1, const char* str2) { return (strcmp(st
 inline bool operator<(const String& str1, const char* str2) { return (strcmp(str1.c_str(), str2) < 0); }
 inline bool operator<=(const String& str1, const char* str2) { return (strcmp(str1.c_str(), str2) <= 0); }
 
-inline bool operator==(const String& str1, const String& str2) { return (strcmp(str1.c_str(), str2.c_str()) == 0); }
-inline bool operator!=(const String& str1, const String& str2) { return (strcmp(str1.c_str(), str2.c_str()) != 0); }
-inline bool operator>(const String& str1, const String& str2) { return (strcmp(str1.c_str(), str2.c_str()) > 0); }
-inline bool operator>=(const String& str1, const String& str2) { return (strcmp(str1.c_str(), str2.c_str()) >= 0); }
-inline bool operator<(const String& str1, const String& str2) { return (strcmp(str1.c_str(), str2.c_str()) < 0); }
-inline bool operator<=(const String& str1, const String& str2) { return (strcmp(str1.c_str(), str2.c_str()) <= 0); }
-
 inline bool operator==(const char* str1, const String& str2) { return (strcmp(str1, str2.c_str()) == 0); }
 inline bool operator!=(const char* str1, const String& str2) { return (strcmp(str1, str2.c_str()) != 0); }
 inline bool operator>(const char* str1, const String& str2) { return (strcmp(str1, str2.c_str()) > 0); }
 inline bool operator>=(const char* str1, const String& str2) { return (strcmp(str1, str2.c_str()) >= 0); }
 inline bool operator<(const char* str1, const String& str2) { return (strcmp(str1, str2.c_str()) < 0); }
 inline bool operator<=(const char* str1, const String& str2) { return (strcmp(str1, str2.c_str()) <= 0); }
+
+inline bool operator==(const String& str1, const String& str2) 
+{ return (str1.length() == str2.length()) && (strcmp(str1.c_str(), str2.c_str()) == 0); }
+
+inline bool operator!=(const String& str1, const String& str2) { return (strcmp(str1.c_str(), str2.c_str()) != 0); }
+inline bool operator>(const String& str1, const String& str2) { return (strcmp(str1.c_str(), str2.c_str()) > 0); }
+inline bool operator>=(const String& str1, const String& str2) { return (strcmp(str1.c_str(), str2.c_str()) >= 0); }
+inline bool operator<(const String& str1, const String& str2) { return (strcmp(str1.c_str(), str2.c_str()) < 0); }
+inline bool operator<=(const String& str1, const String& str2) { return (strcmp(str1.c_str(), str2.c_str()) <= 0); }
 
 }
 #endif

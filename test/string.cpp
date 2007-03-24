@@ -33,11 +33,12 @@ UT_FUNC(StringBasicTest, "Test basic string functions")
 	dstr.append(" sample2");
 	dstr.append("sample3");
 	UT_VERIFY( dstr.length() == 34 );
+	UT_VERIFY( dstr == "test sample sample1 sample2sample3" );
 }
 
 UT_FUNC(StringOperators, "Test string operators")
 {
-	String test = "sample";
+	String test("sample");
 	UT_VERIFY( test != "Sample" );
 	UT_VERIFY( test == "sample" );
 	UT_VERIFY( test <= "sample" );
@@ -65,4 +66,12 @@ UT_FUNC(StringOperators, "Test string operators")
 	UT_VERIFY( test > test2 );
 	UT_VERIFY( test >= test3 );
 	UT_VERIFY( test > test3 );
+
+	UT_VERIFY( test3[0] == 'd' );
+	UT_VERIFY( test2[2] == 'm' );
+
+	test2[0] = 'D';
+	UT_VERIFY( test2 == "Dumb" );
+	test2[2] = 'M';
+	UT_VERIFY( test2 == "DuMb" );
 }

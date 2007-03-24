@@ -1,6 +1,10 @@
 2007-03-23  Sanel <karijes@users.sourceforge.net>
 
 	* Added String class.
+	* Fixed str_to(lower/upper) since optimizations flags
+	do funny things with it.
+	* Added more operators to String class and apropriate
+	tests.
 
 2007-03-22  Sanel <karijes@users.sourceforge.net>
 

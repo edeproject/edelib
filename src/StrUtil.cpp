@@ -58,7 +58,10 @@ unsigned char* str_tolower(unsigned char* str)
 
 	unsigned char* ptr = str;
 	while(*ptr)
-		*ptr++ = tolower(*ptr);
+	{
+		*ptr = tolower(*ptr);
+		ptr++;
+	}
 	return str;
 }
 
@@ -68,7 +71,10 @@ unsigned char* str_toupper(unsigned char* str)
 
 	unsigned char* ptr = str;
 	while(*ptr)
-		*ptr++ = toupper(*ptr);
+	{
+		*ptr = toupper(*ptr);
+		ptr++;
+	}
 	return str;
 }
 
