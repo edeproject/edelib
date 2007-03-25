@@ -1,7 +1,8 @@
-2007-03-24  Sanel <karijes@users.sourceforge.net>
+2007-03-25  Sanel <karijes@users.sourceforge.net>
 
 	* A better String class with more methods.
 	* Updated tests too.
+	* Addded str_ends.
 
 2007-03-23  Sanel <karijes@users.sourceforge.net>
 
@@ -37,7 +38,7 @@
 
 	* More work on File class.
 
-2007-01-01  The Carcass  <sanel@darkstar>
+2007-01-01  Sanel <karijes@users.sourceforge.net>
 
 	* test/run.sh - now files are run from this
 	directory explicit, so we don't call system wide

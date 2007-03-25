@@ -8,6 +8,8 @@ using namespace edelib;
 
 #define STR_EQUAL(str1, str2) (strcmp(CCHARP(str1), CCHARP(str2)) == 0)
 
+#include <stdio.h>
+
 UT_FUNC(strtest, "Test strutil")
 {
 	unsigned char s1[] = "StRiNG1";
@@ -48,4 +50,10 @@ UT_FUNC(strtest, "Test strutil")
 
 	char s12[] = "\nsss\n";
 	UT_VERIFY( STR_EQUAL("sss", str_trim(s12)) );
+
+	UT_VERIFY( str_ends("sample.png", ".png") == true );
+	UT_VERIFY( str_ends("sample", "foo") == false );
+	UT_VERIFY( str_ends("sample", "ple") == true );
+	UT_VERIFY( str_ends("le", "a long that should fail") == false );
+	UT_VERIFY( str_ends("not-empty", "") == false );
 }

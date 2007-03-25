@@ -41,6 +41,9 @@ EDELIB_API unsigned char* str_tolower(unsigned char* str);
 
 /** makes all characters upper */
 EDELIB_API unsigned char* str_toupper(unsigned char* str);
+
+/** check if string ends with given test string */
+EDELIB_API bool str_ends(const char* str, const char* test);
 /*! @} */
 }
 #endif

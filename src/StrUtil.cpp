@@ -78,4 +78,23 @@ unsigned char* str_toupper(unsigned char* str)
 	return str;
 }
 
+bool str_ends(const char* str, const char* test)
+{
+	EASSERT(str != NULL);
+	EASSERT(test != NULL);
+
+	int len = strlen(str);
+	int tlen = strlen(test);
+	if((tlen > len) || !len || !tlen)
+		return false;
+
+	const char* p = str + len;
+	const char* tp = test + tlen;
+	for(; tlen; p--, tp--, tlen--)
+	{
+		if(*p != *tp)
+			return false;
+	}
+	return true;
+}
 }
