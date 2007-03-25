@@ -1,3 +1,8 @@
+2007-03-24  Sanel <karijes@users.sourceforge.net>
+
+	* A better String class with more methods.
+	* Updated tests too.
+
 2007-03-23  Sanel <karijes@users.sourceforge.net>
 
 	* Added String class.

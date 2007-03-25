@@ -9,11 +9,8 @@ UT_FUNC(StringBasicTest, "Test basic string functions")
 	String dstr;
 	UT_VERIFY( dstr.length() == 0 );
 
-	// std::string return this
-	//UT_VERIFY( dstr.c_str() == "" );
-
 	dstr.reserve(20);
-	UT_VERIFY( dstr.capacity() == 20 + 16 );
+	UT_VERIFY( dstr.capacity() == 20 );
 	UT_VERIFY( dstr.length() == 0 );
 
 	dstr = "Test string";
@@ -34,6 +31,14 @@ UT_FUNC(StringBasicTest, "Test basic string functions")
 	dstr.append("sample3");
 	UT_VERIFY( dstr.length() == 34 );
 	UT_VERIFY( dstr == "test sample sample1 sample2sample3" );
+
+	dstr.clear();
+	dstr.append("Sample string", 4);
+	UT_VERIFY( dstr == "Samp" );
+	UT_VERIFY( dstr[0] == 'S' );
+	UT_VERIFY( dstr[1] == 'a' );
+	UT_VERIFY( dstr[2] == 'm' );
+	UT_VERIFY( dstr[3] == 'p' );
 }
 
 UT_FUNC(StringOperators, "Test string operators")
@@ -74,4 +79,48 @@ UT_FUNC(StringOperators, "Test string operators")
 	UT_VERIFY( test2 == "Dumb" );
 	test2[2] = 'M';
 	UT_VERIFY( test2 == "DuMb" );
+
+	String test4 = "";
+	test4 += "bla";
+	UT_VERIFY( test4 == "bla" );
+	test4 += "";
+	UT_VERIFY( test4 == "bla" );
+	test4 += " ";
+	UT_VERIFY( test4 == "bla " );
+	test4 += "xxx";
+	UT_VERIFY( test4 == "bla xxx" );
+	test4.clear();
+	UT_VERIFY( test4 == "" );
+	test4.assign("moo");
+	UT_VERIFY( test4 == "moo" );
+	test4 += "xxx";
+	UT_VERIFY( test4 == "mooxxx" );
+	test4.assign("foo");
+	UT_VERIFY( test4 == "foo" );
+}
+
+UT_FUNC(StringFind, "Test string find")
+{
+	String s("Sample string");
+	UT_VERIFY( s.find("ample") == 1 );
+	UT_VERIFY( s.find("XXX") == String::npos );
+	UT_VERIFY( s.find('e', 0) == 5 );
+}
+
+#include <string>
+UT_FUNC(StringComparison, "Test std::string comparison")
+{
+	String s;
+	std::string s1;
+	UT_VERIFY( s.length() == s1.length() );
+	UT_VERIFY( s.capacity() == s1.capacity() );
+
+	s = "foo";
+	s1 = "foo";
+	UT_VERIFY( s == s1.c_str() );
+
+	UT_VERIFY( s.find("oo") == s1.find("oo") );
+	UT_VERIFY( s.find("foo") == s1.find("foo") );
+	UT_VERIFY( s.find("o") == s1.find("o") );
+	UT_VERIFY( s.find('o', 0) == s1.find('o', 0) );
 }

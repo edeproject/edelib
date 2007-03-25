@@ -12,100 +12,180 @@
 
 #include <edelib/econfig.h>
 #include <edelib/String.h>
-#include <string.h>
+#include <assert.h>
+
+#define STERM '\0'
 
 EDELIB_NAMESPACE {
 
-String::String() : data(0), alloc(0), len(0)
+String::StringData String::null_data = {0, 0, ""};
+const String::size_type  String::npos = ~(String::size_type)0;
+
+String::String() : sdata(&null_data)
+{ }
+
+String::String(const char* str) : sdata(&null_data)
 { 
+	assign(str); 
 }
 
-String::String(const char* str) : data(0), alloc(0), len(0)
-{
-	assign(str);
+String::String(const String& str) : sdata(&null_data)
+{ 
+	if(str.length())
+		assign(str.c_str()); 
 }
 
 String::~String()
 {
-	if(data)
+	dispose();
+}
+
+void String::init(size_type len, size_type cap)
+{
+	assert(len <= cap);
+//	if(cap > 0)
+//	{
+#if 0
+		if(sdata == &null_data) 
+			sdata = new StringData;
+
+		sdata->chars = new char[cap + 1];
+		sdata->chars[0] = STERM;
+		sdata->length = len;
+		sdata->capacity = cap;
+#endif
+		sdata = new StringData;
+		sdata->chars = new char[cap + 1];
+		sdata->chars[0] = STERM;
+		sdata->length = len;
+		sdata->capacity = cap;
+//	}
+//	else
+//		sdata = &null_data;
+}
+
+void String::dispose(void)
+{
+	if(sdata != &null_data)
 	{
-		//printf("clearing\n");
-		delete[] data;
+		delete [] sdata->chars;
+		delete sdata;
+		sdata = &null_data;
 	}
 }
 
-void String::reserve(unsigned int size)
+void String::reserve(size_type cap)
 {
-	if(alloc < size)
+	if(cap > capacity())
 	{
-		alloc += size + 16;
-		char* newstr = new char[alloc];
-		if(data)
-		{
-			memcpy(newstr, data, len);
-			delete[] data;
-		}
-		data = newstr;
+		String tmp;
+		tmp.init(length(), cap);
+		memcpy(tmp.sdata->chars, data(), length());
+		swap(tmp);
 	}
+}
+
+void String::swap(String& from)
+{
+	StringData* d = sdata;
+	sdata = from.sdata;
+	from.sdata = d;
+}
+
+void String::assign(const char* str, size_type len)
+{
+	dispose();
+
+	init(len, len);
+	memcpy(sdata->chars, str, len);
+	sdata->chars[len] = STERM;
 }
 
 void String::assign(const char* str)
 {
-	unsigned int old = len;
-	len = strlen(str);
-	reserve(len);
-	memcpy(data, str, len);
-
-	// pseudo shrinker
-	if(len < old)
-		data[len] = '\0';
+	assign(str, strlen(str));
 }
 
-void String::resize(unsigned int newsz, char defval)
+void String::append(const char* str, size_type len)
 {
-	// pseudo shrinker
-	if(newsz < len)
+	if(len + length() <= capacity())
 	{
-		len = newsz;
-		data[len] = '\0';
-		return;
+		memcpy(sdata->chars + length(), str, len);
+		sdata->length += len;
+		sdata->chars[sdata->length] = STERM;
 	}
-
-	// we are bigger, so
-	// len have to be exact size as newsz
-	reserve(newsz);
-
-	char* ptr = data + len;
-	for(unsigned int i = 0; i < newsz; i++, ptr++)
-		*ptr = defval;
-
-	len = newsz;
-	data[len] = '\0';
+	else
+	{
+		reserve((capacity() + len) * 2);
+		memcpy(sdata->chars + length(), str, len);
+		sdata->length += len;
+		sdata->chars[sdata->length] = STERM;
+	}
 }
 
 void String::append(const char* str)
 {
-	unsigned int lstr = strlen(str);
-	reserve(len + lstr);
-	char* last = data + len;
-	
-	for(unsigned int i = 0; i < lstr; i++, last++, str++)
-		*last = *str;
-	len += lstr;
-	data[len] = '\0';
+	append(str, strlen(str));
 }
 
 void String::clear(void)
 {
-	len = 0;
-	data[len]='\0';
+	dispose();
 }
 
-const char* String::c_str(void) const
+String& String::operator=(const char* str)
 {
-	if(!data)
-		return "";
-	return data;
+	assign(str);
+	return *this;
+}
+
+String& String::operator+=(const char* str)
+{
+	append(str);
+	return *this;
+}
+
+char& String::operator[](size_type index)
+{
+	assert(index < length());
+	return sdata->chars[index];
+}
+
+char String::operator[](size_type index) const
+{
+	assert(index < length());
+	return sdata->chars[index];
+}
+
+String::size_type String::find(const char* str, size_type offset)
+{
+	if(offset >= length())
+		return npos;
+
+	char* p = strstr(data() + offset, str);
+	if(!p)
+		return npos;
+	else
+		return (p - data());
+}
+
+String::size_type String::find(const char* str)
+{
+	return find(str, 0);
+}
+
+String::size_type String::find(char ch, size_type offset)
+{
+	if(offset >= length())
+		return npos;
+
+	size_type i = 0;
+	for(const char* p = data() + offset; *p != STERM && i < length(); p++, i++)
+	{
+		if(*p == ch)
+			return (i + offset);
+	}
+	return npos;
 }
 
 }
