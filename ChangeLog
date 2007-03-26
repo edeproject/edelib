@@ -1,3 +1,8 @@
+2007-03-26  Sanel <karijes@users.sourceforge.net>
+
+	* Added String::printf
+	* String::capacity() behaviour is now more Standard-like
+
 2007-03-25  Sanel <karijes@users.sourceforge.net>
 
 	* A better String class with more methods.

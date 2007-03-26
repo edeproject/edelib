@@ -107,6 +107,30 @@ UT_FUNC(StringFind, "Test string find")
 	UT_VERIFY( s.find('e', 0) == 5 );
 }
 
+UT_FUNC(StringPrintf, "Test string printf")
+{
+	String s;
+	s.printf("Sample %s", "demo");
+	UT_VERIFY( s == "Sample demo" );
+	s.printf("Sample number %i", 5);
+	UT_VERIFY( s == "Sample number 5" );
+
+	s.clear();
+	UT_VERIFY( s == "" );
+
+	s.reserve(20);
+	s.printf("Sample number %i", 5);
+	UT_VERIFY( s == "Sample number 5" );
+	UT_VERIFY( s.length() == 15 );
+	UT_VERIFY( s.capacity() == 20 );
+
+	s.printf("");
+	UT_VERIFY( s.length() == 0 );
+	UT_VERIFY( s.capacity() == 20 );
+	s.clear();
+	UT_VERIFY( s.capacity() == 0 );
+}
+
 #include <string>
 UT_FUNC(StringComparison, "Test std::string comparison")
 {

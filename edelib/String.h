@@ -52,6 +52,7 @@ class String
 		size_type find(char ch, size_type offset);
 		size_type find(const char* str);
 		void clear(void);
+		void printf(const char* fmt, ...);
 
 		const char* c_str(void)  { return sdata->chars; }
 		const char* c_str(void) const { return sdata->chars; }

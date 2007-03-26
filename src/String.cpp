@@ -13,7 +13,10 @@
 #include <edelib/econfig.h>
 #include <edelib/String.h>
 #include <assert.h>
+#include <stdarg.h>
+#include <stdio.h> // vsnprintf
 
+#define PRINTF_BUFF 1024
 #define STERM '\0'
 
 EDELIB_NAMESPACE {
@@ -43,25 +46,11 @@ String::~String()
 void String::init(size_type len, size_type cap)
 {
 	assert(len <= cap);
-//	if(cap > 0)
-//	{
-#if 0
-		if(sdata == &null_data) 
-			sdata = new StringData;
-
-		sdata->chars = new char[cap + 1];
-		sdata->chars[0] = STERM;
-		sdata->length = len;
-		sdata->capacity = cap;
-#endif
-		sdata = new StringData;
-		sdata->chars = new char[cap + 1];
-		sdata->chars[0] = STERM;
-		sdata->length = len;
-		sdata->capacity = cap;
-//	}
-//	else
-//		sdata = &null_data;
+	sdata = new StringData;
+	sdata->chars = new char[cap + 1];
+	sdata->chars[0] = STERM;
+	sdata->length = len;
+	sdata->capacity = cap;
 }
 
 void String::dispose(void)
@@ -94,9 +83,21 @@ void String::swap(String& from)
 
 void String::assign(const char* str, size_type len)
 {
+	/*
+	 * Hanle cases:
+	 *    foo.reserve(20);
+	 *    foo.assign("foo");
+	 * since std::string will have:
+	 *    foo.length() == 3;
+	 *    foo.capacity() == 20;
+	 */
+	size_type cap = capacity();
 	dispose();
 
-	init(len, len);
+	if(len < cap)
+		init(len, cap);
+	else
+		init(len, len);
 	memcpy(sdata->chars, str, len);
 	sdata->chars[len] = STERM;
 }
@@ -131,6 +132,19 @@ void String::append(const char* str)
 void String::clear(void)
 {
 	dispose();
+}
+
+void String::printf(const char* fmt, ...)
+{
+	assert(fmt != NULL);
+
+	char buff[PRINTF_BUFF];
+	va_list ap;
+	va_start(ap, fmt);
+	vsnprintf(buff, PRINTF_BUFF, fmt, ap);
+	va_end(ap);
+
+	assign((char*)buff);
 }
 
 String& String::operator=(const char* str)
