@@ -39,6 +39,9 @@ UT_FUNC(StringBasicTest, "Test basic string functions")
 	UT_VERIFY( dstr[1] == 'a' );
 	UT_VERIFY( dstr[2] == 'm' );
 	UT_VERIFY( dstr[3] == 'p' );
+
+	String dstr2(dstr);
+	UT_VERIFY( dstr2 == dstr );
 }
 
 UT_FUNC(StringOperators, "Test string operators")
