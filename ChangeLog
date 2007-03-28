@@ -1,3 +1,10 @@
+2007-03-27  Sanel <karijes@users.sourceforge.net>
+
+	* Added functions that should return XDG paths,
+	of EDE_XXX their equivalents.
+	* Added (althought unfinished) installation rules 
+	to Jamrules
+
 2007-03-26  Sanel <karijes@users.sourceforge.net>
 
 	* Added String::printf

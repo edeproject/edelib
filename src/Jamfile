@@ -12,10 +12,11 @@ SubDir TOP src ;
 
 SOURCE = Config.cpp 
 		 StrUtil.cpp
+		 Util.cpp
 		 String.cpp
 		 File.cpp
 		 Debug.cpp ;
 
-LPATH = [ FFileName $(TOP) $(LIBDIR) $(EDELIB_NAME) ] ;
+LPATH = [ FFileName $(TOP) $(EDELIB_LIBDIR) $(EDELIB_NAME) ] ;
 MakeLibrary $(LPATH) : $(SOURCE) ;
 Clean clean : $(LPATH) ;

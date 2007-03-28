@@ -14,6 +14,24 @@ DIRNAME ?= dirname ;
 LINKCMD ?= ln -s ;
 SED		?= sed ;
 AWK		?= awk ;
+RMDIR   ?= rm -R ;
+COPYDIR ?= cp -R ;
+
+# install script
+INSTALL      ?= [ FDirName $(TOP) install-sh ] ;
+INSTALL_LIB  ?= "$(INSTALL) -c" ;
+INSTALL_DATA ?= "$(INSTALL) -m 644" ;
+INSTALL_DIR ?= $(COPYDIR) ;
+
+# where to install data
+# Note: do not use '?=' since it have lower precendence
+# here and will read data from environmend
+# (or we should change variables ?)
+#PREFIX    ?= "/opt/ede" ;
+PREFIX     = ;
+INCLUDEDIR = $(PREFIX)/include ;
+LIBDIR     = $(PREFIX)/lib ;
+DOCDIR     = $(PREFIX)/doc/ede ;
 
 # flags
 FLAGS  ?= -Wall -g3 -D_DEBUG -I$(TOP) ;
@@ -23,8 +41,8 @@ SHARED ?= ;
 OPTIM = ;
 
 # directories
-INCLUDEDIR = edelib ;
-LIBDIR = lib ;
+EDELIB_INCLUDEDIR = edelib ;
+EDELIB_LIBDIR = lib ;
 
 # library names
 EDELIB = edelib ;
@@ -54,7 +72,7 @@ rule FFileName
 }
 
 # creates symlink
-# SymLink [link] : [source] : [path for source]
+# SymLink <link> : <source> : <path-for-source> ;
 rule SymLink
 {
 	if $(LINKCMD)
@@ -161,13 +179,14 @@ rule MakeLibrary
 	{
 		# call builtin one
 		Library $(<) : $(>) ;
+		InstallLibrary $(LIBDIR) : $(<)$(SUFLIB) ;
 	}
 }
 
 rule MakeTest
 {
-	local elib = [ FFileName $(TOP) $(LIBDIR) $(EDELIB_NAME)$(SUFLIB) ] ;
-	local ldir = [ FDirName $(TOP) $(LIBDIR) ] ;
+	local elib = [ FFileName $(TOP) $(EDELIB_LIBDIR) $(EDELIB_NAME)$(SUFLIB) ] ;
+	local ldir = [ FDirName $(TOP) $(EDELIB_LIBDIR) ] ;
 	DEPENDS $(<)  : $(elib) ;
 	DEPENDS tests : $(<) ;
 
@@ -184,6 +203,9 @@ rule MakeDocumentation
 		DEPENDS all : doc ;
 
 		MakeDocumentation1 $(<) : $(>) ;
+		INSTALL on $(target) = $(INSTALL_DIR) ;
+		InstallDocumentation $(DOCDIR) : $(<) ;
+		Cleandir uninstall : $(<) ;
 	}
 
 	# just return if doxygen is not found
@@ -203,8 +225,6 @@ rule MakeDocumentation
 		Echo "To make documentation, go to $(<:P) and run doxygen" ;
 		return ;
 	}
-
-	Cleandir clean : $(<) ;
 }
 
 # not used as MakeDocumentation because
@@ -218,7 +238,7 @@ actions piecemeal MakeDocumentation1
 
 # similar to GenFile, except it run
 # a command on source
-# GenDocumentation [target] : [command] [source]
+# GenDocumentation <target> : <command> <source>
 rule GenDocumentation
 {
 	local target = $(<) ;
@@ -228,13 +248,58 @@ rule GenDocumentation
 	DEPENDS $(target) : $(src) ;
 	DEPENDS $(src) : $(cmd) ;
 	DEPENDS doc : $(target) ;
-
 	Clean clean : $(target) ;
+
+	INSTALL on $(target) = $(INSTALL_DATA) ;
+	InstallDocumentation $(DOCDIR) : $(target) ;
+	Cleandir uninstall : $(DOCDIR) ;
 }
 
 actions GenDocumentation
 {
 	./$(>[1]) $(>[2]) > $(<) ;
+}
+
+# InstallLibrary <directory> : <library> ;
+rule InstallLibrary
+{
+	local target ;
+
+	target = [ FFileName $(<) $(>:D=) ] ;
+	target = $(target:G=installibrary) ;
+
+	Depends install : $(target) ;
+	Depends install : all ;
+
+	NotFile install ;
+	Always install ;
+
+	Install1 $(target) : $(>) ;
+	INSTALL on $(target) = $(INSTALL_LIB) ;
+
+	Clean uninstall : $(target) ;
+}
+
+# InstallLibrary <directory> : <docdir> ;
+rule InstallDocumentation
+{
+	local target ;
+
+	target = [ FFileName $(<) $(>:D=) ] ;
+	target = $(target:G=installidocs) ;
+
+	Depends install : $(target) ;
+	Depends install : all ;
+
+	NotFile install ;
+	Always install ;
+
+	Install1 $(target) : $(>) ;
+}
+
+actions Install1
+{
+	$(INSTALL) $(>) $(<) ;
 }
 
 actions piecemeal Package
@@ -247,7 +312,7 @@ Package archive ;
 # allow to be used as Cleandir cleandir
 actions piecemeal together existing Cleandir
 {
-	$(RM) -R $(>)
+	$(RMDIR) $(>)
 }
 
 actions quietly Help

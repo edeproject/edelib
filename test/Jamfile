@@ -13,6 +13,7 @@ SubDir TOP test ;
 
 MakeTest run_tests : UnitTest.cpp 
 					utest.cpp 
+					util.cpp
 					strutil.cpp 
 					file.cpp
 					conf.cpp
