@@ -7,3 +7,4 @@ TODO list:
  * add convinient Time class
  * maybe better SharedLibraryFromObjects in Jamrules
  * finish and document String class
+ * XDG functions in Util.h needs more checking
