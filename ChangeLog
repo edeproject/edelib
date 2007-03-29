@@ -1,6 +1,7 @@
 2007-03-29  Sanel <karijes@users.sourceforge.net>
 
 	* Added String::substr with tests
+	* Removed left playing with Cleandir
 
 2007-03-27  Sanel <karijes@users.sourceforge.net>
 

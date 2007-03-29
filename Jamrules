@@ -14,8 +14,9 @@ DIRNAME ?= dirname ;
 LINKCMD ?= ln -s ;
 SED		?= sed ;
 AWK		?= awk ;
-RMDIR   ?= rm -R ;
-COPYDIR ?= cp -R ;
+
+RMDIR   = rm -R ;
+COPYDIR = cp -R ;
 
 # install script
 INSTALL      ?= [ FDirName $(TOP) install-sh ] ;
@@ -205,7 +206,7 @@ rule MakeDocumentation
 		MakeDocumentation1 $(<) : $(>) ;
 		INSTALL on $(target) = $(INSTALL_DIR) ;
 		InstallDocumentation $(DOCDIR) : $(<) ;
-		Cleandir uninstall : $(<) ;
+		Cleandir clean : $(<) ;
 	}
 
 	# just return if doxygen is not found
