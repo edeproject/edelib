@@ -171,6 +171,18 @@ char String::operator[](size_type index) const
 	return sdata->chars[index];
 }
 
+String String::substr(size_type index, size_type num)
+{
+	assert(index < num);
+
+	String tmp;
+	if(num == npos)
+		tmp.assign(data() + index, length() - index);
+	else
+		tmp.assign(data() + index, num);
+	return tmp;
+}
+
 String::size_type String::find(const char* str, size_type offset)
 {
 	if(offset >= length())

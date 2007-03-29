@@ -1,3 +1,7 @@
+2007-03-29  Sanel <karijes@users.sourceforge.net>
+
+	* Added String::substr with tests
+
 2007-03-27  Sanel <karijes@users.sourceforge.net>
 
 	* Added functions that should return XDG paths,

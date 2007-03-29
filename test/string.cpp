@@ -110,6 +110,17 @@ UT_FUNC(StringFind, "Test string find")
 	UT_VERIFY( s.find('e', 0) == 5 );
 }
 
+UT_FUNC(StringSubstr, "Test string substr")
+{
+	String s("Sample string");
+	UT_VERIFY( s.substr(6) == " string" );
+	UT_VERIFY( s.substr(0, 6) == "Sample" );
+	UT_VERIFY( s.substr(1, 5) == "ample" );
+
+	String tmp(s.substr(7));
+	UT_VERIFY( tmp == "string" );
+}
+
 UT_FUNC(StringPrintf, "Test string printf")
 {
 	String s;
@@ -150,4 +161,10 @@ UT_FUNC(StringComparison, "Test std::string comparison")
 	UT_VERIFY( s.find("foo") == s1.find("foo") );
 	UT_VERIFY( s.find("o") == s1.find("o") );
 	UT_VERIFY( s.find('o', 0) == s1.find('o', 0) );
+
+	s = "Sample string";
+	// s1 is type of std::string
+	s1 = "Sample string";
+	String stmp = s1.substr(6).c_str();
+	UT_VERIFY( s.substr(6) == stmp );
 }

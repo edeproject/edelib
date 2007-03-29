@@ -48,6 +48,7 @@ class String
 		void append(const char* str);
 		void reserve(size_type len);
 		void swap(String& from);
+		String substr(size_type index, size_type num = npos);
 		size_type find(const char* str, size_type offset);
 		size_type find(char ch, size_type offset);
 		size_type find(const char* str);
