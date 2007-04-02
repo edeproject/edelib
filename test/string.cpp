@@ -1,6 +1,7 @@
 #include <edelib/String.h>
 #include <stdlib.h>
 #include "UnitTest.h"
+#include <stdio.h>
 
 using namespace edelib;
 
@@ -42,6 +43,18 @@ UT_FUNC(StringBasicTest, "Test basic string functions")
 
 	String dstr2(dstr);
 	UT_VERIFY( dstr2 == dstr );
+
+	dstr.clear();
+	dstr2.clear();
+	dstr = "Sample";
+	dstr2.assign(dstr);
+	UT_VERIFY( dstr2 == dstr );
+	UT_VERIFY( dstr2 == "Sample" );
+
+	dstr2.append(dstr);
+	UT_VERIFY( dstr2 == "SampleSample" );
+	dstr2.append(dstr2);
+	UT_VERIFY( dstr2 == "SampleSampleSampleSample" );
 }
 
 UT_FUNC(StringOperators, "Test string operators")
@@ -100,6 +113,27 @@ UT_FUNC(StringOperators, "Test string operators")
 	UT_VERIFY( test4 == "mooxxx" );
 	test4.assign("foo");
 	UT_VERIFY( test4 == "foo" );
+
+	test = "sample";
+	test2 = "string";
+	UT_VERIFY( (test + test2) == "samplestring" );
+
+	test2 += test;
+	UT_VERIFY( test2 == "stringsample" );
+	test += test2;
+	UT_VERIFY( test == "samplestringsample" );
+
+	test.clear();
+	test2.clear();
+	UT_VERIFY( (test + test2) == "" );
+
+	test3.clear();
+	test = "sample ";
+	test2 = "string ";
+	test3 = "with no meanings";
+	UT_VERIFY( (test + test2 + test3) == "sample string with no meanings" );
+	UT_VERIFY( (test3 + test2 + test) == "with no meaningsstring sample " );
+	UT_VERIFY( (test + test3 + test2) == "sample with no meaningsstring " );
 }
 
 UT_FUNC(StringFind, "Test string find")
@@ -167,4 +201,12 @@ UT_FUNC(StringComparison, "Test std::string comparison")
 	s1 = "Sample string";
 	String stmp = s1.substr(6).c_str();
 	UT_VERIFY( s.substr(6) == stmp );
+
+	std::string s2;
+	s1.clear();
+	s2.clear();
+	String ss;
+	ss.clear();
+	s.clear();
+	UT_VERIFY( String((s1 + s2).c_str()) == (ss + s) );
 }

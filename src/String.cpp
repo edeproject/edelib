@@ -81,7 +81,7 @@ void String::swap(String& from)
 	from.sdata = d;
 }
 
-void String::assign(const char* str, size_type len)
+String& String::assign(const char* str, size_type len)
 {
 	/*
 	 * Hanle cases:
@@ -100,14 +100,23 @@ void String::assign(const char* str, size_type len)
 		init(len, len);
 	memcpy(sdata->chars, str, len);
 	sdata->chars[len] = STERM;
+
+	return *this;
 }
 
-void String::assign(const char* str)
+String& String::assign(const char* str)
 {
 	assign(str, strlen(str));
+	return *this;
 }
 
-void String::append(const char* str, size_type len)
+String& String::assign(const String& str)
+{
+	assign(str.c_str(), str.length());
+	return *this;
+}
+
+String& String::append(const char* str, size_type len)
 {
 	if(len + length() <= capacity())
 	{
@@ -122,11 +131,20 @@ void String::append(const char* str, size_type len)
 		sdata->length += len;
 		sdata->chars[sdata->length] = STERM;
 	}
+
+	return *this;
 }
 
-void String::append(const char* str)
+String& String::append(const char* str)
 {
 	append(str, strlen(str));
+	return *this;
+}
+
+String& String::append(const String& str)
+{
+	append(str.c_str(), str.length());
+	return *this;
 }
 
 void String::clear(void)
@@ -153,7 +171,20 @@ String& String::operator=(const char* str)
 	return *this;
 }
 
+String& String::operator=(const String& str)
+{
+	if(&str != this)
+		assign(str);
+	return *this;
+}
+
 String& String::operator+=(const char* str)
+{
+	append(str);
+	return *this;
+}
+
+String& String::operator+=(const String& str)
 {
 	append(str);
 	return *this;
@@ -212,6 +243,46 @@ String::size_type String::find(char ch, size_type offset)
 			return (i + offset);
 	}
 	return npos;
+}
+
+String operator+(const String& s1, const String& s2)
+{
+	String tmp;
+
+	String::size_type len = s1.length();
+	len += s1.length();
+	/*
+	 * Do not allocate anything if sum of lenghts of 
+	 * s1 and s2 are 0.
+	 */
+	if(len)
+	{
+		tmp.reserve(len);
+		tmp += s1;
+		tmp += s2;
+	}
+	return tmp;
+}
+
+String operator+(const char* s1, const String& s2)
+{
+	String tmp;
+
+	String::size_type len = strlen(s1);
+	len += s2.length();
+	// see above for allocation
+	if(len)
+	{
+		tmp.reserve(len);
+		tmp += s1;
+		tmp += s2;
+	}
+	return tmp;
+}
+
+String operator+(const String& s1, const char* s2)
+{
+	return operator+(s2, s1);
 }
 
 }

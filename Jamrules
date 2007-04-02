@@ -35,7 +35,7 @@ LIBDIR     = $(PREFIX)/lib ;
 DOCDIR     = $(PREFIX)/doc/ede ;
 
 # flags
-FLAGS  ?= -Wall -g3 -D_DEBUG -I$(TOP) ;
+FLAGS  ?= -Wall -g3 -D_DEBUG -DUSE_NLS -I$(TOP) ;
 STDLIB ?= stdc++ ;
 SHARED ?= ;
 # clear flag, so we can set it elsewhere

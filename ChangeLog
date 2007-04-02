@@ -1,3 +1,18 @@
+2007-04-02  Sanel <karijes@users.sourceforge.net>
+
+	* String self assignement checks added
+	* Added very usefull timer.hpp from boost
+	* At last documented String class, but some functions
+	are left undocumented, mostly becaus of doxygen's stupidity
+	* Added support for locales
+	* Added Ask.{h,cpp} with .fl data and icons for them
+
+2007-04-01  Sanel <karijes@users.sourceforge.net>
+
+	* Added operator+ to String
+	* Added copy ctors for varions operators in String
+	* ...and tests for them
+
 2007-03-29  Sanel <karijes@users.sourceforge.net>
 
 	* Added String::substr with tests
