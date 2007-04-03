@@ -119,8 +119,11 @@ class EDELIB_API ConfigSection
  *    idea = good
  * \endcode
  *
- * In above case, using get("my section", "idea", &val, valsz) will set
- * val to good.
+ * In above case, using 
+ * \code
+ *   get("my section", "idea", &val, valsz) 
+ * \endcode
+ * will set val to "good".
  *
  * During reading phase, file is checked is malformed and if that
  * was true, CONF_ERR_BAD will be returned as error code. Target line
@@ -135,8 +138,10 @@ class EDELIB_API ConfigSection
  *    item = value
  * \endcode
  *
- * Later option was never needed during eFLTK usage, and when we get
- * to that point, Config class will probably use some XML backend.
+ * Later option can be checked like:
+ * \code
+ *   get("parent/child", "item", &val, valsz);
+ * \endcode
  */
 class EDELIB_API Config
 {

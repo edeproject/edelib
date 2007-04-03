@@ -1,3 +1,7 @@
+2007-04-03  Sanel <karijes@users.sourceforge.net>
+
+	* Documented Nls.h
+
 2007-04-02  Sanel <karijes@users.sourceforge.net>
 
 	* String self assignement checks added

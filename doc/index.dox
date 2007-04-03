@@ -31,7 +31,7 @@ edelib can't be built with 1.x series.
 
 As build tool instead standard Make, Jam is used. Jam is Make-like tool with it's own
 syntax and can be found at <a href="http://www.perforce.com/jam/jam.html">Perforce jam pages</a>
-Currenty for development is used it's small modification called 
+Currently for the development is used it's small modification called 
 <a href="http://www.freetype.org/jam/">ftjam</a>, based on little older official Jam version
 which gives us an option that edelib can be built on various Jam derivatives, like:
 

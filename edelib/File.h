@@ -53,7 +53,7 @@ enum FileIOMode
  *  	printf("can't open %s\n", f.name());
  *  while(!f.eof())
  *  	printf("%s", f.readline());
- *  f.close();
+ *  f.close(); // optional
  * \endcode
  */
 
