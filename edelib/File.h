@@ -188,13 +188,13 @@ class EDELIB_API File
  * @{
  */
 /** Check if file exists and is regular file */
-bool file_exists(const char* name);
+EDELIB_API bool file_exists(const char* name);
 
 /** Check if file is readable */
-bool file_readable(const char* name);
+EDELIB_API bool file_readable(const char* name);
 
 /** Check if file is writeable */
-bool file_writeable(const char* name);
+EDELIB_API bool file_writeable(const char* name);
 /*! @} */
 }
 

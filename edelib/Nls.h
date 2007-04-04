@@ -35,7 +35,7 @@ EDELIB_NAMESPACE {
  * \return the current message domain if domain is not NULL; returned string must not be modified or freed
  * \param domain is current message domain; if domain is NULL, the function returns the current message domain
  */
-const char* set_textdomain(const char* domain);
+EDELIB_API const char* set_textdomain(const char* domain);
 
 /**
  * Sets the base directory of the hierarchy containing message catalogs for a given message domain.
@@ -55,7 +55,7 @@ const char* set_textdomain(const char* domain);
  * \param dir the base directory for message catalogs belonging to domain; it dir is NULL, the function 
  * returns the previously set base directory for domain 
  */
-const char* set_textdomain_dir(const char* domain, const char* dir);
+EDELIB_API const char* set_textdomain_dir(const char* domain, const char* dir);
 
 /**
  * A shorthand for set_textdomain() and set_textdomain_dir()
@@ -75,7 +75,7 @@ const char* set_textdomain_dir(const char* domain, const char* dir);
  * \param appname is a set of translatable messages, coresponding to the target application's executable
  * \param dir the base directory for appname
  */
-void init_locale_support(const char* appname, const char* dir);
+EDELIB_API void init_locale_support(const char* appname, const char* dir);
 
 }
 #endif

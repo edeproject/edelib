@@ -16,6 +16,7 @@ SOURCE = Config.cpp
 		 Nls.cpp
 		 String.cpp
 		 File.cpp
+		 Directory.cpp
 		 Debug.cpp ;
 
 LPATH = [ FFileName $(TOP) $(EDELIB_LIBDIR) $(EDELIB_NAME) ] ;

@@ -8,36 +8,27 @@
 # GNU General Public Licence version 2 or newer.
 # See COPYING for details.
 
-# tools
-DOXYGEN ?= doxygen ;
-DIRNAME ?= dirname ;
-LINKCMD ?= ln -s ;
-SED		?= sed ;
-AWK		?= awk ;
+JAMCONFIG ?= $(TOP)/Jamconfig ;
+include $(JAMCONFIG) ;
+if ! $(JAMCONFIG_READ)
+{
+	Exit "Can't find Jamconfig. Did you run 'configure' first ?" ;
+}
 
 RMDIR   = rm -R ;
 COPYDIR = cp -R ;
 
-# install script
-INSTALL      ?= [ FDirName $(TOP) install-sh ] ;
-INSTALL_LIB  ?= "$(INSTALL) -c" ;
-INSTALL_DATA ?= "$(INSTALL) -m 644" ;
-INSTALL_DIR ?= $(COPYDIR) ;
+SOEXT = $(DSOSYMLINK) ;
+SOEXTFULL = $(DSOSUFFIX) ;
+SOLDFLAGS = $(DSOLDFLAGS) ;
+SOFLAGS = $(DSOFLAGS) ;
 
-# where to install data
-# Note: do not use '?=' since it have lower precendence
-# here and will read data from environmend
-# (or we should change variables ?)
-#PREFIX    ?= "/opt/ede" ;
-PREFIX     = ;
-INCLUDEDIR = $(PREFIX)/include ;
-LIBDIR     = $(PREFIX)/lib ;
-DOCDIR     = $(PREFIX)/doc/ede ;
+LINKCMD = $(SYMLINKCMD) ;
 
-# flags
-FLAGS  ?= -Wall -g3 -D_DEBUG -DUSE_NLS -I$(TOP) ;
+#FLAGS  ?= -Wall -pedantic -Weffc++ -g3 -D_DEBUG -DUSE_NLS -I$(TOP) ;
+FLAGS  = $(ALLFLAGS) -I$(TOP) ;
 STDLIB ?= stdc++ ;
-SHARED ?= ;
+
 # clear flag, so we can set it elsewhere
 OPTIM = ;
 
@@ -48,11 +39,6 @@ EDELIB_LIBDIR = lib ;
 # library names
 EDELIB = edelib ;
 EDELIB_NAME = libedelib ;
-
-# extensions
-SOEXT = .so ;
-SOEXTFULL = $(SOEXT).2.0.0 ;
-SOFLAGS = -fPIC ;
 
 JUNK = "> /dev/null" ;
 
@@ -85,6 +71,10 @@ rule SymLink
 		SymLink1 $(<) : $(>:D=$(3)) ;
 		Clean clean : $(<) ;
 	}
+	else
+	{
+		Exit "Don't know how to make symbolic link!" ;
+	}
 }
 
 actions SymLink1
@@ -103,11 +93,11 @@ rule SharedLibraryFromObjects
 	_l = $(<:S=$(SUFLIB)) ;
 
 	# library depends on its member objects
-	if $(KEEPOBJS)
+	if $(KEEPOBJS) 
 	{
 		DEPENDS obj : $(_s) ;
 	}
-	else
+	else 
 	{
 		DEPENDS lib : $(_l) ;
 	}
@@ -116,7 +106,7 @@ rule SharedLibraryFromObjects
 	# value shows up as $(NEEDLIBS) on the Link actions.
 	# For compatibility, we only do this if the library doesn't
 	# already have a path.
-	if ! $(_l:D)
+	if ! $(_l:D) 
 	{
 		MakeLocate $(_l) $(_l)($(_s:BS)) : $(LOCATE_TARGET) ;
 	}
@@ -161,10 +151,11 @@ rule MakeLibrary
 			Exit "Dynamic libraries can't be built on this OS for now" ;
 		}
 
+		Echo "...making shared library is experimental..." ;
+
 		local target tlink ;
 		target = $(<)$(SOEXTFULL) ;
 		tlink  = $(<)$(SOEXT) ;
-
 		# we must have exact name or linking will fail
 		LINKFLAGS on $(target) = -shared -Wl,-soname,$(<:D=)$(SOEXTFULL) -l$(STDLIB) ;
 
@@ -204,7 +195,8 @@ rule MakeDocumentation
 		DEPENDS all : doc ;
 
 		MakeDocumentation1 $(<) : $(>) ;
-		INSTALL on $(target) = $(INSTALL_DIR) ;
+		#INSTALL on $(target) = $(INSTALL_DIR) ;
+		INSTALL on $(target) = $(COPYDIR) ;
 		InstallDocumentation $(DOCDIR) : $(<) ;
 		Cleandir clean : $(<) ;
 	}
@@ -300,6 +292,7 @@ rule InstallDocumentation
 
 actions Install1
 {
+	echo "$(INSTALL) $(>) $(<)"
 	$(INSTALL) $(>) $(<) ;
 }
 
@@ -337,5 +330,14 @@ Help help ;
 NOTFILE doc help archive tests ;
 ALWAYS	doc help archive tests ;
 
-#Cleandir distclean : autom4te.cache ;
-#Clean distclean : config.h config.log config.status configure ;
+Cleandir distclean : autom4te.cache ;
+Clean distclean : config.h 
+				config.log 
+				config.status 
+				configure 
+				$(TOP)/edelib/Version.h 
+				$(TOP)/doc/Doxyfile
+				aclocal.m4 
+				edelibconf.h.in 
+				edelibconf.h
+				Jamconfig ;

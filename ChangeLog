@@ -1,6 +1,14 @@
+2007-04-04  Sanel <karijes@users.sourceforge.net>
+
+	* s/vsprintf/vsnprintf in Debug.cpp
+	* Small attempts toward configure integration
+
 2007-04-03  Sanel <karijes@users.sourceforge.net>
 
 	* Documented Nls.h
+	* Now XDG Base Directory functions return String
+	(with that tests discovered few bugs with previous char-only version :P)
+	* Added dir_exists, dir_readable, dir_writeable
 
 2007-04-02  Sanel <karijes@users.sourceforge.net>
 

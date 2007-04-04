@@ -16,7 +16,6 @@
 
 #include <stdlib.h> // getenv
 #include <string.h> // strlen, strncpy
-#include <stdio.h>  // snprintf
 
 // default places according to freedesktop
 #define CONFIG_HOME_DEFAULT "~/.config/ede/"
@@ -27,40 +26,44 @@
 
 EDELIB_NAMESPACE {
 
-// TODO: this buffer should be locked
-static char path_buff[MAX_PATH];
-
-const char* _config_get(const char* env1, const char* env2, const char* fallback, unsigned int fallback_len)
+String _config_get(const char* env1, const char* env2, const char* fallback, unsigned int fallback_len)
 {
 	char* path = getenv(env1);
 	if(!path)
 		path = getenv(env2);
+	// failed env1 and env2; return fallback
+	if(!path)
+		return fallback;
+	/*
+	 * getenv() can return empty variable ("") and
+	 * will see it as existing; with additional checking
+	 * we make sure we have meaningfull data
+	 */
+	int len = strlen(path);
+	if(!len)
+		return fallback;
 
-	// TODO: what about plain == "", since is valid environ variable ?
-	if(path)
-	{
-		int len = strlen(path);
-		if(path[len-1] == '/') 
-			snprintf(path_buff, MAX_PATH, "%s%s", path, "ede/");
-		else
-			snprintf(path_buff, MAX_PATH, "%s%s", path, "/ede/");
-	}
+	String ret;
+	ret.reserve(MAX_PATH);
+
+	if(path[len-1] == '/') 
+		ret.printf("%s%s", path, "ede/");
 	else
-		strncpy(path_buff, fallback, fallback_len);
-	return path_buff;
+		ret.printf("%s%s", path, "/ede/");
+	return ret;
 }
 
-const char* user_config_dir(void) 
+String user_config_dir(void) 
 { 
 	return _config_get("XDG_CONFIG_HOME", "EDE_CONFIG_HOME", CONFIG_HOME_DEFAULT, sizeof(CONFIG_HOME_DEFAULT));
 }
 
-const char* user_data_dir(void) 
+String user_data_dir(void) 
 {
 	return _config_get("XDG_DATA_HOME", "EDE_DATA_HOME", DATA_HOME_DEFAULT, sizeof(DATA_HOME_DEFAULT));
 }
 
-const char* user_cache_dir(void) 
+String user_cache_dir(void) 
 {
 	return _config_get("XDG_CACHE_HOME", "EDE_CACHE_HOME", CACHE_HOME_DEFAULT, sizeof(CACHE_HOME_DEFAULT));
 }

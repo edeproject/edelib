@@ -18,9 +18,9 @@
  * they are not in namespace so we don't get
  * strange output with preprocessor
  */
-void EDebug(const char* fmt, ...);
-void EWarning(const char* fmt, ...);
-void EFatal(const char* fmt, ...);
+EDELIB_API void EDebug(const char* fmt, ...);
+EDELIB_API void EWarning(const char* fmt, ...);
+EDELIB_API void EFatal(const char* fmt, ...);
 
 #ifdef _DEBUG
 	#define EASSERT(expr) \
@@ -75,7 +75,7 @@ typedef void (*MsgHandlerType)(MsgType t, const char* msg);
  *   }
  * \endcode
  */
-void InstallMsgHandler(MsgHandlerType m);
+EDELIB_API void InstallMsgHandler(MsgHandlerType m);
 /*! @} */
 }
 #endif

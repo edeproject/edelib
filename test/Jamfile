@@ -16,6 +16,7 @@ MakeTest run_tests : UnitTest.cpp
 					util.cpp
 					strutil.cpp 
 					file.cpp
+					directory.cpp
 					conf.cpp
 					string.cpp
 					run_tests.cpp ;

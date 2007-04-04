@@ -8,24 +8,82 @@ dnl This program is licenced under terms of the
 dnl GNU General Public Licence version 2 or newer.
 dnl See COPYING for details.
 
-dnl for now very base configure script
-
 AC_PREREQ(2.13)
-AC_INIT(edelib/Version.h.in)
 
-MAJOR_VERSION=2
-MINOR_VERSION=0
-PATCH_VERSION=0
-EDELIB_API_VERSION=${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}
+AC_INIT(edelib, 2.0.0 alpha, [karijes@users.sourceforge.net])
 
-AC_CONFIG_HEADER(config.h:config.h.in)
+AC_CONFIG_SRCDIR(edelib/Nls.h)
+AC_CONFIG_HEADER(edelibconf.h:edelibconf.h.in)
 
-AC_SUBST(MAJOR_VERSION)
-AC_SUBST(MINOR_VERSION)
-AC_SUBST(PATCH_VERSION)
+dnl stupid autoconf does not allow any variables
+dnl before AC_INIT(), without messing with m4;
+dnl so increasing version data in AC_INIT() should be reflected here too
+EDELIB_MAJOR_VERSION=2
+EDELIB_MINOR_VERSION=0
+EDELIB_PATCH_VERSION=0
+EDELIB_API_VERSION=$PACKAGE_VERSION
+
+dnl some systems (guess, OpenBSD) ships ginstall as separate
+dnl package, and if AC_PROG_INSTALL can't find it, it will fallback to
+dnl install-sh which is placed in tools directory; also, jam will 
+dnl require full path to it, so we pwd-it
+AC_CONFIG_AUX_DIRS(`pwd`/tools)
+
+dnl startup variables
+ALLFLAGS="-Wall -pedantic"
+DEBUGFLAGS="-D_DEBUG"
+OPTIMFLAGS="-O2"
+
+AC_PROG_CXX
+AC_PROG_INSTALL
+AC_PROG_AWK
+AC_PROG_LN_S
+AC_PATH_PROG(SED, sed)
+AC_PATH_PROG(MSGFMT, msgfmt)
+AC_PATH_PROG(XGETTEXT, xgettext)
+AC_PATH_PROG(DOXYGEN, doxygen)
+AC_PATH_PROG(DIRNAME, dirname)
+EDE_PROG_JAM
+
+dnl call this quickly as possible so underlying scripts 
+dnl can change make-like variables to jam-like
+EDE_INIT_JAM
+
+dnl basic headers
+AC_HEADER_STDC
+EDE_CHECK_STL
+AC_CHECK_HEADER(string.h,AC_DEFINE(HAVE_STRING_H, 1, [Define to 1 if you have string.h file]))
+AC_CHECK_FUNC(snprintf, AC_DEFINE(HAVE_SNPRINTF, 1, [Define to 1 if you have snprintf()]))
+AC_CHECK_FUNC(vsnprintf, AC_DEFINE(HAVE_VSNPRINTF, 1, [Define to 1 if you have vsnprintf()]))
+
+EDE_DEVELOPMENT
+EDE_CHECK_FLTK
+EDE_SHARED
+EDE_NLS
+
+if test -n "$OPTIMFLAGS"; then
+	ALLFLAGS="$ALLFLAGS $OPTIMFLAGS"
+else
+	ALLFLAGS="$ALLFLAGS $DEBUGFLAGS"
+fi
+
+AC_SUBST(EDELIB_MAJOR_VERSION)
+AC_SUBST(EDELIB_MINOR_VERSION)
+AC_SUBST(EDELIB_PATCH_VERSION)
 AC_SUBST(EDELIB_API_VERSION)
+AC_SUBST(SHARED)
+AC_SUBST(DSOFLAGS)
+AC_SUBST(DSOLDFLAGS)
+AC_SUBST(DSOSYMLINK)
+AC_SUBST(DSOSUFFIX)
+AC_SUBST(ALLFLAGS)
 
 AC_OUTPUT([
 edelib/Version.h
 doc/Doxyfile
+Jamconfig
 ])
+
+echo ""
+echo "Now run 'jam' or 'jam help' to see further options."
+echo ""

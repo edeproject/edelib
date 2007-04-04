@@ -42,9 +42,9 @@ which gives us an option that edelib can be built on various Jam derivatives, li
 For manual building a Jam tool, please look at Jam's documentation. After you got binary,
 you can either install it at usuall paths or in edelib root directory.
 
-To build edelib, run standard:
+To build edelib, run:
  \code
-  autoconf
+  ./prepare
   ./configure
  \endcode
 or inspect configure options with <i>./configure --help</i>. After that simply run:

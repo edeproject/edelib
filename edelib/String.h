@@ -94,7 +94,7 @@ EDELIB_NAMESPACE {
  *
  * For all these quirks and details about them you should consult some good C++ book :P
  */
-class String 
+class EDELIB_API String 
 {
 	public: 
 #ifndef SKIP_DOCS

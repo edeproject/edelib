@@ -35,7 +35,7 @@ void EDebug(const char* fmt, ...)
 	char buff[ERROR_BUFFLEN];
 	va_list ap;
 	va_start(ap, fmt);
-	vsprintf(buff, fmt, ap);
+	vsnprintf(buff, ERROR_BUFFLEN, fmt, ap);
 	va_end(ap);
 
 	if(default_msg_handler)
@@ -49,7 +49,7 @@ void EWarning(const char* fmt, ...)
 	char buff[ERROR_BUFFLEN];
 	va_list ap;
 	va_start(ap, fmt);
-	vsprintf(buff, fmt, ap);
+	vsnprintf(buff, ERROR_BUFFLEN, fmt, ap);
 	va_end(ap);
 
 
@@ -64,7 +64,7 @@ void EFatal(const char* fmt, ...)
 	char buff[ERROR_BUFFLEN];
 	va_list ap;
 	va_start(ap, fmt);
-	vsprintf(buff, fmt, ap);
+	vsnprintf(buff, ERROR_BUFFLEN, fmt, ap);
 	va_end(ap);
 
 	if(default_msg_handler)

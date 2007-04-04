@@ -1,0 +1,27 @@
+/*
+ * $Id$
+ *
+ * Version info
+ * Part of edelib.
+ * Copyright (c) 2005-2007 EDE Authors.
+ *
+ * This program is licenced under terms of the 
+ * GNU General Public Licence version 2 or newer.
+ * See COPYING for details.
+ */
+
+#ifndef __VERSION_H__
+#define __VERSION_H__
+
+#define EDELIB_MAJOR_VERSION	@EDELIB_MAJOR_VERSION@
+#define EDELIB_MINOR_VERSION	@EDELIB_MINOR_VERSION@
+#define EDELIB_PATCH_VERSION	@EDELIB_PATCH_VERSION@
+
+#define EDELIB_VERSION          "@EDELIB_API_VERSION@"
+
+/**
+ * Returns current edelib version. Returned string <b>must not</b> be modified
+ */
+const char* edelib_version(void) { return EDELIB_VERSION; }
+
+#endif

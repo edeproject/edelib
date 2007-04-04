@@ -14,6 +14,7 @@
 #define __UTIL_H__
 
 #include "econfig.h"
+#include "String.h"
 
 EDELIB_NAMESPACE {
 
@@ -24,33 +25,27 @@ EDELIB_NAMESPACE {
  * configuration files. Place is determined according to the
  * XDG Base Directory Specification.
  *
- * \return C-string pointing to internal buffer, which overwritten with each new call.
- *
- * \note user_config_dir(), user_data_dir() and user_cache_dir() share the same
- * buffer and each call to any of them will overwrite it. You \b should \b copy
- * returned data to own buffer.
- *
- * \todo These functions needs more testing.
+ * \return filled String with path or empty String if fails
  * */
-EDELIB_API const char* user_config_dir(void);
+EDELIB_API String user_config_dir(void);
 
 /** 
  * Get default directory where should be stored user specific
  * data files like icons. Place is determined according to the
  * XDG Base Directory Specification.
  *
- * \return C-string pointing to internal buffer, which overwritten with each new call.
+ * \return filled String with path or empty String if fails
  * */
-EDELIB_API const char* user_data_dir(void);
+EDELIB_API String user_data_dir(void);
 
 /** 
  * Get default directory where should be stored application specific
  * cached data. Place is determined according to the
  * XDG Base Directory Specification.
  *
- * \return C-string pointing to internal buffer, which overwritten with each new call.
+ * \return filled String with path or empty String if fails
  * */
-EDELIB_API const char* user_cache_dir(void);
+EDELIB_API String user_cache_dir(void);
 
 /*! @} */
 }
