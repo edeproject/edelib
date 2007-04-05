@@ -42,7 +42,6 @@ AC_PATH_PROG(SED, sed)
 AC_PATH_PROG(MSGFMT, msgfmt)
 AC_PATH_PROG(XGETTEXT, xgettext)
 AC_PATH_PROG(DOXYGEN, doxygen)
-AC_PATH_PROG(DIRNAME, dirname)
 EDE_PROG_JAM
 
 dnl call this quickly as possible so underlying scripts 
