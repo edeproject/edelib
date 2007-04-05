@@ -29,7 +29,6 @@ INSTALL         ?= "@INSTALL@" ;
 INSTALL_DATA    ?= "@INSTALL_DATA@" ;
 INSTALL_PROGRAM ?= "@INSTALL_PROGRAM@" ;
 INSTALL_SCRIPT  ?= "@INSTALL_SCRIPT@" ;
-DIRNAME         ?= "@DIRNAME@" ;
 SYMLINKCMD      ?= "@LN_S@" ;
 SED		        ?= "@SED@" ;
 AWK		        ?= "@AWK@" ;

@@ -1,3 +1,8 @@
+2007-04-05  Sanel <karijes@users.sourceforge.net>
+
+	* Rewritten Jamrules
+	* Removed needs for dirname
+
 2007-04-04  Sanel <karijes@users.sourceforge.net>
 
 	* s/vsprintf/vsnprintf in Debug.cpp

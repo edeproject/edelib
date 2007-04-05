@@ -8,78 +8,97 @@
 # GNU General Public Licence version 2 or newer.
 # See COPYING for details.
 
-JAMCONFIG ?= $(TOP)/Jamconfig ;
-include $(JAMCONFIG) ;
-if ! $(JAMCONFIG_READ)
-{
-	Exit "Can't find Jamconfig. Did you run 'configure' first ?" ;
-}
 
+#JAMCONFIG ?= $(TOP)/Jamconfig ;
+#include $(JAMCONFIG) ;
+#if ! $(JAMCONFIG_READ)
+#{
+#	Exit "Can't find Jamconfig. Did you run 'configure' first ?" ;
+#}
+
+# these variables should be here (not in Jamconfig) since RMDIR
+# is already defined as 'rm -f' in Jambase, and calling 'jam distclean'
+# will revert it's value when we remove Jamconfig
 RMDIR   = rm -R ;
 COPYDIR = cp -R ;
 
-SOEXT = $(DSOSYMLINK) ;
-SOEXTFULL = $(DSOSUFFIX) ;
-SOLDFLAGS = $(DSOLDFLAGS) ;
-SOFLAGS = $(DSOFLAGS) ;
+# variables used by MakeSharedLibrary
+#SOEXT     = $(DSOSYMLINK) ;
+#SOEXTFULL = $(DSOSUFFIX) ;
+#SOLDFLAGS = $(DSOLDFLAGS) ;
+#SOFLAGS   = $(DSOFLAGS) ;
 
 LINKCMD = $(SYMLINKCMD) ;
 
-#FLAGS  ?= -Wall -pedantic -Weffc++ -g3 -D_DEBUG -DUSE_NLS -I$(TOP) ;
+# testing
+LINKCMD = "ln -s" ;
+SHARED = "1" ;
+SOEXTFULL = ".so.2.0.0" ;
+SOEXT = ".so" ;
+ALLFLAGS = "-Wall -shared" ;
+DOXYGEN = "doxygen" ;
+
+# general flags we pull from Jamconfig, with addition of include
+# directory search, so compiler can find edelib include directory
 FLAGS  = $(ALLFLAGS) -I$(TOP) ;
+
+# standard C++ library we link with; for now is gcc's default
 STDLIB ?= stdc++ ;
 
-# clear flag, so we can set it elsewhere
-OPTIM = ;
-
-# directories
-EDELIB_INCLUDEDIR = edelib ;
-EDELIB_LIBDIR = lib ;
-
-# library names
-EDELIB = edelib ;
-EDELIB_NAME = libedelib ;
-
-JUNK = "> /dev/null" ;
-
-if $(SHARED)
-{
-	FLAGS += $(SOFLAGS) ;
-	SUFLIB = $(SOEXTFULL) ;
-}
-
-# this is used by jam
-CCFLAGS = $(FLAGS) $(LOCALFLAGS) ;
+# variables used by jam directly
+# OPTIM is cleared so it don't collide with FLAGS
+OPTIM    = ;
+CCFLAGS  = $(FLAGS) $(LOCALFLAGS) ;
 C++FLAGS = $(FLAGS) $(LOCALFLAGS) ;
 
-# at least we differ for FDirName
+# directories used to place final library and 
+# by tests to construct correct paths
+EDELIB_INCLUDEDIR = edelib ;
+EDELIB_LIBDIR     = lib ;
+
+# library names
+EDELIB      = edelib ;
+EDELIB_NAME = libedelib ;
+
+# construct path from list members
+# same as FDirName, but targeted to files
 rule FFileName
 {
 	return [ FDirName $(<) ] ;
 }
 
-# creates symlink
-# SymLink <link> : <source> : <path-for-source> ;
+# Cleandir cleandir : <directory> ;
+# Removes directory in 'Clean clean' fassion
+actions piecemeal together existing Cleandir
+{
+	$(RMDIR) $(>)
+}
+
+# SymLink <link> : <source> : <optional-path-to-source> ;
+# create symbolic link from parameters, removing existing one
+# it use LINKCMD variable and is expecting 'ln -s' style
 rule SymLink
 {
-	if $(LINKCMD)
-	{
-		# $(>) contains real path, not cheated one :-)
-		DEPENDS $(<) : $(>) ;
-		DEPENDS all : $(<) ;
-		# cheat, so we don't confuse LINKCMD
-		SymLink1 $(<) : $(>:D=$(3)) ;
-		Clean clean : $(<) ;
-	}
-	else
+	if ! $(LINKCMD)
 	{
 		Exit "Don't know how to make symbolic link!" ;
 	}
+
+	Depends $(<) : $(>) ;
+	Depends all : $(<) ;
+	
+	# replace directory part at source, so LINKCMD can operate
+	# correctly; also mark it as NotFile since it does not exist
+	# (at least for jam since path is stripped) and jam will not yell about it
+	SymLink1 $(<) : $(>:D=$(3)) ;
+	NotFile $(>:D=$(3)) ;
+
+	Clean clean : $(<) ;
 }
 
 actions SymLink1
 {
-	$(LINKCMD) $(>) $(<) ;
+	$(RM) "$(<)" && $(LINKCMD) "$(>)" "$(<)"
 }
 
 # a hacked version of LibraryFromObjects
@@ -140,64 +159,86 @@ rule SharedLibraryFromObjects
 	if ! ( $(NOARSCAN) || $(KEEPOBJS) ) { RmTemps $(_l) : $(_s) ; }
 }
 
-
-# create either static of dynamic library
-rule MakeLibrary
+# MakeStaticLibrary <libname> : <sources> ;
+# a rule using jam's default Library with meaningfull name
+rule MakeStaticLibrary
 {
-	if $(SHARED)
-	{
-		if ! $(UNIX)
-		{
-			Exit "Dynamic libraries can't be built on this OS for now" ;
-		}
-
-		Echo "...making shared library is experimental..." ;
-
-		local target tlink ;
-		target = $(<)$(SOEXTFULL) ;
-		tlink  = $(<)$(SOEXT) ;
-		# we must have exact name or linking will fail
-		LINKFLAGS on $(target) = -shared -Wl,-soname,$(<:D=)$(SOEXTFULL) -l$(STDLIB) ;
-
-		SUFLIB on $(<) = $(SOEXTFULL) ;
-
-		SharedLibraryFromObjects $(<) : $(>:S=$(SUFOBJ)) ;
-		Objects $(>) ;
-
-		SymLink $(tlink) : $(target) : "" ;
-		DEPENDS lib : $(tlink) ;
-	}
-	else
-	{
-		# call builtin one
-		Library $(<) : $(>) ;
-		InstallLibrary $(LIBDIR) : $(<)$(SUFLIB) ;
-	}
+	Library $(<) : $(>) ;
 }
 
+# MakeStaticLibrary <libname> : <sources> ;
+# Create shared library, creating symlink to it.
+#
+# This is probably a good candidate for libtool backend, but
+# later is story for it's own; for now we stick with direct compiler flags
+# and if breaks something, addons will be done.
+# It use SOEXTFULL as full shared library extension and SOEXT as symlink 
+# extension to it.
+rule MakeSharedLibrary
+{
+	if ! $(UNIX)
+	{
+		Exit "Dynamic libraries can't be built on this OS for now" ;
+	}
+
+	# make sure we have defined this one
+	if ! $(SOEXTFULL) && ! $(SOEXT)
+	{
+		Exit "Library extension not defined" ;
+	}
+	
+	Echo "...making shared library is experimental..." ;
+
+	local target symlink target_only ;
+	target = $(<:S=$(SOEXTFULL)) ;
+	symlink  = $(<:S=$(SOEXT)) ;
+
+	# target name without directory part so compiler can recognize
+	# it as final library name and do linking without problems
+	target_only = $(target:D=) ;
+
+	# main linking part; for specific compilers, things should be tuned here
+	LINKFLAGS on $(target) = -shared -Wl,-soname,$(target_only) -l$(STDLIB) ;
+
+	# overwrite SUFLIB; do not use SUFLIB on target = XYZ since
+	# 'on target' variables work only in actions, and SUFLIB is not
+	# used in MakeSharedLibrary action (I had to write here since docs sucks!)
+	SUFLIB = $(SOEXTFULL) ;
+
+	SharedLibraryFromObjects $(<) : $(>:S=$(SUFOBJ)) ;
+	Objects $(>) ;
+
+	SymLink $(symlink) : $(target) : "" ;
+	Depends lib : $(symlink) ;
+}
+
+# MakeTest <target> : <sources> ;
+# Rule used to correctly compule library path, do linking and stuff
+# for edelib specific tests
 rule MakeTest
 {
 	local elib = [ FFileName $(TOP) $(EDELIB_LIBDIR) $(EDELIB_NAME)$(SUFLIB) ] ;
 	local ldir = [ FDirName $(TOP) $(EDELIB_LIBDIR) ] ;
-	DEPENDS $(<)  : $(elib) ;
-	DEPENDS tests : $(<) ;
+	Depends $(<)  : $(elib) ;
+	Depends tests : $(<) ;
 
 	LINKLIBS on $(<) = -L$(ldir) -l$(EDELIB) -l$(STDLIB) ;
 	Main $(<) : $(>) ;
 }
 
-rule MakeDocumentation
+# MakeApiDocumentation <full-path-to-directory> : <full-path-to-doxyfile> ;
+# Create api documentation via doxygen; not full paths are required
+# since doxygen don't have any external option to specify path for Doxyfile
+# or path for output directory
+rule MakeApiDocumentation
 {
-	if $(DOXYGEN) && $(DIRNAME)
+	if $(DOXYGEN)
 	{
-		DEPENDS doc : $(<) ;
-		DEPENDS $(<) : $(>) ;
-		DEPENDS all : doc ;
+		Depends doc : $(<) ;
+		Depends $(<) : $(>) ;
+		Depends all : doc ;
 
-		MakeDocumentation1 $(<) : $(>) ;
-		#INSTALL on $(target) = $(INSTALL_DIR) ;
-		INSTALL on $(target) = $(COPYDIR) ;
-		InstallDocumentation $(DOCDIR) : $(<) ;
+		MakeApiDocumentation1 $(<) : $(>) ;
 		Cleandir clean : $(<) ;
 	}
 
@@ -209,104 +250,34 @@ rule MakeDocumentation
 		Echo "To make documentation, you will need to install it" ;
 		return ;
 	}
-
-	# dirname is used to compute path
-	# since doxygen command must be run where Doxyfile exists
-	if ! $(DIRNAME)
-	{
-		Echo "dirname is missing" ;
-		Echo "To make documentation, go to $(<:P) and run doxygen" ;
-		return ;
-	}
 }
 
-# not used as MakeDocumentation because
-# we want to run it only if DOXYGEN is defined
-actions piecemeal MakeDocumentation1
+# Strip directory path from (example: 'doc/Doxyfile') and
+# go into it so DOXYGEN command can work
+actions piecemeal MakeApiDocumentation1
 {
-	dn=`$(DIRNAME) $(>)`
-	cd $dn
-	$(DOXYGEN) $(>:B) $(JUNK) ;
+	cd $(>:D)
+	$(DOXYGEN) $(>:B) ;
 }
 
-# similar to GenFile, except it run
-# a command on source
-# GenDocumentation <target> : <command> <source>
+# GenDocumentation <path-to-target> : <path-to-command> <path-to-source> ;
+# Aimed for generating text files from doxygen source;
+# probably this should be called GenerateFile or something.
 rule GenDocumentation
 {
 	local target = $(<) ;
 	local cmd = $(>[1]) ;
 	local src = $(>[2]) ;
 
-	DEPENDS $(target) : $(src) ;
-	DEPENDS $(src) : $(cmd) ;
-	DEPENDS doc : $(target) ;
+	Depends $(target) : $(src) ;
+	Depends $(src) : $(cmd) ;
+	Depends doc : $(target) ;
 	Clean clean : $(target) ;
-
-	INSTALL on $(target) = $(INSTALL_DATA) ;
-	InstallDocumentation $(DOCDIR) : $(target) ;
-	Cleandir uninstall : $(DOCDIR) ;
 }
 
 actions GenDocumentation
 {
 	./$(>[1]) $(>[2]) > $(<) ;
-}
-
-# InstallLibrary <directory> : <library> ;
-rule InstallLibrary
-{
-	local target ;
-
-	target = [ FFileName $(<) $(>:D=) ] ;
-	target = $(target:G=installibrary) ;
-
-	Depends install : $(target) ;
-	Depends install : all ;
-
-	NotFile install ;
-	Always install ;
-
-	Install1 $(target) : $(>) ;
-	INSTALL on $(target) = $(INSTALL_LIB) ;
-
-	Clean uninstall : $(target) ;
-}
-
-# InstallLibrary <directory> : <docdir> ;
-rule InstallDocumentation
-{
-	local target ;
-
-	target = [ FFileName $(<) $(>:D=) ] ;
-	target = $(target:G=installidocs) ;
-
-	Depends install : $(target) ;
-	Depends install : all ;
-
-	NotFile install ;
-	Always install ;
-
-	Install1 $(target) : $(>) ;
-}
-
-actions Install1
-{
-	echo "$(INSTALL) $(>) $(<)"
-	$(INSTALL) $(>) $(<) ;
-}
-
-actions piecemeal Package
-{
-	nm=`cat $(TOP)/edelib/Version.h | $(SED) -ne '/EDELIB_VERSION/p' | $(AWK) '{print $3}' | $(SED) -e 's/"//g'`
-	tar -czpvf edelib-$nm.tar.gz $(TOP)/../edelib
-}
-Package archive ;
-
-# allow to be used as Cleandir cleandir
-actions piecemeal together existing Cleandir
-{
-	$(RMDIR) $(>)
 }
 
 actions quietly Help
@@ -326,18 +297,5 @@ actions quietly Help
 }
 Help help ;
 
-
-NOTFILE doc help archive tests ;
-ALWAYS	doc help archive tests ;
-
-Cleandir distclean : autom4te.cache ;
-Clean distclean : config.h 
-				config.log 
-				config.status 
-				configure 
-				$(TOP)/edelib/Version.h 
-				$(TOP)/doc/Doxyfile
-				aclocal.m4 
-				edelibconf.h.in 
-				edelibconf.h
-				Jamconfig ;
+NotFile help ;
+Always help ;

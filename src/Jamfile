@@ -20,5 +20,14 @@ SOURCE = Config.cpp
 		 Debug.cpp ;
 
 LPATH = [ FFileName $(TOP) $(EDELIB_LIBDIR) $(EDELIB_NAME) ] ;
-MakeLibrary $(LPATH) : $(SOURCE) ;
+
+if $(SHARED)
+{
+	MakeSharedLibrary $(LPATH) : $(SOURCE) ;
+}
+else
+{
+	MakeStaticLibrary $(LPATH) : $(SOURCE) ;
+}
+
 Clean clean : $(LPATH) ;

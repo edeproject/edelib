@@ -19,7 +19,7 @@ readmesrc_ = [ FDirName $(TOP) doc index.dox ] ;
 genreadme_ = [ FDirName $(TOP) doc genreadme ] ;
 readme_    = [ FDirName $(TOP) README ] ;
 
-MakeDocumentation $(html_) : $(doxyfile_) ;
+MakeApiDocumentation $(html_) : $(doxyfile_) ;
 GenDocumentation $(readme_) : $(genreadme_) $(readmesrc_) ;
 
 #Clean distclean : $(doxyfile_) ;
