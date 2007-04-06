@@ -24,6 +24,7 @@ if $(NOJAMCFG)
 	INSTALL_DATA    ?= "$(INSTALL) -m 644" ;
 	INSTALL_PROGRAM ?= "$(INSTALL)" ;
 	INSTALL_SCRIPT  ?= "$(INSTALL)" ;
+	EDELIB_VERSION  ?= "2.0.0a" ;
 }
 else
 {
@@ -72,7 +73,7 @@ EDELIB      = edelib ;
 EDELIB_NAME = libedelib ;
 
 # directory name for installed documentation
-EDELIB_DOCDIR      = "$(EDELIB)-2.0.0a" ;
+EDELIB_DOCDIR      = "$(EDELIB)-$(EDELIB_VERSION)" ;
 
 # construct path from list members
 # same as FDirName, but targeted to files

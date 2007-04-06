@@ -45,5 +45,7 @@ DSOSUFFIX  ?= "@DSOSUFFIX@" ;
 # not used for now
 DSOLDFLAGS ?= "@DSOLDFLAGS@" ;
 
+EDELIB_VERSION ?= "@EDELIB_API_VERSION@" ;
+
 # do not touch this
 JAMCONFIG_READ = "yes" ;
