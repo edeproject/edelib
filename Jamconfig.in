@@ -13,6 +13,7 @@ prefix      ?= "@prefix@" ;
 exec_prefix ?= "@exec_prefix@" ;
 bindir      ?= "@bindir@" ;
 datadir     ?= "@datadir@" ;
+docdir      ?= "@datadir@/doc" ;
 includedir  ?= "@includedir@" ;
 libdir      ?= "@libdir@" ;
 mandir      ?= "@mandir@" ;

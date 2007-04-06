@@ -24,10 +24,10 @@ LPATH = [ FFileName $(TOP) $(EDELIB_LIBDIR) $(EDELIB_NAME) ] ;
 if $(SHARED)
 {
 	MakeSharedLibrary $(LPATH) : $(SOURCE) ;
+	InstallSharedLibrary $(libdir) : $(LPATH) ;
 }
 else
 {
 	MakeStaticLibrary $(LPATH) : $(SOURCE) ;
+	InstallStaticLibrary $(libdir) : $(LPATH) ;
 }
-
-Clean clean : $(LPATH) ;

@@ -8,35 +8,46 @@
 # GNU General Public Licence version 2 or newer.
 # See COPYING for details.
 
+if $(NOJAMCFG)
+{
+	# for testing purposes
+	LINKCMD = "ln -s" ;
+	SHARED = "" ;
+	SOEXTFULL = ".so.2.0.0" ;
+	SOEXT = ".so" ;
+	ALLFLAGS = "-Wall -shared" ;
+	DOXYGEN = "doxygen" ;
+	libdir = "/opt/ede/lib" ;
+	docdir = "/opt/ede/doc" ;
+	includedir  = "/opt/ede/include" ;
+	INSTALL         ?= "ginstall -c" ;
+	INSTALL_DATA    ?= "$(INSTALL) -m 644" ;
+	INSTALL_PROGRAM ?= "$(INSTALL)" ;
+	INSTALL_SCRIPT  ?= "$(INSTALL)" ;
+}
+else
+{
+	JAMCONFIG ?= $(TOP)/Jamconfig ;
+	include $(JAMCONFIG) ;
+	if ! $(JAMCONFIG_READ)
+	{
+		Exit "Can't find Jamconfig. Did you run 'configure' first ?" ;
+	}
 
-#JAMCONFIG ?= $(TOP)/Jamconfig ;
-#include $(JAMCONFIG) ;
-#if ! $(JAMCONFIG_READ)
-#{
-#	Exit "Can't find Jamconfig. Did you run 'configure' first ?" ;
-#}
+	# variables used by MakeSharedLibrary
+	SOEXT     = $(DSOSYMLINK) ;
+	SOEXTFULL = $(DSOSUFFIX) ;
+	SOLDFLAGS = $(DSOLDFLAGS) ;
+	SOFLAGS   = $(DSOFLAGS) ;
+
+	LINKCMD = $(SYMLINKCMD) ;
+}
 
 # these variables should be here (not in Jamconfig) since RMDIR
 # is already defined as 'rm -f' in Jambase, and calling 'jam distclean'
 # will revert it's value when we remove Jamconfig
 RMDIR   = rm -R ;
 COPYDIR = cp -R ;
-
-# variables used by MakeSharedLibrary
-#SOEXT     = $(DSOSYMLINK) ;
-#SOEXTFULL = $(DSOSUFFIX) ;
-#SOLDFLAGS = $(DSOLDFLAGS) ;
-#SOFLAGS   = $(DSOFLAGS) ;
-
-LINKCMD = $(SYMLINKCMD) ;
-
-# testing
-LINKCMD = "ln -s" ;
-SHARED = "1" ;
-SOEXTFULL = ".so.2.0.0" ;
-SOEXT = ".so" ;
-ALLFLAGS = "-Wall -shared" ;
-DOXYGEN = "doxygen" ;
 
 # general flags we pull from Jamconfig, with addition of include
 # directory search, so compiler can find edelib include directory
@@ -59,6 +70,9 @@ EDELIB_LIBDIR     = lib ;
 # library names
 EDELIB      = edelib ;
 EDELIB_NAME = libedelib ;
+
+# directory name for installed documentation
+EDELIB_DOCDIR      = "$(EDELIB)-2.0.0a" ;
 
 # construct path from list members
 # same as FDirName, but targeted to files
@@ -85,7 +99,6 @@ rule SymLink
 	}
 
 	Depends $(<) : $(>) ;
-	Depends all : $(<) ;
 	
 	# replace directory part at source, so LINKCMD can operate
 	# correctly; also mark it as NotFile since it does not exist
@@ -98,7 +111,8 @@ rule SymLink
 
 actions SymLink1
 {
-	$(RM) "$(<)" && $(LINKCMD) "$(>)" "$(<)"
+	# remove existing link and try to link, removing possible grist
+	$(RM) "$(<)" && $(LINKCMD) "$(>:G=)" "$(<)"
 }
 
 # a hacked version of LibraryFromObjects
@@ -120,6 +134,11 @@ rule SharedLibraryFromObjects
 	{
 		DEPENDS lib : $(_l) ;
 	}
+
+	# Leave this since we can't scan .o files inside
+	# shared binary; jam will then relay on object file
+	# (see comments below)
+	NOARSCAN = "1" ;
 
 	# Set LOCATE for the library and its contents.	The bound
 	# value shows up as $(NEEDLIBS) on the Link actions.
@@ -246,8 +265,7 @@ rule MakeApiDocumentation
 	# so we can build the rest
 	if ! $(DOXYGEN)
 	{
-		Echo "doxygen is missing" ;
-		Echo "To make documentation, you will need to install it" ;
+		Echo "doxygen is missing; skiping..." ;
 		return ;
 	}
 }
@@ -280,6 +298,108 @@ actions GenDocumentation
 	./$(>[1]) $(>[2]) > $(<) ;
 }
 
+# InstallStaticLibrary <destination> : <lib-file> ;
+# Installs static library to destination
+rule InstallStaticLibrary
+{
+	local t dir lfix ;
+	dir = $(<) ;
+
+	# construct valid installed library name with end path with it's grist
+	t = $(>:BSR=$(dir)) ;
+	t = $(t:G=installstaticlibrary) ;
+	t = $(t:S=$(SUFLIB)) ;
+
+	lfix = $(>:S=$(SUFLIB)) ;
+
+	Depends install : lib $(dir) $(t) ;
+	
+	MkDir $(dir) ;
+	INSTALL on $(t) = $(CP) ;
+	Install1 $(t) : $(lfix) ;
+
+	Clean uninstall : $(t) ;
+}
+
+# InstallSharedLibrary <destination> : <lib-file> ;
+# Installs shared library to destination, installing
+# symbolic link too
+rule InstallSharedLibrary
+{
+	local t sl dir lfix slfix ;
+	dir = $(<) ;
+
+	# construct valid installed library name with end path with it's grist
+	t = $(>:BSR=$(dir)) ;
+	t = $(t:G=installsharedlibrary) ;
+	t = $(t:S=$(SOEXTFULL)) ;
+
+	# now the same for symlink
+	sl = $(>:BSR=$(dir)) ;
+	sl = $(sl:G=installsymlink) ;
+	sl = $(sl:S=$(SOEXT)) ;
+
+	# full local library names
+	lfix = $(>:S=$(SOEXTFULL)) ;
+	slfix = $(>:S=$(SOEXT)) ;
+
+	Depends install : lib $(dir) $(t) $(sl) ;
+	
+	MkDir $(dir) ;
+	INSTALL on $(t) = $(CP) ;
+	Install1 $(t) : $(lfix) ;
+
+	# make system wide symlink, since CP mess things up
+	SymLink $(sl) : $(t) : "" ;
+
+	Clean uninstall : $(t) ;
+	Clean uninstall : $(sl) ;
+}
+
+# InstallDocumentation <directory> : <source> ;
+# Copy source file to target directory
+rule InstallDocumentation
+{
+	local t ;
+	t = [ FFileName $(<) $(>:D=) ] ;
+	t = $(t:G=installdoc) ;
+
+	MkDir $(<) ;
+
+	Depends $(<) : $(>) ;
+	Depends $(t) : $(<) ;
+	Depends install : $(t) ;
+	INSTALL on $(t) = $(CP) ;
+	Install1 $(t) : $(>) ;
+
+	Clean uninstall : $(t) ;
+}
+
+# InstallDirectory <where> : <source-directory> ;
+# Copy directory to given path
+rule InstallDirectory
+{
+	local t;
+
+	t = [ FDirName $(<) $(>) ] ;
+
+	SEARCH on $(>) = $(SUBDIR) ;
+
+	MkDir $(<) ;
+	Depends $(<) : $(>) ;
+	Depends $(t) : $(<) ;
+	Depends install : $(t) ;
+	INSTALL on $(t) = $(COPYDIR) ;
+	Install1 $(t) : $(>) ;
+
+	Cleandir uninstall : $(t) ;
+}
+
+actions Install1
+{
+	$(INSTALL) "$(>)" "$(<:D)"
+}
+
 actions quietly Help
 {
 	echo ""
@@ -297,5 +417,10 @@ actions quietly Help
 }
 Help help ;
 
-NotFile help ;
+NotFile help install ;
 Always help ;
+
+# a generated junk
+Clean distclean : configure aclocal.m4 Jamconfig 
+	config.log config.status edelibconf.h edelibconf.h.in doc/Doxyfile edelib/Version.h ;
+Cleandir distclean : autom4te.cache ;

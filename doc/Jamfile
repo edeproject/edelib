@@ -22,4 +22,5 @@ readme_    = [ FDirName $(TOP) README ] ;
 MakeApiDocumentation $(html_) : $(doxyfile_) ;
 GenDocumentation $(readme_) : $(genreadme_) $(readmesrc_) ;
 
-#Clean distclean : $(doxyfile_) ;
+InstallDocumentation [ FDirName $(docdir) $(EDELIB_DOCDIR) ] : $(readme_) ;
+InstallDirectory     [ FDirName $(docdir) $(EDELIB_DOCDIR) ] : html ;

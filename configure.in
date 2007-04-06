@@ -10,7 +10,7 @@ dnl See COPYING for details.
 
 AC_PREREQ(2.13)
 
-AC_INIT(edelib, 2.0.0 alpha, [karijes@users.sourceforge.net])
+AC_INIT(edelib, 2.0.0a, [karijes@users.sourceforge.net])
 
 AC_CONFIG_SRCDIR(edelib/Nls.h)
 AC_CONFIG_HEADER(edelibconf.h:edelibconf.h.in)
