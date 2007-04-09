@@ -10,3 +10,6 @@ TODO list:
  * XDG functions in Util.h needs more checking
  * what should set_textdomain_dir() and set_textdomain() return when NLS is disabled ?
  * organize documentation into modules
+
+ * upload XSet.h,cpp
+ * upload Directory.h,cpp

@@ -1,3 +1,9 @@
+2007-04-09  Sanel <karijes@users.sourceforge.net>
+
+	* Build script tweaks
+	* Removed some warrnings
+	* Added XSet class
+
 2007-04-06  Sanel <karijes@users.sourceforge.net>
 
 	* Almost done build scripts. For now everything

@@ -12,10 +12,11 @@ AC_DEFUN([EDE_CHECK_FLTK], [
 	dnl AC_MSG_NOTICE(whether is fltk 2.0 present)
 	AC_PATH_PROG(FLTK2_CONFIG, fltk2-config)
 	if test -n "$FLTK2_CONFIG"; then
-		FLTKFLAGS=`fltk2-config --cxxflags`
+		dnl remove -Wno-non-virtual-dtor from flags
+		FLTKFLAGS=`$FLTK2_CONFIG --cxxflags | sed -e 's/-Wno-non-virtual-dtor//'`
 
 		dnl remove -lsupc++ so we can chose what to use
-		FLTKLIBS=`fltk2-config --use-images --ldflags | sed -e 's/-lsupc++//g'`
+		FLTKLIBS=`$FLTK2_CONFIG --use-images --ldflags | sed -e 's/-lsupc++//g'`
 	else
 		AC_MSG_ERROR([You don't have fltk2 installed. To compile edelib, you will need it.])
 	fi

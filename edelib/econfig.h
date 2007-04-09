@@ -15,13 +15,14 @@
 
 /* Needed so we don't have to include
  * necessary libraries.
- *
- * TODO: place it in Types.h ?
  */
-#ifndef __cplusplus
-	#define NULL 0
-#else 
-	#define NULL ((void*)0)
+
+#ifndef NULL
+	#ifndef __cplusplus
+		#define NULL 0
+	#else 
+		#define NULL ((void*)0)
+	#endif
 #endif
 
 #define EDELIB_NS edelib

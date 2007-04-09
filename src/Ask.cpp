@@ -55,7 +55,7 @@ class MessageDialog : public Window
 		int ret_value;
 
 	public:
-		MessageDialog(MessageDialogType t = PLAIN) : dtype(t), Window(365, 125, "")
+		MessageDialog(MessageDialogType t = PLAIN) : Window(365, 125, ""), dtype(t)
 		{ 
 			begin();
 			icon = new InvisibleBox(10, 10, 70, 70);

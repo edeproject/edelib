@@ -11,6 +11,12 @@
 
 SubDir TOP test ;
 
+# shared library requires linkage with FLTK
+if $(SHARED)
+{
+	ADDONLIB = $(FLTKLIBS) ;
+}
+
 MakeTest run_tests : UnitTest.cpp 
 					utest.cpp 
 					util.cpp
@@ -19,7 +25,9 @@ MakeTest run_tests : UnitTest.cpp
 					directory.cpp
 					conf.cpp
 					string.cpp
-					run_tests.cpp ;
+					run_tests.cpp
+					: 
+					$(ADDONLIB) ;
 
 Clean clean : [ FFileName $(TOP) test .foo.txt ] ;
 Clean clean : [ FFileName $(TOP) test .ede.conf ] ;

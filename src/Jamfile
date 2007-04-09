@@ -19,11 +19,24 @@ SOURCE = Config.cpp
 		 Directory.cpp
 		 Debug.cpp ;
 
+# files that requires fltk or X11
+SOURCE_GUI = Ask.cpp
+			 XSet.cpp ;
+
+if $(FLTKLIBS)
+{
+	SOURCE += $(SOURCE_GUI) ;
+}
+else
+{
+	Echo "...building without FLTK support..." ;
+}
+
 LPATH = [ FFileName $(TOP) $(EDELIB_LIBDIR) $(EDELIB_NAME) ] ;
 
 if $(SHARED)
 {
-	MakeSharedLibrary $(LPATH) : $(SOURCE) ;
+	MakeSharedLibrary $(LPATH) : $(SOURCE) : $(FLTKLIBS) ;
 	InstallSharedLibrary $(libdir) : $(LPATH) ;
 }
 else

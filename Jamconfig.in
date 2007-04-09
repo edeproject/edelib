@@ -35,7 +35,11 @@ SED		        ?= "@SED@" ;
 AWK		        ?= "@AWK@" ;
 
 # build options
-ALLFLAGS ?= "@ALLFLAGS@" ;
+ALLFLAGS  ?= "@ALLFLAGS@" ;
+
+# for fltk and X11
+FLTKFLAGS ?= "@FLTKFLAGS@" ;
+FLTKLIBS  ?= "@FLTKLIBS@" ;
 
 # for shared library
 SHARED     ?= "@SHARED@" ;

@@ -186,7 +186,7 @@ rule MakeStaticLibrary
 	Library $(<) : $(>) ;
 }
 
-# MakeStaticLibrary <libname> : <sources> ;
+# MakeStaticLibrary <libname> : <sources> : <optional-libraries> ;
 # Create shared library, creating symlink to it.
 #
 # This is probably a good candidate for libtool backend, but
@@ -207,8 +207,6 @@ rule MakeSharedLibrary
 		Exit "Library extension not defined" ;
 	}
 	
-	Echo "...making shared library is experimental..." ;
-
 	local target symlink target_only ;
 	target = $(<:S=$(SOEXTFULL)) ;
 	symlink  = $(<:S=$(SOEXT)) ;
@@ -218,7 +216,7 @@ rule MakeSharedLibrary
 	target_only = $(target:D=) ;
 
 	# main linking part; for specific compilers, things should be tuned here
-	LINKFLAGS on $(target) = -shared -Wl,-soname,$(target_only) -l$(STDLIB) ;
+	LINKFLAGS on $(target) = -shared -Wl,-soname,$(target_only) $(3) -l$(STDLIB) ;
 
 	# overwrite SUFLIB; do not use SUFLIB on target = XYZ since
 	# 'on target' variables work only in actions, and SUFLIB is not
@@ -232,17 +230,28 @@ rule MakeSharedLibrary
 	Depends lib : $(symlink) ;
 }
 
-# MakeTest <target> : <sources> ;
+# MakeTest <target> : <sources> : <optional-libraries> ;
 # Rule used to correctly compule library path, do linking and stuff
 # for edelib specific tests
 rule MakeTest
 {
-	local elib = [ FFileName $(TOP) $(EDELIB_LIBDIR) $(EDELIB_NAME)$(SUFLIB) ] ;
+	# make sure we depends all tests on correct library
+	# and in case when SHARED flag is on, we must check file with '.so' existance
+	local suffix ;
+	if $(SHARED)
+	{
+		suffix = $(SOEXT) ;
+	}
+	else
+	{
+		suffix = $(SUFLIB) ;
+	}
+	
+	local elib = [ FFileName $(TOP) $(EDELIB_LIBDIR) $(EDELIB_NAME)$(suffix) ] ;
 	local ldir = [ FDirName $(TOP) $(EDELIB_LIBDIR) ] ;
 	Depends $(<)  : $(elib) ;
 	Depends tests : $(<) ;
-
-	LINKLIBS on $(<) = -L$(ldir) -l$(EDELIB) -l$(STDLIB) ;
+	LINKLIBS on $(<) = -L$(ldir) -l$(EDELIB) $(3) -l$(STDLIB) ;
 	Main $(<) : $(>) ;
 }
 
