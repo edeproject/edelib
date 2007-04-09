@@ -1,7 +1,7 @@
 dnl
 dnl $Id$
 dnl
-dnl Part of Equinox Desktop Environment (EDE).
+dnl Part of edelib.
 dnl Copyright (c) 2000-2007 EDE Authors.
 dnl 
 dnl This program is licenced under terms of the 
