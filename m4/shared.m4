@@ -1,5 +1,5 @@
 dnl
-dnl $Id: various.m4 1856 2007-03-17 11:28:25Z karijes $
+dnl $Id$
 dnl
 dnl Part of edelib.
 dnl Copyright (c) 2000-2007 EDE Authors.
