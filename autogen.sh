@@ -27,7 +27,7 @@ if aclocal -I m4 && autoheader && autoconf; then
 	fi
 
 	# a junk from autoheader
-	rm -f "edeconf.h.in~"
+	rm -f "edelibconf.h.in~"
 
 	echo ""
 	echo "Now run ./configure [OPTIONS]"
