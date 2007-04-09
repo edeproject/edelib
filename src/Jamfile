@@ -17,7 +17,8 @@ SOURCE = Config.cpp
 		 String.cpp
 		 File.cpp
 		 Directory.cpp
-		 Debug.cpp ;
+		 Debug.cpp 
+		 Sound.cpp ;
 
 # files that requires fltk or X11
 SOURCE_GUI = Ask.cpp
@@ -36,7 +37,7 @@ LPATH = [ FFileName $(TOP) $(EDELIB_LIBDIR) $(EDELIB_NAME) ] ;
 
 if $(SHARED)
 {
-	MakeSharedLibrary $(LPATH) : $(SOURCE) : $(FLTKLIBS) ;
+	MakeSharedLibrary $(LPATH) : $(SOURCE) : $(FLTKLIBS) $(SOUNDLIBS) ;
 	InstallSharedLibrary $(libdir) : $(LPATH) ;
 }
 else

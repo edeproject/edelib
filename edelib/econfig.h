@@ -31,4 +31,6 @@
 
 #define EDELIB_API 
 
+#include <edelibconf.h>
+
 #endif

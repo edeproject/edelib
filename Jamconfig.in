@@ -41,6 +41,9 @@ ALLFLAGS  ?= "@ALLFLAGS@" ;
 FLTKFLAGS ?= "@FLTKFLAGS@" ;
 FLTKLIBS  ?= "@FLTKLIBS@" ;
 
+# sound
+SOUNDLIBS ?= "@SOUNDLIBS@" ;
+
 # for shared library
 SHARED     ?= "@SHARED@" ;
 DSOFLAGS   ?= "@DSOFLAGS@" ;
