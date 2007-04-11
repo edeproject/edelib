@@ -1,3 +1,7 @@
+2007-04-11  Sanel <karijes@users.sourceforge.net>
+
+	* Small fix so genreadme can work on FreeBSD
+
 2007-04-09  Sanel <karijes@users.sourceforge.net>
 
 	* Build script tweaks

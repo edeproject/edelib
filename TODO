@@ -12,3 +12,5 @@ TODO list:
  * organize documentation into modules
  * Sound should have explicit option for setting various drivers
  * non-blocking Sound
+ * NULL is on FreeBSD defined differently; check this
+ * documentation install strangely depends on xxx/doc/edelib-xxx/html directory; how ?
