@@ -246,7 +246,7 @@ rule MakeTest
 	{
 		suffix = $(SUFLIB) ;
 	}
-	
+
 	local elib = [ FFileName $(TOP) $(EDELIB_LIBDIR) $(EDELIB_NAME)$(suffix) ] ;
 	local ldir = [ FDirName $(TOP) $(EDELIB_LIBDIR) ] ;
 	Depends $(<)  : $(elib) ;

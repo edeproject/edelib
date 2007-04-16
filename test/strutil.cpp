@@ -56,4 +56,10 @@ UT_FUNC(strtest, "Test strutil")
 	UT_VERIFY( str_ends("sample", "ple") == true );
 	UT_VERIFY( str_ends("le", "a long that should fail") == false );
 	UT_VERIFY( str_ends("not-empty", "") == false );
+	UT_VERIFY( str_ends("sample/path", "/") == false );
+	UT_VERIFY( str_ends("sample/path/", "/") == true );
+	UT_VERIFY( str_ends("sample/path////", "/") == true );
+	UT_VERIFY( str_ends("sample/path////aa", "/aa") == true );
+	UT_VERIFY( str_ends("/aa", "/aa") == true );
+	UT_VERIFY( str_ends("/aa", "/aaaaa") == false);
 }

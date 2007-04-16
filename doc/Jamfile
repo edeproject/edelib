@@ -20,6 +20,7 @@ genreadme_ = [ FDirName $(TOP) doc genreadme ] ;
 readme_    = [ FDirName $(TOP) README ] ;
 
 MakeApiDocumentation $(html_) : $(doxyfile_) ;
+
 GenDocumentation $(readme_) : $(genreadme_) $(readmesrc_) ;
 
 InstallDocumentation [ FDirName $(docdir) $(EDELIB_DOCDIR) ] : $(readme_) ;

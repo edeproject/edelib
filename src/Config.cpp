@@ -17,11 +17,15 @@
 #include <edelib/File.h>
 #include <edelib/Nls.h>
 
-#include <stdio.h>
+#include <stdio.h>   // snprintf
 #include <ctype.h>
 
-#include <string.h>  // strchr
-#include <stdlib.h>  // free, atoi, atol, atof
+#include <string.h>  // strchr, strncpy, strlen
+#include <stdlib.h>  // free, atoi, atol, atof, getenv
+
+#ifdef USE_NLS
+	#include <libintl.h> // setlocale
+#endif
 
 #define COMMENT    '#'
 #define SECT_OPEN  '['
@@ -211,6 +215,7 @@ Config::Config() : errcode(0), linenum(0), sectnum(0)
 
 Config::~Config()
 {
+	clear();
 }
 
 bool Config::load(const char* fname)
@@ -514,13 +519,110 @@ bool Config::get(const char* section, const char* key, char* ret, int size)
 {
 	ConfigSection* cs = find_section(section);
 	if(!cs)
+	{
+		errcode = CONF_ERR_SECTION;
 		return false; 
+	}
 	ConfigEntry* ce = cs->find_entry(key);
 	if(!ce)
+	{
+		errcode = CONF_ERR_KEY;
 		return false; 
+	}
 	char* value = ce->value;
 	strncpy(ret, value, size);
 	return true;
+}
+
+bool Config::get_localized(const char* section, const char* key, char* ret, int size)
+{
+	char* lang;
+/*
+#ifdef USE_NLS
+	if((lang = setlocale(LC_MESSAGES, NULL)) == NULL)
+#endif
+*/
+		lang = getenv("LANG");
+
+	// fallback
+	if(!lang) 
+		return get(section, key, ret, size);
+
+	//printf("--> %s\n", lang);
+
+	// do not use default locales
+	if (lang[0] == 'C' || (strncmp(lang, "en_US", 5) == 0))
+		return get(section, key, ret, size);
+
+	ConfigSection* cs = find_section(section);
+	if(!cs)
+	{
+		errcode = CONF_ERR_SECTION;
+		return false; 
+	}
+
+	char key_buff[128];
+
+	/*
+	 * Config class can accept Name[xxx] names as
+	 * keys, so we use it here; first construct
+	 * a key name, and try to find it
+	 */
+	snprintf(key_buff, sizeof(key_buff), "%s[%s]", key, lang);
+	bool found = false;
+
+	// first try to find it with full data
+	ConfigEntry* ce = cs->find_entry(key_buff);
+	if(ce)
+		found = true;
+	else
+	{
+		/*
+		 * We will try in this order:
+		 * 1. lc_CC@qualifier.encoding
+		 * 2. lc_CC@qualifier
+		 * 3. lc_CC (language code with country code)
+		 * 4. lc
+		 */
+		char delim[] = {'.', '@', '_'};
+		char* p;
+		char* code;
+		for(int i = 0; i < 3; i++) 
+		{
+			p = strchr(lang, delim[i]);
+			if(p != NULL) 
+			{
+				int sz = p - lang;
+				code = new char[sz+1];	
+				strncpy(code, lang, sz);
+
+				// damint strncpy does not add this
+				code[sz] = '\0';
+
+				//printf("have code: %s lang: %s sz: %i\n", code, lang, sz);
+				snprintf(key_buff, sizeof(key_buff), "%s[%s]", key, code);
+				//printf("trying with: %c: %s\n", delim[i], key_buff);
+				delete [] code;
+
+				ce = cs->find_entry(key_buff);
+				if(ce)
+				{
+					found = true;
+					break;
+				}
+			}
+		}
+	}
+
+	if(found)
+	{
+		char* value = ce->value;
+		strncpy(ret, value, size);
+		return true;
+	}
+	else
+		errcode = CONF_ERR_KEY;
+	return false;
 }
 
 void Config::set(const char* section, const char* key, char* value)

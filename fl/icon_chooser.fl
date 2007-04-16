@@ -1,0 +1,40 @@
+# data file for the FLTK User Interface Designer (FLUID)
+version 2.1000 
+header_name {.h} 
+code_name {.cxx} 
+gridx 5 
+gridy 5 
+snap 1
+Function {} {open
+} {
+  {fltk::Window} {} {
+    label {Choose icon} open
+    xywh {610 271 355 305} resizable visible
+  } {
+    {fltk::Input} {} {
+      xywh {10 15 240 25}
+    }
+    {fltk::Button} {} {
+      label {&Browse...}
+      xywh {255 15 90 25}
+    }
+    {fltk::Group} {} {open
+      xywh {10 45 335 220} box DOWN_BOX color 0xffffff00
+    } {}
+    {fltk::Button} {} {
+      label {&OK}
+      xywh {160 270 90 25}
+    }
+    {fltk::Button} {} {
+      label {&Cancel}
+      xywh {255 270 90 25}
+    }
+    {fltk::InvisibleBox} {} {
+      xywh {10 240 110 25} resizable
+      extra_code {/* invisible resizable box */}
+    }
+    {fltk::ProgressBar} {} {selected
+      xywh {10 270 110 25}
+    }
+  }
+} 

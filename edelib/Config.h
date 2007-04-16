@@ -211,6 +211,30 @@ class EDELIB_API Config
 		bool get(const char* section, const char* key, char* ret, int size);
 
 		/**
+		 * Get localized character data. This method behaves the same as get()
+		 * with character data, except it will search first keys with locale
+		 * tags, which coresponds system locale settings. This keys looks like:
+		 * \code
+		 *   # localized value
+		 *   Key[de] = localized value in german
+		 *
+		 *   # unlocalized value
+		 *   Key = some value
+		 * \endcode
+		 *
+		 * Function will try to find out current locale settings and if fails,
+		 * of specific key with locale tag does not exist, it will try with
+		 * ordinary unlocalized value.
+		 *
+		 * \return true if value exist
+		 * \param section name of target section
+		 * \param key name of target key
+		 * \param ret buffer to copy returned value
+		 * \param size size of buffer
+		 */
+		bool get_localized(const char* section, const char* key, char* ret, int size);
+
+		/**
 		 * Get bool value from named section.
 		 *
 		 * \return true if value exist

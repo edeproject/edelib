@@ -88,8 +88,12 @@ bool str_ends(const char* str, const char* test)
 	if((tlen > len) || !len || !tlen)
 		return false;
 
-	const char* p = str + len;
-	const char* tp = test + tlen;
+	// cases when 'test' contains only one character
+	if(tlen == 1)
+		return (str[len-1] == test[0]);
+
+	const char* p = str + len - 1;
+	const char* tp = test + tlen - 1;
 	for(; tlen; p--, tp--, tlen--)
 	{
 		if(*p != *tp)

@@ -1,6 +1,5 @@
 #include <edelib/Directory.h>
 #include "UnitTest.h"
-#include <stdio.h>
 
 using namespace edelib;
 
@@ -27,4 +26,9 @@ UT_FUNC(DirectoryFunctions, "Test Directory functions")
 	UT_VERIFY( dir_home() != "" );
 	UT_VERIFY( dir_separator() == "/" );
 	UT_VERIFY( dir_current() != "" );
+
+	vector<String> dlist;
+	UT_VERIFY( dir_list("/this/directory/should/not/exist", dlist) == false );
+	UT_VERIFY( dir_list(".", dlist) == true );
+	UT_VERIFY( dlist.size() != 0 );
 }

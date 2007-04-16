@@ -1,3 +1,19 @@
+2007-04-15  Sanel <karijes@users.sourceforge.net>
+
+	* Added ExpandableGroup
+	* Added test/examples/ directory with few samples
+	* Added dir_list
+	* Fixed flaw in str_ends when test string have only
+	one character
+	* More tests for str_ends :P
+	* Almost complete icon_chooser
+	* Small fix for function module for doxygendocumentation
+	* Leek in Config class cleaned
+	* A small leek in dir_list too ;)
+	* Added get_localized to Config class so locale dependant
+	values can be retreived
+	* ExpandableGroup now loads/handles data much faster
+
 2007-04-11  Sanel <karijes@users.sourceforge.net>
 
 	* Small fix so genreadme can work on FreeBSD

@@ -31,3 +31,6 @@ MakeTest run_tests : UnitTest.cpp
 
 Clean clean : [ FFileName $(TOP) test .foo.txt ] ;
 Clean clean : [ FFileName $(TOP) test .ede.conf ] ;
+
+# include examples directory
+SubInclude TOP test examples ;

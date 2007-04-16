@@ -4,9 +4,8 @@ TODO list:
  * error checks during stream read/write in File (ferror)
  * correct File::write(const char* w, int s) -> File::write(const char* w)
  * in Config, don't allow [] sections
+ * Config::remove_entry() finish
  * add convinient Time class
- * maybe better SharedLibraryFromObjects in Jamrules
- * finish and document String class
  * XDG functions in Util.h needs more checking
  * what should set_textdomain_dir() and set_textdomain() return when NLS is disabled ?
  * organize documentation into modules
@@ -14,3 +13,7 @@ TODO list:
  * non-blocking Sound
  * NULL is on FreeBSD defined differently; check this
  * documentation install strangely depends on xxx/doc/edelib-xxx/html directory; how ?
+ * more checks on GenDocumentation since /usr/bin/env gawk -f does not work
+ * ExpandableGroup should have conservative redrawing
+ * dir_list() should expand directory to current when "." is added only
+ * add local snprintf/vsnprintf/scandir/dirent(???)

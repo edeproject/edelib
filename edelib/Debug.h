@@ -35,7 +35,7 @@ EDELIB_API void EFatal(const char* fmt, ...);
 
 EDELIB_NAMESPACE {
 
-/*!\addtogroup Functions
+/*!\addtogroup functions
  * @{ */
 enum MsgType
 {

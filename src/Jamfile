@@ -22,7 +22,9 @@ SOURCE = Config.cpp
 
 # files that requires fltk or X11
 SOURCE_GUI = Ask.cpp
-			 XSet.cpp ;
+			 XSet.cpp 
+			 ExpandableGroup.cpp 
+			 IconChooser.cpp ;
 
 if $(FLTKLIBS)
 {

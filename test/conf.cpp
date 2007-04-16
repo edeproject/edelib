@@ -1,5 +1,6 @@
 #include <edelib/Config.h>
 #include <string.h>
+#include <stdlib.h>
 #include "UnitTest.h"
 
 #define CCHARP(str)           ((const char*)str)
@@ -49,5 +50,75 @@ UT_FUNC(ConfigTest, "Test Config class")
 	else
 	{
 		UT_FAIL("No ede.conf, but expected to be");
+	}
+}
+
+
+UT_FUNC(ConfigTestLocale, "Test Config locale")
+{
+	Config c;
+	c.load("test.desktop");
+	if(!c)
+		UT_FAIL("No test.desktop, but expected to be");
+	else
+	{
+		char buff[128];
+		setenv("LANG", "en_US", 1);
+		UT_VERIFY(c.get_localized("Desktop Entry", "Name", buff, 128) == true);
+		UT_VERIFY( STR_EQUAL(buff, "Home Folder") );
+		unsetenv("LANG");
+
+		// the real stuff :P
+		setenv("LANG", "es_PE", 1);
+		UT_VERIFY(c.get_localized("Desktop Entry", "Name", buff, 128) == true);
+		UT_VERIFY( STR_EQUAL(buff, "Carpeta personal") );
+		unsetenv("LANG");
+
+		setenv("LANG", "et_EE", 1);
+		UT_VERIFY(c.get_localized("Desktop Entry", "Name", buff, 128) == true);
+		UT_VERIFY( STR_EQUAL(buff, "Kodukataloog") );
+		unsetenv("LANG");
+
+		setenv("LANG", "et_EE.iso885915", 1);
+		UT_VERIFY(c.get_localized("Desktop Entry", "Name", buff, 128) == true);
+		UT_VERIFY( STR_EQUAL(buff, "Kodukataloog") );
+		unsetenv("LANG");
+
+		setenv("LANG", "et_EE.utf8", 1);
+		UT_VERIFY(c.get_localized("Desktop Entry", "Name", buff, 128) == true);
+		UT_VERIFY( STR_EQUAL(buff, "Kodukataloog") );
+		unsetenv("LANG");
+
+		setenv("LANG", "eu_ES@euro", 1);
+		UT_VERIFY(c.get_localized("Desktop Entry", "Name", buff, 128) == true);
+		UT_VERIFY( STR_EQUAL(buff, "Etxea") );
+		unsetenv("LANG");
+
+		setenv("LANG", "eu_ES.utf8", 1);
+		UT_VERIFY(c.get_localized("Desktop Entry", "Name", buff, 128) == true);
+		UT_VERIFY( STR_EQUAL(buff, "EtxeaUTF8") );
+		unsetenv("LANG");
+
+		setenv("LANG", "eu_ES", 1);
+		UT_VERIFY(c.get_localized("Desktop Entry", "Name", buff, 128) == true);
+		UT_VERIFY( STR_EQUAL(buff, "Etxea") );
+		unsetenv("LANG");
+
+		setenv("LANG", "fr_BE", 1);
+		UT_VERIFY(c.get_localized("Desktop Entry", "Name", buff, 128) == true);
+		UT_VERIFY( STR_EQUAL(buff, "Dossier personnel") );
+		unsetenv("LANG");
+
+		setenv("LANG", "fr_LU@Latin", 1);
+		UT_VERIFY(c.get_localized("Desktop Entry", "Name", buff, 128) == true);
+		UT_VERIFY( STR_EQUAL(buff, "Dossier personnel Latin") );
+		unsetenv("LANG");
+
+		setenv("LANG", "fr_CH.utf8", 1);
+		UT_VERIFY(c.get_localized("Desktop Entry", "Name", buff, 128) == true);
+		UT_VERIFY( STR_EQUAL(buff, "Dossier personnel UTF8") );
+		unsetenv("LANG");
+
+		setenv("LANG", "en_US", 1);
 	}
 }
