@@ -33,6 +33,9 @@ EDELIB_NAMESPACE {
  * Starting position for the first child is x = 10, y = 10, and spacing
  * between each added child is 10 px.
  *
+ * Childs before be put in, <b>must</b> be allocated with <em>new</em>;
+ * destructor on them will be called automatically.
+ *
  * \note All childs have to have the same height, so reordering can be correctly computed
  */
 
@@ -45,12 +48,22 @@ class ExpandableGroup : public fltk::Group
 		fltk::Rectangle widget_area;
 
 	public:
+		/**
+		 * Constructs an empty group.
+		 */
 		ExpandableGroup(int x, int y, int w, int h, const char* l=0);
+
+		/**
+		 * Clear data and call destructor on widgets.
+		 */
 		~ExpandableGroup();
+
+#ifndef SKIP_DOCS
 		void draw(void);
 		void layout(void);
 		void scrolly(int yp);
 		fltk::Scrollbar& get_scroll(void) { return *vscrollbar; }
+#endif
 };
 }
 #endif

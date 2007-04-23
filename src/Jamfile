@@ -18,7 +18,8 @@ SOURCE = Config.cpp
 		 File.cpp
 		 Directory.cpp
 		 Debug.cpp 
-		 Sound.cpp ;
+		 Sound.cpp 
+		 IconTheme.cpp ;
 
 # files that requires fltk or X11
 SOURCE_GUI = Ask.cpp

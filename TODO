@@ -14,6 +14,5 @@ TODO list:
  * NULL is on FreeBSD defined differently; check this
  * documentation install strangely depends on xxx/doc/edelib-xxx/html directory; how ?
  * more checks on GenDocumentation since /usr/bin/env gawk -f does not work
- * ExpandableGroup should have conservative redrawing
  * dir_list() should expand directory to current when "." is added only
  * add local snprintf/vsnprintf/scandir/dirent(???)

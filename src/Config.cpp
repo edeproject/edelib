@@ -27,6 +27,15 @@
 	#include <libintl.h> // setlocale
 #endif
 
+// max section len
+#define ESECT_MAX 128
+// max line len
+#define ELINE_MAX 5120
+// max key len
+#define EKEY_MAX  128
+// max value len
+#define EVAL_MAX  5120
+
 #define COMMENT    '#'
 #define SECT_OPEN  '['
 #define SECT_CLOSE ']'
@@ -221,20 +230,22 @@ Config::~Config()
 bool Config::load(const char* fname)
 {
 	EASSERT(fname != NULL);
-#if 0
+
+#ifdef CONFIG_USE_STDIO
 	FILE *f = fopen(fname, "r");
 	if(!f)
 	{
 		errcode = CONF_ERR_FILE;
 		return false;
 	}
-#endif
+#else
 	File f;
 	if(!f.open(fname))
 	{
 		errcode = CONF_ERR_FILE;
 		return false;
 	}
+#endif
 
 	// set default return values
 	errcode = CONF_SUCCESS;
@@ -273,7 +284,6 @@ bool Config::load(const char* fname)
 				errcode = CONF_ERR_BAD;
 				status = false;
 				break;
-
 			}
 			else
 			{
@@ -297,14 +307,14 @@ bool Config::load(const char* fname)
 		else
 		{
 			// file without sections
-			if(!sect_found)
+			if(!sect_found) 
 			{
 				errcode = CONF_ERR_SECTION;
 				status = false;
 				break;
 			}
 
-			if(!scan_keyvalues(buffp, keybuff, valbuff, EKEY_MAX, EVAL_MAX))
+			if(!scan_keyvalues(buffp, keybuff, valbuff, EKEY_MAX, EVAL_MAX)) 
 			{
 				errcode = CONF_ERR_BAD;
 				status = false;
@@ -315,41 +325,44 @@ bool Config::load(const char* fname)
 			tsect->add_entry(keybuff, valbuff);
 		}
 	}
-
-	//fclose(f);
+#ifdef CONFIG_USE_STDIO
+	fclose(f);
+#endif
 	return status;
 }
 
 bool Config::save(const char* fname)
 {
 	EASSERT(fname != NULL);
-#if 0
+#ifdef CONFIG_USE_STDIO
 	FILE* f = fopen(fname, "w");
 	if(!f)
 	{
 		errcode = CONF_ERR_FILE;
 		return false;
 	}
-#endif
+#else
 	File f;
 	if(!f.open(fname, FIO_WRITE))
 	{
 		errcode = CONF_ERR_FILE;
 		return false;
 	}
-			
+#endif
 
 	SectionList::iterator sit = section_list.begin();
 	EntryList::iterator eit;
-#if 0
-	for(; sit != section_list.end(); ++sit)
+
+#ifdef CONFIG_USE_STDIO
+	for(; sit != section_list.end(); ++sit) 
 	{
 		fprintf(f, "[%s]\n", (*sit)->sname);
 		for(eit = (*sit)->entry_list.begin(); eit != (*sit)->entry_list.end(); ++eit)
 			fprintf(f, "   %s = %s\n", (*eit)->key, (*eit)->value);
 		fprintf(f, "\n");
 	}
-#endif
+	fclose(f);
+#else
 	for(; sit != section_list.end(); ++sit)
 	{
 		f.printf("[%s]\n", (*sit)->sname);
@@ -357,8 +370,7 @@ bool Config::save(const char* fname)
 			f.printf("   %s = %s\n", (*eit)->key, (*eit)->value);
 		f.printf("\n");
 	}
-
-	//fclose(f);
+#endif
 	return true;
 }
 

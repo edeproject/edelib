@@ -33,50 +33,51 @@ EDELIB_NAMESPACE {
  * For now the only supported format is ogg, but for the future is
  * planned mp3 and wav.
  *
- * Before it's usage, init() method should be called or assertion will
- * be triggered. This could be avoided setting init() method inside
- * constructor, but the main reason why is not is because on demand loading
- * so initialization does not have to depend on it's instance definition.
+ * Before it's usage, SoundSystem::init() <b>must</b> be called or assertion will
+ * be triggered if SoundSystem::play() call is attempted. SoundSystem::init()
+ * usually should be placed before application loads gui data, and SoundSystem::shutdown()
+ * when sound will not be played.
  */
 
 class SoundSystem
 {
-#ifdef USE_SOUNDS
 	private:
+		static SoundSystem* pinstance;
+
+#ifdef USE_SOUNDS
 		ao_device* device;
 		ao_sample_format format;
 		int default_driver;
 		char pcm_out[PCM_BUF_SIZE];
-		bool inited;
-		bool down;
 #endif 
-	public:
-		/**
-		 * Empty constructor that will NULL-ify internal data
-		 */
 		SoundSystem();
-
-		/**
-		 * Destructor will close all currently opened devices, if needed
-		 */
 		~SoundSystem();
 
+		SoundSystem(const SoundSystem&);
+		SoundSystem& operator=(SoundSystem&);
+	public:
+#ifndef SKIP_DOCS
+		bool play_stream(const char* fname);
+		static SoundSystem* instance(void);
+#endif
 		/**
-		 * This must be called before playing any type of sound
+		 * Initialize internal data and device. This function <b>must</b>
+		 * be called before SoundSystem::play().
 		 */
-		void init(void);
+		static void init(void);
 
 		/**
-		 * Explicitly close all opened devices. Calling play() method after this will
-		 * trigger assertion
+		 * Clears internal data and close device.
 		 */
-		void shutdown(void);
+		static void shutdown(void);
 
 		/**
-		 * Play content of fname. Assumed format is ogg vorbis, and if file can't be
-		 * opened, or errors during playing stream occurs, it will return 0
+		 * Plays given file. Ogg format is assumed.
+		 *
+		 * \return true if all went fine, otherwise false
+		 * \param  fname is full path to file
 		 */
-		int play(const char* fname);
+		static bool play(const char* fname);
 };
 }
 #endif

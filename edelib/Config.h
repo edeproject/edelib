@@ -16,16 +16,6 @@
 #include "econfig.h"
 #include "List.h"
 
-// max section len
-#define ESECT_MAX 128
-// max line len
-#define ELINE_MAX 256
-// max key len
-#define EKEY_MAX  128
-// max value len
-#define EVAL_MAX  128
-
-
 EDELIB_NAMESPACE {
 
 enum ConfigErrors 

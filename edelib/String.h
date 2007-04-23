@@ -229,7 +229,7 @@ class EDELIB_API String
 		 * \param index starting position for substring
 		 * \param num ending position for substring
 		 */
-		String substr(size_type index, size_type num = npos);
+		String substr(size_type index, size_type num = npos) const;
 
 		/**
 		 * Returns starting position of str starting at offset. If str is not
@@ -291,7 +291,7 @@ class EDELIB_API String
 		 *
 		 * Do \b not use this function as input for C functions.
 		 * */
-		const char* data(void)  { return sdata->chars; }
+		const char* data(void) const  { return sdata->chars; }
 
 		/** Retrun size of character data */
 		size_type   length(void) const { return sdata->length; }

@@ -12,7 +12,7 @@
 
 #include <edelib/econfig.h>
 #include <edelib/String.h>
-#include <assert.h>
+#include <edelib/Debug.h>
 #include <stdarg.h>
 #include <stdio.h> // vsnprintf
 
@@ -45,7 +45,7 @@ String::~String()
 
 void String::init(size_type len, size_type cap)
 {
-	assert(len <= cap);
+	EASSERT(len <= cap);
 	sdata = new StringData;
 	sdata->chars = new char[cap + 1];
 	sdata->chars[0] = STERM;
@@ -83,8 +83,10 @@ void String::swap(String& from)
 
 String& String::assign(const char* str, size_type len)
 {
+	EASSERT(str != NULL);
+
 	/*
-	 * Hanle cases:
+	 * Handle cases:
 	 *    foo.reserve(20);
 	 *    foo.assign("foo");
 	 * since std::string will have:
@@ -154,7 +156,7 @@ void String::clear(void)
 
 void String::printf(const char* fmt, ...)
 {
-	assert(fmt != NULL);
+	EASSERT(fmt != NULL);
 
 	char buff[PRINTF_BUFF];
 	va_list ap;
@@ -192,20 +194,18 @@ String& String::operator+=(const String& str)
 
 char& String::operator[](size_type index)
 {
-	assert(index < length());
+	EASSERT(index < length());
 	return sdata->chars[index];
 }
 
 char String::operator[](size_type index) const
 {
-	assert(index < length());
+	EASSERT(index < length());
 	return sdata->chars[index];
 }
 
-String String::substr(size_type index, size_type num)
+String String::substr(size_type index, size_type num) const
 {
-	assert(index < num);
-
 	String tmp;
 	if(num == npos)
 		tmp.assign(data() + index, length() - index);

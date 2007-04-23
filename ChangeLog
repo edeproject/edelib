@@ -1,3 +1,22 @@
+2007-04-21  Sanel <karijes@users.sourceforge.net>
+
+	* Added IconTheme with documentation
+	* string from libstdc++ dies on assign(NULL) so
+	our String's assign will trigger assertion for that case
+	* Recoded Sound so it can be initialized only once during
+	application lifetime
+
+2007-04-17  Sanel <karijes@users.sourceforge.net>
+
+	* Maded data()/substr() in String const, as this is required
+	by Standard
+	* Removed assertion from substr since num parameter
+	represents size of returned characters
+	* Added CONFIG_USE_STDIO in Config class
+	* Increased buffers sizes in Config class so line/values
+	can accepts huge sizes
+	* Added stringtok
+
 2007-04-15  Sanel <karijes@users.sourceforge.net>
 
 	* Added ExpandableGroup
@@ -143,7 +162,7 @@
 
 2006-12-23  Sanel <karijes@users.sourceforge.net>
 
-	* Basic structure, jam builds, doxygen documentatio
+	* Basic structure, jam builds, doxygen documentation
 	and not yet finished Config class
 	* Added StringUtils(.h,.cpp) with c string functions
 	* Added tests for StringUtils

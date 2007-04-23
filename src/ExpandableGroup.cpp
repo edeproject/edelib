@@ -15,6 +15,7 @@
 #include <fltk/layout.h>
 #include <fltk/draw.h>
 #include <fltk/damage.h>
+#include <edelib/Debug.h>
 
 #define SLIDER_WIDTH  16
 
@@ -74,7 +75,8 @@ void ExpandableGroup::draw()
 		{
 			Widget& w = *child(n);
 			draw_child(w);
-			if(w.damage() & fltk::DAMAGE_CHILD_LABEL)
+
+			if(w.damage() & fltk::DAMAGE_CHILD_LABEL) 
 			{
 				draw_outside_label(w);
 				w.set_damage(w.damage() & ~fltk::DAMAGE_CHILD_LABEL);
