@@ -1,0 +1,85 @@
+#!/usr/bin/python
+# Converts svg icon theme to png one
+
+import os.path
+import os
+import sys
+import stat
+
+INKSCAPE = "/usr/bin/inkscape"
+#SIZES = ["16x16", "22x22", "32x32", "48x48", "64x64"]
+SIZES = ["32x32", "64x64"]
+
+def convert_ext(name):
+	if name[-4:] == ".svg":
+		return name.replace(".svg", ".png")
+	else:
+		return name
+
+def dir_exists(path):
+	# first use this since stat() scream
+	# if not exists
+	if not os.access(path, os.F_OK):
+		return False
+	mode = os.stat(path)[stat.ST_MODE]
+	return stat.S_ISDIR(mode)
+
+# with given path base/sub/sub, remove 'base/'
+def skip_base(path):
+	all = path.split("/")[1:]
+	return "/".join(all)
+
+def visit(arg, dirname, names):
+	destdir = skip_base(dirname)
+	for name in names:
+		# os.walk will first walk on the top
+		# of source directory before enters it's childs
+		# we are interested only in childs
+		if len(destdir) == 0:
+			continue
+		for sz in SIZES:
+			w, h = sz.split("x")
+			srcicon = "%s/%s" % (dirname, name)
+			findir = "%s/%s/%s" % (arg, sz, destdir)
+
+			if not dir_exists(findir):
+				os.makedirs(findir)
+
+			dsticon = "%s/%s" % (findir, convert_ext(name))
+			cmd = "%s -e %s -w %s -h %s %s" % (INKSCAPE, dsticon, w, h, srcicon)
+
+			print "%s -> %s" % (srcicon, dsticon)
+			if os.system(cmd) != 0:
+				print "FAILED :("
+				return
+
+def convert(srcdir, dstdir):
+	os.path.walk(srcdir, visit, dstdir) 
+
+def help():
+	print "Usage: svg2png source dest"
+	print "Convert [source] icon theme (assumed all are .svg)"
+	print "to .png equivalent one, using inkscape."
+	print ""
+	print "Directory layout will be created according to the sizes"
+	print "defined in SIZES at the top of this file."
+
+def main():
+	if len(sys.argv) != 3:
+		help()
+		return
+
+	src = sys.argv[1]
+	dst = sys.argv[2]
+	if not dir_exists(src):
+		print "%s does not exists. Then what to convert ?" % src
+		return
+
+	if dir_exists(dst):
+		print "%s exists. Remove it, of if is too important, choose another name" % dst
+		return
+
+	convert(src, dst)
+
+if __name__ == "__main__":
+	main()

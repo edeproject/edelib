@@ -1,0 +1,120 @@
+#!/usr/bin/python
+# Creates index.theme from given directory
+# Note that content is not checked except directory tree
+
+import sys
+import os
+import os.path
+import stat
+
+class IconTypeSection:
+	section = ""
+	size = ""
+	context = ""
+
+def dir_exists(path):
+	if not os.access(path, os.F_OK):
+		return False
+
+	mode = os.stat(path)[stat.ST_MODE]
+	return stat.S_ISDIR(mode)
+
+def extract_context(path):
+	items = path.split("/")
+	for i in items:
+		if i == "filesystems":
+			return "FileSystem"
+		elif i == "apps":
+			return "Applications"
+		elif i == "devices":
+			return "Devices"
+		elif i == "actions":
+			return "Actions"
+		elif i == "emblems":
+			return "Emblems"
+		elif i == "mimetypes":
+			return "MimeTypes"
+
+	return " # unknown context for path %s" % path
+
+def extract_size(path):
+	# we got this path: some/path/theme/size/context
+	# size is second from back
+	sz = path.split("/")[-2:]
+	sz = sz[0]
+	# we expect to have WxH; everything than
+	# that should be ignored (or how to figure size ?)
+	vals = sz.split("x")
+	if len(vals) != 2:
+		return 0
+	else:
+		return vals
+
+def scan_dir(dir):
+	print "#"
+	print "# Generated with mkindextheme. Edit what needs to be edited."
+	print "#\n"
+	print "[Icon Theme]"
+	print "  Name = SET ICON THEME NAME"
+	print "# Comment = "
+	print "# Inherit ="
+	print "  Directories =",
+
+	icon_keys = []
+	dir_values = []
+	def visitor(arg, dirname, names):
+		for n in names:
+			dn = "%s/%s" % (dirname, n)
+			if dir_exists(dn):
+				sizes = extract_size(dn)
+				if not sizes:
+					continue
+
+				dir_values.append(dn)
+
+				w = sizes[0]
+				h = sizes[1]
+
+				ic = IconTypeSection()
+				ic.section = dn
+				if w != h:
+					ic.size = "%s    # CHECK THIS, width: %s height: %s" % (w, w, h)
+				else:
+					ic.size = w
+				ic.context = extract_context(dn)
+				icon_keys.append(ic)
+	os.path.walk(dir, visitor, "")
+
+	print ",".join(dir_values)
+	
+	for k in icon_keys:
+		print ""
+		print "[%s]" % k.section
+		print "  Size = %s" % k.size
+		print "  Context = %s" % k.context
+		print "# Threshold ="
+
+def help():
+	print "Usage: mkindextheme dir"
+	print "Creates index.theme type file from given directory."
+	print "Content is spit out to the stdout."
+	print ""
+	print "This script should be run in directory where theme directory"
+	print "is places, so correct paths can be created; like:"
+	print " 1. /my/good/path/IconTheme"
+	print " 2. go to /my/good/path"
+	print " 3. run 'mkindextheme IconTheme'"
+
+def main():
+	if len(sys.argv) != 2:
+		help()
+		return
+
+	dir = sys.argv[1]
+	if not dir_exists(dir):
+		print "%s does not exists or is not directory"
+		return
+	scan_dir(dir)
+
+if __name__ == "__main__":
+	main()
