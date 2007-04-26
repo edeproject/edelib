@@ -13,7 +13,7 @@ AC_PREREQ(2.13)
 AC_INIT(edelib, 2.0.0a, [karijes@users.sourceforge.net])
 
 AC_CONFIG_SRCDIR(edelib/Nls.h)
-AC_CONFIG_HEADER(edelibconf.h:edelibconf.h.in)
+AC_CONFIG_HEADER(edelib/_conf.h:edelib/_conf.h.in)
 
 dnl stupid autoconf does not allow any variables
 dnl before AC_INIT(), without messing with m4;
@@ -33,6 +33,10 @@ dnl startup variables
 ALLFLAGS="-Wall -pedantic"
 DEBUGFLAGS="-D_DEBUG"
 OPTIMFLAGS="-O2"
+
+dnl clear these since configure set it '-g -O2' by default
+CFLAGS=
+CXXFLAGS=
 
 AC_PROG_CXX
 AC_PROG_INSTALL
@@ -73,6 +77,12 @@ else
 	ALLFLAGS="$ALLFLAGS $DEBUGFLAGS"
 fi
 
+dnl construct needed variables for edelib-config
+CFLAGS="$CFLAGS $ALLFLAGS $FLTKFLAGS $DSOFLAGS"
+CXXFLAGS="$CXXFLAGS $ALLFLAGS $FLTKFLAGS $DSOFLAGS"
+LDFLAGS="$LDFLAGS"
+LDLIBS="$LDLIBS"
+
 AC_SUBST(EDELIB_MAJOR_VERSION)
 AC_SUBST(EDELIB_MINOR_VERSION)
 AC_SUBST(EDELIB_PATCH_VERSION)
@@ -86,12 +96,19 @@ AC_SUBST(DSOLDFLAGS)
 AC_SUBST(DSOSYMLINK)
 AC_SUBST(DSOSUFFIX)
 AC_SUBST(ALLFLAGS)
+AC_SUBST(CFLAGS)
+AC_SUBST(CXXFLAGS)
+AC_SUBST(LDFLAGS)
+AC_SUBST(LDLIBS)
 
 AC_OUTPUT([
 edelib/Version.h
 doc/Doxyfile
 Jamconfig
+edelib-config
 ])
+
+chmod +x edelib-config
 
 echo ""
 echo "Now run 'jam' or 'jam help' to see further options."

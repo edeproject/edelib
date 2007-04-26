@@ -39,7 +39,11 @@ EDELIB_API String dir_separator(void);
 
 /**
  * List content of given directory. If directory is accessible, given
- * parameter will be filled with the content
+ * parameter will be filled with the content.
+ *
+ * dir_list() can accept "." which will resolve to the current directory, but
+ * will <b>not</b> accept ".." (directory up), nor will resolve chainings on 
+ * it (like "../../../").
  *
  * \return true if target directory reading went fine; otherwise false
  * \param dir target directory

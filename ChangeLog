@@ -1,3 +1,21 @@
+2007-04-26  Sanel <karijes@users.sourceforge.net>
+
+	* Added edelib-config.in, which will produce edelib-config
+	* Replaced edelibconf.{h,h.in} with edelib/_conf.{h,h.in}
+	so installed library can correctly find it (it will be in
+	include/edelib/)
+	* Added InstallProgram rule to Jamrules
+
+2007-04-25  Sanel <karijes@users.sourceforge.net>
+
+	* Small fix in Config class for CONFIG_USE_STDIO
+
+2007-04-24  Sanel <karijes@users.sourceforge.net>
+
+	* Added append(num, char) and operator+=(ch) in String
+	with the tests
+	* dir_list() accepts "." as directory parameter
+
 2007-04-21  Sanel <karijes@users.sourceforge.net>
 
 	* Added IconTheme with documentation

@@ -21,6 +21,13 @@
 
 EDELIB_NAMESPACE {
 
+// copy character num times into dest
+inline void chcpy(char* dest, const char& ch, String::size_type num)
+{
+	for(char* ptr = dest; num > 0; ptr++, num--)
+		*ptr = ch;
+}
+
 String::StringData String::null_data = {0, 0, ""};
 const String::size_type  String::npos = ~(String::size_type)0;
 
@@ -137,6 +144,25 @@ String& String::append(const char* str, size_type len)
 	return *this;
 }
 
+String& String::append(size_type num, const char& ch)
+{
+	if(num + length() <= capacity())
+	{
+		chcpy(sdata->chars + length(), ch, num);
+		sdata->length += num;
+		sdata->chars[sdata->length] = STERM;
+	}
+	else
+	{
+		char* buff = new char[num];
+		chcpy(buff, ch, num);
+		append(buff, num);
+		delete[] buff;
+	}
+
+	return* this;
+}
+
 String& String::append(const char* str)
 {
 	append(str, strlen(str));
@@ -182,14 +208,17 @@ String& String::operator=(const String& str)
 
 String& String::operator+=(const char* str)
 {
-	append(str);
-	return *this;
+	return append(str);
 }
 
 String& String::operator+=(const String& str)
 {
-	append(str);
-	return *this;
+	return append(str);
+}
+
+String& String::operator+=(const char& ch)
+{
+	return append(1, ch);
 }
 
 char& String::operator[](size_type index)
@@ -284,5 +313,6 @@ String operator+(const String& s1, const char* s2)
 {
 	return operator+(s2, s1);
 }
+
 
 }

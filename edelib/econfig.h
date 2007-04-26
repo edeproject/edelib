@@ -13,7 +13,8 @@
 #ifndef __ECONFIG_H__
 #define __ECONFIG_H__
 
-/* Needed so we don't have to include
+/*
+ * Needed so we don't have to include
  * necessary libraries.
  */
 
@@ -31,6 +32,6 @@
 
 #define EDELIB_API 
 
-#include <edelibconf.h>
+#include "_conf.h"
 
 #endif

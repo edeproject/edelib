@@ -206,6 +206,16 @@ class EDELIB_API String
 		 */
 		String& append(const String& str);
 
+
+		/**
+		 * Appends given character num times at the end of character string
+		 *
+		 * \return itself
+		 * \param num is number of given character
+		 * \param ch is character to append
+		 */
+		String& append(size_type num, const char& ch);
+
 		/**
 		 * Set size of internal buffer
 		 *
@@ -319,6 +329,9 @@ class EDELIB_API String
 
 		/** Same as append(String type) */
 		String& operator+=(const String& str);
+
+		/** Same as append(1, ch) */
+		String& operator+=(const char& ch);
 };
 
 /*

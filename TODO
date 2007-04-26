@@ -16,3 +16,5 @@ TODO list:
  * more checks on GenDocumentation since /usr/bin/env gawk -f does not work
  * dir_list() should expand directory to current when "." is added only
  * add local snprintf/vsnprintf/scandir/dirent(???)
+ * IconTheme will probably fail if Directories contains spaces between ',' delimiters;
+ trim this

@@ -385,6 +385,25 @@ rule InstallDocumentation
 	Clean uninstall : $(t) ;
 }
 
+# InstallProgram <directory> : <source> ;
+# Copy program to target directory
+rule InstallProgram
+{
+	local t ;
+	t = [ FFileName $(<) $(>:D=) ] ;
+	t = $(t:G=installprogram) ;
+
+	MkDir $(<) ;
+
+	Depends $(<) : $(>) ;
+	Depends $(t) : $(<) ;
+	Depends install : $(t) ;
+	INSTALL on $(t) = $(CP) ;
+	Install1 $(t) : $(>) ;
+
+	Clean uninstall : $(t) ;
+}
+
 # InstallDirectory <where> : <source-directory> ;
 # Copy directory to given path
 rule InstallDirectory
@@ -431,6 +450,6 @@ NotFile help install ;
 Always help ;
 
 # a generated junk
-Clean distclean : configure aclocal.m4 Jamconfig 
-	config.log config.status edelibconf.h edelibconf.h.in doc/Doxyfile edelib/Version.h ;
+Clean distclean : configure aclocal.m4 Jamconfig edelib-config
+	config.log config.status edelib/_conf.h.in edelib/_conf.h doc/Doxyfile edelib/Version.h ;
 Cleandir distclean : autom4te.cache ;

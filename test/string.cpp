@@ -55,6 +55,37 @@ UT_FUNC(StringBasicTest, "Test basic string functions")
 	UT_VERIFY( dstr2 == "SampleSample" );
 	dstr2.append(dstr2);
 	UT_VERIFY( dstr2 == "SampleSampleSampleSample" );
+
+	dstr.clear();
+	dstr.append(10, 'F');
+	UT_VERIFY( dstr == "FFFFFFFFFF" );
+	dstr.append(10, 'B');
+	UT_VERIFY( dstr == "FFFFFFFFFFBBBBBBBBBB" );
+
+	dstr += "boo";
+	UT_VERIFY( dstr == "FFFFFFFFFFBBBBBBBBBBboo" );
+
+	dstr.append(1, '/');
+	UT_VERIFY( dstr == "FFFFFFFFFFBBBBBBBBBBboo/" );
+	dstr.append(5, 'c');
+	UT_VERIFY( dstr == "FFFFFFFFFFBBBBBBBBBBboo/ccccc" );
+
+	dstr += 'x';
+	dstr += 'x';
+	dstr += 'x';
+	UT_VERIFY( dstr == "FFFFFFFFFFBBBBBBBBBBboo/cccccxxx" );
+
+	dstr.clear();
+	dstr += 'x';
+	dstr += 'y';
+	dstr += 'z';
+	UT_VERIFY( dstr == "xyz" );
+
+	dstr.clear();
+	dstr.reserve(3);
+	dstr = "abc";
+	dstr += 'd';
+	UT_VERIFY( dstr == "abcd" );
 }
 
 UT_FUNC(StringOperators, "Test string operators")
@@ -209,4 +240,20 @@ UT_FUNC(StringComparison, "Test std::string comparison")
 	ss.clear();
 	s.clear();
 	UT_VERIFY( String((s1 + s2).c_str()) == (ss + s) );
+
+	s1.clear();
+	s2.clear();
+
+	s1.append(3, 'c');
+	s2.append(3, 'c');
+
+	UT_VERIFY( s1 == s2.c_str() );
+
+	s1 = "sample str";
+	s2 = "sample str";
+
+	s1.append(1, 'C');
+	s2.append(1, 'C');
+
+	UT_VERIFY( s1 == s2.c_str() );
 }

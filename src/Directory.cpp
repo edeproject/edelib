@@ -82,8 +82,12 @@ bool dir_list(const char* dir, vector<String>& lst, bool full_path, bool show_hi
 	if(!dir_readable(dir))
 		return false;
 
+	String dirstr = dir;
+	if(dirstr == ".")
+		dirstr.assign(dir_current());
+
 	dirent** files;
-	int n = scandir(dir, &files, NULL, alphasort);
+	int n = scandir(dirstr.c_str(), &files, NULL, alphasort);
 	if(n < 0)
 		return false;
 
@@ -91,23 +95,27 @@ bool dir_list(const char* dir, vector<String>& lst, bool full_path, bool show_hi
 	lst.reserve(n);
 
 	bool have_sep;
-	if(str_ends(dir, dir_separator().c_str()))
+	if(str_ends(dirstr.c_str(), dir_separator().c_str()))
 		have_sep = true;
 	else
 		have_sep = false;
 
+	String tmp;
+	tmp.reserve(PATH_MAX);
+	
 	// fill our vector and clean in the same time
 	for(int i = 0; i < n; i++) 
 	{
-		if(!show_hidden && files[i]->d_name[0] == '.')
+		if(!show_hidden && files[i]->d_name[0] == '.') 
 		{
 			free(files[i]);
 			continue;
 		}
 
-		if(full_path)
+		if(full_path) 
 		{
-			String tmp = dir;
+			tmp = dirstr;
+
 			if(!have_sep)
 				tmp += dir_separator();
 			tmp += files[i]->d_name;

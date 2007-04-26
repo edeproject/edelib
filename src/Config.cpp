@@ -262,8 +262,11 @@ bool Config::load(const char* fname)
 	char *buffp;
 	ConfigSection* tsect = NULL;
 
-	//while(fgets(buff, sizeof(buff)-1, f))
+#if CONFIG_USE_STDIO
+	while(fgets(buff, sizeof(buff)-1, f))
+#else
 	while(f.readline(buff, sizeof(buff)-1) >= 0)
+#endif
 	{
 		++linenum;
 

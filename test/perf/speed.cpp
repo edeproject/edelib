@@ -29,6 +29,7 @@ void test_str(int repeat, int loop)
 	s.clear();
 	std::cout << " operator=(1) : ";
 	tt.restart();
+	result = 0;
 	for(int i = 0; i < repeat; i++) {
 		tim.restart();
 		for(int j = 0; j < loop; j++) {
@@ -42,6 +43,7 @@ void test_str(int repeat, int loop)
 	s.clear();
 	std::cout << " operator=(2) : ";
 	tt.restart();
+	result = 0;
 	for(int i = 0; i < repeat; i++) {
 		tim.restart();
 		for(int j = 0; j < loop; j++) {
@@ -64,6 +66,7 @@ void test_str(int repeat, int loop)
 	s.clear();
 	std::cout << " operator+(1) : ";
 	tt.restart();
+	result = 0;
 	for(int i = 0; i < repeat; i++) {
 		tim.restart();
 		for(int j = 0; j < loop; j++) {
@@ -77,6 +80,7 @@ void test_str(int repeat, int loop)
 	s.clear();
 	std::cout << " operator+(2) : ";
 	tt.restart();
+	result = 0;
 	for(int i = 0; i < repeat; i++) {
 		tim.restart();
 		for(int j = 0; j < loop; j++) {
@@ -85,6 +89,19 @@ void test_str(int repeat, int loop)
 			s = s + "sample string with no allocation";
 			s = s + "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
 		}
+		result += tim.elapsed();
+	}
+	total = tt.elapsed();
+	std::cout << "total = " << total << " average = " << result / repeat << std::endl;
+
+	s.clear();
+	std::cout << " operator+=(ch) : ";
+	tt.restart();
+	result = 0;
+	for(int i = 0; i < repeat; i++) {
+		tim.restart();
+		for(int j = 0; j < loop; j++)
+			s += 'x';
 		result += tim.elapsed();
 	}
 	total = tt.elapsed();
