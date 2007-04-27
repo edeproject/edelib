@@ -1,6 +1,7 @@
 2007-04-27  Sanel <karijes@users.sourceforge.net>
 
 	* IconChooser will open dialog even when directory does not exists
+	* user_xxx_dir() will not return string ending with dir_separator() 
 
 2007-04-26  Sanel <karijes@users.sourceforge.net>
 

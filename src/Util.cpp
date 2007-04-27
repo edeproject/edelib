@@ -18,9 +18,9 @@
 #include <string.h> // strlen, strncpy
 
 // default places according to freedesktop
-#define CONFIG_HOME_DEFAULT "~/.config/ede/"
-#define DATA_HOME_DEFAULT   "~/.local/share/ede/"
-#define CACHE_HOME_DEFAULT  "~/.cache/ede/"
+#define CONFIG_HOME_DEFAULT "~/.config/ede"
+#define DATA_HOME_DEFAULT   "~/.local/share/ede"
+#define CACHE_HOME_DEFAULT  "~/.cache/ede"
 
 #define MAX_PATH 1024
 
@@ -47,9 +47,9 @@ String _config_get(const char* env1, const char* env2, const char* fallback, uns
 	ret.reserve(MAX_PATH);
 
 	if(path[len-1] == '/') 
-		ret.printf("%s%s", path, "ede/");
+		ret.printf("%s%s", path, "ede");
 	else
-		ret.printf("%s%s", path, "/ede/");
+		ret.printf("%s%s", path, "/ede");
 	return ret;
 }
 
