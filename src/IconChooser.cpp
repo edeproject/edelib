@@ -184,6 +184,9 @@ void IconChooser::load(const char* dir)
 	path->value(dir);
 	start.assign(dir);
 
+	if(!dir_exists(dir))
+		return;
+
 	vector<String> lst;
 	if(!dir_list(dir, lst, true))
 		return;
@@ -306,9 +309,6 @@ bool IconChooser::find_focused(void)
 
 String icon_chooser(const char* dir)
 {
-	if(!dir_exists(dir))
-		return "";
-
 	IconChooser ic;
 	ic.load(dir);
 

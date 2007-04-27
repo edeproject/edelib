@@ -1,3 +1,7 @@
+2007-04-27  Sanel <karijes@users.sourceforge.net>
+
+	* IconChooser will open dialog even when directory does not exists
+
 2007-04-26  Sanel <karijes@users.sourceforge.net>
 
 	* Added edelib-config.in, which will produce edelib-config

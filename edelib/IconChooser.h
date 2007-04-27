@@ -24,6 +24,9 @@ EDELIB_NAMESPACE {
  * will be scanned for known image/icon types and those will
  * be shown.
  *
+ * If given path does not exists, or directory is not readable,
+ * empty dialog will be shown.
+ *
  * \image html icon_chooser.jpg
  *
  * \note icon_chooser() will skip those icons who's size
