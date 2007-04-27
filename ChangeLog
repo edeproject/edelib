@@ -2,6 +2,8 @@
 
 	* IconChooser will open dialog even when directory does not exists
 	* user_xxx_dir() will not return string ending with dir_separator() 
+	* added system_data_dirs() and system_config_dirs() which represents
+	XDG_DATA_DIRS and XDG_CONFIG_DIRS
 
 2007-04-26  Sanel <karijes@users.sourceforge.net>
 

@@ -15,6 +15,7 @@
 
 #include "econfig.h"
 #include "String.h"
+#include "Vector.h"
 
 EDELIB_NAMESPACE {
 
@@ -25,7 +26,8 @@ EDELIB_NAMESPACE {
  * configuration files. Place is determined according to the
  * XDG Base Directory Specification.
  *
- * \return filled String with path or empty String if fails
+ * \return filled String with path or empty String if fails <b>without</b>
+ * directory separator at the end
  * */
 EDELIB_API String user_config_dir(void);
 
@@ -34,7 +36,8 @@ EDELIB_API String user_config_dir(void);
  * data files like icons. Place is determined according to the
  * XDG Base Directory Specification.
  *
- * \return filled String with path or empty String if fails
+ * \return filled String with path or empty String if fails <b>without</b>
+ * directory separator at the end
  * */
 EDELIB_API String user_data_dir(void);
 
@@ -43,9 +46,28 @@ EDELIB_API String user_data_dir(void);
  * cached data. Place is determined according to the
  * XDG Base Directory Specification.
  *
- * \return filled String with path or empty String if fails
+ * \return filled String with path or empty String if fails <b>without</b>
+ * directory separator at the end
  * */
 EDELIB_API String user_cache_dir(void);
+
+/**
+ * Get a list of directories where configuration files should be searched.
+ * List is determined according to the XDG Base Directory Specification.
+ *
+ * \return a size of list
+ * \param lst is where to put founded data
+ */
+EDELIB_API int system_config_dirs(vector<String>& lst);
+
+/**
+ * Get a list of directories where data files should be searched.
+ * List is determined according to the XDG Base Directory Specification.
+ *
+ * \return a size of list
+ * \param lst is where to put founded data
+ */
+EDELIB_API int system_data_dirs(vector<String>& lst);
 
 /*! @} */
 }

@@ -13,6 +13,7 @@
 #include <edelib/econfig.h>
 #include <edelib/Debug.h>
 #include <edelib/Util.h>
+#include <edelib/StrUtil.h>
 
 #include <stdlib.h> // getenv
 #include <string.h> // strlen, strncpy
@@ -53,6 +54,20 @@ String _config_get(const char* env1, const char* env2, const char* fallback, uns
 	return ret;
 }
 
+int _dirs_get(const char* env1, const char* env2, const char* fallback, vector<String>& lst)
+{
+	EASSERT(fallback != NULL);
+
+	char* path = getenv(env1);
+	if(!path)
+		path = getenv(env2);
+	if(!path)
+		path = (char*)fallback;
+
+	stringtok(lst, path, ":");
+	return lst.size();
+}
+
 String user_config_dir(void) 
 { 
 	return _config_get("XDG_CONFIG_HOME", "EDE_CONFIG_HOME", CONFIG_HOME_DEFAULT, sizeof(CONFIG_HOME_DEFAULT));
@@ -66,6 +81,20 @@ String user_data_dir(void)
 String user_cache_dir(void) 
 {
 	return _config_get("XDG_CACHE_HOME", "EDE_CACHE_HOME", CACHE_HOME_DEFAULT, sizeof(CACHE_HOME_DEFAULT));
+}
+
+int system_config_dirs(vector<String>& lst)
+{
+	/*
+	 * for /etc/xdg is added endig ':' intentionaly so 
+	 * stringtok can work
+	 */
+	return _dirs_get("XDG_CONFIG_DIRS", "EDE_CONFIG_DIRS", "/etc/xdg:", lst);
+}
+
+int system_data_dirs(vector<String>& lst)
+{
+	return _dirs_get("XDG_DATA_DIRS", "EDE_DATA_DIRS", "/usr/local/share:/usr/share", lst);
 }
 
 }
