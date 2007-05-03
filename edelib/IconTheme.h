@@ -102,6 +102,7 @@ class IconTheme
 		static IconTheme* pinstance;
 		bool   fvisited;
 		String curr_theme;
+		vector<String>      theme_dirs;
 		vector<IconDirInfo> dirlist;
 
 		IconTheme();
@@ -111,6 +112,7 @@ class IconTheme
 		IconTheme& operator=(IconTheme&);
 
 		void read_inherits(const char* buff);
+		void init_base_dirs(void);
 
 	public:
 #ifndef SKIP_DOCS
@@ -121,7 +123,12 @@ class IconTheme
 		static IconTheme* instance(void);
 #endif
 		/**
-		 * Loads given theme
+		 * Initializes internal data, but will not load anything
+		 */
+		//static void init(void);
+
+		/**
+		 * Loads given theme from predefined directories
 		 */
 		static void init(const char* theme);
 
@@ -129,6 +136,13 @@ class IconTheme
 		 * Clear allocated data
 		 */
 		static void shutdown(void);
+
+		/**
+		 * Appends directory to the list of directories where to
+		 * look named theme. Usually after this you should
+		 * call IconTheme::load();
+		 */
+		//static void add_dir(const char* dir);
 
 		/**
 		 * Load another theme, clearing all previous internal

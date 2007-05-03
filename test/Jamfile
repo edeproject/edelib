@@ -25,6 +25,7 @@ MakeTest run_tests : UnitTest.cpp
 					directory.cpp
 					conf.cpp
 					string.cpp
+					color.cpp
 					run_tests.cpp
 					: 
 					$(ADDONLIB) ;

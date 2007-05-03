@@ -267,12 +267,13 @@ void IconChooser::load(const char* dir)
 	 */
 	icongrp->focus_index(0);
 
+	IconBox* preview;
 	for(unsigned int i = 0; i < lst.size(); i++)
 	{
 		img = fltk::SharedImage::get(lst[i].c_str());
 		if(img && lst_info[i] == 1)
 		{
-			IconBox* preview = new IconBox(0, 0, imax_w, imax_h);
+			preview = new IconBox(0, 0, imax_w, imax_h);
 			preview->set_icon_path(lst[i]);
 			// use background from ExpandableGroup
 			preview->color(icongrp->color());

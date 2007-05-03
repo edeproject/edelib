@@ -16,10 +16,11 @@
 #include <edelib/StrUtil.h>
 
 #include <stdlib.h>    // getenv
-#include <sys/types.h> // stat
+#include <sys/types.h> // stat, struct passwd
 #include <sys/stat.h>  // stat
-#include <unistd.h>    // access, stat, getcwd
+#include <unistd.h>    // access, stat, getcwd, getuid, sysconf
 #include <dirent.h>    // scandir, dirent
+#include <pwd.h>       // getpwuid_r
 
 #ifndef PATH_MAX
 	#define PATH_MAX 256
@@ -59,8 +60,38 @@ String dir_home(void)
 	char* p = getenv("HOME");
 	if(p)
 		return p;
-	else
+
+	/*
+	 * Fallback, read passwd structure, firstly acquiring it with
+	 * _SC_GETPW_R_SIZE_MAX, then with our own size.
+	 * 
+	 * Note that valgrind will report leak here, with this message:
+	 *   __nss_database_lookup (in /lib/tls/libc-2.3.5.so)
+	 *   getpwuid_r@@GLIBC_2.1.2 (in /lib/tls/libc-2.3.5.so)
+	 * This looks like leak in glibc.
+	 */
+	long buffsz = sysconf(_SC_GETPW_R_SIZE_MAX);
+	if(buffsz < 0)
+		buffsz = 1024;
+
+	struct passwd pwd_str;
+	struct passwd* pw = NULL;
+
+	char* buff = new char[buffsz];
+	int err = getpwuid_r(getuid(), &pwd_str, buff, buffsz, &pw);
+
+	if(err)
+	{
+		delete [] buff;
 		return "";
+	}
+
+	EASSERT(pw != NULL);
+
+	String ret = pw->pw_dir;
+	delete [] buff;
+
+	return ret;
 }
 
 String dir_current(void)

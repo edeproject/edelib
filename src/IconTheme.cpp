@@ -17,6 +17,7 @@
 #include <edelib/File.h>
 #include <edelib/Config.h>
 #include <edelib/StrUtil.h>
+#include <edelib/Util.h>
 #include <stdio.h>
 
 EDELIB_NAMESPACE {
@@ -28,24 +29,6 @@ IconTheme* IconTheme::pinstance = NULL;
  * is not found in specified one
  */
 #define FALLBACK_THEME "hicolor"
-
-/*
- * A list of directories we must look at,
- * sort by order; desktop specific should
- * be sorted last
- *
- * NOTE: Make sure directories ends with '/'
- */
-#define ICON_DIR_SIZE 5
-const char* icon_directories[] = {
-	"/home/sanel/.icons/",        // mandatory first
-	"/usr/local/share/",          // should be XDG_DATA_DIRS, mandatory second
-	"/usr/share/pixmaps/",        // mandatory third
-
-	// desktop specific
-	"/usr/share/icons/",
-	"/opt/kde/share/icons/"
-};
 
 /*
  * Icon Theme Specification adds .svg too, but
@@ -60,7 +43,7 @@ const char* icon_extensions[] = {
 int check_sz(int sz)
 {
 	if(sz < ICON_SIZE_TINY || sz > ICON_SIZE_ENORMOUS) {
-		EWARNING("Unknown size '%i', defaulting to the 32x32\n", sz);
+		EWARNING("Unsupported size '%i', defaulting to the 32x32\n", sz);
 		return ICON_SIZE_MEDIUM;
 	}
 
@@ -102,6 +85,50 @@ IconTheme::~IconTheme()
 {
 }
 
+/*
+ * Load base directories required from Theme specs
+ * in order as noted there. The order is:
+ *  1. /home/user/.icons
+ *  2. XDG_DATA_DIRS/icons
+ *  3. /usr/share/pixmaps
+ *  4. rest
+ */
+void IconTheme::init_base_dirs(void)
+{
+	theme_dirs.reserve(10);
+
+	// TODO: I will need some make_dir_path() functions somewhere
+	String path = dir_home();
+	path += "/.icons/";
+
+	theme_dirs.push_back(path);
+
+	vector<String> xdg_data_dirs;
+	unsigned int sz = system_data_dirs(xdg_data_dirs);
+
+	if(sz) {
+		for(unsigned int i = 0; i < sz; i++) {
+			path.clear();
+			path = xdg_data_dirs[i];
+			path += dir_separator();
+
+			theme_dirs.push_back(path);
+		}
+	}
+
+	theme_dirs.push_back("/usr/share/pixmaps/");
+	theme_dirs.push_back("/opt/kde/share/icons/");
+}
+
+/*
+void IconTheme::init(void)
+{
+	if(IconTheme::pinstance != NULL)
+		return;
+	IconTheme::pinstance = new IconTheme();
+}	
+*/
+
 void IconTheme::init(const char* theme) 
 {
 	if(IconTheme::pinstance != NULL)
@@ -109,6 +136,8 @@ void IconTheme::init(const char* theme)
 
 	EASSERT(theme != NULL);
 	IconTheme::pinstance = new IconTheme();
+
+	IconTheme::pinstance->init_base_dirs();
 	IconTheme::pinstance->load_theme(theme);
 }
 
@@ -127,6 +156,11 @@ IconTheme* IconTheme::instance(void)
 	return IconTheme::pinstance;
 }
 
+/*
+ * If given theme inherits one, all theme_dirs should
+ * be prescanned for that theme; that applies too if inherited
+ * inherits another, and etc.
+ */
 void IconTheme::load_theme(const char* theme) 
 {
 	curr_theme = theme;
@@ -140,10 +174,14 @@ void IconTheme::load_theme(const char* theme)
 	 * if found, try to locate index.theme since is
 	 * sign for theme directory
 	 */
-	for(int i = 0; i < ICON_DIR_SIZE; i++) {
-		if(dir_exists(icon_directories[i])) {
-			tpath = icon_directories[i];
+	const char* tt;
+	for(unsigned int i = 0; i < theme_dirs.size(); i++) {
+		tt = theme_dirs[i].c_str();
+
+		if(dir_exists(tt)) {
+			tpath = tt;
 			tpath += curr_theme;
+
 			if(dir_exists(tpath.c_str())) {
 				tpath += dir_separator();
 

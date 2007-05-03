@@ -100,7 +100,7 @@ void ExpandableGroup::layout()
 	if(!layout_damage()) 
 		return;
 
-	if (!(layout_damage()&(fltk::LAYOUT_WH|fltk::LAYOUT_DAMAGE))) 
+	if(!(layout_damage()&(fltk::LAYOUT_WH|fltk::LAYOUT_DAMAGE))) 
 	{
 		Widget::layout();
 		return;
@@ -167,6 +167,7 @@ void ExpandableGroup::layout()
 	 * count how many childs are fully visible not overlapping BORDER_OFFSET
 	 * so we can show scrollbar if needed
 	 */
+
 	int vis = 0;
 	for(int i = 0; i < children(); i++) {
 		if(((child(i)->y() + child(i)->h()) <= (h() - BORDER_OFFSET)) && (child(i)->y() >= BORDER_OFFSET))
