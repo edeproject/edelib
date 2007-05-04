@@ -3,6 +3,7 @@
 	* stringtok can work witout delimiter so delimiter
 	is removed from default entry in system_config_dirs()
 	* More tests for system_xxx_dirs()
+	* Added Run.{h,cpp}
 
 2007-05-04  Sanel <karijes@users.sourceforge.net>
 
