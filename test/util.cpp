@@ -80,6 +80,14 @@ UT_FUNC(XDGPathTest, "Test XDG paths")
 	unsetenv("XDG_DATA_DIRS");
 	lst.clear();
 
+	setenv("XDG_DATA_DIRS", "/home/foo", 1);
+	ret = system_data_dirs(lst);
+	UT_VERIFY( ret == 1 );
+	UT_VERIFY( lst[0] == "/home/foo" );
+
+	unsetenv("XDG_DATA_DIRS");
+	lst.clear();
+
 	// in case of empty XDG_DATA_DIRS
 	ret = system_data_dirs(lst);
 	UT_VERIFY( ret == 2 );
@@ -95,6 +103,15 @@ UT_FUNC(XDGPathTest, "Test XDG paths")
 	UT_VERIFY( lst[1] == "/etc/yourconf" );
 	UT_VERIFY( lst[2] == "/usr/local/share/conf" );
 	UT_VERIFY( lst[3] == "/some/path/conf" );
+
+	unsetenv("XDG_CONFIG_DIRS");
+	lst.clear();
+
+	setenv("XDG_CONFIG_DIRS", "/etc/mydirconf", 1);
+	ret = system_config_dirs(lst);
+	UT_VERIFY( ret == 1 );
+	UT_VERIFY( lst.size() == 1 );
+	UT_VERIFY( lst[0] == "/etc/mydirconf" );
 
 	unsetenv("XDG_CONFIG_DIRS");
 	lst.clear();

@@ -86,10 +86,10 @@ String user_cache_dir(void)
 int system_config_dirs(vector<String>& lst)
 {
 	/*
-	 * for /etc/xdg is added endig ':' intentionaly so 
-	 * stringtok can work
+	 * stringtok will correctly see /etc/xdg (without ':')
+	 * as one entry
 	 */
-	return _dirs_get("XDG_CONFIG_DIRS", "EDE_CONFIG_DIRS", "/etc/xdg:", lst);
+	return _dirs_get("XDG_CONFIG_DIRS", "EDE_CONFIG_DIRS", "/etc/xdg", lst);
 }
 
 int system_data_dirs(vector<String>& lst)

@@ -1,5 +1,11 @@
 2007-05-04  Sanel <karijes@users.sourceforge.net>
 
+	* stringtok can work witout delimiter so delimiter
+	is removed from default entry in system_config_dirs()
+	* More tests for system_xxx_dirs()
+
+2007-05-04  Sanel <karijes@users.sourceforge.net>
+
 	* Added color_fltk_to_rgb and color_fltk_to_html
 	* More tests for color functions and ones for above
 
