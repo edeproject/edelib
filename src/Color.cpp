@@ -11,8 +11,10 @@
  */
 
 #include <edelib/Color.h>
+#include <edelib/Debug.h>
 #include <string.h> // strlen
 #include <stdlib.h> // strtol
+#include <stdio.h>  // snprintf
 
 EDELIB_NAMESPACE {
 
@@ -31,15 +33,23 @@ unsigned int hex2int(char hex)
 	return val;
 }
 
-#define FIX_COL(c) if(c > 255) c = 255
-
-unsigned int color_rgb_to_fltk(unsigned int r, unsigned int g, unsigned int b) 
+unsigned int color_rgb_to_fltk(unsigned char r, unsigned char g, unsigned char b) 
 {
-	FIX_COL(r);
-	FIX_COL(g);
-	FIX_COL(b);
-
 	return (unsigned int) ((r << 24) + (g << 16) + (b << 8));
+}
+
+void color_fltk_to_rgb(unsigned int color, unsigned char& r, unsigned char& g, unsigned char& b) 
+{
+	/*
+	 * 255 < color < 0 can't be correctly computed without colormap
+	 * which is distributed with fltk, and can be changed
+	 */
+	if(color > 0 && (!(color & 0xffffff00)))
+		EDEBUG("color_fltk_to_rgb() got value from FLTK colormap! Use fltk::split_color() instead\n");
+
+	r = color >> 24;
+	g = (color >> 16) & 0xff;
+	b = (color >> 8) & 0xff;
 }
 
 unsigned int color_html_to_fltk(const char* col) 
@@ -77,6 +87,15 @@ unsigned int color_html_to_fltk(const char* col)
 		return 0;
 
 	return color_rgb_to_fltk(r, g, b);
+}
+
+void color_fltk_to_html(unsigned int color, char* buff)
+{
+	unsigned char r, g, b;
+	color_fltk_to_rgb(color, r, g, b);
+
+	// TODO: can we avoid snprintf ???
+	snprintf(buff, 8, "#%02x%02x%02x", r, g, b);
 }
 
 }

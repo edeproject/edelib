@@ -25,7 +25,21 @@ EDELIB_NAMESPACE {
  * \param g is green component
  * \param b is blue component
  */
-EDELIB_API unsigned int color_rgb_to_fltk(unsigned int r, unsigned int g, unsigned int b);
+EDELIB_API unsigned int color_rgb_to_fltk(unsigned char r, unsigned char g, unsigned char b);
+
+/**
+ * Decompose FLTK color to rgb components.
+ *
+ * \note This function will decompose corectly values <b>grater</b> than 255; for less values
+ * use fltk::split_color(), since it will do lookup inside colormap. Speaken simply, don't
+ * use this function for predefined FLTK colors (fltk::WHITE, fltk::RED, ...)
+ *
+ * \param color is FLTK color (<b>not</b> predefined)
+ * \param r is extracted red component
+ * \param g is extracted green component
+ * \param b is extracted blue component
+ */
+EDELIB_API void color_fltk_to_rgb(unsigned int color, unsigned char& r, unsigned char& g, unsigned char& b);
 
 /**
  * Tries to convert html-like color names to FLTK color space. This function
@@ -37,6 +51,18 @@ EDELIB_API unsigned int color_rgb_to_fltk(unsigned int r, unsigned int g, unsign
  * \param col is named color, if is NULL, it will return 0 (black)
  */
 EDELIB_API unsigned int color_html_to_fltk(const char* col);
+
+/**
+ * Convert FLTK color to html-like representation. Given buffer is assumed to
+ * be a prior allocated and <b>must</b> be at least 8 character wide. Final result
+ * will be in form <em>\#rrggbb</em> and string will be null terminated.
+ *
+ * \note For this function the same applies as for color_fltk_to_rgb()
+ *
+ * \param color is FLTK color
+ * \param buff is buffer where to place html color
+ */
+EDELIB_API void color_fltk_to_html(unsigned int color, char* buff);
 
 }
 #endif

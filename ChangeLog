@@ -1,3 +1,18 @@
+2007-05-04  Sanel <karijes@users.sourceforge.net>
+
+	* Added color_fltk_to_rgb and color_fltk_to_html
+	* More tests for color functions and ones for above
+
+2007-05-02  Sanel <karijes@users.sourceforge.net>
+
+	* Added Color.{h,cpp} with color conversion functions
+	* Added tests for color functions, with some tuning inside them
+
+2007-04-29  Sanel <karijes@users.sourceforge.net>
+
+	* Removed declaration inside loop in IconChooser
+	* Added fallback in dir_home() via getpwuid_r
+
 2007-04-27  Sanel <karijes@users.sourceforge.net>
 
 	* IconChooser will open dialog even when directory does not exists
