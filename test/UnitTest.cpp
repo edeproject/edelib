@@ -168,7 +168,7 @@ void UnitTestSuite::run(bool verbose)
 		{
 			failed++;
 
-			printf("Test %i: %s (%s): Failed!\n", i, t->test->name(), t->test->description());
+			printf("Test %2i: %20s (%-30s): %30s\n", i, t->test->name(), t->test->description(), "FAILED!");
 			if(t->test->msglist_size())
 			{
 				for(const UTMsgList* ml = t->test->msglist(); ml; ml = ml->next)
@@ -185,7 +185,7 @@ void UnitTestSuite::run(bool verbose)
 		{
 			passed++;
 			if(verbose)
-				printf("Test %i: %s (%s): Success\n", i, t->test->name(), t->test->description());
+				printf("Test %2i: %20s (%-30s): %30s\n", i, t->test->name(), t->test->description(), "Success");
 		}
 	}
 
