@@ -10,7 +10,6 @@ TODO list:
  * organize documentation into modules
  * Sound should have explicit option for setting various drivers
  * non-blocking Sound
- * NULL is on FreeBSD defined differently; check this
  * documentation install strangely depends on xxx/doc/edelib-xxx/html directory; how ?
  * more checks on GenDocumentation since /usr/bin/env gawk -f does not work
  * dir_list() should expand directory to current when "." is added only

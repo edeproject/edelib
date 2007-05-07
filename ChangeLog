@@ -6,6 +6,7 @@
 	* added build_filename() and build_dirname() functions with tests
 	* Added gmtime_r() checks if datetime.m4
 	* Date can be set via local date or UTC
+	* Fixed NULL defines :)
 
 2007-05-06  Sanel <karijes@users.sourceforge.net>
 

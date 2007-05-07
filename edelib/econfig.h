@@ -17,12 +17,11 @@
  * Needed so we don't have to include
  * necessary libraries.
  */
-
 #ifndef NULL
 	#ifndef __cplusplus
-		#define NULL 0
-	#else 
 		#define NULL ((void*)0)
+	#else 
+		#define NULL 0
 	#endif
 #endif
 
