@@ -218,7 +218,7 @@ ConfigEntry* ConfigSection::find_entry(const char* key)
 /*
  * Config methods
  */
-Config::Config() : errcode(0), linenum(0), sectnum(0)
+Config::Config() : errcode(0), linenum(0), sectnum(0), cached(0)
 {
 }
 
@@ -408,15 +408,25 @@ ConfigSection* Config::find_section(const char* section)
 	int slen = strlen(section);
 	unsigned hh = do_hash(section, slen);
 
+	// check if we have cached section
+	if(cached && cached->shash == hh && (strncmp(cached->sname, section, cached->snamelen) == 0))
+	{
+#ifdef CONFIG_INTERNAL
+		printf("Found %s cached\n", cached->sname);
+#endif
+		return cached;
+	}
+
 	SectionList::iterator it = section_list.begin();
 	for(; it != section_list.end(); ++it)
 	{
 		ConfigSection *cs = *it;
-		if(cs->shash == hh && strncmp(cs->sname, section, cs->snamelen) == 0)
+		if(cs->shash == hh && (strncmp(cs->sname, section, cs->snamelen) == 0))
 		{
 #ifdef CONFIG_INTERNAL
 			printf("XXX found: %s\n", cs->sname);
 #endif
+			cached = cs;
 			return cs;
 		}
 	}
@@ -498,7 +508,21 @@ bool Config::get(const char* section, const char* key, int& ret, int deflt)
 bool Config::get(const char* section, const char* key, bool& ret, bool deflt)
 {
 	GET_VALUE(section, key, ret, deflt);
-	ret = (bool)atoi(value);
+	//ret = (bool)atoi(value);
+	
+	str_tolower((unsigned char*)value);
+	int len = strlen(value);
+
+	if(len == 4 && (strncmp(value, "true", 4) == 0))
+		ret = true;
+	else if(len == 5 && (strncmp(value, "false", 5) == 0))
+		ret = false;
+	else if(len == 1 && (strncmp(value, "1", 1) == 0))
+		ret = true;
+	else if(len == 0 && (strncmp(value, "0", 1) == 0))
+		ret = false;
+	else
+		ret = deflt;
 	return true;
 }
 
@@ -557,13 +581,11 @@ bool Config::get_localized(const char* section, const char* key, char* ret, int 
 	if((lang = setlocale(LC_MESSAGES, NULL)) == NULL)
 #endif
 */
-		lang = getenv("LANG");
+	lang = getenv("LANG");
 
 	// fallback
 	if(!lang) 
 		return get(section, key, ret, size);
-
-	//printf("--> %s\n", lang);
 
 	// do not use default locales
 	if (lang[0] == 'C' || (strncmp(lang, "en_US", 5) == 0))

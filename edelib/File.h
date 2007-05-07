@@ -37,8 +37,9 @@ enum FileIOMode
 	FIO_TRUNC   = (1<<5)           ///< truncate currently opened file
 };
 
-/*! \class File
- * A system file io stream.
+/**
+ * \class File
+ * \brief A system file io stream.
  *
  * File is portable wrapper for various
  * functions for reading and writing files.
@@ -184,18 +185,23 @@ class EDELIB_API File
 		int printf(const char* fmt, ...);
 };
 
-/*! \addtogroup functions
- * @{
+/** 
+ * Check if file exists and is regular file 
+ * \related File
  */
-/** Check if file exists and is regular file */
 EDELIB_API bool file_exists(const char* name);
 
-/** Check if file is readable */
+/** 
+ * Check if file is readable 
+ * \related File
+ */
 EDELIB_API bool file_readable(const char* name);
 
-/** Check if file is writeable */
+/** 
+ * Check if file is writeable 
+ * \related File
+ */
 EDELIB_API bool file_writeable(const char* name);
-/*! @} */
 }
 
 #endif

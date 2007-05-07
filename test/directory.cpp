@@ -24,7 +24,6 @@ UT_FUNC(DirectoryFunctions, "Test Directory functions")
 	UT_VERIFY( dir_exists("../edelib") );
 
 	UT_VERIFY( dir_home() != "" );
-	UT_VERIFY( dir_separator() == "/" );
 	UT_VERIFY( dir_current() != "" );
 
 	vector<String> dlist;

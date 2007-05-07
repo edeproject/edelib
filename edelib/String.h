@@ -18,8 +18,9 @@
 
 EDELIB_NAMESPACE {
 
-/*! \class String
- * A (relatively simple) string implementation.
+/**
+ * \class String
+ * \brief A (relatively simple) string implementation.
  *
  * This implementation tries to be compatible with
  * std::string implementation, althought it does not implement

@@ -5,7 +5,6 @@ TODO list:
  * correct File::write(const char* w, int s) -> File::write(const char* w)
  * in Config, don't allow [] sections
  * Config::remove_entry() finish
- * add convinient Time class
  * XDG functions in Util.h needs more checking
  * what should set_textdomain_dir() and set_textdomain() return when NLS is disabled ?
  * organize documentation into modules
@@ -16,5 +15,5 @@ TODO list:
  * more checks on GenDocumentation since /usr/bin/env gawk -f does not work
  * dir_list() should expand directory to current when "." is added only
  * add local snprintf/vsnprintf/scandir/dirent(???)
- * IconTheme will probably fail if Directories contains spaces between ',' delimiters;
- trim this
+ * IconTheme will probably fail if Directories contains spaces between ',' delimiters; trim this
+ * Date can accept set(0,1,0); leave this or... (possible bugs ?)

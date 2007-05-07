@@ -35,8 +35,6 @@ EDELIB_API void EFatal(const char* fmt, ...);
 
 EDELIB_NAMESPACE {
 
-/*!\addtogroup functions
- * @{ */
 enum MsgType
 {
 	MsgDebug = 0,         ///< debug messages
@@ -76,6 +74,5 @@ typedef void (*MsgHandlerType)(MsgType t, const char* msg);
  * \endcode
  */
 EDELIB_API void InstallMsgHandler(MsgHandlerType m);
-/*! @} */
 }
 #endif

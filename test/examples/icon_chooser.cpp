@@ -16,22 +16,23 @@ void close_cb(fltk::Widget*, void* w)
 	ww->hide();
 }
 
-void run_cb(fltk::Widget*, void*)
+void run_cb(fltk::Widget*, void*) 
 {
-	const char* dd = "/opt/kde/share/icons/default.kde/48x48/apps/";
+	//const char* dd = "/opt/kde/share/icons/default.kde/48x48/apps/";
+	const char* dd = "/";
 	if(!edelib::dir_exists(dd))
 		printf("Directory %s does not exists, continuing...\n", dd);
 
 	edelib::String r = edelib::icon_chooser(dd);
 
-	if(!r.empty())
+	if(!r.empty()) 
 	{
 		image_box->image(fltk::SharedImage::get(r.c_str()));
 		image_box->redraw();
 	}
 }
 
-int main()
+int main() 
 {
 	fltk::Window* win = new fltk::Window(290, 180, "Icon chooser test");
 	win->begin();

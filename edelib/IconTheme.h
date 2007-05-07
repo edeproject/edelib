@@ -21,7 +21,7 @@ EDELIB_NAMESPACE {
 
 /**
  * \class IconTheme
- * Loads named icon according to given theme.
+ * \brief Loads named icon according to given theme.
  *
  * IconTheme is icon loader that follows <em>Icon Theme Specification</em>
  * from http://www.freedesktop.org and support PNG and XPM icons. This means 

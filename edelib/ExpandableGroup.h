@@ -23,7 +23,7 @@ EDELIB_NAMESPACE {
 
 /**
  * \class ExpandableGroup
- * A group with applied layout on childs.
+ * \brief A group with applied layout on childs.
  *
  * ExpandableGroup is group where all childs are placed
  * next to each other. Resizing this group will dynamically

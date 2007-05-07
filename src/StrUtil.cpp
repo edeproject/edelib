@@ -101,4 +101,5 @@ bool str_ends(const char* str, const char* test)
 	}
 	return true;
 }
+
 }

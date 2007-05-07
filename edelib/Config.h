@@ -50,7 +50,8 @@ typedef list<ConfigSection*> SectionList;
 #endif
 
 #ifndef SKIP_DOCS
-/*! \class ConfigSection
+/**
+ * \class ConfigSection
  * Section in config file.
  *
  * Section is a field in config file, containing
@@ -81,8 +82,9 @@ class EDELIB_API ConfigSection
 #endif
 
 
-/*! \class Config
- * A config file reader.
+/**
+ * \class Config
+ * \brief A config file reader.
  *
  * This class is aimed for reading and storing classic INI files
  * in form:
@@ -139,6 +141,7 @@ class EDELIB_API Config
 		unsigned int errcode;
 		unsigned int linenum;
 		unsigned int sectnum;
+		ConfigSection* cached;
 
 		SectionList section_list;
 

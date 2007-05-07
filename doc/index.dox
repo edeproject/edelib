@@ -44,7 +44,7 @@ you can either install it at usuall paths or in edelib root directory.
 
 To build edelib, run:
  \code
-  ./prepare
+  ./autogen.sh
   ./configure
  \endcode
 or inspect configure options with <i>./configure --help</i>. After that simply run:

@@ -19,8 +19,6 @@
 
 EDELIB_NAMESPACE {
 
-/*!\addtogroup functions
- * @{ */
 /** 
  * Get default directory where should be stored user specific
  * configuration files. Place is determined according to the
@@ -69,6 +67,38 @@ EDELIB_API int system_config_dirs(vector<String>& lst);
  */
 EDELIB_API int system_data_dirs(vector<String>& lst);
 
-/*! @} */
+/**
+ * This function will create correct filename path, separating each item
+ * with exact one separator. It will also correct possible given incorrect parameters.
+ * Function will not touch trailing separator, if given.
+ *
+ * Sample:
+ * \code
+ *   build_filename("/", "/home/foo", "foofile", "baz") == "/home/foo/foofile/baz";
+ *   build_filename("/", "myplace/dir", "myfile") == "myplace/dir/myfile";
+ *   // corrections
+ *   build_filename("/", "/home////foo", "//foofile///", "/baz//") == "/home/foo/foofile/baz";
+ *   // correct trailing data, since does not match to separator
+ *   build_filename("/", "///home////foo", "//foofile///", "/baz//") == "/home/foo/foofile/baz";
+ *   // also correct first parameter
+ *   build_filename("/", "/home/foo/////") == "/home/foo";
+ * \endcode
+ *
+ * \return string with given parameters
+ * \param separator is separator
+ * \param p1 first parameter
+ * \param p2 optional second; if is NULL (default), it is ignored
+ * \param p3 optional third; if is NULL (default), it is ignored
+ */
+EDELIB_API String build_filename(const char* separator, const char* p1, const char* p2 = NULL, const char* p3 = NULL);
+
+/**
+ * This function behaves the same as build_filename(), except will always add ending separator, like:
+ * \code
+ *   build_dirname("/", "/home/foo") == "/home/foo/";
+ *   build_dirname("/", "home","mydir") == "home/mydir/";
+ * \endcode
+ */
+EDELIB_API String build_dirname(const char* separator, const char* p1, const char* p2 = NULL, const char* p3 = NULL);
 }
 #endif

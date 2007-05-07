@@ -1,4 +1,5 @@
 #include <edelib/ExpandableGroup.h>
+#include <edelib/Color.h>
 #include <fltk/Window.h>
 #include <fltk/run.h>
 #include <fltk/Button.h>
@@ -9,7 +10,9 @@ int main()
 	win->begin();
 	edelib::ExpandableGroup* eg = new edelib::ExpandableGroup(15, 15, 455, 315);
 	eg->box(fltk::DOWN_BOX);
-	eg->color(fltk::WHITE);
+	//eg->color(fltk::WHITE);
+	//eg->color(edelib::color_html_to_fltk("#abc"));
+	eg->color(edelib::color_rgb_to_fltk(255, 255, 255));
 	eg->begin();
 		new fltk::Button(0, 0, 45, 45, "ch1");
 		new fltk::Button(0, 0, 45, 45, "ch2");

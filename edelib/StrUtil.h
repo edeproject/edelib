@@ -18,34 +18,39 @@
 
 EDELIB_NAMESPACE {
 
-//!\defgroup functions Functions
-
-/*!\addtogroup functions
- * C-string like functions that operates directly on buffer.
- * \note Buffer <b>must</b> be writeable, so you can't just
- * do:
- *  \code
- *  str_trim(" foo ");
- *  \endcode
- * @{ */
-/** removes leading spaces */
+/**
+ * Removes leading space. Operates directly on buffer.
+ */
 EDELIB_API char* str_trimleft(char* str);
 
-/** removes trailing spaces */
+/**
+ * Removes leading space. Operates directly on buffer.
+ */
 EDELIB_API char* str_trimright(char* str);
 
-/** removes leading and trailing spaces */
+/**
+ * Same as str_trimleft(str_trimright(str)).
+ */
 EDELIB_API char* str_trim(char* str);
 
-/** makes all characters lower */
+/**
+ * Makes all characters lower. Operates directly on buffer.
+ */
 EDELIB_API unsigned char* str_tolower(unsigned char* str);
 
-/** makes all characters upper */
+/**
+ * Makes all characters upper. Operates directly on buffer.
+ */
 EDELIB_API unsigned char* str_toupper(unsigned char* str);
 
-/** check if string ends with given test string */
+/**
+ * Check if string ends with given test string.
+ *
+ * \return true if ends or false if not
+ * \param str is where to search
+ * \param test is what to search
+ * */
 EDELIB_API bool str_ends(const char* str, const char* test);
-/*! @} */
 
 #ifndef SKIP_DOCS
 inline bool isws(char c, const char* str) { return (strchr(str, c) != NULL); }
@@ -53,8 +58,11 @@ inline bool isws(char c, const char* str) { return (strchr(str, c) != NULL); }
 
 /**
  * A generic String tokenizer (or spliter), similar to stringtok, but works on
- * given container (container that have push_back()). If delimiter is not found
- * nothing will be put in container.
+ * given container (container that have push_back()). 
+ *
+ * If delimiter is not found * in container will be put whole string parameter 
+ * (or container will be size 1). If given string is empty, in container will
+ * not be put anything.
  *
  * This tokenizer is found in libstdc++ documentation. Author is unknown.
  *

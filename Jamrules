@@ -251,6 +251,9 @@ rule MakeTest
 	local ldir = [ FDirName $(TOP) $(EDELIB_LIBDIR) ] ;
 	Depends $(<)  : $(elib) ;
 	Depends tests : $(<) ;
+	#LINKFLAGS on $(<) = -pg ;
+	LINKFLAGS on $(<) = -rdynamic ;
+
 	LINKLIBS on $(<) = -L$(ldir) -l$(EDELIB) $(3) -l$(STDLIB) ;
 	Main $(<) : $(>) ;
 }

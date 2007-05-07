@@ -1,3 +1,28 @@
+2007-05-07  Sanel <karijes@users.sourceforge.net>
+
+	* dir_separator() will return const char* (why the hell it 
+	was returning String?)
+	* removed entry (dir_separator() == "/") in test/directory.cpp
+	* added build_filename() and build_dirname() functions with tests
+	* Added gmtime_r() checks if datetime.m4
+	* Date can be set via local date or UTC
+
+2007-05-06  Sanel <karijes@users.sourceforge.net>
+
+	* Added Date class with tests
+	* Corrected \brief tag for doxygen in rest of the code
+	* Cleaned obsolete modules for doxygen
+	* index.dox s/prepare/autohen.sh
+	* Fixed flawed docs for stringtok; uh!
+	* Assertion will dump stack if apropriate functions are available
+	* MakeTest will by default link with '-rdynamic' flag, so stack dump
+	can be corectly shown
+
+2007-05-05  Sanel <karijes@users.sourceforge.net>
+
+	* Config can accept true/false strings as replacement for 1/0
+	* Config section lookup is now cached, speeding things considerably
+
 2007-05-04  Sanel <karijes@users.sourceforge.net>
 
 	* stringtok can work witout delimiter so delimiter

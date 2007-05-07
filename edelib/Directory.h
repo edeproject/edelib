@@ -19,23 +19,35 @@
 
 EDELIB_NAMESPACE {
 
-/** Check if directory exists */ 
+/** 
+ * Check if directory exists 
+ */ 
 EDELIB_API bool dir_exists(const char* name);
 
-/** Check if directory is readable */
+/** 
+ * Check if directory is readable 
+ */
 EDELIB_API bool dir_readable(const char* name);
 
-/** Check if directory is writeable */
+/** 
+ * Check if directory is writeable 
+ */
 EDELIB_API bool dir_writeable(const char* name);
 
-/** Returns user home directory or empty String if fails */
+/**
+ * Returns user home directory or empty String if fails 
+ */
 EDELIB_API String dir_home(void);
 
-/** Returns current directory or empty String if fails */
+/** 
+ * Returns current directory or empty String if fails 
+ */
 EDELIB_API String dir_current(void);
 
-/** Returns platform specific separator to delimit directories in path */
-EDELIB_API String dir_separator(void);
+/** 
+ * Returns platform specific separator to delimit directories in path 
+ */
+EDELIB_API const char* dir_separator(void);
 
 /**
  * List content of given directory. If directory is accessible, given

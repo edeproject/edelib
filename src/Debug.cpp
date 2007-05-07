@@ -23,6 +23,22 @@
 #define EMsgWarn          EDELIB_NS::MsgWarn
 #define EMsgFatal         EDELIB_NS::MsgFatal
 
+#ifndef __GLIBC__
+	#define DUMP_STACK(fd) 0
+#else
+#include <execinfo.h>
+void __dump_stack(int fd) {
+	// stacktrace depth calls
+	void* strace[256];
+   	const int sz = backtrace(strace, int (sizeof(strace) / sizeof(*strace)));
+	// fd means stdout/stderr/...
+   	backtrace_symbols_fd(strace, sz, fd);
+}
+	
+#define DUMP_STACK(fd) __dump_stack(fd)
+#endif
+
+
 EMsgHandlerType default_msg_handler = 0;
 
 void InstallMsgHandler(EMsgHandlerType m)
@@ -72,6 +88,14 @@ void EFatal(const char* fmt, ...)
 	else
 	{
 		fprintf(stderr, "%s", buff);
+
+		/*
+		 * glibc redefined stderr pointing it to internal IO struct,
+		 * so here is used good-old-defalut-normal-every_one_use_it
+		 * alias for it. Yuck!
+		 */
+		DUMP_STACK(2);
+
 		abort();
 	}
 }

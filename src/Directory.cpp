@@ -103,7 +103,7 @@ String dir_current(void)
 		return "";
 }
 
-String dir_separator(void)
+const char* dir_separator(void)
 {
 	return "/";
 }
@@ -126,7 +126,7 @@ bool dir_list(const char* dir, vector<String>& lst, bool full_path, bool show_hi
 	lst.reserve(n);
 
 	bool have_sep;
-	if(str_ends(dirstr.c_str(), dir_separator().c_str()))
+	if(str_ends(dirstr.c_str(), dir_separator()))
 		have_sep = true;
 	else
 		have_sep = false;

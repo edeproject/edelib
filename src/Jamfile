@@ -16,6 +16,7 @@ SOURCE = Config.cpp
 		 Nls.cpp
 		 String.cpp
 		 File.cpp
+		 DateTime.cpp
 		 Directory.cpp
 		 Debug.cpp 
 		 Sound.cpp 

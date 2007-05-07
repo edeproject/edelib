@@ -20,7 +20,7 @@ EDELIB_NAMESPACE {
 
 /**
  * \class XSet
- * A class for setting some X11 options.
+ * \brief  A class for setting some X11 options.
  *
  * This class contains options that allows setting
  * a minimal set of options found in 'xset' command (run <em>man xset</em>

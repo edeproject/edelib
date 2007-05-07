@@ -121,3 +121,34 @@ UT_FUNC(XDGPathTest, "Test XDG paths")
 	UT_VERIFY( ret == 1 );
 	UT_VERIFY( lst[0] == "/etc/xdg" );
 }
+
+
+UT_FUNC(PathBuildTest, "Test path builders")
+{
+	String s = build_filename("/", "foo", "baz", "taz");
+	UT_VERIFY( s == "foo/baz/taz" );
+
+	s = build_filename("/", "/foo/baz////", "baz", "myfile.txt/");
+	UT_VERIFY( s == "/foo/baz/baz/myfile.txt" );
+
+	s = build_filename("||", "|foo|", "baz", "file.txt");
+	UT_VERIFY( s == "foo||baz||file.txt" );
+
+	s = build_filename("||", "|foo|", "baz", "||||||||file.txt");
+	UT_VERIFY( s == "foo||baz||file.txt" );
+
+	s = build_filename("/", "home", "myfile.txt");
+	UT_VERIFY( s == "home/myfile.txt" );
+
+	s = build_filename("/", "///home/", "/myfile.txt//");
+	UT_VERIFY( s == "/home/myfile.txt" );
+
+	s = build_dirname("/", "/", "home", "mydir");
+	UT_VERIFY( s == "/home/mydir/" );
+
+	s = build_dirname("/", "/", "/", "/demodir");
+	UT_VERIFY( s == "/demodir/" );
+
+	s = build_dirname("", "/", "/", "/demodir");
+	UT_VERIFY( s == "///demodir" );
+}

@@ -67,6 +67,66 @@ int _dirs_get(const char* env1, const char* env2, const char* fallback, vector<S
 	stringtok(lst, path, ":");
 	return lst.size();
 }
+#include <stdio.h>
+String _path_builder(const char* separator, bool ending, const char* p1, const char* p2 = NULL, const char* p3 = NULL)
+{
+	bool trailing = false;
+	int slen = strlen(separator);
+
+	if(strncmp(p1, separator, slen) == 0)
+		trailing = true;
+
+	String str;
+	str.reserve(100);
+	str = p1;
+
+	if(p2) {
+		str += separator;
+		str += p2;
+	}
+
+	if(p3) {
+		str += separator;
+		str += p3;
+	}
+
+	// separator == ""
+	if(!slen)
+		return str;
+
+	// now tokenize it
+	vector<String> vs;
+	stringtok(vs, str, separator);
+
+	// this should not happen
+	EASSERT(vs.size() > 0 && "This should not be happened !!!");
+
+	str.clear();
+	if(trailing)
+		str += separator;
+
+	unsigned int sz = vs.size();
+	/*
+	 * This is intentionaly so cases like
+	 * build_filename("/", "/", "/", "foo") can be accepted
+	 */
+	if(sz > 1) {
+		unsigned int i = 0;
+		sz -= 1;
+		for(; i < sz; i++) {
+			str += vs[i];
+			str += separator;
+		}
+		// take last one
+		str += vs[i];
+	} else
+		str += vs[0];
+
+	if(ending)
+		str += separator;
+
+	return str;
+}
 
 String user_config_dir(void) 
 { 
@@ -95,6 +155,22 @@ int system_config_dirs(vector<String>& lst)
 int system_data_dirs(vector<String>& lst)
 {
 	return _dirs_get("XDG_DATA_DIRS", "EDE_DATA_DIRS", "/usr/local/share:/usr/share", lst);
+}
+
+String build_filename(const char* separator, const char* p1, const char* p2, const char* p3)
+{
+	EASSERT(separator != NULL);
+	EASSERT(p1 != NULL);
+
+	return _path_builder(separator, false, p1, p2, p3);
+}
+
+String build_dirname(const char* separator, const char* p1, const char* p2, const char* p3)
+{
+	EASSERT(separator != NULL);
+	EASSERT(p1 != NULL);
+
+	return _path_builder(separator, true, p1, p2, p3);
 }
 
 }

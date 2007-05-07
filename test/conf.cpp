@@ -32,6 +32,18 @@ UT_FUNC(ConfigTest, "Test Config class")
 		UT_VERIFY(c.get("Screen", "Pattern", dummy2, 33.0) == true);
 		UT_VERIFY(c.get("Mojo", "Jojo", dummy, 33) == false);
 
+		bool dummy3;
+		UT_VERIFY(c.get("Panel", "RunBrowser", dummy3, false) == true);
+		UT_VERIFY( dummy3 == true );
+		UT_VERIFY(c.get("Panel", "RunBrowser2", dummy3, false) == true);
+		UT_VERIFY( dummy3 == true );
+		UT_VERIFY(c.get("Panel", "RunBrowser3", dummy3, false) == true);
+		UT_VERIFY( dummy3 == true );
+		UT_VERIFY(c.get("Panel", "RunBrowser4", dummy3, false) == true);
+		UT_VERIFY( dummy3 == true );
+		UT_VERIFY(c.get("Panel", "RunBrowser5", dummy3, true) == true);
+		UT_VERIFY( dummy3 == false );
+
 		// test write
 		c.set("Panel", "AutoHide", 45);
 		c.set("Mouse", "Thresh", 65);

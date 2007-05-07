@@ -1,4 +1,5 @@
 #include <edelib/StrUtil.h>
+#include <edelib/Vector.h>
 #include <string.h>
 #include "UnitTest.h"
 
@@ -62,4 +63,38 @@ UT_FUNC(strtest, "Test strutil")
 	UT_VERIFY( str_ends("sample/path////aa", "/aa") == true );
 	UT_VERIFY( str_ends("/aa", "/aa") == true );
 	UT_VERIFY( str_ends("/aa", "/aaaaa") == false);
+}
+
+UT_FUNC(strtok, "Test strtok")
+{
+	vector<String> vs;
+	stringtok(vs, "//this///is//sample//string", "/");
+	UT_VERIFY( vs.size() == 4 ); 
+	vs.clear();
+
+	// bug or feature ???
+	stringtok(vs, "//this///is//sample/string", "//");
+	UT_VERIFY( vs.size() == 4 ); 
+	vs.clear();
+
+	// bug or feature ???
+	stringtok(vs, "/|this/|is//sample/string", "/|");
+	UT_VERIFY( vs.size() == 4 ); 
+	vs.clear();
+
+	stringtok(vs, "stringblastringblastring", "string");
+	UT_VERIFY( vs.size() == 2 );
+	UT_VERIFY( vs[0] == "bla" );
+	UT_VERIFY( vs[1] == "bla" );
+	vs.clear();
+
+	stringtok(vs, "foo,baz,foo,baz,foo,baz,foo,gaz", ",");
+	UT_VERIFY( vs.size() == 8 );
+	UT_VERIFY( vs[7] == "gaz" );
+	UT_VERIFY( vs[1] == "baz" );
+	vs.clear();
+
+	// if not found, vector is filled with string value
+	stringtok(vs, "foo baz foo", "");
+	UT_VERIFY( vs.size() == 1 );
 }

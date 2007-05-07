@@ -54,6 +54,7 @@ EDE_INIT_JAM
 
 dnl basic headers
 AC_HEADER_STDC
+EDE_DATETIME
 EDE_CHECK_STL
 AC_CHECK_HEADER(string.h,AC_DEFINE(HAVE_STRING_H, 1, [Define to 1 if you have string.h file]))
 AC_CHECK_FUNC(snprintf, AC_DEFINE(HAVE_SNPRINTF, 1, [Define to 1 if you have snprintf()]))

@@ -25,7 +25,7 @@ EDELIB_NAMESPACE {
 
 /**
  * \class SoundSystem
- * SoundSystem is a class responsible for playing sound files.
+ * \brief A class responsible for playing sound files.
  *
  * This class depends on libao and if during configure phase this
  * library is not detected, the class will do nothing.
