@@ -19,13 +19,15 @@
 #include <string.h> // strlen, strncpy
 
 // default places according to freedesktop
-#define CONFIG_HOME_DEFAULT "~/.config/ede"
-#define DATA_HOME_DEFAULT   "~/.local/share/ede"
-#define CACHE_HOME_DEFAULT  "~/.cache/ede"
+#define CONFIG_HOME_DEFAULT "~/.config"
+#define DATA_HOME_DEFAULT   "~/.local/share"
+#define CACHE_HOME_DEFAULT  "~/.cache"
 
 #define MAX_PATH 1024
 
 EDELIB_NAMESPACE {
+
+#include <stdio.h>
 
 String _config_get(const char* env1, const char* env2, const char* fallback, unsigned int fallback_len)
 {
@@ -44,13 +46,17 @@ String _config_get(const char* env1, const char* env2, const char* fallback, uns
 	if(!len)
 		return fallback;
 
-	String ret;
-	ret.reserve(MAX_PATH);
+	// case when we got only one character in path
+	if(len == 1)
+		return path;
 
+	String ret;
+	ret.reserve(len);
+	// assure path does not ends with slash.
 	if(path[len-1] == '/') 
-		ret.printf("%s%s", path, "ede");
+		ret.assign(path, len-1);
 	else
-		ret.printf("%s%s", path, "/ede");
+		ret.assign(path);
 	return ret;
 }
 
@@ -67,7 +73,7 @@ int _dirs_get(const char* env1, const char* env2, const char* fallback, vector<S
 	stringtok(lst, path, ":");
 	return lst.size();
 }
-#include <stdio.h>
+
 String _path_builder(const char* separator, bool ending, const char* p1, const char* p2 = NULL, const char* p3 = NULL)
 {
 	bool trailing = false;

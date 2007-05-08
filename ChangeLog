@@ -1,3 +1,10 @@
+2007-05-08  Sanel <karijes@users.sourceforge.net>
+
+	* Work on Time class
+	* String allocation checks
+	* user_xxx_dir() will now return correct XDG paths; returning
+	paths with '/ede' appended is not conforming
+
 2007-05-07  Sanel <karijes@users.sourceforge.net>
 
 	* dir_separator() will return const char* (why the hell it 

@@ -91,6 +91,11 @@ void String::swap(String& from)
 String& String::assign(const char* str, size_type len)
 {
 	EASSERT(str != NULL);
+	/*
+	 * I'm not implementing max_size().
+	 * Here will be checked against only half, so memcpy does not goes crazy
+	 */
+	EASSERT(len < (String::npos / 2) && "Allocation exceeded max allowed size");
 
 	/*
 	 * Handle cases:

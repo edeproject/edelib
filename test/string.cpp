@@ -256,4 +256,12 @@ UT_FUNC(StringComparison, "Test std::string comparison")
 	s2.append(1, 'C');
 
 	UT_VERIFY( s1 == s2.c_str() );
+
+	s1.clear();
+	s2.clear();
+
+	s1.assign("Sample string", 5);
+	s2.assign("Sample string", 5);
+
+	UT_VERIFY( s1 == s2.c_str() );
 }
