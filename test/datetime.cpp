@@ -107,3 +107,40 @@ UT_FUNC(DateCaveat, "Test date caveat")
 	d2.set(Date::YearNow, Date::Jan, Date::DayNow);
 	UT_VERIFY( d1 == d2 );
 }
+
+UT_FUNC(TimeTest, "Test time")
+{
+	Time t;
+	t.set(20, 10, 10, 233);
+	UT_VERIFY( t.hour() == 20 );
+	UT_VERIFY( t.min() == 10 );
+	UT_VERIFY( t.sec() == 10 );
+	UT_VERIFY( t.msec() == 233 );
+
+	UT_VERIFY( t.is_valid(25, 0, 0, 0) == false );
+	UT_VERIFY( t.is_valid(0, 0, 0, 0) == true );
+}
+
+UT_FUNC(TimeOperatorsTest, "Test time operators")
+{
+	Time t1, t2;
+	UT_VERIFY( t1 == t2 );
+	t1.set(0, 0, 0, 1);
+	UT_VERIFY( t1 > t2);
+
+	t1.set(0, 59, 59, 59);
+	t2.set(1, 0, 0, 0);
+	UT_VERIFY( t1 > t2 );
+	UT_VERIFY( t1 >= t2 );
+	UT_VERIFY( t1 != t2 );
+
+	t2 = t1;
+	UT_VERIFY( t1 == t2 );
+	UT_VERIFY( t1 >= t2 );
+	UT_VERIFY( t1 <= t2 );
+
+	Time t3(t1);
+	UT_VERIFY( t1 == t3 );
+	UT_VERIFY( t1 >= t3 );
+	UT_VERIFY( t1 <= t3 );
+}

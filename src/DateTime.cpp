@@ -344,7 +344,6 @@ unsigned short Date::day_of_year() const
 const char* Date::day_name(void)
 {
 	EASSERT(dayval <= 7);
-
 	// days are counted from 0
 	return day_names[day_of_week()-1];
 }
@@ -352,9 +351,72 @@ const char* Date::day_name(void)
 const char* Date::month_name(void)
 {
 	EASSERT(monthval <= 12);
-
 	// months are counted from 1
 	return month_names[monthval-1];
+}
+
+Time::Time() : hourval(0), minval(0), secval(0), msecval(0)
+{
+}
+
+Time::~Time()
+{
+}
+
+bool Time::is_valid(unsigned char h, unsigned char m, unsigned char s, unsigned short ms)
+{
+	if(h <= 23 && m <= 59 && s <= 59 && ms <= 999)
+		return true;
+	return false;
+}
+
+Time::Time(const Time& t)
+{
+	if(!is_valid(t.hour(), t.min(), t.sec(), t.msec()))
+		return;
+	hourval = t.hour();
+	minval = t.min();
+	secval = t.sec();
+	msecval = t.msec();
+}
+
+Time& Time::operator=(const Time& t)
+{
+	if(&t == this)
+		return *this;
+	if(!is_valid(t.hour(), t.min(), t.sec(), t.msec()))
+		return *this;
+
+	hourval = t.hour();
+	minval = t.min();
+	secval = t.sec();
+	msecval = t.msec();
+	return *this;
+}
+
+bool Time::set(unsigned char h, unsigned char m, unsigned char s, unsigned short ms)
+{
+	EASSERT(is_valid(h, m, s, ms));
+
+	hourval = h;
+	minval = m;
+	secval = s;
+	msecval = ms;
+
+	return true;
+}
+
+void Time::set_now(void)
+{
+	struct tm tmp;
+	// FIXME: allow UTC/Local option
+	get_system_time(&tmp, true);
+	hourval = tmp.tm_hour;
+	minval  = tmp.tm_min;
+	// for leap seconds we can have 61; ignore this and set it to 59
+	secval  = (tmp.tm_sec > 59 ? 59 : tmp.tm_sec);
+	// FIXME: retrieve clock
+	msecval = 0;
 }
 
 } // EDELIB_NAMESPACE

@@ -265,18 +265,38 @@ class Time
 		unsigned char hourval;
 		unsigned char minval;
 		unsigned char secval;
+		unsigned short msecval;
 	
 	public:
 		Time();
+		Time(const Time& t);
+		Time& operator=(const Time& t);
+
 		~Time();
-		bool set(unsigned char h, unsigned char m, unsigned char s);
+		bool set(unsigned char h, unsigned char m, unsigned char s = 0, unsigned short ms = 0);
+		bool is_valid(unsigned char h, unsigned char m, unsigned char s, unsigned short ms);
+		void set_now(void);
 
 		bool system_set(void);
 
 		unsigned char hour(void) const { return hourval; }
 		unsigned char min(void) const  { return minval; }
 		unsigned char sec(void) const  { return secval; }
+		unsigned short msec(void) const { return msecval; }
 };
+
+#ifndef SKIP_DOCS
+inline bool operator==(const Time& t1, const Time& t2)
+{ return (t1.hour() == t2.hour() && t1.min() == t2.min() && t1.sec() == t2.sec() && t2.msec() == t2.msec()); }
+
+inline bool operator>(const Time& t1, const Time& t2)
+{ return (t1.hour()+t1.min()+t1.sec()+t1.msec() > t2.hour()+t2.min()+t2.sec()+t2.msec()); }
+
+inline bool operator!=(const Time& t1, const Time& t2) { return !(t1 == t2); }
+inline bool operator>=(const Time& t1, const Time& t2) { return (t1 > t2 || t1 == t2); }
+inline bool operator<(const Time& t1, const Time& t2)  { return (!(t1 > t2) && (t1 != t2)); }
+inline bool operator<=(const Time& t1, const Time& t2) { return (t1 == t2 || t1 < t2); }
+#endif
 
 }
 
