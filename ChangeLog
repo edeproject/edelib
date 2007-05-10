@@ -4,6 +4,8 @@
 	* Added tinyxml classes
 	* MimeType class with xdgmime backend; needs more work
 	* Finished docs for tinyxml (PITA!)
+	* Added icon_name() to MimeType
+	* Added tests for MimeType
 
 2007-05-09  Sanel <karijes@users.sourceforge.net>
 

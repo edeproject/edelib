@@ -15,6 +15,7 @@
 #include <edelib/Debug.h>
 #include <edelib/Util.h>
 #include <edelib/File.h>
+#include <edelib/StrUtil.h>
 #include <string.h>  // strncmp
 #include "xdgmime/xdgmime.h"
 
@@ -95,6 +96,30 @@ String MimeType::comment(void)
 	}
 
 	return mcmt;
+}
+
+String MimeType::icon_name(void)
+{
+	if(mtype.empty())
+		return "";
+
+	vector<String> vs;
+	stringtok(vs, mtype, "/");
+	// failed
+	if(vs.size() < 2)
+		return "";
+
+	String ret;
+	ret.reserve(50);
+	unsigned int sz = vs.size();
+	for(unsigned int i = 0; i < sz-1; i++) {
+		ret += vs[i];
+		ret += '-';
+	}
+
+	ret += vs[sz-1];
+
+	return ret;
 }
 
 }
