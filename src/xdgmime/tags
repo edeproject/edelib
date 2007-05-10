@@ -1,0 +1,290 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.5.4	//
+FALSE	xdgmimealias.c	41;"	d	file:
+FALSE	xdgmimecache.c	57;"	d	file:
+FALSE	xdgmimeglob.c	41;"	d	file:
+FALSE	xdgmimeint.c	37;"	d	file:
+FALSE	xdgmimeint.h	35;"	d
+FALSE	xdgmimemagic.c	43;"	d	file:
+FALSE	xdgmimeparent.c	41;"	d	file:
+GET_UINT16	xdgmimecache.c	83;"	d	file:
+GET_UINT32	xdgmimecache.c	84;"	d	file:
+MAJOR_VERSION	xdgmimecache.c	72;"	d	file:
+MAP_FAILED	xdgmimecache.c	69;"	d	file:
+MAX	xdgmimecache.c	53;"	d	file:
+MAX_NUMBER_SIZE	xdgmimemagic.c	201;"	d	file:
+MINOR_VERSION	xdgmimecache.c	73;"	d	file:
+SWAP_BE16_TO_LE16	xdgmimeint.h	56;"	d
+SWAP_BE32_TO_LE32	xdgmimeint.h	58;"	d
+TRUE	xdgmimealias.c	45;"	d	file:
+TRUE	xdgmimecache.c	61;"	d	file:
+TRUE	xdgmimeglob.c	45;"	d	file:
+TRUE	xdgmimeint.c	41;"	d	file:
+TRUE	xdgmimeint.h	39;"	d
+TRUE	xdgmimemagic.c	47;"	d	file:
+TRUE	xdgmimeparent.c	45;"	d	file:
+XDG_CHECKED_INVALID	xdgmime.c	/^  XDG_CHECKED_INVALID$/;"	e	file:
+XDG_CHECKED_UNCHECKED	xdgmime.c	/^  XDG_CHECKED_UNCHECKED,$/;"	e	file:
+XDG_CHECKED_VALID	xdgmime.c	/^  XDG_CHECKED_VALID,$/;"	e	file:
+XDG_ENTRY	xdgmime.h	40;"	d
+XDG_GLOB_FULL	xdgmimeglob.h	/^  XDG_GLOB_FULL     \/* x*.[ch] *\/$/;"	e
+XDG_GLOB_LITERAL	xdgmimeglob.h	/^  XDG_GLOB_LITERAL, \/* Makefile *\/$/;"	e
+XDG_GLOB_SIMPLE	xdgmimeglob.h	/^  XDG_GLOB_SIMPLE,  \/* *.gif *\/$/;"	e
+XDG_MIME_MAGIC_EOF	xdgmimemagic.c	/^  XDG_MIME_MAGIC_EOF$/;"	e	file:
+XDG_MIME_MAGIC_ERROR	xdgmimemagic.c	/^  XDG_MIME_MAGIC_ERROR,$/;"	e	file:
+XDG_MIME_MAGIC_MAGIC	xdgmimemagic.c	/^  XDG_MIME_MAGIC_MAGIC,$/;"	e	file:
+XDG_MIME_MAGIC_SECTION	xdgmimemagic.c	/^  XDG_MIME_MAGIC_SECTION,$/;"	e	file:
+XDG_MIME_TYPE_UNKNOWN	xdgmime.h	68;"	d
+XdgAlias	xdgmimealias.c	/^struct XdgAlias $/;"	s	file:
+XdgAlias	xdgmimealias.c	/^typedef struct XdgAlias XdgAlias;$/;"	t	file:
+XdgAliasList	xdgmimealias.c	/^struct XdgAliasList$/;"	s	file:
+XdgAliasList	xdgmimealias.h	/^typedef struct XdgAliasList XdgAliasList;$/;"	t
+XdgCallbackList	xdgmime.c	/^struct XdgCallbackList$/;"	s	file:
+XdgCallbackList	xdgmime.c	/^typedef struct XdgCallbackList XdgCallbackList;$/;"	t	file:
+XdgDirTimeList	xdgmime.c	/^struct XdgDirTimeList$/;"	s	file:
+XdgDirTimeList	xdgmime.c	/^typedef struct XdgDirTimeList XdgDirTimeList;$/;"	t	file:
+XdgDirectoryFunc	xdgmime.c	/^typedef int (*XdgDirectoryFunc) (const char *directory,$/;"	t	file:
+XdgGlobHash	xdgmimeglob.c	/^struct XdgGlobHash$/;"	s	file:
+XdgGlobHash	xdgmimeglob.h	/^typedef struct XdgGlobHash XdgGlobHash;$/;"	t
+XdgGlobHashNode	xdgmimeglob.c	/^struct XdgGlobHashNode$/;"	s	file:
+XdgGlobHashNode	xdgmimeglob.c	/^typedef struct XdgGlobHashNode XdgGlobHashNode;$/;"	t	file:
+XdgGlobList	xdgmimeglob.c	/^struct XdgGlobList$/;"	s	file:
+XdgGlobList	xdgmimeglob.c	/^typedef struct XdgGlobList XdgGlobList;$/;"	t	file:
+XdgGlobType	xdgmimeglob.h	/^} XdgGlobType;$/;"	t
+XdgMimeCache	xdgmimecache.h	/^typedef struct _XdgMimeCache XdgMimeCache;$/;"	t
+XdgMimeCallback	xdgmime.h	/^typedef void (*XdgMimeCallback) (void *user_data);$/;"	t
+XdgMimeDestroy	xdgmime.h	/^typedef void (*XdgMimeDestroy)  (void *user_data);$/;"	t
+XdgMimeMagic	xdgmimemagic.c	/^struct XdgMimeMagic$/;"	s	file:
+XdgMimeMagic	xdgmimemagic.h	/^typedef struct XdgMimeMagic XdgMimeMagic;$/;"	t
+XdgMimeMagicMatch	xdgmimemagic.c	/^struct XdgMimeMagicMatch$/;"	s	file:
+XdgMimeMagicMatch	xdgmimemagic.c	/^typedef struct XdgMimeMagicMatch XdgMimeMagicMatch;$/;"	t	file:
+XdgMimeMagicMatchlet	xdgmimemagic.c	/^struct XdgMimeMagicMatchlet$/;"	s	file:
+XdgMimeMagicMatchlet	xdgmimemagic.c	/^typedef struct XdgMimeMagicMatchlet XdgMimeMagicMatchlet;$/;"	t	file:
+XdgMimeMagicState	xdgmimemagic.c	/^} XdgMimeMagicState;$/;"	t	file:
+XdgMimeParents	xdgmimeparent.c	/^struct XdgMimeParents$/;"	s	file:
+XdgMimeParents	xdgmimeparent.c	/^typedef struct XdgMimeParents XdgMimeParents;$/;"	t	file:
+XdgParentList	xdgmimeparent.c	/^struct XdgParentList$/;"	s	file:
+XdgParentList	xdgmimeparent.h	/^typedef struct XdgParentList XdgParentList;$/;"	t
+_O_BINARY	xdgmimecache.c	65;"	d	file:
+_XDG_ENTRY2	xdgmime.h	41;"	d
+_XDG_ENTRY3	xdgmime.h	42;"	d
+_XdgMimeCache	xdgmimecache.c	/^struct _XdgMimeCache$/;"	s	file:
+__XDG_MIME_ALIAS_H__	xdgmimealias.h	29;"	d
+__XDG_MIME_CACHE_H__	xdgmimecache.h	28;"	d
+__XDG_MIME_GLOB_H__	xdgmimeglob.h	29;"	d
+__XDG_MIME_H__	xdgmime.h	30;"	d
+__XDG_MIME_INT_H__	xdgmimeint.h	29;"	d
+__XDG_MIME_MAGIC_H__	xdgmimemagic.h	29;"	d
+__XDG_MIME_PARENT_H__	xdgmimeparent.h	29;"	d
+_caches	xdgmime.c	/^XdgMimeCache **_caches = NULL;$/;"	v
+_xdg_get_base_name	xdgmimeint.c	/^_xdg_get_base_name (const char *file_name)$/;"	f
+_xdg_get_base_name	xdgmimeint.h	53;"	d
+_xdg_glob_determine_type	xdgmimeglob.c	/^_xdg_glob_determine_type (const char *glob)$/;"	f
+_xdg_glob_determine_type	xdgmimeglob.h	49;"	d
+_xdg_glob_hash_append_glob	xdgmimeglob.c	/^_xdg_glob_hash_append_glob (XdgGlobHash *glob_hash,$/;"	f
+_xdg_glob_hash_append_glob	xdgmimeglob.h	48;"	d
+_xdg_glob_hash_dump	xdgmimeglob.c	/^_xdg_glob_hash_dump (XdgGlobHash *glob_hash)$/;"	f
+_xdg_glob_hash_dump	xdgmimeglob.h	50;"	d
+_xdg_glob_hash_free	xdgmimeglob.c	/^_xdg_glob_hash_free (XdgGlobHash *glob_hash)$/;"	f
+_xdg_glob_hash_free	xdgmimeglob.h	46;"	d
+_xdg_glob_hash_free_nodes	xdgmimeglob.c	/^_xdg_glob_hash_free_nodes (XdgGlobHashNode *node)$/;"	f	file:
+_xdg_glob_hash_insert_text	xdgmimeglob.c	/^_xdg_glob_hash_insert_text (XdgGlobHashNode *glob_hash_node,$/;"	f	file:
+_xdg_glob_hash_lookup_file_name	xdgmimeglob.c	/^_xdg_glob_hash_lookup_file_name (XdgGlobHash *glob_hash,$/;"	f
+_xdg_glob_hash_lookup_file_name	xdgmimeglob.h	47;"	d
+_xdg_glob_hash_new	xdgmimeglob.c	/^_xdg_glob_hash_new (void)$/;"	f
+_xdg_glob_hash_new	xdgmimeglob.h	45;"	d
+_xdg_glob_hash_node_dump	xdgmimeglob.c	/^_xdg_glob_hash_node_dump (XdgGlobHashNode *glob_hash_node,$/;"	f	file:
+_xdg_glob_hash_node_lookup_file_name	xdgmimeglob.c	/^_xdg_glob_hash_node_lookup_file_name (XdgGlobHashNode *glob_hash_node,$/;"	f	file:
+_xdg_glob_hash_node_new	xdgmimeglob.c	/^_xdg_glob_hash_node_new (void)$/;"	f	file:
+_xdg_glob_list_append	xdgmimeglob.c	/^_xdg_glob_list_append (XdgGlobList *glob_list,$/;"	f	file:
+_xdg_glob_list_free	xdgmimeglob.c	/^_xdg_glob_list_free (XdgGlobList *glob_list)$/;"	f	file:
+_xdg_glob_list_new	xdgmimeglob.c	/^_xdg_glob_list_new (void)$/;"	f	file:
+_xdg_mime_alias_list_dump	xdgmimealias.c	/^_xdg_mime_alias_list_dump (XdgAliasList *list)$/;"	f
+_xdg_mime_alias_list_free	xdgmimealias.c	/^_xdg_mime_alias_list_free (XdgAliasList *list)$/;"	f
+_xdg_mime_alias_list_free	xdgmimealias.h	38;"	d
+_xdg_mime_alias_list_lookup	xdgmimealias.c	/^_xdg_mime_alias_list_lookup (XdgAliasList *list,$/;"	f
+_xdg_mime_alias_list_lookup	xdgmimealias.h	39;"	d
+_xdg_mime_alias_list_new	xdgmimealias.c	/^_xdg_mime_alias_list_new (void)$/;"	f
+_xdg_mime_alias_list_new	xdgmimealias.h	37;"	d
+_xdg_mime_alias_read_from_file	xdgmimealias.c	/^_xdg_mime_alias_read_from_file (XdgAliasList *list,$/;"	f
+_xdg_mime_alias_read_from_file	xdgmimealias.h	36;"	d
+_xdg_mime_cache_get_max_buffer_extents	xdgmimecache.c	/^_xdg_mime_cache_get_max_buffer_extents (void)$/;"	f
+_xdg_mime_cache_get_mime_type_for_data	xdgmimecache.c	/^_xdg_mime_cache_get_mime_type_for_data (const void *data,$/;"	f
+_xdg_mime_cache_get_mime_type_for_file	xdgmimecache.c	/^_xdg_mime_cache_get_mime_type_for_file (const char  *file_name,$/;"	f
+_xdg_mime_cache_get_mime_type_from_file_name	xdgmimecache.c	/^_xdg_mime_cache_get_mime_type_from_file_name (const char *file_name)$/;"	f
+_xdg_mime_cache_list_mime_parents	xdgmimecache.c	/^_xdg_mime_cache_list_mime_parents (const char *mime)$/;"	f
+_xdg_mime_cache_mime_type_subclass	xdgmimecache.c	/^_xdg_mime_cache_mime_type_subclass (const char *mime,$/;"	f
+_xdg_mime_cache_new_from_file	xdgmimecache.c	/^_xdg_mime_cache_new_from_file (const char *file_name)$/;"	f
+_xdg_mime_cache_new_from_file	xdgmimecache.h	35;"	d
+_xdg_mime_cache_ref	xdgmimecache.c	/^_xdg_mime_cache_ref (XdgMimeCache *cache)$/;"	f
+_xdg_mime_cache_ref	xdgmimecache.h	36;"	d
+_xdg_mime_cache_unalias_mime_type	xdgmimecache.c	/^_xdg_mime_cache_unalias_mime_type (const char *mime)$/;"	f
+_xdg_mime_cache_unref	xdgmimecache.c	/^_xdg_mime_cache_unref (XdgMimeCache *cache)$/;"	f
+_xdg_mime_cache_unref	xdgmimecache.h	37;"	d
+_xdg_mime_glob_read_from_file	xdgmimeglob.c	/^_xdg_mime_glob_read_from_file (XdgGlobHash *glob_hash,$/;"	f
+_xdg_mime_glob_read_from_file	xdgmimeglob.h	44;"	d
+_xdg_mime_glob_read_from_file	xdgmimemagic.h	36;"	d
+_xdg_mime_magic_free	xdgmimemagic.c	/^_xdg_mime_magic_free (XdgMimeMagic *mime_magic)$/;"	f
+_xdg_mime_magic_free	xdgmimemagic.h	39;"	d
+_xdg_mime_magic_get_buffer_extents	xdgmimemagic.c	/^_xdg_mime_magic_get_buffer_extents (XdgMimeMagic *mime_magic)$/;"	f
+_xdg_mime_magic_get_buffer_extents	xdgmimemagic.h	40;"	d
+_xdg_mime_magic_insert_match	xdgmimemagic.c	/^_xdg_mime_magic_insert_match (XdgMimeMagic      *mime_magic,$/;"	f	file:
+_xdg_mime_magic_lookup_data	xdgmimemagic.c	/^_xdg_mime_magic_lookup_data (XdgMimeMagic *mime_magic,$/;"	f
+_xdg_mime_magic_lookup_data	xdgmimemagic.h	41;"	d
+_xdg_mime_magic_match_compare_to_data	xdgmimemagic.c	/^_xdg_mime_magic_match_compare_to_data (XdgMimeMagicMatch *match,$/;"	f	file:
+_xdg_mime_magic_match_free	xdgmimemagic.c	/^_xdg_mime_magic_match_free (XdgMimeMagicMatch *mime_magic_match)$/;"	f	file:
+_xdg_mime_magic_match_new	xdgmimemagic.c	/^_xdg_mime_magic_match_new (void)$/;"	f	file:
+_xdg_mime_magic_matchlet_compare_level	xdgmimemagic.c	/^_xdg_mime_magic_matchlet_compare_level (XdgMimeMagicMatchlet *matchlet,$/;"	f	file:
+_xdg_mime_magic_matchlet_compare_to_data	xdgmimemagic.c	/^_xdg_mime_magic_matchlet_compare_to_data (XdgMimeMagicMatchlet *matchlet,$/;"	f	file:
+_xdg_mime_magic_matchlet_free	xdgmimemagic.c	/^_xdg_mime_magic_matchlet_free (XdgMimeMagicMatchlet *mime_magic_matchlet)$/;"	f	file:
+_xdg_mime_magic_matchlet_mirror	xdgmimemagic.c	/^_xdg_mime_magic_matchlet_mirror (XdgMimeMagicMatchlet *matchlets)$/;"	f	file:
+_xdg_mime_magic_matchlet_new	xdgmimemagic.c	/^_xdg_mime_magic_matchlet_new (void)$/;"	f	file:
+_xdg_mime_magic_new	xdgmimemagic.c	/^_xdg_mime_magic_new (void)$/;"	f
+_xdg_mime_magic_new	xdgmimemagic.h	37;"	d
+_xdg_mime_magic_parse_error	xdgmimemagic.c	/^_xdg_mime_magic_parse_error (FILE *magic_file)$/;"	f	file:
+_xdg_mime_magic_parse_header	xdgmimemagic.c	/^_xdg_mime_magic_parse_header (FILE *magic_file, XdgMimeMagicMatch *match)$/;"	f	file:
+_xdg_mime_magic_parse_magic_line	xdgmimemagic.c	/^_xdg_mime_magic_parse_magic_line (FILE              *magic_file,$/;"	f	file:
+_xdg_mime_magic_read_a_number	xdgmimemagic.c	/^_xdg_mime_magic_read_a_number (FILE *magic_file,$/;"	f	file:
+_xdg_mime_magic_read_from_file	xdgmimemagic.c	/^_xdg_mime_magic_read_from_file (XdgMimeMagic *mime_magic,$/;"	f
+_xdg_mime_magic_read_from_file	xdgmimemagic.h	38;"	d
+_xdg_mime_magic_read_magic_file	xdgmimemagic.c	/^_xdg_mime_magic_read_magic_file (XdgMimeMagic *mime_magic,$/;"	f	file:
+_xdg_mime_magic_read_to_newline	xdgmimemagic.c	/^_xdg_mime_magic_read_to_newline (FILE *magic_file,$/;"	f	file:
+_xdg_mime_parent_list_dump	xdgmimeparent.c	/^_xdg_mime_parent_list_dump (XdgParentList *list)$/;"	f
+_xdg_mime_parent_list_free	xdgmimeparent.c	/^_xdg_mime_parent_list_free (XdgParentList *list)$/;"	f
+_xdg_mime_parent_list_free	xdgmimeparent.h	38;"	d
+_xdg_mime_parent_list_lookup	xdgmimeparent.c	/^_xdg_mime_parent_list_lookup (XdgParentList *list,$/;"	f
+_xdg_mime_parent_list_lookup	xdgmimeparent.h	39;"	d
+_xdg_mime_parent_list_new	xdgmimeparent.c	/^_xdg_mime_parent_list_new (void)$/;"	f
+_xdg_mime_parent_list_new	xdgmimeparent.h	37;"	d
+_xdg_mime_parent_read_from_file	xdgmimeparent.c	/^_xdg_mime_parent_read_from_file (XdgParentList *list,$/;"	f
+_xdg_mime_parent_read_from_file	xdgmimeparent.h	36;"	d
+_xdg_mime_update_mime_magic_extents	xdgmimemagic.c	/^_xdg_mime_update_mime_magic_extents (XdgMimeMagic *mime_magic)$/;"	f	file:
+_xdg_ucs4_to_lower	xdgmimeint.c	/^_xdg_ucs4_to_lower (xdg_unichar_t source)$/;"	f
+_xdg_ucs4_to_lower	xdgmimeint.h	51;"	d
+_xdg_utf8_char_size	xdgmimeint.h	66;"	d
+_xdg_utf8_next_char	xdgmimeint.h	65;"	d
+_xdg_utf8_skip	xdgmimeint.c	/^const char * const _xdg_utf8_skip = _xdg_utf8_skip_data;$/;"	v
+_xdg_utf8_skip	xdgmimeint.h	49;"	d
+_xdg_utf8_skip_data	xdgmimeint.c	/^static const char _xdg_utf8_skip_data[256] = {$/;"	v	file:
+_xdg_utf8_to_ucs4	xdgmimeint.c	/^_xdg_utf8_to_ucs4(const char *source)$/;"	f
+_xdg_utf8_to_ucs4	xdgmimeint.h	50;"	d
+_xdg_utf8_validate	xdgmimeint.c	/^_xdg_utf8_validate (const char *source)$/;"	f
+_xdg_utf8_validate	xdgmimeint.h	52;"	d
+alias	xdgmimealias.c	/^  char *alias;$/;"	m	struct:XdgAlias	file:
+alias_entry_cmp	xdgmimealias.c	/^alias_entry_cmp (const void *v1, const void *v2)$/;"	f	file:
+alias_list	xdgmime.c	/^static XdgAliasList *alias_list = NULL;$/;"	v	file:
+aliases	xdgmimealias.c	/^  struct XdgAlias *aliases;$/;"	m	struct:XdgAliasList	file:
+buffer	xdgmimecache.c	/^  char   *buffer;$/;"	m	struct:_XdgMimeCache	file:
+cache_alias_lookup	xdgmimecache.c	/^cache_alias_lookup (const char *alias)$/;"	f	file:
+cache_get_mime_type_for_data	xdgmimecache.c	/^cache_get_mime_type_for_data (const void *data,$/;"	f	file:
+cache_glob_lookup_file_name	xdgmimecache.c	/^cache_glob_lookup_file_name (const char *file_name, $/;"	f	file:
+cache_glob_lookup_fnmatch	xdgmimecache.c	/^cache_glob_lookup_fnmatch (const char *file_name,$/;"	f	file:
+cache_glob_lookup_literal	xdgmimecache.c	/^cache_glob_lookup_literal (const char *file_name,$/;"	f	file:
+cache_glob_lookup_suffix	xdgmimecache.c	/^cache_glob_lookup_suffix (const char *suffix, $/;"	f	file:
+cache_glob_node_lookup_suffix	xdgmimecache.c	/^cache_glob_node_lookup_suffix (XdgMimeCache *cache,$/;"	f	file:
+cache_magic_compare_to_data	xdgmimecache.c	/^cache_magic_compare_to_data (XdgMimeCache *cache, $/;"	f	file:
+cache_magic_lookup_data	xdgmimecache.c	/^cache_magic_lookup_data (XdgMimeCache *cache, $/;"	f	file:
+cache_magic_matchlet_compare	xdgmimecache.c	/^cache_magic_matchlet_compare (XdgMimeCache *cache, $/;"	f	file:
+cache_magic_matchlet_compare_to_data	xdgmimecache.c	/^cache_magic_matchlet_compare_to_data (XdgMimeCache *cache, $/;"	f	file:
+callback	xdgmime.c	/^  XdgMimeCallback  callback;$/;"	m	struct:XdgCallbackList	file:
+callback_id	xdgmime.c	/^  int              callback_id;$/;"	m	struct:XdgCallbackList	file:
+callback_list	xdgmime.c	/^static XdgCallbackList *callback_list = NULL;$/;"	v	file:
+character	xdgmimeglob.c	/^  xdg_unichar_t character;$/;"	m	struct:XdgGlobHashNode	file:
+checked	xdgmime.c	/^  int checked;$/;"	m	struct:XdgDirTimeList	file:
+child	xdgmimeglob.c	/^  XdgGlobHashNode *child;$/;"	m	struct:XdgGlobHashNode	file:
+data	xdgmime.c	/^  void            *data;$/;"	m	struct:XdgCallbackList	file:
+data	xdgmimeglob.c	/^  const char *data;$/;"	m	struct:XdgGlobList	file:
+destroy	xdgmime.c	/^  XdgMimeDestroy   destroy;$/;"	m	struct:XdgCallbackList	file:
+dir_time_list	xdgmime.c	/^static XdgDirTimeList *dir_time_list = NULL;$/;"	v	file:
+directory_name	xdgmime.c	/^  char *directory_name;$/;"	m	struct:XdgDirTimeList	file:
+find_stopchars	xdgmimecache.c	/^find_stopchars (char *stopchars)$/;"	f	file:
+full_list	xdgmimeglob.c	/^  XdgGlobList *full_list;$/;"	m	struct:XdgGlobHash	file:
+global_hash	xdgmime.c	/^static XdgGlobHash *global_hash = NULL;$/;"	v	file:
+global_magic	xdgmime.c	/^static XdgMimeMagic *global_magic = NULL;$/;"	v	file:
+indent	xdgmimemagic.c	/^  int indent;$/;"	m	struct:XdgMimeMagicMatchlet	file:
+is_super_type	xdgmimecache.c	/^is_super_type (const char *mime)$/;"	f	file:
+last_stat_time	xdgmime.c	/^static time_t last_stat_time = 0;$/;"	v	file:
+literal_list	xdgmimeglob.c	/^  XdgGlobList *literal_list;$/;"	m	struct:XdgGlobHash	file:
+mask	xdgmimemagic.c	/^  unsigned char *mask;$/;"	m	struct:XdgMimeMagicMatchlet	file:
+match_list	xdgmimemagic.c	/^  XdgMimeMagicMatch *match_list;$/;"	m	struct:XdgMimeMagic	file:
+matchlet	xdgmimemagic.c	/^  XdgMimeMagicMatchlet *matchlet;$/;"	m	struct:XdgMimeMagicMatch	file:
+max_extent	xdgmimemagic.c	/^  int max_extent;$/;"	m	struct:XdgMimeMagic	file:
+mime	xdgmimeparent.c	/^  char *mime;$/;"	m	struct:XdgMimeParents	file:
+mime_type	xdgmimealias.c	/^  char *mime_type;$/;"	m	struct:XdgAlias	file:
+mime_type	xdgmimeglob.c	/^  const char *mime_type;$/;"	m	struct:XdgGlobHashNode	file:
+mime_type	xdgmimeglob.c	/^  const char *mime_type;$/;"	m	struct:XdgGlobList	file:
+mime_type	xdgmimemagic.c	/^  const char *mime_type;$/;"	m	struct:XdgMimeMagicMatch	file:
+mtime	xdgmime.c	/^  time_t mtime;$/;"	m	struct:XdgDirTimeList	file:
+n_aliases	xdgmimealias.c	/^  int n_aliases;$/;"	m	struct:XdgAliasList	file:
+n_caches	xdgmime.c	/^static int n_caches = 0;$/;"	v	file:
+n_mimes	xdgmimeparent.c	/^  int n_mimes;$/;"	m	struct:XdgParentList	file:
+n_parents	xdgmimeparent.c	/^  int n_parents;$/;"	m	struct:XdgMimeParents	file:
+need_reread	xdgmime.c	/^static int need_reread = TRUE;$/;"	v	file:
+next	xdgmime.c	/^  XdgCallbackList *next;$/;"	m	struct:XdgCallbackList	file:
+next	xdgmime.c	/^  XdgDirTimeList *next;$/;"	m	struct:XdgDirTimeList	file:
+next	xdgmimeglob.c	/^  XdgGlobHashNode *next;$/;"	m	struct:XdgGlobHashNode	file:
+next	xdgmimeglob.c	/^  XdgGlobList *next;$/;"	m	struct:XdgGlobList	file:
+next	xdgmimemagic.c	/^  XdgMimeMagicMatch *next;$/;"	m	struct:XdgMimeMagicMatch	file:
+next	xdgmimemagic.c	/^  XdgMimeMagicMatchlet *next;$/;"	m	struct:XdgMimeMagicMatchlet	file:
+offset	xdgmimemagic.c	/^  int offset;$/;"	m	struct:XdgMimeMagicMatchlet	file:
+parent_entry_cmp	xdgmimeparent.c	/^parent_entry_cmp (const void *v1, const void *v2)$/;"	f	file:
+parent_list	xdgmime.c	/^static XdgParentList *parent_list = NULL;$/;"	v	file:
+parents	xdgmimeparent.c	/^  char **parents;$/;"	m	struct:XdgMimeParents	file:
+parents	xdgmimeparent.c	/^  struct XdgMimeParents *parents;$/;"	m	struct:XdgParentList	file:
+prev	xdgmime.c	/^  XdgCallbackList *prev;$/;"	m	struct:XdgCallbackList	file:
+priority	xdgmimemagic.c	/^  int priority;$/;"	m	struct:XdgMimeMagicMatch	file:
+range_length	xdgmimemagic.c	/^  unsigned int range_length;$/;"	m	struct:XdgMimeMagicMatchlet	file:
+ref_count	xdgmimecache.c	/^  int ref_count;$/;"	m	struct:_XdgMimeCache	file:
+simple_node	xdgmimeglob.c	/^  XdgGlobHashNode *simple_node;$/;"	m	struct:XdgGlobHash	file:
+size	xdgmimecache.c	/^  size_t  size;$/;"	m	struct:_XdgMimeCache	file:
+value	xdgmimemagic.c	/^  unsigned char *value;$/;"	m	struct:XdgMimeMagicMatchlet	file:
+value_length	xdgmimemagic.c	/^  unsigned int value_length;$/;"	m	struct:XdgMimeMagicMatchlet	file:
+word_size	xdgmimemagic.c	/^  unsigned int word_size;$/;"	m	struct:XdgMimeMagicMatchlet	file:
+xdg_check_dir	xdgmime.c	/^xdg_check_dir (const char *directory,$/;"	f	file:
+xdg_check_dirs	xdgmime.c	/^xdg_check_dirs (void)$/;"	f	file:
+xdg_check_file	xdgmime.c	/^xdg_check_file (const char *file_path)$/;"	f	file:
+xdg_check_time_and_dirs	xdgmime.c	/^xdg_check_time_and_dirs (void)$/;"	f	file:
+xdg_dir_time_list_free	xdgmime.c	/^xdg_dir_time_list_free (XdgDirTimeList *list)$/;"	f	file:
+xdg_dir_time_list_new	xdgmime.c	/^xdg_dir_time_list_new (void)$/;"	f	file:
+xdg_mime_dump	xdgmime.c	/^xdg_mime_dump (void)$/;"	f
+xdg_mime_get_max_buffer_extents	xdgmime.c	/^xdg_mime_get_max_buffer_extents (void)$/;"	f
+xdg_mime_get_max_buffer_extents	xdgmime.h	60;"	d
+xdg_mime_get_mime_parents	xdgmime.c	/^xdg_mime_get_mime_parents (const char *mime)$/;"	f
+xdg_mime_get_mime_parents	xdgmime.h	57;"	d
+xdg_mime_get_mime_type_for_data	xdgmime.c	/^xdg_mime_get_mime_type_for_data (const void *data,$/;"	f
+xdg_mime_get_mime_type_for_data	xdgmime.h	50;"	d
+xdg_mime_get_mime_type_for_file	xdgmime.c	/^xdg_mime_get_mime_type_for_file (const char  *file_name,$/;"	f
+xdg_mime_get_mime_type_for_file	xdgmime.h	51;"	d
+xdg_mime_get_mime_type_from_file_name	xdgmime.c	/^xdg_mime_get_mime_type_from_file_name (const char *file_name)$/;"	f
+xdg_mime_get_mime_type_from_file_name	xdgmime.h	52;"	d
+xdg_mime_init	xdgmime.c	/^xdg_mime_init (void)$/;"	f	file:
+xdg_mime_init_from_directory	xdgmime.c	/^xdg_mime_init_from_directory (const char *directory)$/;"	f	file:
+xdg_mime_is_valid_mime_type	xdgmime.c	/^xdg_mime_is_valid_mime_type (const char *mime_type)$/;"	f
+xdg_mime_is_valid_mime_type	xdgmime.h	53;"	d
+xdg_mime_list_mime_parents	xdgmime.c	/^xdg_mime_list_mime_parents (const char *mime)$/;"	f
+xdg_mime_list_mime_parents	xdgmime.h	58;"	d
+xdg_mime_media_type_equal	xdgmime.c	/^xdg_mime_media_type_equal (const char *mime_a,$/;"	f
+xdg_mime_media_type_equal	xdgmime.h	55;"	d
+xdg_mime_mime_type_equal	xdgmime.c	/^xdg_mime_mime_type_equal (const char *mime_a,$/;"	f
+xdg_mime_mime_type_equal	xdgmime.h	54;"	d
+xdg_mime_mime_type_subclass	xdgmime.c	/^xdg_mime_mime_type_subclass (const char *mime,$/;"	f
+xdg_mime_mime_type_subclass	xdgmime.h	56;"	d
+xdg_mime_register_reload_callback	xdgmime.c	/^xdg_mime_register_reload_callback (XdgMimeCallback  callback,$/;"	f
+xdg_mime_register_reload_callback	xdgmime.h	62;"	d
+xdg_mime_remove_callback	xdgmime.c	/^xdg_mime_remove_callback (int callback_id)$/;"	f
+xdg_mime_remove_callback	xdgmime.h	63;"	d
+xdg_mime_shutdown	xdgmime.c	/^xdg_mime_shutdown (void)$/;"	f
+xdg_mime_shutdown	xdgmime.h	61;"	d
+xdg_mime_type_unknown	xdgmime.c	/^const char *xdg_mime_type_unknown = "application\/octet-stream";$/;"	v
+xdg_mime_type_unknown	xdgmime.h	64;"	d
+xdg_mime_unalias_mime_type	xdgmime.c	/^xdg_mime_unalias_mime_type (const char *mime_type)$/;"	f
+xdg_mime_unalias_mime_type	xdgmime.h	59;"	d
+xdg_run_command_on_dirs	xdgmime.c	/^xdg_run_command_on_dirs (XdgDirectoryFunc  func,$/;"	f	file:
+xdg_uchar8_t	xdgmimeint.h	/^typedef unsigned char  xdg_uchar8_t;$/;"	t
+xdg_uint16_t	xdgmimeint.h	/^typedef unsigned short xdg_uint16_t;$/;"	t
+xdg_uint32_t	xdgmimeint.h	/^typedef unsigned int   xdg_uint32_t;$/;"	t
+xdg_unichar_t	xdgmimeint.h	/^typedef unsigned int   xdg_unichar_t;$/;"	t

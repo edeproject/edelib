@@ -1,3 +1,14 @@
+2007-05-10  Sanel <karijes@users.sourceforge.net>
+
+	* Removed some obsole entries from TODO
+	* Added tinyxml classes
+	* MimeType class with xdgmime backend; needs more work
+	* Finished docs for tinyxml (PITA!)
+
+2007-05-09  Sanel <karijes@users.sourceforge.net>
+
+	* Changed find() functions in String to const
+
 2007-05-08  Sanel <karijes@users.sourceforge.net>
 
 	* Work on Time class

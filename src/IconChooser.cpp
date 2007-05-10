@@ -220,10 +220,11 @@ void IconChooser::load(const char* dir)
 	 */
 	int* lst_info = new int[lst.size()];
 
-	for(unsigned int i = 0; i < lst.size(); i++)
+	for(unsigned int i = 0; i < lst.size(); i++) 
 	{
 		img = fltk::SharedImage::get(lst[i].c_str());
-		if(!img)
+
+		if(!img) 
 		{
 			lst_info[i] = 0;
 			continue;
@@ -231,7 +232,7 @@ void IconChooser::load(const char* dir)
 
 		img->measure(iw, ih);
 
-		if(iw > MAX_ICON_W || ih > MAX_ICON_H)
+		if(iw > MAX_ICON_W || ih > MAX_ICON_H) 
 		{
 			lst_info[i] = 0;
 			continue;
@@ -239,7 +240,7 @@ void IconChooser::load(const char* dir)
 
 		imax_w = MAX(imax_w, iw);
 		imax_h = MAX(imax_h, ih);
-		lst_info[i] = 1;
+		lst_info[i] = 1; 
 	}
 
 	// clear potential content of ExpandableGroup

@@ -248,7 +248,7 @@ String String::substr(size_type index, size_type num) const
 	return tmp;
 }
 
-String::size_type String::find(const char* str, size_type offset)
+String::size_type String::find(const char* str, size_type offset) const
 {
 	if(offset >= length())
 		return npos;
@@ -260,12 +260,12 @@ String::size_type String::find(const char* str, size_type offset)
 		return (p - data());
 }
 
-String::size_type String::find(const char* str)
+String::size_type String::find(const char* str) const
 {
 	return find(str, 0);
 }
 
-String::size_type String::find(char ch, size_type offset)
+String::size_type String::find(char ch, size_type offset) const
 {
 	if(offset >= length())
 		return npos;

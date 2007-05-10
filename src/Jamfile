@@ -10,6 +10,20 @@
 
 SubDir TOP src ;
 
+XDGMIME_SRC = xdgmime.c 
+			  xdgmimeglob.c 
+			  xdgmimeint.c 
+			  xdgmimemagic.c 
+			  xdgmimealias.c 
+			  xdgmimeparent.c 
+			  xdgmimecache.c ;
+
+# construct full path to directory
+#XDGMIME = [ FDirName $(TOP) src xdgmime ] ;
+# assign directory name to each XDGMIME_SRC item
+#XDGMIME = $(XDGMIME)/$(XDGMIME_SRC) ;
+XDGMIME = xdgmime/$(XDGMIME_SRC) ;
+
 SOURCE = Config.cpp 
 		 StrUtil.cpp
 		 Util.cpp
@@ -22,7 +36,11 @@ SOURCE = Config.cpp
 		 Sound.cpp 
 		 IconTheme.cpp 
 		 Color.cpp 
-		 Run.cpp ;
+		 Run.cpp 
+		 TiXml.cpp
+		 TiXmlParser.cpp 
+		 MimeType.cpp
+		 $(XDGMIME) ;
 
 # files that requires fltk or X11
 SOURCE_GUI = Ask.cpp

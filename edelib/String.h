@@ -250,7 +250,7 @@ class EDELIB_API String
 		 * \param str is string we are looking for
 		 * \param offset position to start looking from
 		 */
-		size_type find(const char* str, size_type offset);
+		size_type find(const char* str, size_type offset) const;
 
 		/**
 		 * Returns starting position of given character starting at the given
@@ -260,12 +260,12 @@ class EDELIB_API String
 		 * \param ch character we are looking for
 		 * \param offset position to start looking from
 		 */
-		size_type find(char ch, size_type offset);
+		size_type find(char ch, size_type offset) const;
 
 		/**
 		 * Returns start of given string. Behaves same as find(str, 0)
 		 */
-		size_type find(const char* str);
+		size_type find(const char* str) const;
 
 		/**
 		 * Clear all elements of current string

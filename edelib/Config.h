@@ -185,8 +185,6 @@ class EDELIB_API Config
 		 */
 		operator bool(void) const   { return ((errcode == CONF_SUCCESS) ? 1 : 0); }
 
-		//bool operator!(void) const  { return (errcode != CONF_SUCCESS); };
-
 		/**
 		 * Clear all internal data.
 		 */
@@ -397,7 +395,6 @@ class EDELIB_API Config
 		const char* strerror(int code);
 };
 
-
-} // _EDELIB_NAMESPACE
+}
 
 #endif // __CONFIG_H__

@@ -104,7 +104,6 @@ String _path_builder(const char* separator, bool ending, const char* p1, const c
 	vector<String> vs;
 	stringtok(vs, str, separator);
 
-	// this should not happen
 	EASSERT(vs.size() > 0 && "This should not be happened !!!");
 
 	str.clear();
