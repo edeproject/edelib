@@ -44,8 +44,10 @@ EDELIB_NAMESPACE {
 class MimeType
 {
 	private:
+		unsigned char status;
 		String mtype;
 		String mcmt;
+		String micon;
 
 		MimeType(const MimeType&);
 		MimeType& operator=(const MimeType&);

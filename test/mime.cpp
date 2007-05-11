@@ -33,6 +33,24 @@ UT_FUNC(MimeTypeTest, "Test MimeType")
 	UT_VERIFY( mt.comment() == "AWK script" );
 	UT_VERIFY( mt.icon_name() == "application-x-awk" );
 
+	// duplicate, should not run tokenizer
+	UT_VERIFY( mt.icon_name() == "application-x-awk" );
+	UT_VERIFY( mt.icon_name() == "application-x-awk" );
+	UT_VERIFY( mt.icon_name() == "application-x-awk" );
+	
+	// duplicate, should not reload comment
+	UT_VERIFY( mt.comment() == "AWK script" );
+	UT_VERIFY( mt.comment() == "AWK script" );
+	UT_VERIFY( mt.comment() == "AWK script" );
+	UT_VERIFY( mt.comment() == "AWK script" );
+
+	// empty mime, do nothing
+	MimeType mt2;
+	UT_VERIFY( mt2.type() == "" );
+	UT_VERIFY( mt2.comment() == "" );
+	UT_VERIFY( mt2.icon_name() == "" );
+
+
 	/* TODO
 	UT_VERIFY( mt.set("this-does-not-exists") == false );
 	UT_VERIFY( mt.type().empty() == true );
