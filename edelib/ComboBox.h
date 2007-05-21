@@ -17,12 +17,20 @@
 
 #include <fltk/Choice.h>
 #include <fltk/Menu.h>
+#include <fltk/Input.h>
 
 EDELIB_NAMESPACE {
 
-//class ComboBox : public fltk::Choice
 class ComboBox : public fltk::Menu
 {
+	private:
+		bool edt;
+
+		fltk::Widget* sel;
+		fltk::Input*  inpt;
+
+		void draw_static(void);
+		int handle_static(int event);
 	public:
 		/**
 		 * Constructs an empty group.
@@ -34,8 +42,12 @@ class ComboBox : public fltk::Menu
 		 */
 		~ComboBox();
 
+		void set_editable(void);
+		bool editable(void)     { return edt; }
+
 #ifndef SKIP_DOCS
 		virtual void draw(void);
+		virtual void layout(void);
 		virtual int handle(int event);
 #endif
 };
