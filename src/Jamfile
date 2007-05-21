@@ -46,7 +46,8 @@ SOURCE = Config.cpp
 SOURCE_GUI = Ask.cpp
 			 XSet.cpp 
 			 ExpandableGroup.cpp 
-			 IconChooser.cpp ;
+			 IconChooser.cpp 
+			 ComboBox.cpp ;
 
 if $(FLTKLIBS)
 {
