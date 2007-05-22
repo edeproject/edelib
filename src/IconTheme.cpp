@@ -192,7 +192,7 @@ void IconTheme::load_theme(const char* theme)
 					found = true;
 					break;
 				}
-				EDEBUG("index.theme not found in %s, skipping...\n", ipath.c_str());
+				EDEBUG(ESTRLOC ": index.theme not found in %s, skipping...\n", ipath.c_str());
 			}
 		}
 	}
@@ -207,7 +207,7 @@ void IconTheme::load_theme(const char* theme)
 	 */
 	Config c;
 	if(!c.load(ipath.c_str())) {
-		EWARNING("%s not accessible\n", ipath.c_str());
+		EWARNING(ESTRLOC ": %s not accessible\n", ipath.c_str());
 		return;
 	}
 
@@ -217,7 +217,7 @@ void IconTheme::load_theme(const char* theme)
 	 */
 	char buffer[3072];
 	if(!c.get("Icon Theme", "Directories", buffer, sizeof(buffer))) {
-		EWARNING("bad: %s\n", c.strerror());
+		EWARNING(ESTRLOC ": bad: %s\n", c.strerror());
 		return;
 	}
 
@@ -240,12 +240,12 @@ void IconTheme::load_theme(const char* theme)
 	IconDirInfo dinfo;
 	for(unsigned int i = 0; i < dl.size(); i++) {
 		if(!c.get(dl[i].c_str(), "Size", sz, 0))
-			EWARNING("Bad entry '%s' in %s, skipping...\n", dl[i].c_str(), ipath.c_str());
+			EWARNING(ESTRLOC ": Bad entry '%s' in %s, skipping...\n", dl[i].c_str(), ipath.c_str());
 
 		dinfo.size = check_sz(sz);
 
 		if(!c.get(dl[i].c_str(), "Context", buffer, sizeof(buffer)))
-			EWARNING("Bad entry '%s' in %s, skipping...\n", dl[i].c_str(), ipath.c_str());
+			EWARNING(ESTRLOC ": Bad entry '%s' in %s, skipping...\n", dl[i].c_str(), ipath.c_str());
 
 		dinfo.context = figure_ctx(buffer);
 
@@ -268,7 +268,7 @@ void IconTheme::load_theme(const char* theme)
 	if(!c.get("Icon Theme", "Inherits", buffer, sizeof(buffer))) {
 		// prevent infinite recursion
 		if(!fvisited) {
-			EDEBUG("No parents, going for '%s'\n", FALLBACK_THEME);
+			EDEBUG(ESTRLOC ": No parents, going for '%s'\n", FALLBACK_THEME);
 			fvisited = true;
 			load_theme(FALLBACK_THEME);
 		}
@@ -337,6 +337,5 @@ void IconTheme::load(const char* theme)
 	IconTheme::instance()->clear_data();
 	IconTheme::instance()->load_theme(theme);
 }
-
 
 }

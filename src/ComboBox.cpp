@@ -20,11 +20,20 @@
 #include <fltk/Box.h>
 #include <fltk/Group.h>
 
-#include <stdio.h>
+#include <string.h> // strlen, strcmp, strncmp
+
+#define MIN_CHARS 6  // min. chars to start autocomplete
 
 EDELIB_NAMESPACE {
 
-ComboBox::ComboBox(int x, int y, int w, int h, const char* l) : fltk::Menu(x,y,w,h,l), edt(false), sel(0), inpt(NULL) {
+void input_cb(fltk::Widget*, void* w) {
+	ComboBox* cbox = (ComboBox*)w;
+	cbox->try_autocomplete();
+}
+
+ComboBox::ComboBox(int x, int y, int w, int h, const char* l) : 
+	fltk::Menu(x,y,w,h,l), ctype(COMBOBOX_STATIC), min_match(MIN_CHARS), sel(NULL), curr(NULL), inpt(NULL) {
+
 	clear_flag(fltk::ALIGN_MASK);
 	set_flag(fltk::ALIGN_LEFT);
 	box(fltk::DOWN_BOX);
@@ -33,7 +42,7 @@ ComboBox::ComboBox(int x, int y, int w, int h, const char* l) : fltk::Menu(x,y,w
 	// enable click_to_focus() below
 	set_click_to_focus();
 
-	set_editable();
+	//when(fltk::WHEN_CHANGED);
 }
 
 ComboBox::~ComboBox() {
@@ -41,22 +50,51 @@ ComboBox::~ComboBox() {
 		delete inpt;
 }
 
-void ComboBox::set_editable(void) {
-	if(!inpt) {
-		int pad = w()-h()*4/5;
+void ComboBox::type(int t) {
+	if(ctype == t)
+		return;
 
-		// pretend as group so Input can be drawn correctly
-		fltk::Group* g = current();
-		current(0);
+	ctype = t;
+	if(ctype & COMBOBOX_STATIC) {
+		if(inpt)
+			delete inpt;
+		set_click_to_focus();
+		return;
+	} else {
+		if(!inpt) {
+			int pad = w()-h()*4/5;
 
-		inpt = new fltk::Input(x(), y(), pad, h());
-		inpt->box(fltk::NO_BOX);
-		inpt->parent(this);
+			// pretend as group so Input can be drawn correctly
+			fltk::Group* g = current();
+			current(0);
 
-		current(g);
+			inpt = new fltk::Input(x(), y(), pad, h());
+			inpt->box(fltk::NO_BOX);
+			inpt->parent(this);
 
-		clear_click_to_focus();
+			if(ctype & COMBOBOX_AUTOCOMPLETE) {
+				inpt->callback(input_cb, this);
+				inpt->when(fltk::WHEN_CHANGED);
+			}
+
+			current(g);
+			clear_click_to_focus();
+		}
 	}
+}
+
+void ComboBox::draw(void) {
+	if(!inpt)
+		draw_static();
+	else
+		draw_editable();
+}
+
+int ComboBox::handle(int event) {
+	if(!inpt)
+		return handle_static(event);
+	else
+		return handle_editable(event);
 }
 
 void ComboBox::draw_static(void) {
@@ -131,7 +169,7 @@ void ComboBox::draw_static(void) {
 	}
 }
 
-void ComboBox::draw(void) {
+void ComboBox::draw_editable(void) {
 	if(damage() & fltk::DAMAGE_ALL)
 		draw_frame();
 
@@ -163,6 +201,8 @@ void ComboBox::layout(void) {
 	int ww = h()*4/5;
 	Rectangle rr(w() - ww, h());
 	box()->inset(rr);
+	// inset() leave some space from right so w()+2 is enough to hide them
+	rr.w(rr.w()+2);
 	inpt->resize(rr.x(), rr.y(), rr.w(), rr.h());
 }
 
@@ -178,6 +218,21 @@ int ComboBox::handle_static(int event) {
 			redraw_highlight();
 			return 1;
 
+		case fltk::SHOW:
+			/*
+			 * childs are build in runtime so this can't be checked
+			 * in constructor or similar
+			 */
+			if(children()) {
+				// for cases when value() is given before widget is shown
+				if(value() < 0)
+					value(0);
+
+				sel = child(0);
+				redraw(fltk::DAMAGE_VALUE);
+			}
+			return 1;
+
 		case fltk::PUSH:
 			if(click_to_focus()) {
 				take_focus();
@@ -187,21 +242,42 @@ int ComboBox::handle_static(int event) {
 					return 1;
 			}
 
+	EXECUTE:
 			if(!children(0,0))
 				return 1;
 
 			value(0);
-			sel = try_popup(Rectangle(0, h()-2, w(), h()), 0);
-
-			if(sel)
+			/*
+			 * Make a copy in case menu is popped and nothing is selected
+			 * but window is moved
+			 */
+			curr = try_popup(Rectangle(0, h()-2, w(), h()), 0);
+			if(curr) {
+				sel = curr;
 				redraw(fltk::DAMAGE_VALUE);
+				// run callback
+				if(sel->takesevents())
+					execute(sel);
+			}
 			return 1;
+
+		case fltk::SHORTCUT:
+			if(test_shortcut())
+				goto EXECUTE;
+			if(handle_shortcut()) {
+				redraw(fltk::DAMAGE_VALUE);
+				return 1;
+			}
+			return 0;
 	}
 	return fltk::Menu::handle(event);
 }
 
-int ComboBox::handle(int event) {
-	inpt->when(when());
+int ComboBox::handle_editable(int event) {
+	/*
+	 * enabling this will enable ComboBox::when() (in constructor uncomment too)
+	 * inpt->when(when());
+	 */
 	int ret = 0;
 
 	switch(event) {
@@ -238,13 +314,82 @@ int ComboBox::handle(int event) {
 				ret = inpt->send(event);
 			else {
 				ret = handle_static(event);
-				if(sel)
-					inpt->value(sel->label());
+				// pick up value and fill input box
+				if(sel) {
+					inpt->text(sel->label());
+					inpt->take_focus();
+				}
 			}
 			break;
 	}
 
 	return ret;
+}
+
+// valid only if set_editable() is used
+void ComboBox::try_autocomplete(void) {
+	if(!inpt)
+		return;
+
+	if(!(ctype & COMBOBOX_AUTOCOMPLETE))
+		return;
+
+	const char* str = inpt->text();
+	int sz = strlen(str);
+	if(sz < min_match)
+		return;
+
+	fltk::Widget* found = 0;
+
+	// let's rock
+	for(int i = 0; i < children(); i++) {
+		if(strncmp(child(i)->label(), str, sz) == 0) {
+			found = child(i);
+			break;
+		}
+	}
+
+	if(found)
+		inpt->text(found->label());
+}
+
+void ComboBox::choice(unsigned int it) {
+	bool ret = value(it);
+	if(ret) {
+		fltk::Widget* ww = get_item();
+
+		if(inpt)
+			inpt->text(ww->label());
+		else
+			sel = ww;
+	}
+}
+
+int ComboBox::choice(void) {
+	fltk::Widget* ww = get_item();
+	if(!ww || !ww->label())
+		return -1;
+	if(!inpt)
+		return fltk::Menu::value();
+	if(strcmp(ww->label(), inpt->text()) == 0)
+		return fltk::Menu::value();
+	else {
+		// last resort, scan all childs
+		for(int i = 0; i < children(); i++) {
+			if(child(i)->label() && (strcmp(child(i)->label(), inpt->text()) == 0))
+				return i;
+		}
+	}
+
+	return -1;
+}
+
+const char* ComboBox::text(void) { 
+	if(inpt)
+		return inpt->text();
+	else if(sel)
+		return sel->label();
+	return 0;
 }
 
 }

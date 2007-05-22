@@ -71,11 +71,11 @@ int run_fork(const char* cmd, bool wait)
 		else {
 			if(!WIFEXITED(status)) {
 				status_ret = WEXITSTATUS(status);
-				EDEBUG("run_fork(): Child '%s' died with %i\n", cmd, status_ret);
+				EDEBUG(ESTRLOC ": run_fork(): Child '%s' died with %i\n", cmd, status_ret);
 			}
 			else if(WIFSIGNALED(status)) {
 				status_ret = WTERMSIG(status);
-				EDEBUG("run_fork(): Child '%s' signaled with %i\n", cmd,  status_ret);
+				EDEBUG(ESTRLOC ": run_fork(): Child '%s' signaled with %i\n", cmd,  status_ret);
 			}
 			else {
 				// convert status signal to errno format

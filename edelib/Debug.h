@@ -33,6 +33,13 @@ EDELIB_API void EFatal(const char* fmt, ...);
 #define EWARNING EWarning
 #define EFATAL   EFatal
 
+// current localtion of code (an cool idea from glib)
+#define ESTRLOC_STRINGIFY(arg)          ESTRLOC_STRINGIFY_ARG(arg)
+#define ESTRLOC_STRINGIFY_ARG(content)  #content
+
+#define ESTRLOC __FILE__ ":" ESTRLOC_STRINGIFY(__LINE__)
+
+
 EDELIB_NAMESPACE {
 
 enum MsgType

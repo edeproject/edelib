@@ -81,14 +81,14 @@ String MimeType::comment(void)
 	String path = build_filename("/", MIME_DIR, ttype.c_str());
 
 	if(!file_exists(path.c_str())) {
-		EDEBUG("MimeType::comment() %s does not exists\n", path.c_str());
+		EDEBUG(ESTRLOC ": MimeType::comment() %s does not exists\n", path.c_str());
 		return "";
 	}
 	
 	TiXmlDocument doc(path.c_str());
 
 	if(!doc.LoadFile()) {
-		EDEBUG("MimeType::comment() %s malformed\n", path.c_str());
+		EDEBUG(ESTRLOC ": MimeType::comment() %s malformed\n", path.c_str());
 		return "";
 	}
 

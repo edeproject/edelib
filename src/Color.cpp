@@ -45,7 +45,7 @@ void color_fltk_to_rgb(unsigned int color, unsigned char& r, unsigned char& g, u
 	 * which is distributed with fltk, and can be changed
 	 */
 	if(color > 0 && (!(color & 0xffffff00)))
-		EDEBUG("color_fltk_to_rgb() got value from FLTK colormap! Use fltk::split_color() instead\n");
+		EDEBUG(ESTRLOC ": color_fltk_to_rgb() got value from FLTK colormap! Use fltk::split_color() instead\n");
 
 	r = color >> 24;
 	g = (color >> 16) & 0xff;

@@ -30,7 +30,7 @@ SoundSystem::SoundSystem()
 	ao_initialize();
 	default_driver = ao_default_driver_id();
 
-	EDEBUG("SoundSystem init\n");
+	EDEBUG(ESTRLOC ": SoundSystem init\n");
 #endif
 }
 
@@ -38,7 +38,7 @@ SoundSystem::~SoundSystem()
 {
 #ifdef USE_SOUNDS
 	ao_shutdown();
-	EDEBUG("SoundSystem shutdown\n");
+	EDEBUG(ESTRLOC ": SoundSystem shutdown\n");
 #endif
 }
 
@@ -85,7 +85,7 @@ bool SoundSystem::play_stream(const char* fname)
 	OggVorbis_File vf;
 	if(ov_open(f, &vf, NULL, 0) < 0)
 	{
-		EWARNING("%s does not appear to be ogg file\n");
+		EWARNING(ESTRLOC ": %s does not appear to be ogg file\n");
 		fclose(f);
 		return false;
 	}
@@ -96,7 +96,7 @@ bool SoundSystem::play_stream(const char* fname)
 
 	while(*comm)
 	{
-		EDEBUG("%s", *comm);
+		EDEBUG(ESTRLOC ": %s", *comm);
 		comm++;
 	}
 
@@ -117,7 +117,7 @@ bool SoundSystem::play_stream(const char* fname)
 	//device = ao_open_live(ao_driver_id("oss"), &format, NULL);
 	if(device == NULL)
 	{
-		EWARNING("Can't open device");
+		EWARNING(ESTRLOC ": Can't open device");
 		ov_clear(&vf);
 		return false;
 	}
@@ -129,7 +129,7 @@ bool SoundSystem::play_stream(const char* fname)
 		if(ret == 0)
 			break;
 		else if(ret < 0)
-			EDEBUG("Error in the stream, continuing...");
+			EDEBUG(ESTRLOC ": Error in the stream, continuing...");
 		else
 			ao_play(device, pcm_out, ret);
 	}

@@ -1,3 +1,12 @@
+2007-05-22  Sanel <karijes@users.sourceforge.net>
+
+	* Completed ComboBox.
+	* Modified comobox example.
+	* Added comobox.jpg inside docs.
+	* Added Item.{h,cpp} with test/example/menuitem.cpp
+	* Added ESTRLOC as shortand for __FILE__ and __LINE__
+	* Updated code for ESTRLOC
+
 2007-05-21  Sanel <karijes@users.sourceforge.net>
 
 	* Added ComboBox.{h,cpp} with test/example/combobox.cpp, althought
