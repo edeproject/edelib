@@ -51,7 +51,7 @@ void Item::draw(void) {
 		draw_label(lr, flags());
 	}
 
-	focusbox()->draw(r);
+	//focusbox()->draw(r);
 }
 
 void Item::layout(void) {
