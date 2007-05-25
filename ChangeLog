@@ -1,3 +1,9 @@
+2007-05-25  Sanel <karijes@users.sourceforge.net>
+
+	* Added few ESTRLOC to IconTheme
+	* Values returned from splitted Inherits key (IconTheme) are
+	trimmed which will prevent wrong path construction
+
 2007-05-22  Sanel <karijes@users.sourceforge.net>
 
 	* Completed ComboBox.

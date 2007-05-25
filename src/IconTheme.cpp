@@ -43,7 +43,7 @@ const char* icon_extensions[] = {
 int check_sz(int sz)
 {
 	if(sz < ICON_SIZE_TINY || sz > ICON_SIZE_ENORMOUS) {
-		EWARNING("Unsupported size '%i', defaulting to the 32x32\n", sz);
+		EWARNING(ESTRLOC ": Unsupported size '%i', defaulting to the 32x32\n", sz);
 		return ICON_SIZE_MEDIUM;
 	}
 
@@ -72,7 +72,7 @@ IconContext figure_ctx(const String& ctx)
 	if(ctx == "Misc")
 		return ICON_CONTEXT_MISC;
 
-	EWARNING("Unknown icon context '%s', defaulting to the ICON_CONTEXT_ANY\n", ctx.c_str());
+	EWARNING(ESTRLOC ": Unknown icon context '%s', defaulting to the ICON_CONTEXT_ANY\n", ctx.c_str());
 	return ICON_CONTEXT_ANY;
 }
 
@@ -285,8 +285,10 @@ void IconTheme::read_inherits(const char* buff)
 	vector<String> parents;
 	stringtok(parents, buff, ",");
 
-	for(unsigned int i = 0; i < parents.size(); i++)
+	for(unsigned int i = 0; i < parents.size(); i++) { 
+		str_trim((char*)parents[i].c_str());
 		load_theme(parents[i].c_str());
+	}
 }
 
 void IconTheme::clear_data(void)
@@ -306,8 +308,10 @@ String IconTheme::lookup(const char* icon, IconSizes sz, IconContext ctx)
 
 	String ret;
 	ret.reserve(50);
-	// ICON_CONTEXT_ANY means context is ignored, but also means slower lookup
-	// since all entries are searched
+	/*
+	 * ICON_CONTEXT_ANY means context is ignored, but also means slower lookup
+	 * since all entries are searched
+	 */
 	for(unsigned int i = 0; i < dirlist.size(); i++) 
 		if(dirlist[i].size == sz && (dirlist[i].context == ctx || ctx == ICON_CONTEXT_ANY)) {
 			for(int j = 0; j < ICON_EXT_SIZE; j++) {

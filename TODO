@@ -11,7 +11,6 @@ TODO list:
  * documentation install strangely depends on xxx/doc/edelib-xxx/html directory; how ?
  * more checks on GenDocumentation since /usr/bin/env gawk -f does not work
  * add local snprintf/vsnprintf/scandir/dirent(???)
- * IconTheme will probably fail if Directories contains spaces between ',' delimiters; trim this
  * Date can accept set(0,1,0); leave this or... (possible bugs ?)
  * Finish DateTime
  * xdgmime calls too much xdg_mime_init()/xdg_mime_shutdown(); move these in MimeType class
