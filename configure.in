@@ -38,6 +38,9 @@ dnl clear these since configure set it '-g -O2' by default
 CFLAGS=
 CXXFLAGS=
 
+dnl clear 'prefix' from possible ending slashes
+prefix=`echo $prefix | sed -e 's/\/\+$//g'`
+
 AC_PROG_CXX
 AC_PROG_INSTALL
 AC_PROG_AWK
