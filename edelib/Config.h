@@ -302,6 +302,16 @@ class EDELIB_API Config
 		void set(const char* section, const char* key, char* val);
 
 		/**
+		 * Set const char* value in named section. If section, or key does not
+		 * exists, they will be created.
+		 *
+		 * \param section name of target section
+		 * \param key name of target key
+		 * \param val value to store within key
+		 */
+		void set(const char* section, const char* key, const char* val);
+
+		/**
 		 * Set bool value in named section. If section, or key does not
 		 * exists, they will be created.
 		 *

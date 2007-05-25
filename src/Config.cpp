@@ -664,15 +664,24 @@ bool Config::get_localized(const char* section, const char* key, char* ret, int 
 
 void Config::set(const char* section, const char* key, char* value)
 {
+	EDEBUG("xxxxxxxxx> %s <xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n", value);
 	ConfigSection* sc = add_section(section);
+
+	EDEBUG("xxxxxxxxx> %s\n", value);
 
 	// it will create entry, if needed
 	// TODO: really needs this casts !?@
-	sc->add_entry((char*)key, (char*)value);
+	sc->add_entry((char*)key, value);
+}
+
+void Config::set(const char* section, const char* key, const char* value)
+{
+	set(section, key, (char*)value);
 }
 
 void Config::set(const char* section, const char* key, bool value)
 {
+	EDEBUG("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx> bool\n");
 	ConfigSection* sc = add_section(section);
 	const char* v = ((value) ? "1" : "0");
 	sc->add_entry((char*)key, (char*)v);
@@ -680,6 +689,7 @@ void Config::set(const char* section, const char* key, bool value)
 
 void Config::set(const char* section, const char* key, int value)
 {
+	EDEBUG("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx> int\n");
 	ConfigSection* sc = add_section(section);
 	char tmp[128];
 	snprintf(tmp, sizeof(tmp)-1, "%d", value);
@@ -688,6 +698,7 @@ void Config::set(const char* section, const char* key, int value)
 
 void Config::set(const char* section, const char* key, long value)
 {
+	EDEBUG("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx> long\n");
 	ConfigSection* sc = add_section(section);
 	char tmp[128];
 	snprintf(tmp, sizeof(tmp)-1, "%ld", value);
@@ -696,6 +707,7 @@ void Config::set(const char* section, const char* key, long value)
 
 void Config::set(const char* section, const char* key, float value)
 {
+	EDEBUG("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx> float\n");
 	ConfigSection* sc = add_section(section);
 	// TODO: set locale to C
 	char tmp[32];
@@ -706,6 +718,7 @@ void Config::set(const char* section, const char* key, float value)
 
 void Config::set(const char* section, const char* key, double value)
 {
+	EDEBUG("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx> double\n");
 	ConfigSection* sc = add_section(section);
 	// TODO: set locale to C
 	char tmp[32];
