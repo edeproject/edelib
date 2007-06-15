@@ -18,8 +18,7 @@
 
 EDELIB_NAMESPACE {
 
-enum FileErrors
-{
+enum FileErrors {
 	FILE_SUCCESS = 0,  ///< successful operation
 	FILE_EACCESS,      ///< permission denied
 	FILE_ENOENT,       ///< no such file
@@ -28,8 +27,7 @@ enum FileErrors
 	FILE_FLAG          ///< bad flag
 };
 
-enum FileIOMode
-{
+enum FileIOMode {
 	FIO_READ    = (1<<1),          ///< open file in read-only mode
 	FIO_WRITE   = (1<<2),          ///< open file in write mode, and truncate it to zero length
 	FIO_APPEND  = (1<<3),          ///< open file in append mode
@@ -58,8 +56,7 @@ enum FileIOMode
  * \endcode
  */
 
-class EDELIB_API File
-{
+class EDELIB_API File {
 	private:
 		FILE* fobj;
 		char* fname;
@@ -178,6 +175,11 @@ class EDELIB_API File
 		int write(const char* buff, unsigned int buffsz);
 
 		/**
+		 * Same as write(buff, strlen(buff))
+		 */
+		int write(const char* buff);
+
+		/**
 		 * printf function on the stream.
 		 *
 		 * \return size of writen data
@@ -202,6 +204,48 @@ EDELIB_API bool file_readable(const char* name);
  * \related File
  */
 EDELIB_API bool file_writeable(const char* name);
+
+/**
+ * Remove file at given path. It will call system's unlink()
+ * instead remove() since remove() is not compatible between
+ * latest versions of libc and libc4 or libc5 (see <em>man remove</em>).
+ *
+ * \related File
+ * \return true if operation was succesfull, or false if is unable to proceed
+ * \param name is absolute (or relative) path to the file
+ */
+EDELIB_API bool file_remove(const char* name);
+
+/**
+ * Copy file from src to dest. This function is implemented via getc()
+ * (not like standard <em>cp</em> command) due it's simplicity. 
+ *
+ * \note src <b>must</b> exists and checking if dest exists <b>is not done</b>.
+ *       This means if dest exists, it will <b>be overwritten</b>. Use file_exists() to
+ *       check does it really exists.
+ *
+ * If <em>exact</em> parameter is set to true, it will set the same permissions and access/change time
+ * to the dest as src. On other hand, if any of stages (changing permissions or setting time) fails
+ * file_copy() will return false.
+ *
+ * \related File
+ * \return true if is able to open src and able to write in dest, or false if failed in both (or setting
+ *  permissions/time if <em>exact</em> paramter is used)
+ * \param src is source file to be copied
+ * \param dest is destination
+ * \param exact will try to set exact src info (timestamp,owner,group,...) to dest
+ */
+EDELIB_API bool file_copy(const char* src, const char* dest, bool exact = false);
+
+/**
+ * Rename file. Assumed is that name to be renamed to does not exists (file, directory, link and etc.)
+ * \related File
+ * \return true if succeded or false if not
+ * \param from is what file to rename
+ * \param to is new name
+ */
+EDELIB_API bool file_rename(const char* from, const char* to);
+
 }
 
 #endif

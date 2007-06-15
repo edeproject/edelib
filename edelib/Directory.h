@@ -35,6 +35,66 @@ EDELIB_API bool dir_readable(const char* name);
 EDELIB_API bool dir_writeable(const char* name);
 
 /**
+ * Creates directory calling system's mkdir() with apropriate
+ * permission (default is 0777).
+ *
+ * This function will fail if given path exists (directory, file, link, etc.)
+ * Return true if succeded or false if failed.
+ */
+EDELIB_API bool dir_create(const char* name, int perm = 0777);
+
+/**
+ * Remove given path (must be directory) calling system's rmdir().
+ * Directory <b>must</b> be empty or operation will fail.
+ * Return true if succeded or false if failed.
+ */
+EDELIB_API bool dir_remove(const char* name);
+
+/**
+ * Remove given path recursively (must be a directory). If parameter <em>all</em>
+ * is set to true (default is true), it will remove all files and directories under
+ * <em>name</em> parameter (including given <em>name</em>). If set to true, only
+ * files will be removed, leaving directory structure intact.
+ *
+ * Parameter <em>progress</em> is function externaly defined, which can be used to
+ * track file/directory deletition. Can be used like:
+ * \code
+ *   void myprogress(const char* name) {
+ *      printf("deleting %s\n", name);
+ *   }
+ *
+ *   dir_remove_rec(some_path, true, myprogress)
+ * \endcode
+ *
+ * If function fails to delete underlaying directories/files, it will call on_fail() given
+ * function (otherwise will skip them).
+ */
+EDELIB_API bool dir_remove_rec(const char* name, bool all = true, 
+		void (*progress)(const char* name) = NULL, 
+		void (*on_fail)(const char* name) = NULL);
+
+/**
+ * Rename given directory name. If name to be renamed to exists (file, directory, link and etc.)
+ * it will fail. Directory to be renamed <b>must</b> be empty.
+ */
+EDELIB_API bool dir_rename(const char* from, const char* to);
+
+/**
+ * Return true if given directory is empty. If path is pointing to anything
+ * else than directory, it will return false. Use dir_exists() to check is path really a directory.
+ *
+ * This function is alternative to this code:
+ * \code
+ *   vector<String> dlist;
+ *   dir_list(path, dlist);
+ *   dlist.empty() == true;
+ * \endcode
+ *
+ * since is much faster.
+ */
+EDELIB_API bool dir_empty(const char* name);
+
+/**
  * Returns user home directory or empty String if fails 
  */
 EDELIB_API String dir_home(void);

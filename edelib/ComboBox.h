@@ -74,8 +74,7 @@ enum {
  * version, since is simple subset of it.
  */
 
-class ComboBox : public fltk::Menu
-{
+class ComboBox : public fltk::Menu {
 	private:
 		int  ctype;
 		int  min_match;

@@ -8,6 +8,9 @@
 # GNU General Public Licence version 2 or newer.
 # See COPYING for details.
 
+# only for haiku jam
+JCACHEFILE = .jamcache ;
+
 if $(NOJAMCFG)
 {
 	# for testing purposes
@@ -194,9 +197,10 @@ rule MakeStaticLibrary
 # and if breaks something, addons will be done.
 # It use SOEXTFULL as full shared library extension and SOEXT as symlink 
 # extension to it.
-rule MakeSharedLibrary
+rule MakeSharedLibrary 
 {
-	if ! $(UNIX)
+
+	if ! $(UNIX) 
 	{
 		Exit "Dynamic libraries can't be built on this OS for now" ;
 	}
@@ -262,9 +266,9 @@ rule MakeTest
 # Create api documentation via doxygen; not full paths are required
 # since doxygen don't have any external option to specify path for Doxyfile
 # or path for output directory
-rule MakeApiDocumentation
+rule MakeApiDocumentation 
 {
-	if $(DOXYGEN)
+	if $(DOXYGEN) 
 	{
 		Depends doc : $(<) ;
 		Depends $(<) : $(>) ;

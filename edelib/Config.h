@@ -18,8 +18,7 @@
 
 EDELIB_NAMESPACE {
 
-enum ConfigErrors 
-{
+enum ConfigErrors {
 	CONF_SUCCESS = 0,   ///< successful operation
 	CONF_ERR_FILE,      ///< trouble accessing config file or directory
 	CONF_ERR_BAD,       ///< malformed file
@@ -30,14 +29,12 @@ enum ConfigErrors
 };
 
 #ifndef SKIP_DOCS
-// all data are preserved in unsigned char* form
-struct ConfigEntry
-{
+struct ConfigEntry {
 	char* key;
 	char* value;
-	size_t keylen;
-	size_t valuelen;
-	unsigned hash;
+	unsigned int keylen;
+	unsigned int valuelen;
+	unsigned int hash;
 };
 #endif
 
@@ -57,8 +54,7 @@ typedef list<ConfigSection*> SectionList;
  * Section is a field in config file, containing
  * grouped data. 
  */
-class EDELIB_API ConfigSection
-{
+class EDELIB_API ConfigSection {
 	private:
 		friend class Config;
 
@@ -71,7 +67,7 @@ class EDELIB_API ConfigSection
 		ConfigSection(const ConfigSection&);
 		ConfigSection& operator=(ConfigSection&);
 
-		void add_entry(char* key, char* value);
+		void add_entry(const char* key, const char* value);
 		void remove_entry(char* key);
 		ConfigEntry* find_entry(const char* key);
 
@@ -135,8 +131,7 @@ class EDELIB_API ConfigSection
  *   get("parent/child", "item", &val, valsz);
  * \endcode
  */
-class EDELIB_API Config
-{
+class EDELIB_API Config {
 	private:
 		unsigned int errcode;
 		unsigned int linenum;

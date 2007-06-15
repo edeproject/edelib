@@ -1,8 +1,7 @@
 #ifndef __UNITTEST_H__
 #define __UNITTEST_H__
 
-struct UTMsgList
-{
+struct UTMsgList {
 	char* msg;
 	char* file;
 	unsigned long line;
@@ -10,8 +9,7 @@ struct UTMsgList
 	UTMsgList* next;
 };
 
-class UnitTest
-{
+class UnitTest {
 	private:
 		char* tname;
 		char* tdescr;
@@ -45,16 +43,14 @@ class UnitTest
 #define UT_VERIFY_NOT_EQUAL(p1, p2)          verify(((p1) != (p2)),  #p1" != "#p2, __FILE__, __LINE__)
 #define UT_FAIL(reason)                      verify(false, reason, __FILE__, __LINE__)
 
-struct UTList
-{
+struct UTList {
 	bool alloc;
 	UnitTest* test;
 	UTList* first;
 	UTList* next;
 };
 
-class UnitTestSuite
-{
+class UnitTestSuite {
 	private:
 		int ntests;
 		UTList* tlist;

@@ -22,8 +22,7 @@
 EDELIB_NAMESPACE {
 
 // copy character num times into dest
-inline void chcpy(char* dest, const char& ch, String::size_type num)
-{
+inline void chcpy(char* dest, const char& ch, String::size_type num) {
 	for(char* ptr = dest; num > 0; ptr++, num--)
 		*ptr = ch;
 }
@@ -34,7 +33,7 @@ const String::size_type  String::npos = ~(String::size_type)0;
 String::String() : sdata(&null_data)
 { }
 
-String::String(const char* str) : sdata(&null_data)
+String::String(const char* str) : sdata(&null_data) 
 { 
 	assign(str); 
 }
@@ -50,9 +49,9 @@ String::~String()
 	dispose();
 }
 
-void String::init(size_type len, size_type cap)
-{
+void String::init(size_type len, size_type cap) {
 	EASSERT(len <= cap);
+
 	sdata = new StringData;
 	sdata->chars = new char[cap + 1];
 	sdata->chars[0] = STERM;
@@ -60,20 +59,17 @@ void String::init(size_type len, size_type cap)
 	sdata->capacity = cap;
 }
 
-void String::dispose(void)
-{
-	if(sdata != &null_data)
-	{
+void String::dispose(void) {
+
+	if(sdata != &null_data) {
 		delete [] sdata->chars;
 		delete sdata;
 		sdata = &null_data;
 	}
 }
 
-void String::reserve(size_type cap)
-{
-	if(cap > capacity())
-	{
+void String::reserve(size_type cap) {
+	if(cap > capacity()) {
 		String tmp;
 		tmp.init(length(), cap);
 		memcpy(tmp.sdata->chars, data(), length());
@@ -81,15 +77,13 @@ void String::reserve(size_type cap)
 	}
 }
 
-void String::swap(String& from)
-{
+void String::swap(String& from) {
 	StringData* d = sdata;
 	sdata = from.sdata;
 	from.sdata = d;
 }
 
-String& String::assign(const char* str, size_type len)
-{
+String& String::assign(const char* str, size_type len) {
 	EASSERT(str != NULL);
 	/*
 	 * I'm not implementing max_size().
@@ -118,28 +112,24 @@ String& String::assign(const char* str, size_type len)
 	return *this;
 }
 
-String& String::assign(const char* str)
-{
+String& String::assign(const char* str) {
 	assign(str, strlen(str));
 	return *this;
 }
 
-String& String::assign(const String& str)
-{
+String& String::assign(const String& str) {
 	assign(str.c_str(), str.length());
 	return *this;
 }
 
-String& String::append(const char* str, size_type len)
-{
-	if(len + length() <= capacity())
-	{
+String& String::append(const char* str, size_type len) {
+
+	if(len + length() <= capacity()) {
 		memcpy(sdata->chars + length(), str, len);
 		sdata->length += len;
 		sdata->chars[sdata->length] = STERM;
 	}
-	else
-	{
+	else {
 		reserve((capacity() + len) * 2);
 		memcpy(sdata->chars + length(), str, len);
 		sdata->length += len;
@@ -149,16 +139,13 @@ String& String::append(const char* str, size_type len)
 	return *this;
 }
 
-String& String::append(size_type num, const char& ch)
-{
-	if(num + length() <= capacity())
-	{
+String& String::append(size_type num, const char& ch) {
+	if(num + length() <= capacity()) {
 		chcpy(sdata->chars + length(), ch, num);
 		sdata->length += num;
 		sdata->chars[sdata->length] = STERM;
 	}
-	else
-	{
+	else {
 		char* buff = new char[num];
 		chcpy(buff, ch, num);
 		append(buff, num);
@@ -168,25 +155,21 @@ String& String::append(size_type num, const char& ch)
 	return* this;
 }
 
-String& String::append(const char* str)
-{
+String& String::append(const char* str) {
 	append(str, strlen(str));
 	return *this;
 }
 
-String& String::append(const String& str)
-{
+String& String::append(const String& str) {
 	append(str.c_str(), str.length());
 	return *this;
 }
 
-void String::clear(void)
-{
+void String::clear(void) {
 	dispose();
 }
 
-void String::printf(const char* fmt, ...)
-{
+void String::printf(const char* fmt, ...) {
 	EASSERT(fmt != NULL);
 
 	char buff[PRINTF_BUFF];
@@ -198,48 +181,43 @@ void String::printf(const char* fmt, ...)
 	assign((char*)buff);
 }
 
-String& String::operator=(const char* str)
-{
+String& String::operator=(const char* str) {
 	assign(str);
 	return *this;
 }
 
-String& String::operator=(const String& str)
-{
+String& String::operator=(const String& str) {
 	if(&str != this)
 		assign(str);
+
 	return *this;
 }
 
-String& String::operator+=(const char* str)
-{
+String& String::operator+=(const char* str) {
 	return append(str);
 }
 
-String& String::operator+=(const String& str)
-{
+String& String::operator+=(const String& str) {
 	return append(str);
 }
 
-String& String::operator+=(const char& ch)
-{
+String& String::operator+=(const char& ch) {
 	return append(1, ch);
 }
 
-char& String::operator[](size_type index)
-{
+char& String::operator[](size_type index) {
 	EASSERT(index < length());
+
 	return sdata->chars[index];
 }
 
-char String::operator[](size_type index) const
-{
+char String::operator[](size_type index) const {
 	EASSERT(index < length());
+
 	return sdata->chars[index];
 }
 
-String String::substr(size_type index, size_type num) const
-{
+String String::substr(size_type index, size_type num) const {
 	String tmp;
 	if(num == npos)
 		tmp.assign(data() + index, length() - index);
@@ -248,8 +226,7 @@ String String::substr(size_type index, size_type num) const
 	return tmp;
 }
 
-String::size_type String::find(const char* str, size_type offset) const
-{
+String::size_type String::find(const char* str, size_type offset) const {
 	if(offset >= length())
 		return npos;
 
@@ -260,27 +237,23 @@ String::size_type String::find(const char* str, size_type offset) const
 		return (p - data());
 }
 
-String::size_type String::find(const char* str) const
-{
+String::size_type String::find(const char* str) const {
 	return find(str, 0);
 }
 
-String::size_type String::find(char ch, size_type offset) const
-{
+String::size_type String::find(char ch, size_type offset) const {
 	if(offset >= length())
 		return npos;
 
 	size_type i = 0;
-	for(const char* p = data() + offset; *p != STERM && i < length(); p++, i++)
-	{
+	for(const char* p = data() + offset; *p != STERM && i < length(); p++, i++) {
 		if(*p == ch)
 			return (i + offset);
 	}
 	return npos;
 }
 
-String operator+(const String& s1, const String& s2)
-{
+String operator+(const String& s1, const String& s2) {
 	String tmp;
 
 	String::size_type len = s1.length();
@@ -289,8 +262,7 @@ String operator+(const String& s1, const String& s2)
 	 * Do not allocate anything if sum of lenghts of 
 	 * s1 and s2 are 0.
 	 */
-	if(len)
-	{
+	if(len) {
 		tmp.reserve(len);
 		tmp += s1;
 		tmp += s2;
@@ -298,15 +270,14 @@ String operator+(const String& s1, const String& s2)
 	return tmp;
 }
 
-String operator+(const char* s1, const String& s2)
-{
+String operator+(const char* s1, const String& s2) {
 	String tmp;
 
 	String::size_type len = strlen(s1);
 	len += s2.length();
+
 	// see above for allocation
-	if(len)
-	{
+	if(len) {
 		tmp.reserve(len);
 		tmp += s1;
 		tmp += s2;
@@ -314,10 +285,8 @@ String operator+(const char* s1, const String& s2)
 	return tmp;
 }
 
-String operator+(const String& s1, const char* s2)
-{
+String operator+(const String& s1, const char* s2) {
 	return operator+(s2, s1);
 }
-
 
 }

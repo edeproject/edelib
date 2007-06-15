@@ -36,7 +36,7 @@ MakeTest run_tests : UnitTest.cpp
 #MakeTest th : th.cpp ;
 #MakeTest pth : pth.cpp ;
 #MakeTest dd : dd.cpp ;
-$MakeTest pp : pp.cpp ;
+#MakeTest pp : pp.cpp ;
 
 Clean clean : [ FFileName $(TOP) test .foo.txt ] ;
 Clean clean : [ FFileName $(TOP) test .ede.conf ] ;

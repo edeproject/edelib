@@ -50,6 +50,11 @@ UT_FUNC(MimeTypeTest, "Test MimeType")
 	UT_VERIFY( mt2.comment() == "" );
 	UT_VERIFY( mt2.icon_name() == "" );
 
+	// folder;
+	mt.set("/");
+	UT_VERIFY( mt.type() == "inode/directory" );
+	UT_VERIFY( mt.icon_name() == "folder" );
+
 
 	/* TODO
 	UT_VERIFY( mt.set("this-does-not-exists") == false );

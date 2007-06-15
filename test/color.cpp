@@ -65,3 +65,57 @@ UT_FUNC(ColorTest, "Test color conversions")
 	color_fltk_to_html( color_rgb_to_fltk(0, 0, 0), buff );
 	UT_VERIFY( STR_EQUAL(buff, "#000000") );
 }
+
+
+UT_FUNC(ColorTest2, "Test color conversions2")
+{
+	unsigned char r,g,b;
+	// FL_WHITE
+	color_fltk_to_rgb(255, r, g, b);
+
+	UT_VERIFY( r == 255 );
+	UT_VERIFY( g == 255 );
+	UT_VERIFY( b == 255 );
+
+	// FL_BLACK (colormap)
+	color_fltk_to_rgb(56, r, g, b);
+
+	UT_VERIFY( r == 0 );
+	UT_VERIFY( g == 0 );
+	UT_VERIFY( b == 0 );
+
+	// FL_RED (colormap)
+	color_fltk_to_rgb(88, r, g, b);
+
+	UT_VERIFY( r == 255 );
+	UT_VERIFY( g == 0 );
+	UT_VERIFY( b == 0 );
+
+	// FL_GREEN (colormap)
+	color_fltk_to_rgb(63, r, g, b);
+
+	UT_VERIFY( r == 0 );
+	UT_VERIFY( g == 255 );
+	UT_VERIFY( b == 0 );
+
+	// FL_BLUE (colormap)
+	color_fltk_to_rgb(216, r, g, b);
+
+	UT_VERIFY( r == 0 );
+	UT_VERIFY( g == 0 );
+	UT_VERIFY( b == 255 );
+
+	// FL_YELLOW (colormap)
+	color_fltk_to_rgb(95, r, g, b);
+
+	UT_VERIFY( r == 255 );
+	UT_VERIFY( g == 255 );
+	UT_VERIFY( b == 0 );
+	
+	// FL_MAGENTA (colormap)
+	color_fltk_to_rgb(248, r, g, b);
+
+	UT_VERIFY( r == 255 );
+	UT_VERIFY( g == 0 );
+	UT_VERIFY( b == 255 );
+}

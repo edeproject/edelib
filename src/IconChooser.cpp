@@ -18,29 +18,28 @@
 #include <edelib/Debug.h>
 #include <edelib/StrUtil.h>
 
-#include <fltk/Window.h>
-#include <fltk/run.h>
-#include <fltk/Button.h>
-#include <fltk/Input.h>
-#include <fltk/InvisibleBox.h>
-#include <fltk/SharedImage.h>
-#include <fltk/Group.h>
-#include <fltk/file_chooser.h>
-#include <fltk/ProgressBar.h>
-#include <fltk/events.h>
+#include <FL/Fl_Window.h>
+#include <FL/Fl.h>
+#include <FL/Fl_Button.h>
+#include <FL/Fl_Input.h>
+#include <FL/Fl_Box.h>
+#include <FL/Fl_Shared_Image.h>
+#include <FL/Fl_Group.h>
+#include <FL/Fl_File_Chooser.h>
+#include <FL/Fl_Progress.h>
 
 // maximums for icon sizes
 #define MAX_ICON_W  128
 #define MAX_ICON_H  128
 
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
+
 EDELIB_NAMESPACE {
 
-inline int MAX(int a, int b) { return a > b ? a : b; }
-
-class IconBox : public fltk::Button
-{
+class IconBox : public Fl_Button {
 	private: 
-		fltk::Color corig;
+		bool sel;
+		Fl_Color corig;
 		String iconpth;
 	public:
 		IconBox(int x, int y, int w, int h, const char* l=0);
@@ -48,56 +47,61 @@ class IconBox : public fltk::Button
 		int handle(int event);
 		void set_icon_path(const String& s) { iconpth.assign(s); }
 		const String& icon_path(void) const { return iconpth; }
+		bool selected(void) { return sel; }
 };
 
-IconBox::IconBox(int x, int y, int w, int h, const char* l) : fltk::Button(x, y, w, h, l)
-{
-	box(fltk::FLAT_BOX);
+IconBox::IconBox(int x, int y, int w, int h, const char* l) : Fl_Button(x, y, w, h, l) {
+	box(FL_FLAT_BOX);
 	corig = color();
 	iconpth = "";
+	sel = false;
 }
 
-IconBox::~IconBox()
-{
-}
+IconBox::~IconBox() { }
 
-int IconBox::handle(int event)
-{
-	switch(event)
-	{
-		case fltk::FOCUS:
+/*
+ * FIXME: icon will loose focus if is selected
+ * then press OK, which will take focus from it.
+ * In this case, nothing will be returned; double-click
+ * works as expected.
+ */
+int IconBox::handle(int event) {
+	switch(event) {
+		case FL_FOCUS:
+			corig = color();
 			color(selection_color());
 			redraw();
+			sel = true;
 			return 1;
-		case fltk::UNFOCUS:
+		case FL_UNFOCUS:
 			color(corig);
 			redraw();
+			sel = false;
 			return 1;
-		case fltk::PUSH:
+		case FL_PUSH:
 			take_focus();
 			// double-click
-			if(fltk::event_clicks())
+			if(Fl::event_clicks())
 				do_callback();
 			return 1;
-		case fltk::RELEASE:
+		case FL_RELEASE:
 			return 1;
 		default:
-			return fltk::Button::handle(event);
+			return Fl_Button::handle(event);
 	}
 	return 1;
 }
 
-class IconChooser : public fltk::Window
-{
+class IconChooser : public Fl_Window {
 	private:
 		String ret;
 		String start;
 
-		fltk::Input* path;
-		fltk::Button* bbrowse;
-		fltk::Button* bok;
-		fltk::Button* bcancel;
-		fltk::ProgressBar* progress;
+		Fl_Input* path;
+		Fl_Button* bbrowse;
+		Fl_Button* bok;
+		Fl_Button* bcancel;
+		Fl_Progress* progress;
 		ExpandableGroup* icongrp;
 
 	public:
@@ -110,23 +114,20 @@ class IconChooser : public fltk::Window
 		String& get_start(void) { return start; }
 };
 
-void cancel_cb(fltk::Widget*, void* w)
-{
+void cancel_cb(Fl_Widget*, void* w) {
 	IconChooser* ic = (IconChooser*)w;
 	ic->hide();
 }
 
-void ok_cb(fltk::Widget*, void* w)
-{
+void ok_cb(Fl_Widget*, void* w) {
 	IconChooser* ic = (IconChooser*)w;
 	if(ic->find_focused())
 		ic->hide();
 }
 
-void browse_cb(fltk::Widget*, void* w)
-{
+void browse_cb(Fl_Widget*, void* w) {
 	IconChooser* ic = (IconChooser*)w;
-	const char* dd = fltk::dir_chooser(_("Choose icon directory..."), ic->get_start().c_str(), false);
+	const char* dd = fl_dir_chooser(_("Choose icon directory..."), ic->get_start().c_str(), false);
 	if(!dd)
 		return;
 	ic->load(dd);
@@ -139,43 +140,39 @@ void browse_cb(fltk::Widget*, void* w)
  * forwarding to ok_cb(), who checks what child is
  * focused, is valid
  */
-void iconbox_cb(fltk::Widget*, void* w)
-{
+void iconbox_cb(Fl_Widget*, void* w) {
 	ok_cb(NULL, w);
 }
 
-IconChooser::IconChooser() : fltk::Window(355, 305, _("Choose icon...")), ret("")
-{
+IconChooser::IconChooser() : Fl_Window(355, 305, _("Choose icon...")), ret("") {
 	begin();
-	path = new fltk::Input(10, 15, 240, 25);
-	bbrowse = new fltk::Button(255, 15, 90, 25, _("&Browse..."));
+	path = new Fl_Input(10, 10, 240, 25);
+	bbrowse = new Fl_Button(255, 10, 90, 25, _("&Browse..."));
 	bbrowse->callback(browse_cb, this);
 
-	icongrp = new ExpandableGroup(10, 45, 335, 220);
-	icongrp->box(fltk::DOWN_BOX);
-	icongrp->color(fltk::WHITE);
+	icongrp = new ExpandableGroup(10, 40, 335, 220);
+	icongrp->box(FL_DOWN_BOX);
+	icongrp->color(FL_WHITE);
+	icongrp->end();
 
-	progress = new fltk::ProgressBar(10, 270, 110, 25);
+	progress = new Fl_Progress(10, 270, 125, 25);
 	progress->minimum(0);
 	progress->hide();
 
-	bok = new fltk::Button(160, 270, 90, 25, _("&OK"));
+	bok = new Fl_Button(160, 270, 90, 25, _("&OK"));
 	bok->callback(ok_cb, this);
-	bcancel = new fltk::Button(255, 270, 90, 25, _("&Cancel"));
+	bcancel = new Fl_Button(255, 270, 90, 25, _("&Cancel"));
 	bcancel->callback(cancel_cb, this);
 
 	// invisible resizable box
-	fltk::InvisibleBox* ibox = new fltk::InvisibleBox(10, 240, 110, 25);
+	Fl_Box* ibox = new Fl_Box(15, 160, 115, 95);
 	resizable(ibox);
 	end();
 }
 
-IconChooser::~IconChooser()
-{
-}
+IconChooser::~IconChooser() { }
 
-void IconChooser::load(const char* dir)
-{
+void IconChooser::load(const char* dir) {
 	EASSERT(dir != NULL);
 	/*
 	 * copy directory name to input box and internal String 
@@ -192,22 +189,12 @@ void IconChooser::load(const char* dir)
 		return;
 
 	/*
-	 * TODO: replace this stupid FLTK hack
-	 * with add_handler()
+	 * TODO: replace this this with
+	 * something better
 	 */
-	fltk::register_images();
+	fl_register_images();
 
-	/*
-	 * SharedImage does not calculate dimensions
-	 * at first load, until data was cached (read as: >= second load). Since
-	 * we have to have dimensions now (so can calculate box size)
-	 * Image::measure() will do the job. Yes, it's not too fast, but 
-	 * how to extract header data without direct mess with dependant libraries ?
-	 *
-	 * This have to be done with two pass; in first we find maximal dimensions
-	 * and those are used as final for preview boxes; second will draw actual image.
-	 */
-	fltk::SharedImage* img = NULL;
+	Fl_Shared_Image* img = NULL;
 	int imax_w = 0;
 	int imax_h = 0;
 	int iw, ih;
@@ -219,21 +206,18 @@ void IconChooser::load(const char* dir)
 	 * are marked as 0
 	 */
 	int* lst_info = new int[lst.size()];
+	for(unsigned int i = 0; i < lst.size(); i++) {
+		img = Fl_Shared_Image::get(lst[i].c_str());
 
-	for(unsigned int i = 0; i < lst.size(); i++) 
-	{
-		img = fltk::SharedImage::get(lst[i].c_str());
-
-		if(!img) 
-		{
+		if(!img) {
 			lst_info[i] = 0;
 			continue;
 		}
 
-		img->measure(iw, ih);
+		iw = img->w();
+		ih = img->h();
 
-		if(iw > MAX_ICON_W || ih > MAX_ICON_H) 
-		{
+		if(iw > MAX_ICON_W || ih > MAX_ICON_H) {
 			lst_info[i] = 0;
 			continue;
 		}
@@ -245,16 +229,12 @@ void IconChooser::load(const char* dir)
 
 	// clear potential content of ExpandableGroup
 	if(icongrp->children())
-	{
 		icongrp->clear();
-		icongrp->redraw();
-		icongrp->relayout();
-	}
 
-	if(lst.size() > 10)
-	{
+	if(lst.size() > 10) {
 		show_progress = true;
-		progress->range(0, lst.size(), 1);
+		progress->minimum(0);
+		progress->maximum(lst.size());
 		progress->show();
 	}
 
@@ -266,27 +246,28 @@ void IconChooser::load(const char* dir)
 	 * and that is what we need so other childs don't mess it when
 	 * they are added
 	 */
-	icongrp->focus_index(0);
+	//icongrp->focus(child(0));
+	icongrp->set_visible_focus();
 
 	IconBox* preview;
-	for(unsigned int i = 0; i < lst.size(); i++)
-	{
-		img = fltk::SharedImage::get(lst[i].c_str());
-		if(img && lst_info[i] == 1)
-		{
+	for(unsigned int i = 0; i < lst.size(); i++) {
+		img = Fl_Shared_Image::get(lst[i].c_str());
+
+		if(img && lst_info[i] == 1) {
 			preview = new IconBox(0, 0, imax_w, imax_h);
 			preview->set_icon_path(lst[i]);
-			// use background from ExpandableGroup
+			// use background/selection from ExpandableGroup
 			preview->color(icongrp->color());
+			preview->selection_color(icongrp->color());
 
 			if(show_progress)
-				progress->position(int((i*100)/int(progress->maximum())));
+				progress->value(int((i*100)/int(progress->maximum())));
 
 			preview->image(img);
 			preview->callback(iconbox_cb, this);
 			icongrp->add(preview);
 
-			fltk::check();
+			Fl::check();
 		}
 	}
 
@@ -295,13 +276,12 @@ void IconChooser::load(const char* dir)
 	delete [] lst_info;
 }
 
-bool IconChooser::find_focused(void)
-{
-	for(int i = 0; i < icongrp->children(); i++)
-	{
-		if(icongrp->child(i)->focused())
-		{
-			IconBox* ib = (IconBox*)icongrp->child(i);
+bool IconChooser::find_focused(void) {
+	IconBox* ib;
+	for(int i = 0; i < icongrp->children(); i++) {
+		ib = (IconBox*)icongrp->child(i);
+
+		if(ib->selected()) {
 			ret.assign(ib->icon_path());
 			return true;
 		}
@@ -309,14 +289,13 @@ bool IconChooser::find_focused(void)
 	return false;
 }
 
-String icon_chooser(const char* dir)
-{
+String icon_chooser(const char* dir) {
 	IconChooser ic;
 	ic.load(dir);
 
 	ic.show();
 	while(ic.visible())
-		fltk::wait();
+		Fl::wait();
 
 	return ic.get_ret();
 }

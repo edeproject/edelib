@@ -61,7 +61,13 @@ XdgMimeCache **_caches = NULL;
 static int n_caches = 0;
 
 const char *xdg_mime_type_unknown = "application/octet-stream";
-
+/* Sanel: added */
+const char *xdg_mime_type_folder   = "inode/directory";
+const char *xdg_mime_type_chardev  = "inode/chardevice";
+const char *xdg_mime_type_blockdev = "inode/blockdevice";
+const char *xdg_mime_type_fifo     = "inode/fifo";
+const char *xdg_mime_type_socket   = "inode/socket";
+const char *xdg_mime_type_symlink  = "inode/symlink";
 
 enum
 {
@@ -405,7 +411,7 @@ xdg_check_time_and_dirs (void)
 
 /* Called in every public function.  It reloads the hash function if need be.
  */
-static void
+/*static*/ void
 xdg_mime_init (void)
 {
 	puts("xdg_mime_init()");
@@ -489,8 +495,30 @@ xdg_mime_get_mime_type_for_file (const char  *file_name,
       statbuf = &buf;
     }
 
-  if (!S_ISREG (statbuf->st_mode))
-    return XDG_MIME_TYPE_UNKNOWN;
+  /* Sanel: added */
+  if (S_ISDIR (statbuf->st_mode))
+    return xdg_mime_type_folder;
+
+  if (S_ISCHR (statbuf->st_mode))
+    return xdg_mime_type_chardev;
+
+  if (S_ISBLK (statbuf->st_mode))
+    return xdg_mime_type_blockdev;
+
+  if (S_ISFIFO (statbuf->st_mode))
+    return xdg_mime_type_fifo;
+
+  if (S_ISSOCK (statbuf->st_mode))
+    return xdg_mime_type_socket;
+
+  if (S_ISLNK (statbuf->st_mode))
+    return xdg_mime_type_symlink;
+
+/* By now we are sure this is file
+ *
+ * if (!S_ISREG (statbuf->st_mode))
+ *   return XDG_MIME_TYPE_UNKNOWN;
+ */
 
   /* FIXME: Need to make sure that max_extent isn't totally broken.  This could
    * be large and need getting from a stream instead of just reading it all

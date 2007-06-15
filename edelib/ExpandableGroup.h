@@ -15,9 +15,8 @@
 
 #include "econfig.h"
 
-#include <fltk/Group.h>
-#include <fltk/Scrollbar.h>
-#include <fltk/Rectangle.h>
+#include <FL/Fl_Group.h>
+#include <FL/Fl_Scrollbar.h>
 
 EDELIB_NAMESPACE {
 
@@ -39,13 +38,17 @@ EDELIB_NAMESPACE {
  * \note All childs have to have the same height, so reordering can be correctly computed
  */
 
-class ExpandableGroup : public fltk::Group
-{
+class EDELIB_API ExpandableGroup : public Fl_Group {
 	private:
 		int px, py;
-		int sval;
-		fltk::Scrollbar* vscrollbar;
-		fltk::Rectangle widget_area;
+		int sval, sval_curr, sval_old;
+		int area_x, area_y, area_w, area_h;
+
+		Fl_Scrollbar*  vscrollbar;
+
+		void reposition_childs(void);
+		void fix_scrollbar_order(void);
+		static void draw_clip(void* d, int X, int Y, int W, int H);
 
 	public:
 		/**
@@ -59,10 +62,14 @@ class ExpandableGroup : public fltk::Group
 		~ExpandableGroup();
 
 #ifndef SKIP_DOCS
-		void draw(void);
-		void layout(void);
+		virtual void draw(void);
+		virtual void resize(int x, int y, int w, int h);
+		virtual int handle(int event);
+		void clear(void);
+		int children(void);
 		void scrolly(int yp);
-		fltk::Scrollbar& get_scroll(void) { return *vscrollbar; }
+		void add(Fl_Widget* o);
+		Fl_Scrollbar* get_scroll(void) { return vscrollbar; }
 #endif
 };
 }

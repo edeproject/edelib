@@ -44,7 +44,7 @@ enum {
  * \param wait if is true (default) function will not exit until program exists
  * \param root todo
  */
-int run_program(const char* cmd, bool wait = true, bool root = false);
+EDELIB_API int run_program(const char* cmd, bool wait = true, bool root = false);
 
 }
 

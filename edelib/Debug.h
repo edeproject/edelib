@@ -42,8 +42,7 @@ EDELIB_API void EFatal(const char* fmt, ...);
 
 EDELIB_NAMESPACE {
 
-enum MsgType
-{
+enum MsgType {
 	MsgDebug = 0,         ///< debug messages
 	MsgWarn,              ///< warnings
 	MsgFatal              ///< failed assertions and EFatal calls
@@ -81,5 +80,6 @@ typedef void (*MsgHandlerType)(MsgType t, const char* msg);
  * \endcode
  */
 EDELIB_API void InstallMsgHandler(MsgHandlerType m);
+
 }
 #endif

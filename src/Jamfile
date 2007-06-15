@@ -43,12 +43,16 @@ SOURCE = Config.cpp
 		 $(XDGMIME) ;
 
 # files that requires fltk or X11
-SOURCE_GUI = Ask.cpp
-			 XSet.cpp 
-			 ExpandableGroup.cpp 
-			 IconChooser.cpp 
-			 ComboBox.cpp 
-			 Item.cpp ;
+#SOURCE_GUI = Ask.cpp
+#			 XSet.cpp 
+#			 ExpandableGroup.cpp 
+#			 IconChooser.cpp 
+#			 ComboBox.cpp 
+#			 Item.cpp ;
+
+SOURCE_GUI = XSet.cpp
+			 ExpandableGroup.cpp
+			 IconChooser.cpp ;
 
 if $(FLTKLIBS)
 {

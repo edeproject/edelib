@@ -1,4 +1,5 @@
 #include <edelib/File.h>
+#include <string.h>
 #include "UnitTest.h"
 
 using namespace edelib;
@@ -34,4 +35,35 @@ UT_FUNC(FileFunctions, "Test File functions")
 	UT_VERIFY(file_readable("/xxx/fff/bbb/ggg") == false);
 	UT_VERIFY(file_readable("/dev/this/is/not/file") == false);
 	UT_VERIFY(file_exists("../") == false);
+}
+
+UT_FUNC(FileOperations, "Test File operations")
+{
+	File f;
+	UT_VERIFY( f.open("demo-file.txt", FIO_WRITE) == true );
+	f.printf("This is demo number %i\n", 1);
+	f.close();
+
+	UT_VERIFY( file_exists("demo-file.txt") == true );
+	UT_VERIFY( file_copy("demo-file.txt", "demo-file2.txt") == true );
+	UT_VERIFY( file_exists("demo-file2.txt") == true );
+
+	// assertion will be trigered if one of above operations failed
+	
+	char buff[128];
+
+	UT_VERIFY( f.open("demo-file2.txt") == true );
+	f.readline(buff, 128);
+	UT_VERIFY( strcmp(buff, "This is demo number 1\n") == 0 );
+	f.close();
+
+	UT_VERIFY( file_rename("demo-file2.txt", "dd2.txt") == true );
+	UT_VERIFY( file_exists("dd2.txt") == true );
+	UT_VERIFY( file_exists("demo-file2.txt") != true );
+
+	UT_VERIFY( file_remove("dd2.txt") == true );
+	UT_VERIFY( file_exists("dd2.txt") != true );
+
+	UT_VERIFY( file_remove("demo-file.txt") == true );
+	UT_VERIFY( file_exists("demo-file.txt") != true );
 }

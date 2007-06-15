@@ -41,13 +41,16 @@ void __dump_stack(int fd) {
 
 EMsgHandlerType default_msg_handler = 0;
 
-void InstallMsgHandler(EMsgHandlerType m)
-{
+void InstallMsgHandler(EMsgHandlerType m) {
 	default_msg_handler = m;
 }
 
-void EDebug(const char* fmt, ...)
-{
+/*
+ * NOTE: content buffers are intentionaly declared in
+ * each function due possible threaded environment
+ */
+
+void EDebug(const char* fmt, ...) {
 	char buff[ERROR_BUFFLEN];
 	va_list ap;
 	va_start(ap, fmt);
@@ -60,14 +63,12 @@ void EDebug(const char* fmt, ...)
 		fprintf(stderr, "%s", buff);
 }
 
-void EWarning(const char* fmt, ...)
-{
+void EWarning(const char* fmt, ...) {
 	char buff[ERROR_BUFFLEN];
 	va_list ap;
 	va_start(ap, fmt);
 	vsnprintf(buff, ERROR_BUFFLEN, fmt, ap);
 	va_end(ap);
-
 
 	if(default_msg_handler)
 		default_msg_handler(EMsgWarn, buff);
@@ -75,8 +76,7 @@ void EWarning(const char* fmt, ...)
 		fprintf(stderr, "%s", buff);
 }
 
-void EFatal(const char* fmt, ...)
-{
+void EFatal(const char* fmt, ...) {
 	char buff[ERROR_BUFFLEN];
 	va_list ap;
 	va_start(ap, fmt);
@@ -85,10 +85,8 @@ void EFatal(const char* fmt, ...)
 
 	if(default_msg_handler)
 		default_msg_handler(EMsgFatal, buff);
-	else
-	{
+	else {
 		fprintf(stderr, "%s", buff);
-
 		/*
 		 * glibc redefined stderr pointing it to internal IO struct,
 		 * so here is used good-old-defalut-normal-every_one_use_it

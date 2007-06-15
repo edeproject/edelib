@@ -16,11 +16,38 @@
 
 #include <ctype.h>
 #include <string.h>
+#include <stdlib.h> // malloc
+
+unsigned int estrnlen(const char* str, unsigned int maxlen) {
+#ifdef HAVE_STRNLEN
+	return strnlen(str, maxlen);
+#else
+	if(!str)
+		return 0;
+
+	const char* p = str;
+	unsigned int s = 0;
+
+	for(; *p != '\0' && s < maxlen; p++, s++)
+		;
+	return s;
+#endif
+}
+
+char* estrndup(const char* str, unsigned int maxlen) {
+	unsigned int len = estrnlen(str, maxlen);
+	char* nstr = (char*)malloc(len + 1);
+	if(nstr == NULL)
+		return NULL;
+
+	nstr[len] = '\0';
+	return (char *)memcpy(nstr, str, len);
+}
+
 
 EDELIB_NAMESPACE {
 
-char* str_trimleft(char* str)
-{
+char* str_trimleft(char* str) {
 	EASSERT(str != NULL);
 
 	char* ptr;
@@ -30,8 +57,7 @@ char* str_trimleft(char* str)
 	return str;
 }
 
-char* str_trimright(char* str)
-{
+char* str_trimright(char* str) {
 	EASSERT(str != NULL);
 
 	int len = strlen(str);
@@ -47,13 +73,11 @@ char* str_trimright(char* str)
 	return str;
 }
 
-char* str_trim(char* str)
-{
+char* str_trim(char* str) {
 	return str_trimleft(str_trimright(str));
 }
 
-unsigned char* str_tolower(unsigned char* str)
-{
+unsigned char* str_tolower(unsigned char* str) {
 	EASSERT(str != NULL);
 
 	unsigned char* ptr = str;
@@ -65,8 +89,7 @@ unsigned char* str_tolower(unsigned char* str)
 	return str;
 }
 
-unsigned char* str_toupper(unsigned char* str)
-{
+unsigned char* str_toupper(unsigned char* str) {
 	EASSERT(str != NULL);
 
 	unsigned char* ptr = str;
@@ -78,8 +101,7 @@ unsigned char* str_toupper(unsigned char* str)
 	return str;
 }
 
-bool str_ends(const char* str, const char* test)
-{
+bool str_ends(const char* str, const char* test) {
 	EASSERT(str != NULL);
 	EASSERT(test != NULL);
 

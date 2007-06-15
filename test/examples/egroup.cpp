@@ -1,32 +1,32 @@
 #include <edelib/ExpandableGroup.h>
 #include <edelib/Color.h>
-#include <fltk/Window.h>
-#include <fltk/run.h>
-#include <fltk/Button.h>
+#include <FL/Fl_Window.h>
+#include <FL/Fl.h>
+#include <FL/Fl_Button.h>
 
 int main()
 {
-	fltk::Window* win = new fltk::Window(480, 345, "Sample with 10 childs");
+	Fl_Window* win = new Fl_Window(480, 345, "Sample with 10 childs");
 	win->begin();
 	edelib::ExpandableGroup* eg = new edelib::ExpandableGroup(15, 15, 455, 315);
-	eg->box(fltk::DOWN_BOX);
-	//eg->color(fltk::WHITE);
+	eg->box(FL_DOWN_BOX);
+	eg->color(FL_WHITE);
 	//eg->color(edelib::color_html_to_fltk("#abc"));
-	eg->color(edelib::color_rgb_to_fltk(255, 255, 255));
+	//eg->color(edelib::color_rgb_to_fltk(255, 255, 255));
 	eg->begin();
-		new fltk::Button(0, 0, 45, 45, "ch1");
-		new fltk::Button(0, 0, 45, 45, "ch2");
-		new fltk::Button(0, 0, 45, 45, "ch3");
-		new fltk::Button(0, 0, 45, 45, "ch4");
-		new fltk::Button(0, 0, 45, 45, "ch5");
-		new fltk::Button(0, 0, 45, 45, "ch6");
-		new fltk::Button(0, 0, 45, 45, "ch7");
-		new fltk::Button(0, 0, 45, 45, "ch8");
-		new fltk::Button(0, 0, 45, 45, "ch9");
-		new fltk::Button(0, 0, 45, 45, "ch10");
+		new Fl_Button(0, 0, 45, 45, "ch1");
+		new Fl_Button(0, 0, 45, 45, "ch2");
+		new Fl_Button(0, 0, 45, 45, "ch3");
+		new Fl_Button(0, 0, 45, 45, "ch4");
+		new Fl_Button(0, 0, 45, 45, "ch5");
+		new Fl_Button(0, 0, 45, 45, "ch6");
+		new Fl_Button(0, 0, 45, 45, "ch7");
+		new Fl_Button(0, 0, 45, 45, "ch8");
+		new Fl_Button(0, 0, 45, 45, "ch9");
+		new Fl_Button(0, 0, 45, 45, "ch10");
 	eg->end();
 	win->resizable(eg);
 	win->end();
 	win->show();
-	return fltk::run();
+	return Fl::run();
 }

@@ -22,8 +22,7 @@
 
 EDELIB_NAMESPACE {
 
-int run_fork(const char* cmd, bool wait) 
-{
+int run_fork(const char* cmd, bool wait) {
 	if(!cmd)
 		return RUN_EMPTY;
 
@@ -98,8 +97,7 @@ int run_fork(const char* cmd, bool wait)
 	return status_ret;
 }
 
-int run_program(const char* cmd, bool wait, bool root) 
-{
+int run_program(const char* cmd, bool wait, bool root) {
 	return run_fork(cmd, wait);
 }
 

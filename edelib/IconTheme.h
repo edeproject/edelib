@@ -94,9 +94,18 @@ struct IconDirInfo {
 	IconContext context;
 };
 
+#define CACHED_ICONS_SIZE 10
+
+struct IconsCached {
+	unsigned int hash;
+	IconContext  ctx;
+	IconSizes    sz;
+	String       path;
+};
+
 #endif
 
-class IconTheme 
+class EDELIB_API IconTheme 
 {
 	private:
 		static IconTheme* pinstance;
@@ -104,6 +113,11 @@ class IconTheme
 		String curr_theme;
 		vector<String>      theme_dirs;
 		vector<IconDirInfo> dirlist;
+
+		int cache_ptr;
+		IconsCached* icached[CACHED_ICONS_SIZE];
+		void cache_append(const char* icon, IconSizes sz, IconContext ctx, const String& path);
+		bool cache_lookup(const char* icon, IconSizes sz, IconContext ctx, String& ret);
 
 		IconTheme();
 		~IconTheme();

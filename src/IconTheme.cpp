@@ -19,6 +19,7 @@
 #include <edelib/StrUtil.h>
 #include <edelib/Util.h>
 #include <stdio.h>
+#include <string.h> // strlen
 
 EDELIB_NAMESPACE {
 
@@ -40,8 +41,21 @@ const char* icon_extensions[] = {
 	".xpm"
 };
 
-int check_sz(int sz)
-{
+unsigned int it_do_hash(const char* key, int keylen) {
+	unsigned hash ;
+	int i;
+	for (i = 0, hash = 0; i < keylen ;i++) {
+		hash += (long)key[i] ;
+		hash += (hash<<10);
+		hash ^= (hash>>6) ;
+	}
+	hash += (hash <<3);
+	hash ^= (hash >>11);
+	hash += (hash <<15);
+	return hash ;
+}
+
+int check_sz(int sz) {
 	if(sz < ICON_SIZE_TINY || sz > ICON_SIZE_ENORMOUS) {
 		EWARNING(ESTRLOC ": Unsupported size '%i', defaulting to the 32x32\n", sz);
 		return ICON_SIZE_MEDIUM;
@@ -50,8 +64,7 @@ int check_sz(int sz)
 	return sz;
 }
 
-IconContext figure_ctx(const String& ctx)
-{
+IconContext figure_ctx(const String& ctx) {
 	// mandatory ones
 	if(ctx == "Actions")
 		return ICON_CONTEXT_ACTION;
@@ -79,10 +92,60 @@ IconContext figure_ctx(const String& ctx)
 
 IconTheme::IconTheme() : fvisited(false), curr_theme("")
 {
+	for(int i = 0; i < CACHED_ICONS_SIZE; i++)
+		icached[i] = NULL;
+
+	cache_ptr = 0;
 }
 
-IconTheme::~IconTheme() 
-{
+IconTheme::~IconTheme() {
+
+	for(int i = 0; i < CACHED_ICONS_SIZE; i++) {
+		delete icached[i];
+		icached[i] = NULL;
+	}
+		EDEBUG(ESTRLOC " : IconTheme::~IconTheme() cache dismiss\n");
+}
+
+void IconTheme::cache_append(const char* icon, IconSizes sz, IconContext ctx, const String& path) {
+	unsigned long hash = it_do_hash(icon, strlen(icon));
+	hash += sz;
+	hash += ctx;
+
+	if(cache_ptr == CACHED_ICONS_SIZE) {
+		cache_ptr = 0;
+		EDEBUG(ESTRLOC ": IconTheme cache rollower\n");
+	}
+
+	if(icached[cache_ptr]) {
+		delete icached[cache_ptr];
+		icached[cache_ptr] = NULL;
+	}
+
+	icached[cache_ptr] = new IconsCached;
+	icached[cache_ptr]->hash = hash;
+	icached[cache_ptr]->path = path;
+	icached[cache_ptr]->sz   = sz;
+	icached[cache_ptr]->ctx  = ctx;
+
+	cache_ptr++;
+}
+
+bool IconTheme::cache_lookup(const char* icon, IconSizes sz, IconContext ctx, String& ret) {
+	unsigned long hash = it_do_hash(icon, strlen(icon));
+	hash += sz;
+	hash += ctx;
+
+	for(int i = 0; i < cache_ptr && i < CACHED_ICONS_SIZE; i++) {
+		if(icached[i]->hash == hash && icached[i]->sz == sz && icached[i]->ctx == ctx) {
+			EDEBUG(ESTRLOC ": IconTheme::cache_lookup() : cache hit !\n");
+			ret = icached[i]->path;
+			return true;
+		}
+	}
+
+	EDEBUG(ESTRLOC ": IconTheme::cache_lookup() : cache miss !!!\n");
+	return false;
 }
 
 /*
@@ -93,8 +156,7 @@ IconTheme::~IconTheme()
  *  3. /usr/share/pixmaps
  *  4. rest
  */
-void IconTheme::init_base_dirs(void)
-{
+void IconTheme::init_base_dirs(void) {
 	theme_dirs.reserve(10);
 
 	// TODO: I will need some make_dir_path() functions somewhere
@@ -129,8 +191,7 @@ void IconTheme::init(void)
 }	
 */
 
-void IconTheme::init(const char* theme) 
-{
+void IconTheme::init(const char* theme) {
 	if(IconTheme::pinstance != NULL)
 		return;
 
@@ -141,8 +202,7 @@ void IconTheme::init(const char* theme)
 	IconTheme::pinstance->load_theme(theme);
 }
 
-void IconTheme::shutdown(void) 
-{
+void IconTheme::shutdown(void) {
 	if(IconTheme::pinstance == NULL)
 		return;
 
@@ -150,8 +210,7 @@ void IconTheme::shutdown(void)
 	IconTheme::pinstance = NULL;
 }
 
-IconTheme* IconTheme::instance(void)
-{
+IconTheme* IconTheme::instance(void) {
 	EASSERT(IconTheme::pinstance != NULL && "Did you run IconTheme::init() ?");
 	return IconTheme::pinstance;
 }
@@ -161,8 +220,7 @@ IconTheme* IconTheme::instance(void)
  * be prescanned for that theme; that applies too if inherited
  * inherits another, and etc.
  */
-void IconTheme::load_theme(const char* theme) 
-{
+void IconTheme::load_theme(const char* theme) {
 	curr_theme = theme;
 
 	String tpath;
@@ -279,8 +337,7 @@ void IconTheme::load_theme(const char* theme)
 	}
 }
 
-void IconTheme::read_inherits(const char* buff)
-{
+void IconTheme::read_inherits(const char* buff) {
 	EASSERT(buff != NULL);
 	vector<String> parents;
 	stringtok(parents, buff, ",");
@@ -291,8 +348,7 @@ void IconTheme::read_inherits(const char* buff)
 	}
 }
 
-void IconTheme::clear_data(void)
-{
+void IconTheme::clear_data(void) {
 	/*
 	 * This is not called inside load_theme()
 	 * so we can recursively collect Inherits key
@@ -301,13 +357,16 @@ void IconTheme::clear_data(void)
 	dirlist.clear();
 }
 
-String IconTheme::lookup(const char* icon, IconSizes sz, IconContext ctx)
-{
+String IconTheme::lookup(const char* icon, IconSizes sz, IconContext ctx) {
 	if(dirlist.size() == 0)
 		return "";
 
 	String ret;
 	ret.reserve(50);
+
+	if(cache_lookup(icon, sz, ctx, ret))
+		return ret;
+
 	/*
 	 * ICON_CONTEXT_ANY means context is ignored, but also means slower lookup
 	 * since all entries are searched
@@ -320,22 +379,22 @@ String IconTheme::lookup(const char* icon, IconSizes sz, IconContext ctx)
 				ret += icon;
 				ret += icon_extensions[j];
 
-				if(file_exists(ret.c_str()))
+				if(file_exists(ret.c_str())) {
+					cache_append(icon, sz, ctx, ret);
 					return ret;
+				}
 			}
 		}
 
 	return "";
 }
 
-String IconTheme::get(const char* icon, IconSizes sz, IconContext ctx)
-{
+String IconTheme::get(const char* icon, IconSizes sz, IconContext ctx) {
 	EASSERT(icon != NULL);
 	return IconTheme::instance()->lookup(icon, sz, ctx);
 }
 
-void IconTheme::load(const char* theme)
-{
+void IconTheme::load(const char* theme) {
 	EASSERT(theme != NULL);
 
 	IconTheme::instance()->clear_data();

@@ -2,7 +2,6 @@ TODO list:
 ----------
  * seems File::readline() does not return 1 when line contains only '\n' char. Should return ?
  * error checks during stream read/write in File (ferror)
- * correct File::write(const char* w, int s) -> File::write(const char* w)
  * in Config, don't allow [] sections
  * Config::remove_entry() finish
  * what should set_textdomain_dir() and set_textdomain() return when NLS is disabled ?
@@ -14,3 +13,4 @@ TODO list:
  * Date can accept set(0,1,0); leave this or... (possible bugs ?)
  * Finish DateTime
  * xdgmime calls too much xdg_mime_init()/xdg_mime_shutdown(); move these in MimeType class
+ * MimeType; add locale during read of comments

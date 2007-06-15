@@ -15,31 +15,26 @@
 
 EDELIB_NAMESPACE {
 
-XSet::XSet()
-{
+XSet::XSet() {
 	display = XOpenDisplay("0:0");
 }
 
-XSet::XSet(const char* d)
-{
+XSet::XSet(const char* d) {
 	display = XOpenDisplay(d);
 }
 
-XSet::~XSet()
-{
+XSet::~XSet() {
 	if(display)
 		XCloseDisplay(display);
 }
 
-void XSet::set_mouse(int accel, int thresh)
-{
+void XSet::set_mouse(int accel, int thresh) {
 	if(!display)
 		return;
     XChangePointerControl(display, true, true, accel, 1, thresh);
 }
 
-void XSet::set_bell(int volume, int pitch, int duration)
-{
+void XSet::set_bell(int volume, int pitch, int duration) {
 	if(!display)
 		return;
 
@@ -52,28 +47,28 @@ void XSet::set_bell(int volume, int pitch, int duration)
 	XChangeKeyboardControl(display, KBBellPercent | KBBellPitch | KBBellDuration, &val);
 }
 
-void XSet::set_keyboard(int repeat, int clicks)
-{
+void XSet::set_keyboard(int repeat, int clicks) {
 	if(!display)
 		return;
+
 	XKeyboardControl val;
 	val.auto_repeat_mode = (repeat ? AutoRepeatModeOn : AutoRepeatModeOff);
 	val.key_click_percent = clicks;
 	XChangeKeyboardControl(display, KBAutoRepeatMode | KBKeyClickPercent, &val);
 }
 
-void XSet::test_bell(void)
-{
+void XSet::test_bell(void) {
 	if(!display)
 		return;
+
 	XkbForceBell(display, 0);
 	// TODO: what about XkbBell(dpy, win, volume, atom) ?
 }
 
-void XSet::test_blank(void)
-{
+void XSet::test_blank(void) {
 	if(!display)
 		return;
+
 	XActivateScreenSaver(display);
 }
 

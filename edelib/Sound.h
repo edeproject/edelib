@@ -39,8 +39,7 @@ EDELIB_NAMESPACE {
  * when sound will not be played.
  */
 
-class SoundSystem
-{
+class EDELIB_API SoundSystem {
 	private:
 		static SoundSystem* pinstance;
 

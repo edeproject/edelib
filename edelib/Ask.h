@@ -22,26 +22,26 @@ EDELIB_NAMESPACE {
  * for the user to hit the button. The message will wrap to fit the window, or 
  * may be many lines by putting '\\n' characters into it.
  */
-void message(const char* fmt, ...);
+EDELIB_API void message(const char* fmt, ...);
 
 /** Same as message() */
-void alert(const char* fmt, ...);
+EDELIB_API void alert(const char* fmt, ...);
 
 /**
  * Displays a printf-style message in a pop-up box with "Yes" and "No" buttons and
  * waits for the user to hit the button. If user hits "Yes", returned will be 1, or
  * 0 if user hits "No".
  */
-int  ask(const char* fmt, ...);
+EDELIB_API int ask(const char* fmt, ...);
 
 /**
  * Pops up a window displaying a string, lets the user edit it, and return the new value. 
  * The cancel button returns NULL.
  */
-const char *input(const char *label, const char *deflt = 0, ...);
+EDELIB_API const char *input(const char *label, const char *deflt = 0, ...);
 
 /** Same as input(), except input data are hidden with the stars */
-const char *password(const char *label, const char *deflt = 0, ...);
+EDELIB_API const char *password(const char *label, const char *deflt = 0, ...);
 
 }
 

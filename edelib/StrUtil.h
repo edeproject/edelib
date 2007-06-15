@@ -16,6 +16,18 @@
 #include "econfig.h"
 #include "String.h"
 
+/*
+ * Intentionaly outside namespace so I can provide either system
+ * or local implementations
+ */
+#ifndef SKIP_DOCS
+
+unsigned int estrnlen(const char* str, unsigned int maxlen);
+char*        estrndup(const char* str, unsigned int maxlen);
+
+#endif // SKIP_DOCS
+
+
 EDELIB_NAMESPACE {
 
 /**
@@ -71,8 +83,7 @@ inline bool isws(char c, const char* str) { return (strchr(str, c) != NULL); }
  * \param ws is delimiter by which we do splitting
  */
 template <typename Container>
-void stringtok(Container& c, const String& str, const char* ws = " \t\n")
-{
+void stringtok(Container& c, const String& str, const char* ws = " \t\n") {
 	const String::size_type sz = str.length();
 	String::size_type i = 0;
 	String::size_type j = 0;
@@ -99,8 +110,7 @@ void stringtok(Container& c, const String& str, const char* ws = " \t\n")
  */
 #if 0
 template <typename Container, typename StringType>
-void stringtok(Container& c, const StringType& str, const char* ws = " \t\n")
-{
+void stringtok(Container& c, const StringType& str, const char* ws = " \t\n") {
 	const typename StringType::size_type sz = str.length();
 	typename StringType::size_type i = 0;
 	typename StringType::size_type j = 0;
@@ -121,4 +131,5 @@ void stringtok(Container& c, const StringType& str, const char* ws = " \t\n")
 #endif
 
 }
+
 #endif

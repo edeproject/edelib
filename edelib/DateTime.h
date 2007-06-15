@@ -17,8 +17,7 @@
 
 EDELIB_NAMESPACE {
 
-class TimeZone
-{
+class EDELIB_API TimeZone {
 	private:
 		char* pathval;
 		char* zoneval;
@@ -97,8 +96,7 @@ enum DateType {
  *   ...
  * \endcode
  */
-class Date
-{
+class EDELIB_API Date {
 	private:
 		unsigned char dayval;
 		unsigned char monthval;
@@ -246,8 +244,7 @@ class Date
 inline bool operator==(const Date& d1, const Date& d2)
 { return (d1.day() == d2.day() && d1.month() == d2.month() && d1.year() == d2.year()); }
 
-inline bool operator>(const Date& d1, const Date& d2)
-{
+inline bool operator>(const Date& d1, const Date& d2) {
 	return (d1.year() > d2.year() || (d1.year() == d2.year() && d1.month() > d2.month()) || 
 		(d1.month() == d2.month() && d1.day() > d2.day()));
 }
@@ -259,8 +256,7 @@ inline bool operator<=(const Date& d1, const Date& d2) { return (d1 == d2 || d1 
 #endif
 
 
-class Time
-{
+class EDELIB_API Time {
 	private:
 		unsigned char hourval;
 		unsigned char minval;

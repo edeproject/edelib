@@ -16,7 +16,8 @@
 #include <edelib/Util.h>
 #include <edelib/File.h>
 #include <edelib/StrUtil.h>
-#include <string.h>  // strncmp
+#include <string.h>  // strncmp, strchr
+
 #include "xdgmime/xdgmime.h"
 
 #define MIME_DIR "/usr/share/mime"
@@ -36,8 +37,7 @@ MimeType::~MimeType()
 	xdg_mime_shutdown();
 }
 
-bool MimeType::set(const char* filename)
-{
+bool MimeType::set(const char* filename) {
 	EASSERT(filename != NULL);
 	/*
 	 * Call on the same file again check.
@@ -51,6 +51,7 @@ bool MimeType::set(const char* filename)
 	mcmt.clear(); mtype.clear(); micon.clear();
 
 	const char* res = xdg_mime_get_mime_type_for_file(filename, NULL);
+
 	if(!res) {
 		status = 0;
 		return false;
@@ -61,17 +62,15 @@ bool MimeType::set(const char* filename)
 	return true;
 }
 
-String MimeType::type(void)
-{
+const String& MimeType::type(void) const {
 	// we already cleared value
 	return mtype;
 }
 
-String MimeType::comment(void)
-{
+const String& MimeType::comment(void) {
 	// calling without mime loaded do nothing
 	if(!(status & MIME_LOADED))
-		return "";
+		return mcmt;
 
 	if(status & COMMENT_LOADED)
 		return mcmt;
@@ -82,14 +81,14 @@ String MimeType::comment(void)
 
 	if(!file_exists(path.c_str())) {
 		EDEBUG(ESTRLOC ": MimeType::comment() %s does not exists\n", path.c_str());
-		return "";
+		return mcmt;
 	}
 	
 	TiXmlDocument doc(path.c_str());
 
 	if(!doc.LoadFile()) {
 		EDEBUG(ESTRLOC ": MimeType::comment() %s malformed\n", path.c_str());
-		return "";
+		return mcmt;
 	}
 
 	TiXmlNode* el = doc.FirstChild("mime-type");
@@ -119,29 +118,38 @@ String MimeType::comment(void)
 	return mcmt;
 }
 
-String MimeType::icon_name(void) 
-{
+const String& MimeType::icon_name(void) {
 	if(!(status & MIME_LOADED) && mtype.empty())
-		return "";
+		return micon;
 
 	if(status & ICON_LOADED)
 		return micon;
 
 	vector<String> vs;
 	stringtok(vs, mtype, "/");
-	// failed
-	if(vs.size() < 2)
-		return "";
+
+	// failed, accepted is only type/name
+	if(vs.size() != 2)
+		return micon;
 
 	micon.clear();
 	micon.reserve(5);
-	unsigned int sz = vs.size();
-	for(unsigned int i = 0; i < sz-1; i++) {
-		micon += vs[i];
-		micon += '-';
-	}
 
-	micon += vs[sz-1];
+	if(vs[0] == "inode") {
+		/*
+		 * XDG Mime guys decided that folders are named under 'inode/directory.xml'. 
+		 * But icon naming standard say it should contain name 'folder' (sigh!).
+		 */
+		if(vs[1] == "directory")
+			micon = "folder";
+		else
+			micon = vs[1];
+	}
+	else {
+		micon = vs[0];
+		micon += '-';
+		micon += vs[1];
+	}
 
 	status |= ICON_LOADED;
 	return micon;

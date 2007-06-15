@@ -30,11 +30,10 @@ EDELIB_API unsigned int color_rgb_to_fltk(unsigned char r, unsigned char g, unsi
 /**
  * Decompose FLTK color to rgb components.
  *
- * \note This function will decompose corectly values <b>grater</b> than 255; for less values
- * use fltk::split_color(), since it will do lookup inside colormap. Speaken simply, don't
- * use this function for predefined FLTK colors (fltk::WHITE, fltk::RED, ...)
+ * \note This function will decompose corectly values grater than 255 or FLTK colors (FL_WHIRE, FL_RED,...). 
+ * When FLTK color is given, it will use colormap, the same one used by fltk.
  *
- * \param color is FLTK color (<b>not</b> predefined)
+ * \param color is FLTK color 
  * \param r is extracted red component
  * \param g is extracted green component
  * \param b is extracted blue component

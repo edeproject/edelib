@@ -18,8 +18,12 @@
 
 EDELIB_NAMESPACE {
 
-unsigned int hex2int(char hex) 
-{
+// file fltk_cmap.h is produced by cmap.cxx/colormap.cxx in fltk distribution
+static unsigned int fltk_colomap[256] = {
+#include "fltk_cmap.h"
+};
+
+unsigned int hex2int(char hex) {
 	int val = -1;
 
 	if(hex >= 'A' && hex <= 'F')
@@ -33,27 +37,28 @@ unsigned int hex2int(char hex)
 	return val;
 }
 
-unsigned int color_rgb_to_fltk(unsigned char r, unsigned char g, unsigned char b) 
-{
+unsigned int color_rgb_to_fltk(unsigned char r, unsigned char g, unsigned char b) {
 	return (unsigned int) ((r << 24) + (g << 16) + (b << 8));
 }
 
-void color_fltk_to_rgb(unsigned int color, unsigned char& r, unsigned char& g, unsigned char& b) 
-{
+void color_fltk_to_rgb(unsigned int color, unsigned char& r, unsigned char& g, unsigned char& b) {
 	/*
 	 * 255 < color < 0 can't be correctly computed without colormap
-	 * which is distributed with fltk, and can be changed
+	 * which is distributed with fltk. fltk_cmap.h is because of that provided
+	 * with this code.
 	 */
-	if(color > 0 && (!(color & 0xffffff00)))
-		EDEBUG(ESTRLOC ": color_fltk_to_rgb() got value from FLTK colormap! Use fltk::split_color() instead\n");
+	if(color > 0 && (!(color & 0xffffff00))) {
+		//EDEBUG(ESTRLOC ": color_fltk_to_rgb() got value from FLTK2 colormap! Use fltk::split_color() instead\n");
+		unsigned int c = color;
+		color = fltk_colomap[c];
+	}
 
 	r = color >> 24;
 	g = (color >> 16) & 0xff;
 	b = (color >> 8) & 0xff;
 }
 
-unsigned int color_html_to_fltk(const char* col) 
-{
+unsigned int color_html_to_fltk(const char* col) {
 	if(!col || col[0] != '#')
 		return 0;    // return black if we fail
 
@@ -89,8 +94,7 @@ unsigned int color_html_to_fltk(const char* col)
 	return color_rgb_to_fltk(r, g, b);
 }
 
-void color_fltk_to_html(unsigned int color, char* buff)
-{
+void color_fltk_to_html(unsigned int color, char* buff) {
 	unsigned char r, g, b;
 	color_fltk_to_rgb(color, r, g, b);
 

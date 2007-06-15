@@ -71,6 +71,7 @@ const char  *xdg_mime_get_mime_type_for_data       (const void *data,
 						    size_t      len);
 const char  *xdg_mime_get_mime_type_for_file       (const char *file_name,
                                                     struct stat *statbuf);
+
 const char  *xdg_mime_get_mime_type_from_file_name (const char *file_name);
 int          xdg_mime_is_valid_mime_type           (const char *mime_type);
 int          xdg_mime_mime_type_equal              (const char *mime_a,
@@ -88,6 +89,7 @@ const char **xdg_mime_get_mime_parents		   (const char *mime);
 char **      xdg_mime_list_mime_parents		   (const char *mime);
 const char  *xdg_mime_unalias_mime_type		   (const char *mime);
 int          xdg_mime_get_max_buffer_extents       (void);
+
 void         xdg_mime_shutdown                     (void);
 void         xdg_mime_dump                         (void);
 int          xdg_mime_register_reload_callback     (XdgMimeCallback  callback,

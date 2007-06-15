@@ -12,10 +12,10 @@
 
 #include <edelib/econfig.h>
 #include <edelib/ExpandableGroup.h>
-#include <fltk/layout.h>
-#include <fltk/draw.h>
-#include <fltk/damage.h>
 #include <edelib/Debug.h>
+
+#include <FL/fl_draw.h>
+#include <FL/Fl.h>
 
 #define SLIDER_WIDTH  16
 
@@ -24,178 +24,221 @@
 
 EDELIB_NAMESPACE {
 
-void vscroll_cb(fltk::Widget*, void* w) 
-{
+void vscroll_cb(Fl_Widget*, void* w) {
 	ExpandableGroup* eg = (ExpandableGroup*)w;
-	eg->scrolly(eg->get_scroll().value());
+	eg->scrolly(eg->get_scroll()->value());
 }
 
-ExpandableGroup::ExpandableGroup(int x, int y, int w, int h, const char* l) : 
-	fltk::Group(x, y, w, h, l), px(0), py(0), sval(0)//, vscrollbar(x + w - SLIDER_WIDTH, y, SLIDER_WIDTH, h)
+ExpandableGroup::ExpandableGroup(int X, int Y, int W, int H, const char* l) :
+		Fl_Group(X, Y, W, H, l), px(0), py(0), sval(0), sval_curr(0), sval_old(0)
 {
-	end();
-	//vscrollbar(x + w - SLIDER_WIDTH, y, SLIDER_WIDTH, h)
-	vscrollbar = new fltk::Scrollbar(x + w - SLIDER_WIDTH, y, SLIDER_WIDTH, h);
-	vscrollbar->set_vertical();
+	area_x = X + BORDER_OFFSET;
+	area_y = Y + BORDER_OFFSET;
+	area_w = W;
+	area_h = H;
+
+	begin();
+	vscrollbar = new Fl_Scrollbar(X + W - SLIDER_WIDTH, Y, SLIDER_WIDTH, H);
 	vscrollbar->hide();
 	vscrollbar->callback(vscroll_cb, this);
-
-	widget_area.x(BORDER_OFFSET);
-	widget_area.y(BORDER_OFFSET);
+	end();
 }
 
-ExpandableGroup::~ExpandableGroup()
-{
+ExpandableGroup::~ExpandableGroup() { }
+
+void ExpandableGroup::draw_clip(void* d, int X, int Y, int W, int H) {
+	ExpandableGroup* eg = (ExpandableGroup*)d;
+	fl_clip(X, Y, W, H);
+
+	fl_color(eg->color());
+	fl_rectf(X, Y, W, H);
+
+	Fl_Widget* wdg;
+	for(int i = 0; i < eg->children(); i++) {
+		wdg = eg->child(i);
+		eg->draw_child(*wdg);
+		eg->draw_outside_label(*wdg);
+	}
+	fl_pop_clip();
 }
 
-void ExpandableGroup::draw() 
-{
-	clear_flag(fltk::HIGHLIGHT);
-	/*
-	 * this will remove DAMAGE checks so
-	 * we can have correct clipping;
-	 * this will slow drawing things, but we
-	 * will not get overlaped childs over group bounds;
- 	 *
-	 * NOTE: we clip it againt group bounds, not widget_area
-	 * since it is helper for childs placement
-	 */
+void ExpandableGroup::draw(void) {
+	//fix_scrollbar_order();
+	int X,Y,W,H;
 
-	if(damage() & fltk::DAMAGE_ALL) 
-	{
-		draw_box();
-		draw_label();
+	X = x()+Fl::box_dx(box());
+	Y = y()+Fl::box_dy(box());
+	W = w()-Fl::box_dw(box());
+	H = h()-Fl::box_dh(box());
+
+	unsigned char d = damage();
+	if(d & FL_DAMAGE_ALL) {
+		draw_box(box() ? box() : FL_DOWN_BOX , x(), y(), w(), h(), color());
+		draw_clip(this, X, Y, W, H);
 	}
 
-	fltk::push_clip(0, 2, w()-3, h()-4);
+	if(d & FL_DAMAGE_SCROLL) {
+		// no filickering
+		fl_scroll(X, Y, W - vscrollbar->w(), H, 0, sval_old - sval_curr, draw_clip, this);
+		//draw_clip(this, X, Y, W-20, H);
+	}
 
-	if(damage() & (fltk::DAMAGE_ALL | fltk::DAMAGE_CHILD)) 
-	{
-		for(int n = children(); n--;) 
-		{
-			Widget& w = *child(n);
-			draw_child(w);
-
-			if(w.damage() & fltk::DAMAGE_CHILD_LABEL) 
-			{
-				draw_outside_label(w);
-				w.set_damage(w.damage() & ~fltk::DAMAGE_CHILD_LABEL);
-			}
+	// must update childs too
+	if(d & FL_DAMAGE_CHILD) {
+		fl_clip(X, Y, W, H);
+		Fl_Widget* wdg;
+		for(int i = 0; i < children(); i++) {
+			wdg = child(i);
+			update_child(*wdg);
 		}
+		fl_pop_clip();
 	}
 
-	fltk::pop_clip();
-
-	/*
-	 * draw scrollbar and prevent childs overwrite it
-	 * TODO: this can be fixed increasing right bound
-	 * when scroll is visible
-	 */
-	if(damage() & (fltk::DAMAGE_ALL | fltk::DAMAGE_CHILD))
-		vscrollbar->set_damage(fltk::DAMAGE_ALL);
+	if(d & FL_DAMAGE_ALL)
+		draw_child(*vscrollbar);
+	else
+		update_child(*vscrollbar);
 }
 
-void ExpandableGroup::layout() 
-{
-	if(!layout_damage()) 
-		return;
-
-	if(!(layout_damage()&(fltk::LAYOUT_WH|fltk::LAYOUT_DAMAGE))) 
-	{
-		Widget::layout();
-		return;
+int ExpandableGroup::handle(int event) {
+	//fix_scrollbar_order();
+	switch(event) {
+		case FL_SHOW:
+			reposition_childs();
+			return 1;
 	}
 
-	if(children() < 2)
-	{
-		// for cases when we call clear() on this group
-		vscrollbar->hide();
+	return Fl_Group::handle(event);
+}
+
+void ExpandableGroup::reposition_childs(void) {
+	if(children() < 1)
 		return;
-	}
 
-	// update area width to group width
-	widget_area.w(w()-BORDER_OFFSET);
+	Fl_Widget* wdg = child(0);
+	if(wdg == vscrollbar)
+		wdg = child(1);
 
-	/*
-	 * Assume first child have correct height
-	 * and expand area with it's size.
-	 *
-	 * widget_area have role to emulate group
-	 * full height, just as all childs are visible; this
-	 * is needed so scrollbar can be used.
-	 */
-	widget_area.h(BORDER_OFFSET + child(0)->h());
+	// update area
+	area_w = w() - BORDER_OFFSET;
+	area_h = BORDER_OFFSET + wdg->h();
 
 	// init sizes
-	px = widget_area.x();
-	py = widget_area.y();
-	py = py - sval;
+	px = area_x;
+	py = area_y;
+	py -= sval;
 
-	for(int i = 0; i < children(); i++) 
-	{
+	int ch_size = children();
+	for(int i = 0; i < ch_size; i++) {
 		if(!child(i)->visible())
 			continue;
-
-		if((px + child(i)->w()) <= widget_area.w()) 
-		{
+		if(child(i) == vscrollbar)
+			continue;
+		if((px + child(i)->w()) <= area_w) {
 			// ok, widget is not greater than total width
-			child(i)->x(px);
-			child(i)->y(py);
-		}
-		else 
-		{
-			/*
-			 * widget goes out of bounds, set it to new row
-			 * setting x to begin and increasing y
-			 */
-			px = widget_area.x();
+			child(i)->position(px, py);
+		} else {
+			// widget goes out of bounds, set it to new row
+			// setting x to begin and increasing y
+			px = area_x;
 			py += child(i)->h() + CHILD_OFFSET;
-			child(i)->x(px);
-			child(i)->y(py);
+			child(i)->position(px, py);
 
 			// increase widget_area height since is used for scrolling
-			widget_area.h( widget_area.h() + child(i)->h() + CHILD_OFFSET );
+			area_h += child(i)->h() + CHILD_OFFSET;
 		}
+
 		// we always increase this since widgets flow left to right
 		px += child(i)->w() + CHILD_OFFSET;
 	}
 
 	// now add down border
-	widget_area.h( widget_area.h() + BORDER_OFFSET );
+	area_h += BORDER_OFFSET;
 
-	/*
-	 * count how many childs are fully visible not overlapping BORDER_OFFSET
-	 * so we can show scrollbar if needed
-	 */
-
+	// count how many childs are fully visible not overlapping BORDER_OFFSET
+	// BORDER_OFFSET is already calculated in widget_area
 	int vis = 0;
 	for(int i = 0; i < children(); i++) {
 		if(((child(i)->y() + child(i)->h()) <= (h() - BORDER_OFFSET)) && (child(i)->y() >= BORDER_OFFSET))
 			vis++;
 	}
 
-	if(vis != children()) 
-	{
+	if(vis != children()) {
 		// update scrollbar
-		vscrollbar->position(x() + w() - SLIDER_WIDTH, y());
-		vscrollbar->w(SLIDER_WIDTH);
-		vscrollbar->h(h());
-		vscrollbar->value(sval, h(), 0, widget_area.h());
+		vscrollbar->resize(x() + w() - SLIDER_WIDTH, y(), SLIDER_WIDTH, h());
+		vscrollbar->value(sval, h(), 0, area_h);
 		// now show it
 		vscrollbar->set_visible();
-	} 
-	else
+	} else
 		vscrollbar->hide();
 
 	sval = 0;
-	set_damage(fltk::DAMAGE_CHILD);
-	Widget::layout();
 }
 
-void ExpandableGroup::scrolly(int yp) 
-{
-	sval = yp;
-	relayout();
+void ExpandableGroup::resize(int X, int Y, int W, int H) {
+	//fix_scrollbar_order();
+	Fl_Widget::resize(X,Y,W,H);
+	reposition_childs();
+}
+
+void ExpandableGroup::scrolly(int ypos) {
+	sval = ypos;
+	sval_old = sval_curr;
+	sval_curr = ypos;
+	reposition_childs();
+	damage(FL_DAMAGE_SCROLL);
+}
+
+// overriden so we don't remove scrollbar
+void ExpandableGroup::clear(void) {
+	Fl_Widget* sc;
+	for(int i = children(); i--;) {
+		sc = child(i);
+		remove(sc);
+		delete sc;
+	}
+
+	area_w = w() - BORDER_OFFSET;
+	area_h = h() - BORDER_OFFSET;
+
+	sval = sval_curr = sval_old = 0;
+}
+
+// set scrollbar last so iterations can skip it
+void ExpandableGroup::fix_scrollbar_order(void) {
+	int all = Fl_Group::children();
+
+	if(child(all-1) == vscrollbar)
+		return;
+
+	Fl_Widget** arr = (Fl_Widget**)array();
+	int i = 0;
+	int j = 0;
+	for(; j < all; j++) {
+		if(arr[j] != vscrollbar)
+			arr[i++] = arr[j];
+	}
+	arr[i++] = vscrollbar;
+}
+
+/*
+ * This will return actuall size - 1, which is
+ * scrollbar by default. In all internal code is used so
+ * we don't check explicitly against scrollbar pointer. Also
+ * external usage will skip it.
+ */
+int ExpandableGroup::children(void) {
+	int ch = Fl_Group::children();
+	if(child(ch-1) != vscrollbar)
+		fix_scrollbar_order();
+
+	return Fl_Group::children() - 1;
+}
+
+
+void ExpandableGroup::add(Fl_Widget* o) {
+	Fl_Group::add(o);
+	reposition_childs();
 }
 
 }

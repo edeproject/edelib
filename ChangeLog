@@ -1,3 +1,39 @@
+2007-06-03  Sanel <karijes@users.sourceforge.net>
+
+	* IconChooser tweaks
+	* index.dox update
+	* rm design.dox
+
+2007-06-02  Sanel <karijes@users.sourceforge.net>
+
+	* Converting to fltk 1.x initiated... :)
+	* ExpandableGroup, IconChooser converted
+	* fltk.m4 checks for 1.x
+	* color_fltk_to_rgb will corectly split fltk colors too, via
+	reused colorman from fltk distribution
+
+
+2007-05-27  Sanel <karijes@users.sourceforge.net>
+
+	* estnlen(), estrndup()
+	* TODO entry
+	* MimeType will return String reference instead a copy
+	* xdgmime will return 'inode/directory' for folders
+	* MimeType will return for folders name 'folder' (don't ask)
+	* icon_name() in MimeType accept only names in form 'type/name'
+
+2007-05-26  Sanel <karijes@users.sourceforge.net>
+
+	* Code style sync
+	* Added file_remove(), file_copy(), file_rename(), dir_create(),
+	dir_remove(), dir_rename()
+	* Added tests for above functions
+	* file_copy() have option to preserve permissions/atime/mtime
+	* File::write(const char*) added
+	* Basic dir_remove_rec()
+	* xdgmime didn't recognized correctly any other types than files
+	(directories, socket,...). Added that.
+
 2007-05-25  The Carcass  <sanelz@stigmata>
 
 	* Added set in Config to accept const char* since it will
@@ -8,6 +44,7 @@
 	* Added few ESTRLOC to IconTheme
 	* Values returned from splitted Inherits key (IconTheme) are
 	trimmed which will prevent wrong path construction
+	* Some const corecting in Config
 
 2007-05-22  Sanel <karijes@users.sourceforge.net>
 

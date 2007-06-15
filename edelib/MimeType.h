@@ -41,8 +41,7 @@ EDELIB_NAMESPACE {
  * $XDG_DATA_DIRS/mime/context/file-type.xml file. This description can be
  * plain english (default) or localized (not implemented yet).
  */
-class MimeType
-{
+class EDELIB_API MimeType {
 	private:
 		unsigned char status;
 		String mtype;
@@ -71,13 +70,13 @@ class MimeType
 		 * Return context/file-type form for file, given with set().
 		 * If set() failed, it will return empty string.
 		 */
-		String type(void);
+		const String& type(void) const;
 
 		/**
 		 * Lookup for description described at the beggining of this document.
 		 * If file with description does not exists, it will return empty string.
 		 */
-		String comment(void);
+		const String& comment(void);
 
 		/**
 		 * Return the name of potential icon, using name according to freedesktop.org
@@ -88,9 +87,14 @@ class MimeType
 		 * Icon name will be in form: if mime type is image/jpeg, icon will be image-jpeg;
 		 * the same will be for eg. application/x-tek-pk, icon name will be application-x-tek-pk.
 		 *
+		 * \note This rule does not applies for <em>node/xxx</em> (where xxx is folder,socket,fifo, etc.).
+		 *       According to the icon naming specs, icon names should be file,socket,folder,...
+		 *
+		 * \note For folders icon name will be <em>folder</em> due compatibility with icon naming standard.
+		 *
 		 * If set() failed, it will return empty string.
 		 */
-		String icon_name(void);
+		const String& icon_name(void);
 }; 
 
 }

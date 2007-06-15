@@ -18,8 +18,7 @@
 
 EDELIB_NAMESPACE {
 
-const char* set_textdomain(const char* domain)
-{
+const char* set_textdomain(const char* domain) {
 #ifdef USE_NLS
 	return textdomain(domain);
 #else
@@ -27,8 +26,7 @@ const char* set_textdomain(const char* domain)
 #endif
 }
 
-const char* set_textdomain_dir(const char* domain, const char* dir)
-{
+const char* set_textdomain_dir(const char* domain, const char* dir) {
 #ifdef USE_NLS
 	return bindtextdomain(domain, dir);
 #else
@@ -36,8 +34,7 @@ const char* set_textdomain_dir(const char* domain, const char* dir)
 #endif
 }
 
-void init_locale_support(const char* appname, const char* dir)
-{
+void init_locale_support(const char* appname, const char* dir) {
 #ifdef USE_NLS
 	setlocale(LC_MESSAGES, "");
 	set_textdomain_dir(appname, dir);

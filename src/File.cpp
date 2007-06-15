@@ -17,14 +17,16 @@
 #include <string.h> // strlen, strncpy
 #include <stdarg.h> // va_xxx stuff, vfprintf
 
-#include <sys/types.h> // stat
-#include <sys/stat.h>  // stat
-#include <unistd.h>    // access, stat
+#include <sys/types.h> // stat, chmod, utime
+#include <sys/stat.h>  // stat, chmod
+#include <utime.h>     // utime
+#include <unistd.h>    // access, stat, unlink
+
+#include <stdio.h>     // rename
 
 EDELIB_NAMESPACE {
 
-bool file_exists(const char* name)
-{
+bool file_exists(const char* name) {
 	EASSERT(name != NULL);
 	struct stat s;
 	if(stat(name, &s) != 0)
@@ -32,8 +34,7 @@ bool file_exists(const char* name)
 	return (access(name, F_OK) == 0) && S_ISREG(s.st_mode);
 }
 
-bool file_readable(const char* name)
-{
+bool file_readable(const char* name) {
 	EASSERT(name != NULL);
 	struct stat s;
 	if(stat(name, &s) != 0)
@@ -41,8 +42,7 @@ bool file_readable(const char* name)
 	return (access(name, R_OK) == 0) && S_ISREG(s.st_mode);
 }
 
-bool file_writeable(const char* name)
-{
+bool file_writeable(const char* name) {
 	EASSERT(name != NULL);
 	struct stat s;
 	if(stat(name, &s) != 0)
@@ -50,8 +50,86 @@ bool file_writeable(const char* name)
 	return (access(name, W_OK) == 0) && S_ISREG(s.st_mode);
 }
 
-inline bool have_flag(FileIOMode m, int flags)
-{
+bool file_remove(const char* name) {
+	EASSERT(name != NULL);
+
+	if(file_exists(name)) {
+		int ret = unlink(name);
+
+		if(ret == 0)
+			return true;
+		else
+			return false;
+	}
+
+	return false;
+}
+
+bool file_copy(const char* src, const char* dest, bool exact) {
+	EASSERT(src != NULL);
+	EASSERT(dest != NULL);
+
+	FILE* f1 = NULL;
+	if((f1 = fopen(src, "rb")) == NULL)
+		return false;
+
+	FILE* f2 = NULL;
+	if((f2 = fopen(dest, "wb")) == NULL) {
+		fclose(f1);
+		return false;
+	}
+
+	int ch;
+
+	// FIXME: should we fail if putc returns -1 ???
+	while((ch = getc(f1)) != EOF)
+		putc(ch, f2);
+
+	fclose(f1);
+	fclose(f2);
+
+	/*
+	 * Now try to copy permissions via stat and set it to dest.
+	 * Do the same for date/time. If fails, we see is as whole failed
+	 * operation and will return false.
+	 */
+	if(exact) {
+		struct stat s;
+		// pickup source (only interested in mode_t for chmod() and st_atime/st_mtime for utime)
+		if(stat(src, &s) != 0)
+			return false;
+
+		// set permissions
+		if(chmod(dest, s.st_mode) != 0)
+			return false;
+
+		struct utimbuf tbuff;
+		tbuff.actime = s.st_atime;
+		tbuff.modtime = s.st_mtime;
+
+		// set time
+		if(utime(dest, &tbuff) != 0)
+			return false;
+	}
+
+	return true;
+}
+
+bool file_rename(const char* from, const char* to) {
+	EASSERT(from != NULL);
+	EASSERT(to != NULL);
+
+	if(!file_exists(from))
+		return false;
+
+	int ret = rename(from, to);
+	if(ret == 0)
+		return true;
+
+	return false;
+}
+
+inline bool have_flag(FileIOMode m, int flags) {
 	return ((flags & m) == m) ? true : false;
 }
 
@@ -59,13 +137,11 @@ File::File() : fobj(NULL), fname(NULL), fmode(0), errcode(FILE_ENOENT), opened(f
 {
 }
 
-File::~File()
-{
+File::~File() {
 	close();
 }
 
-File::File(const char* name, int mode)
-{
+File::File(const char* name, int mode) {
 	// state flags are already set
 	open(name, mode);
 }
@@ -73,12 +149,11 @@ File::File(const char* name, int mode)
 /*
  * it will open file via C stdio facility
  */
-bool File::open(const char* name, int mode)
-{
+bool File::open(const char* name, int mode) {
 	EASSERT(name != NULL && "File name is NULL");
+
 	const char* flags;
-	switch(mode)
-	{
+	switch(mode) {
 		case FIO_READ:
 			flags = "r";
 			break;
@@ -126,8 +201,7 @@ bool File::open(const char* name, int mode)
 	fmode = mode;
 	alloc = true;
 	fobj = fopen(fname, flags);
-	if(!fobj)
-	{
+	if(!fobj) {
 		// TODO: add error codes
 		return false;
 	}
@@ -136,10 +210,9 @@ bool File::open(const char* name, int mode)
 	return true;
 }
 
-void File::close(void)
-{
-	if(alloc)
-	{
+void File::close(void) {
+
+	if(alloc) {
 		delete [] fname;
 		fname = NULL;
 		alloc = false;
@@ -152,52 +225,49 @@ void File::close(void)
 	opened = false;
 }
 
-const char* File::name(void) const
-{
+const char* File::name(void) const {
 	return fname;
 }
 
-bool File::eof(void)
-{
+bool File::eof(void) {
 	EASSERT(opened != false && "File stream not opened");
+
 	return feof(fobj);
 }
 
-int File::getch(void)
-{
+int File::getch(void) {
 	EASSERT(opened != false && "File stream not opened");
+
 	return fgetc(fobj);
 }
 
-int File::putch(int c)
-{
+int File::putch(int c) {
 	EASSERT(opened != false && "File stream not opened");
 	EASSERT(have_flag(FIO_WRITE, fmode)||have_flag(FIO_APPEND, fmode) && "File stream not in write mode");
+
 	return fputc(c, fobj);
 }
-int File::read(void* buff, int typesz, int buffsz)
-{
+int File::read(void* buff, int typesz, int buffsz) {
 	EASSERT(opened != false && "File stream not opened");
 	EASSERT(buff != NULL);
+
 	return fread(buff, typesz, buffsz, fobj);
 }
 
 /*
  * same sa fgets, but return len of line
  */
-int File::readline(char* buff, int buffsz)
-{
+int File::readline(char* buff, int buffsz) {
 	EASSERT(opened != false && "File stream not opened");
 	EASSERT(buff != NULL);
 
 	int i = 0;
 	int c;
 	char* buffp = buff;
-	for(; i < buffsz; i++)
-	{
+	for(; i < buffsz; i++) {
 		c = fgetc(fobj);
-		if(c == EOF)
-		{
+
+		if(c == EOF) {
 			i = EOF;
 			break;
 		}
@@ -209,24 +279,25 @@ int File::readline(char* buff, int buffsz)
 	return i;
 }
 
-int File::write(const void* buff, int typesz, int buffsz)
-{
+int File::write(const void* buff, int typesz, int buffsz) {
 	EASSERT(opened != false && "File stream not opened or not opened in write mode");
 	EASSERT(have_flag(FIO_WRITE, fmode)||have_flag(FIO_APPEND, fmode) && "File stream not in write mode");
 
 	return fwrite(buff, typesz, buffsz, fobj);
 }
 
-int File::write(const char* buff, unsigned int buffsz)
-{
+int File::write(const char* buff, unsigned int buffsz) {
 	// assure we don't write data out of the bounds
 	EASSERT(strlen(buff)+1 >= buffsz && "Buffer size is greater than actual size");
 
 	return write(buff, 1, buffsz);
 }
 
-int File::printf(const char* fmt, ...)
-{
+int File::write(const char* buff) {
+	return write(buff, 1, strlen(buff));
+}
+
+int File::printf(const char* fmt, ...) {
 	EASSERT(opened != false && "File stream not opened or not opened in write mode");
 	EASSERT(have_flag(FIO_WRITE, fmode)||have_flag(FIO_APPEND, fmode) && "File stream not in write mode");
 	EASSERT(fmt != NULL);
@@ -237,4 +308,5 @@ int File::printf(const char* fmt, ...)
 	va_end(ap);
 	return ret;
 }
+
 }

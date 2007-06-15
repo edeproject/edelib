@@ -95,8 +95,7 @@ EDELIB_NAMESPACE {
  *
  * For all these quirks and details about them you should consult some good C++ book :P
  */
-class EDELIB_API String 
-{
+class EDELIB_API String {
 	public: 
 #ifndef SKIP_DOCS
 		typedef unsigned int size_type;
@@ -104,8 +103,7 @@ class EDELIB_API String
 
 	private:
 #ifndef SKIP_DOCS
-		struct StringData 
-		{
+		struct StringData {
 			size_type length;
 			size_type capacity;
 			char      *chars;

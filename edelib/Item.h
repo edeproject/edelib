@@ -27,7 +27,7 @@ EDELIB_NAMESPACE {
  * the same as fltk::Item with added few methods that affect label drawing
  */
 
-class Item : public fltk::Item
+class EDELIB_API Item : public fltk::Item
 {
 	private:
 		int off_x_left;
