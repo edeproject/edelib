@@ -35,6 +35,17 @@ UT_FUNC(FileFunctions, "Test File functions")
 	UT_VERIFY(file_readable("/xxx/fff/bbb/ggg") == false);
 	UT_VERIFY(file_readable("/dev/this/is/not/file") == false);
 	UT_VERIFY(file_exists("../") == false);
+
+	UT_VERIFY( file_path("gcc") == "/usr/bin/gcc" );
+	UT_VERIFY( file_path("gdb") == "/usr/bin/gdb" );
+	UT_VERIFY( file_path("/bin/mkdir") == "/bin/mkdir" );
+	UT_VERIFY( file_path("mkdir", true) == "/bin/mkdir" );
+	UT_VERIFY( file_path("mv", true) == "/bin/mv" );
+	UT_VERIFY( file_path("ls", true) == "/bin/ls" );
+
+	UT_VERIFY( file_path("this-should-not-exists") == "" );
+	UT_VERIFY( file_path("") == "" );
+	UT_VERIFY( file_path("x") == "" );
 }
 
 UT_FUNC(FileOperations, "Test File operations")

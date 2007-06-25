@@ -1,3 +1,18 @@
+2007-06-25  Sanel <karijes@users.sourceforge.net>
+
+	* Made DesktopFile inherits Config which is much better than
+	previous version
+
+2007-06-24  Sanel <karijes@users.sourceforge.net>
+
+	* Added file_path; tests too
+	* Added DesktopFile for reading .desktop files with tests
+	* In tests name strtok->stringtok
+	* In Config added set_localized() to match get_localized()
+	* ...and tests of course
+	* TODO entry about LC_MESSAGES in Config
+	* Finished saving part of DesktopFile; needs more tests...
+
 2007-06-03  Sanel <karijes@users.sourceforge.net>
 
 	* IconChooser tweaks
@@ -11,7 +26,6 @@
 	* fltk.m4 checks for 1.x
 	* color_fltk_to_rgb will corectly split fltk colors too, via
 	reused colorman from fltk distribution
-
 
 2007-05-27  Sanel <karijes@users.sourceforge.net>
 

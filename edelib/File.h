@@ -14,6 +14,7 @@
 #define __FILE_H__
 
 #include "econfig.h"
+#include "String.h"
 #include <stdio.h> // FILE
 
 EDELIB_NAMESPACE {
@@ -245,6 +246,25 @@ EDELIB_API bool file_copy(const char* src, const char* dest, bool exact = false)
  * \param to is new name
  */
 EDELIB_API bool file_rename(const char* from, const char* to);
+
+/**
+ * Return full path of given argument, looking at $PATH environment variable.
+ * If is unable to read $PATH or file does not exists or resolved path is not file,
+ * it will return empty string.
+ *
+ * Returned path can be either link to binary or actual binary (depends on how
+ * entries in $PATH are placed). For example <em>mv</em> command is often in <em>/bin</em>, and
+ * it's link is (often) in <em>/usr/bin</em>. If PATH contains something like 
+ * <em>/usr/local/bin:/usr/bin:/bin</em>, <em>/usr/bin/mv</em> will be returned.
+ *
+ * For this casses, setting <em>check_link</em> to true will return <em>/bin/mv</em>.
+ *
+ * \related File
+ * \return full path if file exists or empty string as noted above
+ * \param fname file to look for
+ * \param check_link it true symbolic links are ignored
+ */
+EDELIB_API String file_path(const char* fname, bool check_link = false);
 
 }
 

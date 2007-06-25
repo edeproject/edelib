@@ -13,7 +13,10 @@
 #include <edelib/econfig.h>
 #include <edelib/File.h>
 #include <edelib/Debug.h>
+#include <edelib/StrUtil.h>
+#include <edelib/Vector.h>
 
+#include <stdlib.h> // getenv
 #include <string.h> // strlen, strncpy
 #include <stdarg.h> // va_xxx stuff, vfprintf
 
@@ -29,6 +32,7 @@ EDELIB_NAMESPACE {
 bool file_exists(const char* name) {
 	EASSERT(name != NULL);
 	struct stat s;
+	// FIXME: stat or lstat
 	if(stat(name, &s) != 0)
 		return false;
 	return (access(name, F_OK) == 0) && S_ISREG(s.st_mode);
@@ -37,6 +41,7 @@ bool file_exists(const char* name) {
 bool file_readable(const char* name) {
 	EASSERT(name != NULL);
 	struct stat s;
+	// FIXME: stat or lstat
 	if(stat(name, &s) != 0)
 		return false;
 	return (access(name, R_OK) == 0) && S_ISREG(s.st_mode);
@@ -45,6 +50,7 @@ bool file_readable(const char* name) {
 bool file_writeable(const char* name) {
 	EASSERT(name != NULL);
 	struct stat s;
+	// FIXME: stat or lstat
 	if(stat(name, &s) != 0)
 		return false;
 	return (access(name, W_OK) == 0) && S_ISREG(s.st_mode);
@@ -127,6 +133,36 @@ bool file_rename(const char* from, const char* to) {
 		return true;
 
 	return false;
+}
+
+String file_path(const char* fname, bool check_link) {
+	EASSERT(fname != NULL);
+
+	if(file_exists(fname))
+		return fname;
+
+	char* val = getenv("PATH");
+	if(!val)
+		return "";
+
+	vector<String> vs;
+	stringtok(vs, val, ":");
+
+	struct stat s;
+	for(unsigned int i = 0; i < vs.size(); i++) {
+		// assume PATH does not contains entries ending with '/'
+		vs[i] += '/';
+		vs[i] += fname;
+		if(file_exists(vs[i].c_str())) {
+			if(!check_link) 
+				return vs[i];
+			else if((lstat(vs[i].c_str(), &s) == 0) && !S_ISLNK(s.st_mode)) {
+				return vs[i];
+			}
+		}
+	}
+
+	return "";
 }
 
 inline bool have_flag(FileIOMode m, int flags) {

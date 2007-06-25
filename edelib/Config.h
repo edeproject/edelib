@@ -307,6 +307,26 @@ class EDELIB_API Config {
 		void set(const char* section, const char* key, const char* val);
 
 		/**
+		 * Set char* value for localized named section. Description for get_localized()
+		 * applies here too.
+		 *
+		 * \param section name of target section
+		 * \param key name of target key
+		 * \param val value to store within key
+		 */
+		void set_localized(const char* section, const char* key, char* val);
+
+		/**
+		 * Set const char* value for localized named section. Description for get_localized()
+		 * applies here too.
+		 *
+		 * \param section name of target section
+		 * \param key name of target key
+		 * \param val value to store within key
+		 */
+		void set_localized(const char* section, const char* key, const char* val);
+
+		/**
 		 * Set bool value in named section. If section, or key does not
 		 * exists, they will be created.
 		 *

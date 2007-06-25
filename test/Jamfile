@@ -25,6 +25,7 @@ MakeTest run_tests : UnitTest.cpp
 					directory.cpp
 					datetime.cpp
 					conf.cpp
+					desktopfile.cpp
 					string.cpp
 					color.cpp
 					xml.cpp

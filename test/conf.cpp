@@ -1,4 +1,5 @@
 #include <edelib/Config.h>
+#include <edelib/File.h>
 #include <string.h>
 #include <stdlib.h>
 #include "UnitTest.h"
@@ -65,8 +66,7 @@ UT_FUNC(ConfigTest, "Test Config class")
 	}
 }
 
-
-UT_FUNC(ConfigTestLocale, "Test Config locale")
+UT_FUNC(ConfigTestLocaleRead, "Test Config locale read")
 {
 	Config c;
 	c.load("test.desktop");
@@ -133,4 +133,61 @@ UT_FUNC(ConfigTestLocale, "Test Config locale")
 
 		setenv("LANG", "en_US", 1);
 	}
+}
+
+UT_FUNC(ConfigTestLocaleSave, "Test Config locale save")
+{
+	Config c;
+
+	setenv("LANG", "fr_CH.utf8", 1);
+	c.set_localized("Sample", "Key", "value fr_CH.utf8");
+	unsetenv("LANG");
+
+	setenv("LANG", "en_US", 1);
+	c.set_localized("Sample", "Key", "value en_US");
+	unsetenv("LANG");
+
+	setenv("LANG", "et_EE", 1);
+	c.set_localized("Sample", "Key", "value et_EE");
+	unsetenv("LANG");
+
+	setenv("LANG", "eu_ES@euro", 1);
+	c.set_localized("Sample", "Key", "value eu_ES@euro");
+	unsetenv("LANG");
+
+	c.save("foo.conf");
+
+	c.clear();
+
+	if(!c.load("foo.conf")) {
+		UT_FAIL("No foo.conf. WTF!!! I just wrote to it !!!");
+		return;
+	}
+
+	char buff[128];
+	setenv("LANG", "fr_CH.utf8", 1);
+	UT_VERIFY( c.get_localized("Sample", "Key", buff, 128) == true );
+	UT_VERIFY( STR_EQUAL(buff, "value fr_CH.utf8") );
+	unsetenv("LANG");
+
+	setenv("LANG", "en_US", 1);
+	UT_VERIFY( c.get_localized("Sample", "Key", buff, 128) == true );
+	UT_VERIFY( STR_EQUAL(buff, "value en_US") );
+	unsetenv("LANG");
+
+	setenv("LANG", "et_EE", 1);
+	UT_VERIFY( c.get_localized("Sample", "Key", buff, 128) == true );
+	UT_VERIFY( STR_EQUAL(buff, "value et_EE") );
+	unsetenv("LANG");
+
+	setenv("LANG", "eu_ES@euro", 1);
+	UT_VERIFY( c.get_localized("Sample", "Key", buff, 128) == true );
+	UT_VERIFY( STR_EQUAL(buff, "value eu_ES@euro") );
+	unsetenv("LANG");
+
+	// empty one
+	UT_VERIFY( c.get_localized("Sample", "Key", buff, 128) == true );
+	UT_VERIFY( STR_EQUAL(buff, "value en_US") );
+
+	file_remove("foo.conf");
 }

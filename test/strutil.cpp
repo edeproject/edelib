@@ -65,7 +65,7 @@ UT_FUNC(strtest, "Test strutil")
 	UT_VERIFY( str_ends("/aa", "/aaaaa") == false);
 }
 
-UT_FUNC(strtok, "Test strtok")
+UT_FUNC(stringtok, "Test stringtok")
 {
 	vector<String> vs;
 	stringtok(vs, "//this///is//sample//string", "/");

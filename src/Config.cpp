@@ -616,6 +616,42 @@ void Config::set(const char* section, const char* key, char* value) {
 	set(section, key, (const char*)value);
 }
 
+void Config::set_localized(const char* section, const char* key, const char* val) {
+	char* lang = getenv("LANG");
+
+	// fallback
+	if(!lang) {
+		set(section, key, val);
+		return;
+	}
+
+	// do not use default locales
+	if (lang[0] == 'C' || (strncmp(lang, "en_US", 5) == 0)) {
+		set(section, key, val);
+		return;
+	}
+
+	// we will use only first two chars
+	char lang_val[3];
+	if(strlen(lang) > 2) {
+		lang_val[0] = lang[0];
+		lang_val[1] = lang[1];
+		lang_val[2] = '\0';
+	} else {
+		// wrong code
+		set(section, key, val);
+		return;
+	}
+
+	char key_buff[128];
+	snprintf(key_buff, sizeof(key_buff), "%s[%s]", key, lang_val);
+	set(section, key_buff, val);
+}
+
+void Config::set_localized(const char* section, const char* key, char* val) {
+	set_localized(section, key, (const char*)val);
+}
+
 void Config::set(const char* section, const char* key, bool value) {
 	ConfigSection* sc = add_section(section);
 	const char* v = ((value) ? "1" : "0");

@@ -25,6 +25,7 @@ XDGMIME_SRC = xdgmime.c
 XDGMIME = xdgmime/$(XDGMIME_SRC) ;
 
 SOURCE = Config.cpp 
+		 DesktopFile.cpp
 		 StrUtil.cpp
 		 Util.cpp
 		 Nls.cpp
