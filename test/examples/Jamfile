@@ -17,5 +17,4 @@ if $(FLTKLIBS)
 	MakeTest egroup2 : egroup2.cpp : $(FLTKLIBS) ;
 	MakeTest icon_chooser : icon_chooser.cpp : $(FLTKLIBS) ;
 #	MakeTest combobox : combobox.cpp : $(FLTKLIBS) ;
-#	MakeTest menuitems : menuitems.cpp : $(FLTKLIBS) ;
 }

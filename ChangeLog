@@ -1,3 +1,7 @@
+2007-06-26  Sanel <karijes@users.sourceforge.net>
+
+	* Bumped out Item class
+
 2007-06-25  Sanel <karijes@users.sourceforge.net>
 
 	* Made DesktopFile inherits Config which is much better than
