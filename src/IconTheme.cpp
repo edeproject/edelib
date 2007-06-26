@@ -172,7 +172,7 @@ void IconTheme::init_base_dirs(void) {
 		for(unsigned int i = 0; i < sz; i++) {
 			path.clear();
 			path = xdg_data_dirs[i];
-			path += dir_separator();
+			path += "/icons/";
 
 			theme_dirs.push_back(path);
 		}
