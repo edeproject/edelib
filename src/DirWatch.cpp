@@ -22,8 +22,15 @@
 #endif
 
 #include <fcntl.h>
-#include <signal.h>
-#include <unistd.h>
+
+#ifdef __FreeBSD__
+	#include <sys/types.h>
+	#include <sys/stat.h>
+#else
+	#include <signal.h>
+	#include <unistd.h>
+#endif
+
 #include <stdio.h>          // sscanf
 #include <sys/utsname.h>    // uname
 
@@ -63,9 +70,11 @@ struct DirWatchImpl {
 
 DirWatch* DirWatch::pinstance = NULL;
 
+#ifdef HAVE_DNOTIFY
 void dnotify_handler(int sig, siginfo_t* si, void* data) {
 	DirWatch::instance()->run_callback(si->si_fd);
 }
+#endif
 
 DirWatch::DirWatch() : impl(NULL), dir_notifier(DW_NONE) {
 #ifdef HAVE_DNOTIFY

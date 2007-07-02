@@ -2,6 +2,8 @@
 
 	* DirWatch can now return what file was changed and how
 	is changed (created,modified,deleted)
+	* Looks like freebsd keeps lstat/stat defined else
+	* Fixup when dnotify is not detected
 
 2007-07-01  Sanel <karijes@users.sourceforge.net>
 
