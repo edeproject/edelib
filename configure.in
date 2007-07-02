@@ -71,6 +71,7 @@ if eval "test $have_x = yes"; then
 	EDE_CHECK_FLTK
 fi
 
+EDE_DNOTIFY
 EDE_SHARED
 EDE_NLS
 EDE_SOUND

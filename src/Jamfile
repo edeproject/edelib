@@ -41,6 +41,7 @@ SOURCE = Config.cpp
 		 TiXml.cpp
 		 TiXmlParser.cpp 
 		 MimeType.cpp
+		 DirWatch.cpp
 		 $(XDGMIME) ;
 
 # files that requires fltk or X11

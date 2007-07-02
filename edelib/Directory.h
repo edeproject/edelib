@@ -68,6 +68,8 @@ EDELIB_API bool dir_remove(const char* name);
  *
  * If function fails to delete underlaying directories/files, it will call on_fail() given
  * function (otherwise will skip them).
+ * 
+ * \note Not implemented yet
  */
 EDELIB_API bool dir_remove_rec(const char* name, bool all = true, 
 		void (*progress)(const char* name) = NULL, 
