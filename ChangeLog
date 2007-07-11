@@ -1,3 +1,8 @@
+2007-07-07  Sanel <karijes@users.sourceforge.net>
+	
+	* tests/mime.cpp, removed output from text/html since in newer
+	versions of mime-types distributions, description is changed
+
 2007-07-02  Sanel <karijes@users.sourceforge.net>
 
 	* DirWatch can now return what file was changed and how

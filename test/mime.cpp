@@ -25,7 +25,6 @@ UT_FUNC(MimeTypeTest, "Test MimeType")
 
 	mt.set("../doc/footer.html");
 	UT_VERIFY( mt.type() == "text/html" );
-	UT_VERIFY( mt.comment() == "HTML page" );
 	UT_VERIFY( mt.icon_name() == "text-html" );
 
 	mt.set("../doc/genreadme");
