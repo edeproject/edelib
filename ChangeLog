@@ -1,3 +1,7 @@
+2007-07-11  Sanel <karijes@users.sourceforge.net>
+	* Newer autoconf versions require datarootdir to be present.
+	Jamconfig.in and initjamfile.m4 are modified for that
+
 2007-07-07  Sanel <karijes@users.sourceforge.net>
 	
 	* tests/mime.cpp, removed output from text/html since in newer

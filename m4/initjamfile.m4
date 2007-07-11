@@ -38,6 +38,7 @@ AS_IF([test $exec_prefix = NONE],
 
 prefix=AC_FIX_VARIABLEREF([$prefix])
 exec_prefix=AC_FIX_VARIABLEREF([$exec_prefix])
+datarootdir=AC_FIX_VARIABLEREF([$datarootdir])
 bindir=AC_FIX_VARIABLEREF([$bindir])
 sbindir=AC_FIX_VARIABLEREF([$sbindir])
 libexecdir=AC_FIX_VARIABLEREF([$libexecdir])
