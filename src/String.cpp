@@ -286,7 +286,18 @@ String operator+(const char* s1, const String& s2) {
 }
 
 String operator+(const String& s1, const char* s2) {
-	return operator+(s2, s1);
+	String tmp;
+
+	String::size_type len = strlen(s2);
+	len += s1.length();
+
+	// see above for allocation
+	if(len) {
+		tmp.reserve(len);
+		tmp += s1;
+		tmp += s2;
+	}
+	return tmp;
 }
 
 }
