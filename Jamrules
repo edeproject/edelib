@@ -9,7 +9,8 @@
 # See COPYING for details.
 
 # only for haiku jam
-JCACHEFILE = .jamcache ;
+JCACHEFILE = $(TOP)/.jamcache ;
+HCACHEFILE = $(TOP)/.jamhcache ;
 
 if $(NOJAMCFG)
 {
