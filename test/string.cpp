@@ -165,6 +165,10 @@ UT_FUNC(StringOperators, "Test string operators")
 	UT_VERIFY( (test + test2 + test3) == "sample string with no meanings" );
 	UT_VERIFY( (test3 + test2 + test) == "with no meaningsstring sample " );
 	UT_VERIFY( (test + test3 + test2) == "sample with no meaningsstring " );
+
+	test3.clear();
+	test3 = String("a") + "b" + String("c") + String("d") + "e" + String("f");
+	UT_VERIFY( test3 == "abcdef" );
 }
 
 UT_FUNC(StringFind, "Test string find")

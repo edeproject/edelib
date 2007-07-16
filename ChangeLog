@@ -1,3 +1,10 @@
+2007-07-16  Sanel <karijes@users.sourceforge.net>
+
+	* Forced environ outside edelib namespace
+	* Added tests for Vedran's String fix
+	* Added some perftests to watch container(s) behaviours on stringtok
+	* Correct paths for jam cached data
+
 2007-07-11  Sanel <karijes@users.sourceforge.net>
 	* Newer autoconf versions require datarootdir to be present.
 	Jamconfig.in and initjamfile.m4 are modified for that

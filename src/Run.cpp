@@ -20,6 +20,12 @@
 #include <edelib/Run.h>
 #include <edelib/Debug.h>
 
+/*
+ * Make sure this is declared outside namespace; when shared
+ * linking is done linker will see it as edelib::environ not plain environ
+ */
+extern char** environ;
+
 EDELIB_NAMESPACE {
 
 int run_fork(const char* cmd, bool wait) {
@@ -43,8 +49,6 @@ int run_fork(const char* cmd, bool wait) {
 		argv[1] = "-c";
 		argv[2] = (char*)cmd;
 		argv[3] = NULL;
-
-		extern char** environ;
 
 		/*
 		 * The following is to avoid X locking when executing 
