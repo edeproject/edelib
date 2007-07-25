@@ -29,12 +29,10 @@
 
 // max section len
 #define ESECT_MAX 128
-// max line len
-#define ELINE_MAX 5120
 // max key len
 #define EKEY_MAX  128
-// max value len
-#define EVAL_MAX  5120
+// starting size for line/value, can grow
+#define ELINE_SIZE_START 1024
 
 #define COMMENT    '#'
 #define SECT_OPEN  '['
@@ -46,7 +44,100 @@
 
 EDELIB_NAMESPACE {
 
-/* A hash function from Dr.Dobbs Journal.
+/*
+ * Similar to fgets, but will expand buffer as needed. Actually
+ * this is the same as getline(), but it is not used since is glibc 
+ * extension and is very non-portable.
+ * Return number of read characters or -1 if error/EOF occured.
+ *
+ * Notice that given buffer can be NULL; in that case it will
+ * allocate needed memory size (see man getline). Also, contrary
+ * to the glibc getline(), allocated data must be cleared with delete[],
+ * not free().
+ */
+int config_getline(char** buff, int* len, FILE* f) {
+	if(!buff || !len)
+		return -1;
+
+	if(!*buff) *len = 0;
+
+	int i;
+	int c;
+	for(i = 0; ; ) {
+		c = fgetc(f);
+		if(i >= *len) {
+			// do not multiply since *len can be 0
+			int tmp = *len + 100;
+
+			char* new_buff = new char[tmp];
+			strncpy(new_buff, *buff, *len);
+
+			if(*buff) delete [] *buff;
+			*buff = new_buff;
+			*len = tmp;
+		}
+
+		if(c == EOF) {
+			(*buff)[i] = '\0';
+			return -1;
+		}
+
+		(*buff)[i] = c;
+		/*
+		 * counter is increased here so getline() is fully emulated;
+		 * if this is done in for loop, '\n' chars would not be recorded
+		 * in returned buffer
+		 */
+		i++;
+
+		if(c == '\n')
+			break;
+	}
+
+	(*buff)[i] = '\0';
+	return i;
+}
+
+// edelib::File version
+int config_getline(char** buff, int* len, File* f) {
+	if(!buff || !len)
+		return -1;
+
+	if(!*buff) *len = 0;
+
+	int i;
+	int c;
+	for(i = 0; ; ) {
+		c = f->getch();
+		if(i >= *len) {
+			int tmp = *len + 100;
+
+			char* new_buff = new char[tmp];
+			strncpy(new_buff, *buff, *len);
+
+			if(*buff) delete [] *buff;
+			*buff = new_buff;
+			*len = tmp;
+		}
+
+		if(c == EOF) {
+			(*buff)[i] = '\0';
+			return -1;
+		}
+
+		(*buff)[i] = c;
+		i++;
+
+		if(c == '\n')
+			break;
+	}
+
+	(*buff)[i] = '\0';
+	return i;
+}
+
+/* 
+ * A hash function from Dr.Dobbs Journal.
  * Althought, author is claiming it is collision free,
  * explicit string comparisons should be maded, after
  * matching hash is found
@@ -182,13 +273,25 @@ void ConfigSection::add_entry(const char* key, const char* value) {
 	}
 }
 
-void ConfigSection::remove_entry(char* key) {}
+void ConfigSection::remove_entry(const char* key) {
+	EASSERT(key != NULL);
+
+	int klen = strlen(key);
+	unsigned int hh = do_hash(key, klen);
+	EntryList::iterator it = entry_list.begin();
+
+	for(; it != entry_list.end(); ++it) {
+		ConfigEntry* e = *it;
+		if(hh == e->hash && strncmp(e->key, key, e->keylen) == 0)
+			entry_list.erase(it);
+	}
+}
 
 ConfigEntry* ConfigSection::find_entry(const char* key) {
 	EASSERT(key != NULL);
 
 	int klen = strlen(key);
-	unsigned hh = do_hash(key, klen);
+	unsigned int hh = do_hash(key, klen);
 	EntryList::iterator it = entry_list.begin();
 
 	for (; it != entry_list.end(); ++it) {
@@ -232,18 +335,27 @@ bool Config::load(const char* fname) {
 	// we must have at least one section
 	bool sect_found = false;
 
-	char buff[ELINE_MAX];
+	// use fixed sizes for sections and keys
 	char section[ESECT_MAX];
 	char keybuff[EKEY_MAX];
-	char valbuff[EVAL_MAX];
+
+	// line and value can grow
+	int bufflen = ELINE_SIZE_START;
+	char* buff = new char[bufflen];
+
+	// use the same size as for line
+	int valbufflen = bufflen;
+	char* valbuff = new char[valbufflen];
 
 	char *buffp;
 	ConfigSection* tsect = NULL;
 
 #if CONFIG_USE_STDIO
-	while (fgets(buff, sizeof(buff)-1, f))
+	// FILE version
+	while(config_getline(&buff, &bufflen, f) != -1) 
 #else
-	while (f.readline(buff, sizeof(buff)-1) >= 0)
+	// edelib::File version
+	while(config_getline(&buff, &bufflen, &f) != -1) 
 #endif
 	{
 		++linenum;
@@ -264,10 +376,7 @@ bool Config::load(const char* fname) {
 				status = false;
 				break;
 			} else {
-				/*
-				 * first check if section exists, or create 
-				 * it if not
-				 */
+				// first check if section exists, or create if not
 				tsect = find_section(section);
 				if (!tsect) {
 #ifdef CONFIG_INTERNAL
@@ -288,7 +397,19 @@ bool Config::load(const char* fname) {
 				break;
 			}
 
-			if (!scan_keyvalues(buffp, keybuff, valbuff, EKEY_MAX, EVAL_MAX)) {
+			/*
+			 * check if size of valbuff is less than bufflen;
+			 * in that case make it size as bufflen (better would be to use 
+			 * bufflen - EKEY_MAX - '=' - <spaces>, but that would complicate thing,
+			 * also more size does not hurts :P)
+			 */
+			if(valbufflen < bufflen) {
+				valbufflen = bufflen;
+				delete [] valbuff;
+				valbuff = new char[valbufflen];
+			}
+
+			if (!scan_keyvalues(buffp, keybuff, valbuff, EKEY_MAX, valbufflen)) {
 				errcode = CONF_ERR_BAD;
 				status = false;
 				break;
@@ -301,6 +422,10 @@ bool Config::load(const char* fname) {
 #ifdef CONFIG_USE_STDIO
 	fclose(f);
 #endif
+
+	delete [] buff;
+	delete [] valbuff;
+
 	return status;
 }
 
@@ -372,7 +497,7 @@ ConfigSection* Config::add_section(const char* section) {
 ConfigSection* Config::find_section(const char* section) {
 	EASSERT(section != NULL);
 	int slen = strlen(section);
-	unsigned hh = do_hash(section, slen);
+	unsigned int hh = do_hash(section, slen);
 
 	// check if we have cached section
 	if (cached && cached->shash == hh && (strncmp(cached->sname, section, cached->snamelen) == 0)) {
@@ -401,6 +526,11 @@ void Config::clear(void) {
 	for (; it != section_list.end(); ++it)
 		delete *it;
 	section_list.clear();
+
+	errcode = 0;
+	linenum = 0;
+	sectnum = 0;
+	cached = 0;
 }
 
 bool Config::exist(const char* section) {

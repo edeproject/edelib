@@ -191,3 +191,116 @@ UT_FUNC(ConfigTestLocaleSave, "Test Config locale save")
 
 	file_remove("foo.conf");
 }
+
+
+UT_FUNC(ConfigGetlineTest, "Test config_getline")
+{
+	FILE* f = fopen("test_configlongline.txt", "r");
+	if(!f) {
+		UT_FAIL("No test_configlongline.txt, but expected to be");
+		return;
+	}
+
+	char* buff = NULL;
+	int len = 0;
+
+	// expect only 7 lines
+	UT_VERIFY( config_getline(&buff, &len, f) != -1 );
+	UT_VERIFY( STR_EQUAL(buff, "key1 = value1\n") );
+
+	UT_VERIFY( config_getline(&buff, &len, f) != -1 );
+	UT_VERIFY( STR_EQUAL(buff, "key2 = value2 value2 value2 value2 value2 value2 value2\n") );
+
+	UT_VERIFY( config_getline(&buff, &len, f) != -1 );
+	UT_VERIFY( STR_EQUAL(buff, "key3 = value3 value3 value3 value3\n") );
+
+	UT_VERIFY( config_getline(&buff, &len, f) != -1 );
+	UT_VERIFY( STR_EQUAL(buff, "key4 = value4 value4 value4 value4 value4 value4 value4 value4 value4 value4 value4 value4 value4 value4 value4\n") );
+
+	UT_VERIFY( config_getline(&buff, &len, f) != -1 );
+	UT_VERIFY( STR_EQUAL(buff, "key5 = value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5  value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5\n") );
+
+	UT_VERIFY( config_getline(&buff, &len, f) != -1 );
+	UT_VERIFY( STR_EQUAL(buff, "key6 = value 6\n") );
+
+	UT_VERIFY( config_getline(&buff, &len, f) != -1 );
+	UT_VERIFY( STR_EQUAL(buff, "key7 =\n") );
+
+	fclose(f);
+	delete [] buff;
+}
+
+UT_FUNC(ConfigGetlineTest2, "Test allocated config_getline")
+{
+	FILE* f = fopen("test_configlongline.txt", "r");
+	if(!f) {
+		UT_FAIL("No test_configlongline.txt, but expected to be");
+		return;
+	}
+
+	// pre-allocate
+	int len = 1024;
+	char* buff = new char[len];
+
+	// expect only 7 lines
+	UT_VERIFY( config_getline(&buff, &len, f) != -1 );
+	UT_VERIFY( STR_EQUAL(buff, "key1 = value1\n") );
+
+	UT_VERIFY( config_getline(&buff, &len, f) != -1 );
+	UT_VERIFY( STR_EQUAL(buff, "key2 = value2 value2 value2 value2 value2 value2 value2\n") );
+
+	UT_VERIFY( config_getline(&buff, &len, f) != -1 );
+	UT_VERIFY( STR_EQUAL(buff, "key3 = value3 value3 value3 value3\n") );
+
+	UT_VERIFY( config_getline(&buff, &len, f) != -1 );
+	UT_VERIFY( STR_EQUAL(buff, "key4 = value4 value4 value4 value4 value4 value4 value4 value4 value4 value4 value4 value4 value4 value4 value4\n") );
+
+	UT_VERIFY( config_getline(&buff, &len, f) != -1 );
+	UT_VERIFY( STR_EQUAL(buff, "key5 = value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5  value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5\n") );
+
+	UT_VERIFY( config_getline(&buff, &len, f) != -1 );
+	UT_VERIFY( STR_EQUAL(buff, "key6 = value 6\n") );
+
+	UT_VERIFY( config_getline(&buff, &len, f) != -1 );
+	UT_VERIFY( STR_EQUAL(buff, "key7 =\n") );
+
+	fclose(f);
+	delete [] buff;
+}
+
+
+UT_FUNC(ConfigGetlineTest3, "Test config_getline (File)")
+{
+	File f;
+	if(!f.open("test_configlongline.txt")) {
+		UT_FAIL("No test_configlongline.txt, but expected to be");
+		return;
+	}
+
+	int len = 0;
+	char* buff = NULL;
+
+	// expect only 7 lines
+	UT_VERIFY( config_getline(&buff, &len, &f) != -1 );
+	UT_VERIFY( STR_EQUAL(buff, "key1 = value1\n") );
+
+	UT_VERIFY( config_getline(&buff, &len, &f) != -1 );
+	UT_VERIFY( STR_EQUAL(buff, "key2 = value2 value2 value2 value2 value2 value2 value2\n") );
+
+	UT_VERIFY( config_getline(&buff, &len, &f) != -1 );
+	UT_VERIFY( STR_EQUAL(buff, "key3 = value3 value3 value3 value3\n") );
+
+	UT_VERIFY( config_getline(&buff, &len, &f) != -1 );
+	UT_VERIFY( STR_EQUAL(buff, "key4 = value4 value4 value4 value4 value4 value4 value4 value4 value4 value4 value4 value4 value4 value4 value4\n") );
+
+	UT_VERIFY( config_getline(&buff, &len, &f) != -1 );
+	UT_VERIFY( STR_EQUAL(buff, "key5 = value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5  value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5 value5\n") );
+
+	UT_VERIFY( config_getline(&buff, &len, &f) != -1 );
+	UT_VERIFY( STR_EQUAL(buff, "key6 = value 6\n") );
+
+	UT_VERIFY( config_getline(&buff, &len, &f) != -1 );
+	UT_VERIFY( STR_EQUAL(buff, "key7 =\n") );
+
+	delete [] buff;
+}

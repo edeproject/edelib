@@ -3,7 +3,6 @@ TODO list:
  * seems File::readline() does not return 1 when line contains only '\n' char. Should return ?
  * error checks during stream read/write in File (ferror)
  * in Config, don't allow [] sections
- * Config::remove_entry() finish
  * what should set_textdomain_dir() and set_textdomain() return when NLS is disabled ?
  * Sound should have explicit option for setting various drivers
  * non-blocking Sound

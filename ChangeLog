@@ -1,3 +1,13 @@
+2007-07-25  Sanel <karijes@users.sourceforge.net>
+
+	* Config class is not any more limited with line and value sizes, althought
+	section/key does (can't find any reason why would someone use
+	unlimited sections/keys !)
+	* Small fixup with clear() in Config class
+	* Added tests for config_getline() functions, used internally by Config
+	class
+	* Finished remove_entry() in Config
+
 2007-07-16  Sanel <karijes@users.sourceforge.net>
 
 	* Forced environ outside edelib namespace
