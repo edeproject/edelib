@@ -7,6 +7,9 @@
 	* Added tests for config_getline() functions, used internally by Config
 	class
 	* Finished remove_entry() in Config
+	* Fixed strncpy issue when requested size in Config's get() is less than
+	actuall since strncpy() does not terminate string
+	* Sizes for get() are unsigned int now
 
 2007-07-16  Sanel <karijes@users.sourceforge.net>
 

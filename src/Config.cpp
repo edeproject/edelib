@@ -183,7 +183,7 @@ bool scan_section(char* line, char* buff, int buffsz) {
  * scans key = value part
  * returned values are terminated with '\0'
  */
-bool scan_keyvalues(char* line, char* key, char* val, int keysz, int valsz) {
+bool scan_keyvalues(char* line, char* key, char* val, int linesz, int keysz, int valsz) {
 	char* linep = line;
 
 	char* pos = strchr(line, KV_DELIM);
@@ -199,7 +199,7 @@ bool scan_keyvalues(char* line, char* key, char* val, int keysz, int valsz) {
 	if (*linep == '=')
 		linep++;
 
-	for (i = 0; *linep && (*linep != '\n') && i < valsz; linep++, i++)
+	for (i = 0; *linep && (*linep != '\n') && (i < valsz) && (i < linesz); linep++, i++)
 		val[i] = *linep;
 	val[i] = '\0';
 
@@ -409,7 +409,7 @@ bool Config::load(const char* fname) {
 				valbuff = new char[valbufflen];
 			}
 
-			if (!scan_keyvalues(buffp, keybuff, valbuff, EKEY_MAX, valbufflen)) {
+			if (!scan_keyvalues(buffp, keybuff, valbuff, bufflen, EKEY_MAX, valbufflen)) {
 				errcode = CONF_ERR_BAD;
 				status = false;
 				break;
@@ -639,7 +639,7 @@ bool Config::get(const char* section, const char* key, char& ret, char deflt) {
 	return true;
 }
 
-bool Config::get(const char* section, const char* key, char* ret, int size) {
+bool Config::get(const char* section, const char* key, char* ret, unsigned int size) {
 	ConfigSection* cs = find_section(section);
 	if (!cs) {
 		errcode = CONF_ERR_SECTION;
@@ -652,10 +652,15 @@ bool Config::get(const char* section, const char* key, char* ret, int size) {
 	}
 	char* value = ce->value;
 	strncpy(ret, value, size);
+
+	// again, strncpy does not terminate string if size is less that actuall
+	if(ce->valuelen > size)
+		ret[size-1] = '\0';
+
 	return true;
 }
 
-bool Config::get_localized(const char* section, const char* key, char* ret, int size) {
+bool Config::get_localized(const char* section, const char* key, char* ret, unsigned int size) {
 	char* lang;
 	/*
 	#ifdef USE_NLS

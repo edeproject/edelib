@@ -68,7 +68,7 @@ class EDELIB_API ConfigSection {
 		ConfigSection& operator=(ConfigSection&);
 
 		void add_entry(const char* key, const char* value);
-		void remove_entry(char* key);
+		void remove_entry(const char* key);
 		ConfigEntry* find_entry(const char* key);
 
 	public:
@@ -194,7 +194,7 @@ class EDELIB_API Config {
 		 * \param ret buffer to copy returned value
 		 * \param size size of buffer
 		 */
-		bool get(const char* section, const char* key, char* ret, int size);
+		bool get(const char* section, const char* key, char* ret, unsigned int size);
 
 		/**
 		 * Get localized character data. This method behaves the same as get()
@@ -218,7 +218,7 @@ class EDELIB_API Config {
 		 * \param ret buffer to copy returned value
 		 * \param size size of buffer
 		 */
-		bool get_localized(const char* section, const char* key, char* ret, int size);
+		bool get_localized(const char* section, const char* key, char* ret, unsigned int size);
 
 		/**
 		 * Get bool value from named section.
@@ -419,6 +419,17 @@ class EDELIB_API Config {
 		 */
 		const char* strerror(int code);
 };
+
+/*
+ * These functions are for unit test only.
+ * They should not be used in application code.
+ */
+#ifndef SKIP_DOCS
+class File;
+
+int config_getline(char** buff, int* len, FILE* f);
+int config_getline(char** buff, int* len, File* f);
+#endif
 
 }
 
