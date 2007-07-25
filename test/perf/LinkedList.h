@@ -1,6 +1,10 @@
 #ifndef __LINKEDLIST_H__
 #define __LINKEDLIST_H__
 
+#ifndef NULL
+	#define NULL 0
+#endif
+
 template <typename T>
 class LinkedList {
 	public:
@@ -12,10 +16,11 @@ class LinkedList {
 		};
 	private:
 		Data* data;
+		Data* curr;
 		int sz;
 
 	public:
-		LinkedList() : data(NULL), sz(0) { }
+		LinkedList() : data(NULL), curr(NULL), sz(0) { }
 		~LinkedList() { clear(); }
 
 		void clear(void) {
@@ -52,6 +57,10 @@ class LinkedList {
 				data = tmp;
 			}
 
+			// at start, let current() point to head
+			if(!curr)
+				curr = data->head;
+
 			sz++;
 		}
 
@@ -75,12 +84,42 @@ class LinkedList {
 				data->head->next = tmp;
 			}
 
+			// at start, let current() point to head
+			if(!curr)
+				curr = data->head;
+
 			sz++;
 		}
 
 		Data* begin(void) const { 
 			if(data)
 				return data->head; 
+			return NULL;
+		}
+
+		T* first(void) {
+			if(data) {
+				curr = data->head;
+				return curr->value;
+			}
+			return NULL;
+		}
+
+		T* current(void) {
+			if(curr)
+				return curr->value;
+			return NULL;
+		}
+
+		T* next(void) {
+			if(curr && curr->next) {
+				curr = curr->next;
+				return curr->value;
+			} else {
+				// for cases 'for(list.first(); list.current(); list.next())
+				curr = NULL;
+			}
+
 			return NULL;
 		}
 
