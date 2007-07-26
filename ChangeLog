@@ -1,3 +1,8 @@
+2007-07-26  Sanel <karijes@users.sourceforge.net>
+
+	* Added get_allocated() in Config
+	* IconTheme for Directories values now uses get_allocated()
+
 2007-07-25  Sanel <karijes@users.sourceforge.net>
 
 	* Config class is not any more limited with line and value sizes, althought

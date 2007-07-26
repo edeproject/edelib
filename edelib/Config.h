@@ -221,6 +221,19 @@ class EDELIB_API Config {
 		bool get_localized(const char* section, const char* key, char* ret, unsigned int size);
 
 		/**
+		 * This function is the same as get() with char*, except returned data is allocated.
+		 * Use <b>must</b> call delete[] on returned data. If this function returns false,
+		 * returned data will not be allocated and <em>retsize</em> will be 0.
+		 *
+		 * \return true if value exists
+		 * \param section name of target section
+		 * \param key name of target key
+		 * \param ret is allocated by this function ad returned value will be copied in it
+		 * \param retsize size of buffer
+		 */
+		bool get_allocated(const char* section, const char* key, char** ret, unsigned int& retsize);
+
+		/**
 		 * Get bool value from named section.
 		 *
 		 * \return true if value exist

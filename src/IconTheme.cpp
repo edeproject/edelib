@@ -104,7 +104,7 @@ IconTheme::~IconTheme() {
 		delete icached[i];
 		icached[i] = NULL;
 	}
-		EDEBUG(ESTRLOC " : IconTheme::~IconTheme() cache dismiss\n");
+	EDEBUG(ESTRLOC " : IconTheme::~IconTheme() cache dismiss\n");
 }
 
 void IconTheme::cache_append(const char* icon, IconSizes sz, IconContext ctx, const String& path) {
@@ -181,15 +181,6 @@ void IconTheme::init_base_dirs(void) {
 	theme_dirs.push_back("/usr/share/pixmaps/");
 	theme_dirs.push_back("/opt/kde/share/icons/");
 }
-
-/*
-void IconTheme::init(void)
-{
-	if(IconTheme::pinstance != NULL)
-		return;
-	IconTheme::pinstance = new IconTheme();
-}	
-*/
 
 void IconTheme::init(const char* theme) {
 	if(IconTheme::pinstance != NULL)
@@ -269,15 +260,18 @@ void IconTheme::load_theme(const char* theme) {
 		return;
 	}
 
-	/*
-	 * TODO: this buffer can be small for large Directories values
-	 * Some dynamic facility is needed
-	 */
-	char buffer[3072];
-	if(!c.get("Icon Theme", "Directories", buffer, sizeof(buffer))) {
+	char* buffer = NULL;
+	unsigned int bufflen;
+
+	if(!c.get_allocated("Icon Theme", "Directories", &buffer, bufflen)) {
 		EWARNING(ESTRLOC ": bad: %s\n", c.strerror());
 		return;
 	}
+
+	EASSERT(buffer != NULL);
+
+	// used for Context/Inherits
+	char static_buffer[1024];
 
 	/*
 	 * The format of Directories key is: 'Directories = size1/type, size2/type, size3/type, etc.'
@@ -293,6 +287,7 @@ void IconTheme::load_theme(const char* theme) {
 	 */
 	vector<String> dl;
 	stringtok(dl, buffer, ",");
+	delete [] buffer;
 
 	int sz = 0;
 	IconDirInfo dinfo;
@@ -302,10 +297,10 @@ void IconTheme::load_theme(const char* theme) {
 
 		dinfo.size = check_sz(sz);
 
-		if(!c.get(dl[i].c_str(), "Context", buffer, sizeof(buffer)))
+		if(!c.get(dl[i].c_str(), "Context", static_buffer, sizeof(static_buffer)))
 			EWARNING(ESTRLOC ": Bad entry '%s' in %s, skipping...\n", dl[i].c_str(), ipath.c_str());
 
-		dinfo.context = figure_ctx(buffer);
+		dinfo.context = figure_ctx(static_buffer);
 
 		// and finally record the path
 		dinfo.path = tpath;
@@ -323,7 +318,7 @@ void IconTheme::load_theme(const char* theme) {
 	 *
 	 * They all must be scanned :(
 	 */
-	if(!c.get("Icon Theme", "Inherits", buffer, sizeof(buffer))) {
+	if(!c.get("Icon Theme", "Inherits", static_buffer, sizeof(static_buffer))) {
 		// prevent infinite recursion
 		if(!fvisited) {
 			EDEBUG(ESTRLOC ": No parents, going for '%s'\n", FALLBACK_THEME);
@@ -332,8 +327,7 @@ void IconTheme::load_theme(const char* theme) {
 		}
 	}
 	else {
-		//load_theme(buffer);
-		read_inherits(buffer);
+		read_inherits(static_buffer);
 	}
 }
 

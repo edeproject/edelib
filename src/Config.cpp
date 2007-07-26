@@ -43,7 +43,6 @@
 
 
 EDELIB_NAMESPACE {
-
 /*
  * Similar to fgets, but will expand buffer as needed. Actually
  * this is the same as getline(), but it is not used since is glibc 
@@ -61,9 +60,10 @@ int config_getline(char** buff, int* len, FILE* f) {
 
 	if(!*buff) *len = 0;
 
-	int i;
+	int i = 0;
 	int c;
-	for(i = 0; ; ) {
+
+	while(1) {
 		c = fgetc(f);
 		if(i >= *len) {
 			// do not multiply since *len can be 0
@@ -105,9 +105,10 @@ int config_getline(char** buff, int* len, File* f) {
 
 	if(!*buff) *len = 0;
 
-	int i;
+	int i = 0;
 	int c;
-	for(i = 0; ; ) {
+
+	while(1) {
 		c = f->getch();
 		if(i >= *len) {
 			int tmp = *len + 100;
@@ -653,7 +654,7 @@ bool Config::get(const char* section, const char* key, char* ret, unsigned int s
 	char* value = ce->value;
 	strncpy(ret, value, size);
 
-	// again, strncpy does not terminate string if size is less that actuall
+	// again, strncpy does not terminate string if size is less that actual
 	if(ce->valuelen > size)
 		ret[size-1] = '\0';
 
@@ -714,13 +715,10 @@ bool Config::get_localized(const char* section, const char* key, char* ret, unsi
 				int sz = p - lang;
 				code = new char[sz+1];
 				strncpy(code, lang, sz);
-
 				// damint strncpy does not add this
 				code[sz] = '\0';
 
-				//printf("have code: %s lang: %s sz: %i\n", code, lang, sz);
 				snprintf(key_buff, sizeof(key_buff), "%s[%s]", key, code);
-				//printf("trying with: %c: %s\n", delim[i], key_buff);
 				delete [] code;
 
 				ce = cs->find_entry(key_buff);
@@ -735,10 +733,38 @@ bool Config::get_localized(const char* section, const char* key, char* ret, unsi
 	if (found) {
 		char* value = ce->value;
 		strncpy(ret, value, size);
+		ret[size-1] = '\0';
 		return true;
 	} else
 		errcode = CONF_ERR_KEY;
 	return false;
+}
+
+bool Config::get_allocated(const char* section, const char* key, char** ret, unsigned int& retsize) {
+	retsize = 0;
+
+	ConfigSection* cs = find_section(section);
+	if (!cs) {
+		errcode = CONF_ERR_SECTION;
+		return false;
+	}
+
+	ConfigEntry* ce = cs->find_entry(key);
+	if (!ce) {
+		errcode = CONF_ERR_KEY;
+		return false;
+	}
+
+	char* value = ce->value;
+	retsize = ce->valuelen;
+
+	*ret = new char[retsize + 1];
+	strncpy(*ret, value, retsize);
+	// terminate, since ce->valuelen does not contain terminating char
+	char* p = *ret;
+	p[retsize] = '\0';
+
+	return true;
 }
 
 void Config::set(const char* section, const char* key, const char* value) {
