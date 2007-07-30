@@ -15,7 +15,7 @@
 
 #include "econfig.h"
 
-EDELIB_NAMESPACE {
+EDELIB_NS_BEGIN
 
 /**
  * Convert separated rgb color components to FLTK color space.
@@ -63,5 +63,5 @@ EDELIB_API unsigned int color_html_to_fltk(const char* col);
  */
 EDELIB_API void color_fltk_to_html(unsigned int color, char* buff);
 
-}
+EDELIB_NS_END
 #endif

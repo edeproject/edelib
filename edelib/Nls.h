@@ -24,7 +24,8 @@
 
 #define N_(s) (s)
 
-EDELIB_NAMESPACE {
+EDELIB_NS_BEGIN
+
 /**
  * Sets or retrieves the current message domain.
  *
@@ -77,5 +78,5 @@ EDELIB_API const char* set_textdomain_dir(const char* domain, const char* dir);
  */
 EDELIB_API void init_locale_support(const char* appname, const char* dir);
 
-}
-#endif
+EDELIB_NS_END
+#endif // __NLS_H__

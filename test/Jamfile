@@ -27,6 +27,7 @@ MakeTest run_tests : UnitTest.cpp
 					conf.cpp
 					desktopfile.cpp
 					string.cpp
+					list.cpp
 					color.cpp
 					xml.cpp
 					mime.cpp
@@ -37,7 +38,8 @@ MakeTest run_tests : UnitTest.cpp
 #MakeTest th : th.cpp ;
 #MakeTest pth : pth.cpp ;
 #MakeTest dd : dd.cpp ;
-#MakeTest pp : pp.cpp ;
+MakeTest pp : pp.cpp ;
+MakeTest perf/stringtok : perf/stringtok.cpp ;
 
 Clean clean : [ FFileName $(TOP) test .foo.txt ] ;
 Clean clean : [ FFileName $(TOP) test .ede.conf ] ;

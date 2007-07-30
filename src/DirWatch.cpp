@@ -38,7 +38,7 @@
 
 #define ENOTIFY_SIGNAL (SIGRTMIN + 8)
 
-EDELIB_NAMESPACE {
+EDELIB_NS_BEGIN
 
 // content of watched directory (files, sub-directories, ...)
 struct DirContentEntry {
@@ -513,4 +513,4 @@ const char* DirWatch::figure_changed(DirWatchEntry* e) {
 	return NULL;
 }
 
-}
+EDELIB_NS_END

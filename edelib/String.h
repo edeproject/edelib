@@ -16,7 +16,7 @@
 #include "econfig.h"
 #include <string.h>
 
-EDELIB_NAMESPACE {
+EDELIB_NS_BEGIN
 
 /**
  * \class String
@@ -366,5 +366,5 @@ inline bool operator<(const String& str1, const String& str2) { return (strcmp(s
 inline bool operator<=(const String& str1, const String& str2) { return (strcmp(str1.c_str(), str2.c_str()) <= 0); }
 #endif
 
-}
-#endif
+EDELIB_NS_END
+#endif // __STRING_H__

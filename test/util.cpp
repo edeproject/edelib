@@ -24,10 +24,6 @@ UT_FUNC(XDGPathTest, "Test XDG paths")
 	UT_VERIFY( STR_EQUAL(user_config_dir(), "~/.config") );
 	unsetenv("XDG_CONFIG_HOME");
 
-	setenv("EDE_CONFIG_HOME", "/dummy/place/with/slash/", 1);
-	UT_VERIFY( STR_EQUAL(user_config_dir(), "/dummy/place/with/slash") );
-	unsetenv("EDE_CONFIG_HOME");
-
 	setenv("XDG_DATA_HOME", "", 1);
 	UT_VERIFY( STR_EQUAL(user_data_dir(), "~/.local/share") );
 
@@ -37,16 +33,6 @@ UT_FUNC(XDGPathTest, "Test XDG paths")
 	setenv("XDG_DATA_HOME", "/baz", 1);
 	UT_VERIFY( STR_EQUAL(user_data_dir(), "/baz") );
 	unsetenv("XDG_DATA_HOME");
-
-	setenv("EDE_DATA_HOME", "", 1);
-	UT_VERIFY( STR_EQUAL(user_data_dir(), "~/.local/share") );
-
-	setenv("EDE_DATA_HOME", "/", 1);
-	UT_VERIFY( STR_EQUAL(user_data_dir(), "/") );
-
-	setenv("EDE_DATA_HOME", "/baz", 1);
-	UT_VERIFY( STR_EQUAL(user_data_dir(), "/baz") );
-	unsetenv("EDE_DATA_HOME");
 
 	setenv("XDG_CACHE_HOME", "", 1);
 	UT_VERIFY( STR_EQUAL(user_cache_dir(), "~/.cache") );
@@ -62,68 +48,76 @@ UT_FUNC(XDGPathTest, "Test XDG paths")
 	UT_VERIFY( STR_EQUAL(user_cache_dir(), "/home/foo/withslash") );
 	unsetenv("XDG_CACHE_HOME");
 
-	setenv("EDE_CACHE_HOME", "", 1);
-	UT_VERIFY( STR_EQUAL(user_cache_dir(), "~/.cache") );
-
-	setenv("EDE_CACHE_HOME", "/", 1);
-	UT_VERIFY( STR_EQUAL(user_cache_dir(), "/") );
-
-	setenv("EDE_CACHE_HOME", "/home/foo", 1);
-	UT_VERIFY( STR_EQUAL(user_cache_dir(), "/home/foo") );
-	unsetenv("EDE_CACHE_HOME");
-
-	vector<String> lst;
+	list<String> lst;
 	setenv("XDG_DATA_DIRS", "/home/foo:/home/baz:/home/taz", 1);
 	int ret = system_data_dirs(lst);
 
-	UT_VERIFY(ret == 3);
-	UT_VERIFY(lst[0] == "/home/foo");
-	UT_VERIFY(lst[1] == "/home/baz");
-	UT_VERIFY(lst[2] == "/home/taz");
+	list<String>::iterator it = lst.begin();
+
+	UT_VERIFY( ret == 3 );
+	UT_VERIFY( (*it) == "/home/foo" );
+	++it;
+	UT_VERIFY( (*it) == "/home/baz" );
+	++it;
+	UT_VERIFY( (*it) == "/home/taz" );
 
 	unsetenv("XDG_DATA_DIRS");
 	lst.clear();
 
 	setenv("XDG_DATA_DIRS", "/home/foo", 1);
 	ret = system_data_dirs(lst);
+	it = lst.begin();
+
 	UT_VERIFY( ret == 1 );
-	UT_VERIFY( lst[0] == "/home/foo" );
+	UT_VERIFY( (*it) == "/home/foo" );
 
 	unsetenv("XDG_DATA_DIRS");
 	lst.clear();
 
 	// in case of empty XDG_DATA_DIRS
 	ret = system_data_dirs(lst);
+	it = lst.begin();
+
 	UT_VERIFY( ret == 2 );
-	UT_VERIFY( lst[0] == "/usr/local/share" );
-	UT_VERIFY( lst[1] == "/usr/share" );
+	UT_VERIFY( (*it) == "/usr/local/share" );
+	++it;
+	UT_VERIFY( (*it) == "/usr/share" );
 
 	lst.clear();
 
 	setenv("XDG_CONFIG_DIRS", "/etc/myconf:/etc/yourconf:/usr/local/share/conf:/some/path/conf", 1);
 	ret = system_config_dirs(lst);
+	it = lst.begin();
+
 	UT_VERIFY( ret == 4 );
-	UT_VERIFY( lst[0] == "/etc/myconf" );
-	UT_VERIFY( lst[1] == "/etc/yourconf" );
-	UT_VERIFY( lst[2] == "/usr/local/share/conf" );
-	UT_VERIFY( lst[3] == "/some/path/conf" );
+	UT_VERIFY( (*it) == "/etc/myconf" );
+	++it;
+	UT_VERIFY( (*it) == "/etc/yourconf" );
+	++it;
+	UT_VERIFY( (*it) == "/usr/local/share/conf" );
+	++it;
+	UT_VERIFY( (*it) == "/some/path/conf" );
 
 	unsetenv("XDG_CONFIG_DIRS");
 	lst.clear();
 
 	setenv("XDG_CONFIG_DIRS", "/etc/mydirconf", 1);
 	ret = system_config_dirs(lst);
+	it = lst.begin();
+
 	UT_VERIFY( ret == 1 );
 	UT_VERIFY( lst.size() == 1 );
-	UT_VERIFY( lst[0] == "/etc/mydirconf" );
+	UT_VERIFY( (*it) == "/etc/mydirconf" );
 
 	unsetenv("XDG_CONFIG_DIRS");
 	lst.clear();
 
 	// in case of empty XDG_CONFIG_DIRS
 	ret = system_config_dirs(lst);
+	it = lst.begin();
+
 	UT_VERIFY( ret == 1 );
-	UT_VERIFY( lst[0] == "/etc/xdg" );
+	UT_VERIFY( (*it) == "/etc/xdg" );
 }
 
 

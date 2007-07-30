@@ -15,9 +15,9 @@
 
 #include "econfig.h"
 #include "String.h"
-#include "Vector.h"
+#include "List.h"
 
-EDELIB_NAMESPACE {
+EDELIB_NS_BEGIN
 
 /** 
  * Get default directory where should be stored user specific
@@ -56,7 +56,7 @@ EDELIB_API String user_cache_dir(void);
  * \return a size of list
  * \param lst is where to put founded data
  */
-EDELIB_API int system_config_dirs(vector<String>& lst);
+EDELIB_API int system_config_dirs(list<String>& lst);
 
 /**
  * Get a list of directories where data files should be searched.
@@ -65,7 +65,7 @@ EDELIB_API int system_config_dirs(vector<String>& lst);
  * \return a size of list
  * \param lst is where to put founded data
  */
-EDELIB_API int system_data_dirs(vector<String>& lst);
+EDELIB_API int system_data_dirs(list<String>& lst);
 
 /**
  * This function will create correct filename path, separating each item
@@ -100,5 +100,6 @@ EDELIB_API String build_filename(const char* separator, const char* p1, const ch
  * \endcode
  */
 EDELIB_API String build_dirname(const char* separator, const char* p1, const char* p2 = NULL, const char* p3 = NULL);
-}
-#endif
+
+EDELIB_NS_END
+#endif // __UTIL_H__

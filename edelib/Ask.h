@@ -15,7 +15,7 @@
 
 #include "econfig.h"
 
-EDELIB_NAMESPACE {
+EDELIB_NS_BEGIN
 
 /**
  * Displays a printf-style message in a pop-up box with an "Close" button, waits 
@@ -43,6 +43,5 @@ EDELIB_API const char *input(const char *label, const char *deflt = 0, ...);
 /** Same as input(), except input data are hidden with the stars */
 EDELIB_API const char *password(const char *label, const char *deflt = 0, ...);
 
-}
-
-#endif
+EDELIB_NS_END
+#endif // __ASK_H__

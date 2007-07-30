@@ -33,7 +33,8 @@
 #define DOT_OR_DOTDOT(base) \
 	(base[0] == '.' && (base[1] == '\0' || base[1] == '.' && base[2] == '\0'))
 
-EDELIB_NAMESPACE {
+EDELIB_NS_BEGIN
+
 #if 0
 bool dirwalk(const char* dir, 
 		void (*on_dir_enter)(const char*, const char*), void (*on_dir_leave)(const char*, const char*), 
@@ -360,4 +361,4 @@ bool dir_list(const char* dir, vector<String>& lst, bool full_path, bool show_hi
 	return true;
 }
 
-}
+EDELIB_NS_END

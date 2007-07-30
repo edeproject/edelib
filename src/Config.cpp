@@ -42,7 +42,8 @@
 #define EAT_SPACES(ptr) while(isspace(*ptr) && *ptr) ptr++
 
 
-EDELIB_NAMESPACE {
+EDELIB_NS_BEGIN
+
 /*
  * Similar to fgets, but will expand buffer as needed. Actually
  * this is the same as getline(), but it is not used since is glibc 
@@ -196,8 +197,8 @@ bool scan_keyvalues(char* line, char* key, char* val, int linesz, int keysz, int
 		key[i] = *linep;
 	key[i] = '\0';
 
-	// skip '='
-	if (*linep == '=')
+	// skip KV_DELIM
+	if (*linep == KV_DELIM)
 		linep++;
 
 	for (i = 0; *linep && (*linep != '\n') && (i < valsz) && (i < linesz); linep++, i++)
@@ -223,7 +224,7 @@ ConfigSection::ConfigSection(const char* n) {
 }
 
 ConfigSection::~ConfigSection() {
-	EntryList::iterator it = entry_list.begin();
+	EntryListIter it = entry_list.begin();
 	for (; it != entry_list.end(); ++it) {
 		ConfigEntry* e = *it;
 #ifdef CONFIG_INTERNAL
@@ -279,7 +280,7 @@ void ConfigSection::remove_entry(const char* key) {
 
 	int klen = strlen(key);
 	unsigned int hh = do_hash(key, klen);
-	EntryList::iterator it = entry_list.begin();
+	EntryListIter it = entry_list.begin();
 
 	for(; it != entry_list.end(); ++it) {
 		ConfigEntry* e = *it;
@@ -293,7 +294,7 @@ ConfigEntry* ConfigSection::find_entry(const char* key) {
 
 	int klen = strlen(key);
 	unsigned int hh = do_hash(key, klen);
-	EntryList::iterator it = entry_list.begin();
+	EntryListIter it = entry_list.begin();
 
 	for (; it != entry_list.end(); ++it) {
 		ConfigEntry* e = *it;
@@ -446,8 +447,8 @@ bool Config::save(const char* fname) {
 	}
 #endif
 
-	SectionList::iterator sit = section_list.begin();
-	EntryList::iterator eit;
+	SectionListIter sit = section_list.begin();
+	EntryListIter eit;
 
 #ifdef CONFIG_USE_STDIO
 	for (; sit != section_list.end(); ++sit) {
@@ -508,7 +509,7 @@ ConfigSection* Config::find_section(const char* section) {
 		return cached;
 	}
 
-	SectionList::iterator it = section_list.begin();
+	SectionListIter it = section_list.begin();
 	for (; it != section_list.end(); ++it) {
 		ConfigSection *cs = *it;
 		if (cs->shash == hh && (strncmp(cs->sname, section, cs->snamelen) == 0)) {
@@ -523,7 +524,7 @@ ConfigSection* Config::find_section(const char* section) {
 }
 
 void Config::clear(void) {
-	SectionList::iterator it = section_list.begin();
+	SectionListIter it = section_list.begin();
 	for (; it != section_list.end(); ++it)
 		delete *it;
 	section_list.clear();
@@ -851,4 +852,4 @@ void Config::set(const char* section, const char* key, double value) {
 	sc->add_entry(key, tmp);
 }
 
-} // EDELIB_NAMESPACE
+EDELIB_NS_END // EDELIB_NAMESPACE

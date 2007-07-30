@@ -16,8 +16,14 @@
 #include "econfig.h"
 #include "List.h"
 
-EDELIB_NAMESPACE {
+#include <stdio.h>
 
+EDELIB_NS_BEGIN
+
+/**
+ * \enum ConfigErrors
+ * \brief Error codes from Config class
+ */
 enum ConfigErrors {
 	CONF_SUCCESS = 0,   ///< successful operation
 	CONF_ERR_FILE,      ///< trouble accessing config file or directory
@@ -43,7 +49,10 @@ class ConfigSection;
 
 #ifndef SKIP_DOCS
 typedef list<ConfigEntry*> EntryList;
+typedef list<ConfigEntry*>::iterator EntryListIter;
+
 typedef list<ConfigSection*> SectionList;
+typedef list<ConfigSection*>::iterator SectionListIter;
 #endif
 
 #ifndef SKIP_DOCS
@@ -444,6 +453,5 @@ int config_getline(char** buff, int* len, FILE* f);
 int config_getline(char** buff, int* len, File* f);
 #endif
 
-}
-
+EDELIB_NS_END
 #endif // __CONFIG_H__

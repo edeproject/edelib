@@ -17,7 +17,7 @@
 #include "String.h"
 #include "Vector.h"
 
-EDELIB_NAMESPACE {
+EDELIB_NS_BEGIN
 
 /** 
  * Check if directory exists 
@@ -126,6 +126,6 @@ EDELIB_API const char* dir_separator(void);
  * \param show_hidden if set will show hidden files
  */
 EDELIB_API bool dir_list(const char* dir, vector<String>& lst, bool full_path = false, bool show_hidden = false);
-}
 
-#endif
+EDELIB_NS_END
+#endif // __DIRECTORY_H__

@@ -28,7 +28,7 @@ char*        estrndup(const char* str, unsigned int maxlen);
 #endif // SKIP_DOCS
 
 
-EDELIB_NAMESPACE {
+EDELIB_NS_BEGIN
 
 /**
  * Removes leading space. Operates directly on buffer.
@@ -130,6 +130,5 @@ void stringtok(Container& c, const StringType& str, const char* ws = " \t\n") {
 }
 #endif
 
-}
-
-#endif
+EDELIB_NS_END
+#endif // __STRUTIL_H__

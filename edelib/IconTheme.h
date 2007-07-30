@@ -15,9 +15,9 @@
 
 #include "econfig.h"
 #include "String.h"
-#include "Vector.h"
+#include "List.h"
 
-EDELIB_NAMESPACE {
+EDELIB_NS_BEGIN
 
 /**
  * \class IconTheme
@@ -67,6 +67,10 @@ EDELIB_NAMESPACE {
  * lookup for icon inside theme again, or it will leave uncleared allocated data.
  */
 
+/**
+ * \enum IconSizes
+ * \brief Icon sizes to look for
+ */
 enum IconSizes {
 	ICON_SIZE_TINY         = 16,     ///< 16x16 icons
 	ICON_SIZE_SMALL        = 22,     ///< 22x22 icons
@@ -76,6 +80,10 @@ enum IconSizes {
 	ICON_SIZE_ENORMOUS     = 128     ///< 128x128
 };
 
+/**
+ * \enum IconContext
+ * \brief Icon types to look for
+ */
 enum IconContext {
 	ICON_CONTEXT_ANY = 0,             ///< Can be any icon context
 	ICON_CONTEXT_ACTION,              ///< Icons representing actions
@@ -111,8 +119,9 @@ class EDELIB_API IconTheme
 		static IconTheme* pinstance;
 		bool   fvisited;
 		String curr_theme;
-		vector<String>      theme_dirs;
-		vector<IconDirInfo> dirlist;
+
+		list<String>      theme_dirs;
+		list<IconDirInfo> dirlist;
 
 		int cache_ptr;
 		IconsCached* icached[CACHED_ICONS_SIZE];
@@ -174,6 +183,5 @@ class EDELIB_API IconTheme
 		static String get(const char* icon, IconSizes sz, IconContext ctx = ICON_CONTEXT_ANY);
 };
 
-}
-
-#endif
+EDELIB_NS_END
+#endif // __ICONTHEME_H__

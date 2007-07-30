@@ -27,7 +27,7 @@
 
 #include <stdio.h>     // rename
 
-EDELIB_NAMESPACE {
+EDELIB_NS_BEGIN
 
 bool file_exists(const char* name) {
 	EASSERT(name != NULL);
@@ -345,4 +345,4 @@ int File::printf(const char* fmt, ...) {
 	return ret;
 }
 
-}
+EDELIB_NS_END

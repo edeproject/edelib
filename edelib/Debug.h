@@ -39,9 +39,12 @@ EDELIB_API void EFatal(const char* fmt, ...);
 
 #define ESTRLOC __FILE__ ":" ESTRLOC_STRINGIFY(__LINE__)
 
+EDELIB_NS_BEGIN
 
-EDELIB_NAMESPACE {
-
+/**
+ * \enum MsgType
+ * \brief Type of messages received in error message handler
+ */
 enum MsgType {
 	MsgDebug = 0,         ///< debug messages
 	MsgWarn,              ///< warnings
@@ -81,5 +84,5 @@ typedef void (*MsgHandlerType)(MsgType t, const char* msg);
  */
 EDELIB_API void InstallMsgHandler(MsgHandlerType m);
 
-}
-#endif
+EDELIB_NS_END
+#endif // __DEBUG_H__

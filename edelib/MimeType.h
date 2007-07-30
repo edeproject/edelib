@@ -16,7 +16,7 @@
 #include "econfig.h"
 #include "String.h"
 
-EDELIB_NAMESPACE {
+EDELIB_NS_BEGIN
 
 /**
  * \class MimeType
@@ -97,5 +97,5 @@ class EDELIB_API MimeType {
 		const String& icon_name(void);
 }; 
 
-}
-#endif
+EDELIB_NS_END
+#endif // __MIMETYPE_H__

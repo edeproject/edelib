@@ -13,7 +13,7 @@
 #include <edelib/XSet.h>
 #include <X11/XKBlib.h>
 
-EDELIB_NAMESPACE {
+EDELIB_NS_BEGIN
 
 XSet::XSet() {
 	display = XOpenDisplay("0:0");
@@ -72,4 +72,4 @@ void XSet::test_blank(void) {
 	XActivateScreenSaver(display);
 }
 
-}
+EDELIB_NS_END

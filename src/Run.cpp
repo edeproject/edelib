@@ -26,7 +26,7 @@
  */
 extern char** environ;
 
-EDELIB_NAMESPACE {
+EDELIB_NS_BEGIN
 
 int run_fork(const char* cmd, bool wait) {
 	if(!cmd)
@@ -105,4 +105,4 @@ int run_program(const char* cmd, bool wait, bool root) {
 	return run_fork(cmd, wait);
 }
 
-}
+EDELIB_NS_END

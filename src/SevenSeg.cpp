@@ -17,7 +17,7 @@
 
 #define EDGE_GAP 2
 
-EDELIB_NAMESPACE {
+EDELIB_NS_BEGIN
 
 SevenSeg::SevenSeg(int X, int Y, int W, int H) : Fl_Widget(X, Y, W, H), digit(0), segwidth(0) {
 	color2(FL_BLACK);
@@ -213,4 +213,4 @@ void SevenSeg::draw_seg_g(int X, int Y, int W, int H) {
 	fl_line(x1,y1,x2,y1);
 }
 
-}
+EDELIB_NS_END

@@ -25,15 +25,13 @@
 
 #define MAX_PATH 1024
 
-EDELIB_NAMESPACE {
+EDELIB_NS_BEGIN
 
-#include <stdio.h>
+typedef list<String> StringList;
+typedef list<String>::iterator StringListIter;
 
-String _config_get(const char* env1, const char* env2, const char* fallback, unsigned int fallback_len) {
-	char* path = getenv(env1);
-	if(!path)
-		path = getenv(env2);
-	// failed env1 and env2; return fallback
+String _config_get(const char* env, const char* fallback, unsigned int fallback_len) {
+	char* path = getenv(env);
 	if(!path)
 		return fallback;
 	/*
@@ -59,12 +57,10 @@ String _config_get(const char* env1, const char* env2, const char* fallback, uns
 	return ret;
 }
 
-int _dirs_get(const char* env1, const char* env2, const char* fallback, vector<String>& lst) {
+int _dirs_get(const char* env, const char* fallback, StringList& lst) {
 	EASSERT(fallback != NULL);
 
-	char* path = getenv(env1);
-	if(!path)
-		path = getenv(env2);
+	char* path = getenv(env);
 	if(!path)
 		path = (char*)fallback;
 
@@ -98,31 +94,35 @@ String _path_builder(const char* separator, bool ending, const char* p1, const c
 		return str;
 
 	// now tokenize it
-	vector<String> vs;
-	stringtok(vs, str, separator);
+	StringList ls;
+	stringtok(ls, str, separator);
 
-	EASSERT(vs.size() > 0 && "This should not be happened !!!");
+	EASSERT(ls.size() > 0 && "This should not be happened !!!");
 
 	str.clear();
 	if(trailing)
 		str += separator;
 
-	unsigned int sz = vs.size();
+	unsigned int sz = ls.size();
+	StringListIter it = ls.begin();
+
 	/*
 	 * This is intentionaly so cases like
 	 * build_filename("/", "/", "/", "foo") can be accepted
 	 */
 	if(sz > 1) {
-		unsigned int i = 0;
 		sz -= 1;
-		for(; i < sz; i++) {
-			str += vs[i];
+		for(; sz; sz--) {
+			str += (*it);
 			str += separator;
+			++it;
 		}
 		// take last one
-		str += vs[i];
-	} else
-		str += vs[0];
+		str += (*it);
+	} else {
+		// then just take first one
+		str += (*it);
+	}
 
 	if(ending)
 		str += separator;
@@ -131,27 +131,27 @@ String _path_builder(const char* separator, bool ending, const char* p1, const c
 }
 
 String user_config_dir(void) { 
-	return _config_get("XDG_CONFIG_HOME", "EDE_CONFIG_HOME", CONFIG_HOME_DEFAULT, sizeof(CONFIG_HOME_DEFAULT));
+	return _config_get("XDG_CONFIG_HOME", CONFIG_HOME_DEFAULT, sizeof(CONFIG_HOME_DEFAULT));
 }
 
 String user_data_dir(void) {
-	return _config_get("XDG_DATA_HOME", "EDE_DATA_HOME", DATA_HOME_DEFAULT, sizeof(DATA_HOME_DEFAULT));
+	return _config_get("XDG_DATA_HOME", DATA_HOME_DEFAULT, sizeof(DATA_HOME_DEFAULT));
 }
 
 String user_cache_dir(void) {
-	return _config_get("XDG_CACHE_HOME", "EDE_CACHE_HOME", CACHE_HOME_DEFAULT, sizeof(CACHE_HOME_DEFAULT));
+	return _config_get("XDG_CACHE_HOME", CACHE_HOME_DEFAULT, sizeof(CACHE_HOME_DEFAULT));
 }
 
-int system_config_dirs(vector<String>& lst) {
+int system_config_dirs(StringList& lst) {
 	/*
 	 * stringtok will correctly see /etc/xdg (without ':')
 	 * as one entry
 	 */
-	return _dirs_get("XDG_CONFIG_DIRS", "EDE_CONFIG_DIRS", "/etc/xdg", lst);
+	return _dirs_get("XDG_CONFIG_DIRS", "/etc/xdg", lst);
 }
 
-int system_data_dirs(vector<String>& lst) {
-	return _dirs_get("XDG_DATA_DIRS", "EDE_DATA_DIRS", "/usr/local/share:/usr/share", lst);
+int system_data_dirs(StringList& lst) {
+	return _dirs_get("XDG_DATA_DIRS", "/usr/local/share:/usr/share", lst);
 }
 
 String build_filename(const char* separator, const char* p1, const char* p2, const char* p3) {
@@ -168,4 +168,4 @@ String build_dirname(const char* separator, const char* p1, const char* p2, cons
 	return _path_builder(separator, true, p1, p2, p3);
 }
 
-}
+EDELIB_NS_END

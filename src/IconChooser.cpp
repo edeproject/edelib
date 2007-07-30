@@ -34,7 +34,7 @@
 
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
-EDELIB_NAMESPACE {
+EDELIB_NS_BEGIN
 
 class IconBox : public Fl_Button {
 	private: 
@@ -300,4 +300,4 @@ String icon_chooser(const char* dir) {
 	return ic.get_ret();
 }
 
-}
+EDELIB_NS_END

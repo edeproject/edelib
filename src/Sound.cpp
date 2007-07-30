@@ -19,7 +19,7 @@
 	#include <vorbis/codec.h>
 #endif
 
-EDELIB_NAMESPACE {
+EDELIB_NS_BEGIN
 
 SoundSystem* SoundSystem::pinstance = NULL;
 
@@ -133,4 +133,4 @@ bool SoundSystem::play_stream(const char* fname) {
 	return true;
 }
 
-}
+EDELIB_NS_END

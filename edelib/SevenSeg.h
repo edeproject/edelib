@@ -16,7 +16,7 @@
 #include "econfig.h"
 #include <FL/Fl_Widget.h>
 
-EDELIB_NAMESPACE {
+EDELIB_NS_BEGIN
 
 /**
  * \class SevenSeg
@@ -83,6 +83,5 @@ class SevenSeg : public Fl_Widget {
 		int  bar_width(void) { return segwidth; }
 };
 
-}
-
-#endif
+EDELIB_NS_END
+#endif // __SEVENSEG_H__

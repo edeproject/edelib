@@ -15,9 +15,9 @@
 #include "econfig.h"
 #include <vector>
 
-EDELIB_NAMESPACE {
+EDELIB_NS_BEGIN
 
 using std::vector;
 
-}
+EDELIB_NS_END
 #endif

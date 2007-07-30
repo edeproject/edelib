@@ -15,8 +15,12 @@
 
 #include "econfig.h"
 
-EDELIB_NAMESPACE {
+EDELIB_NS_BEGIN
 
+/**
+ * \enum DirWatchFlags
+ * \brief Flags telling to DirWatch what changes to monitor
+ */
 enum DirWatchFlags {
 	DW_CREATE = (1 << 1),       ///< In directory item created
 	DW_MODIFY = (1 << 2),       ///< In directory item modified
@@ -26,12 +30,20 @@ enum DirWatchFlags {
 	DW_DELETE = (1 << 6)        ///< In directory item is deleted
 };
 
+/**
+ * \enum DirWatchNotifier
+ * \brief Notifier type used by DirWatch
+ */
 enum DirWatchNotifier {
 	DW_NONE    = 0,             ///< None notifier; watching disabled
 	DW_DNOTIFY = 1,             ///< dnotify (linux kernel >= 2.4.19)
 	DW_INOTIFY = 2              ///< inotify (TODO: version)
 };
 
+/**
+ * \enum DirWatchReportFlags
+ * \brief Returned codes for received event
+ */
 enum DirWatchReportFlags {
 	DW_REPORT_NONE   = -1,      ///< Not figured out what happened
 	DW_REPORT_CREATE = 0,       ///< A new item was created
@@ -240,6 +252,5 @@ class DirWatch {
 		static DirWatchNotifier notifier(void);
 };
 
-}
-
-#endif
+EDELIB_NS_END
+#endif // __DIRWATCH_H__

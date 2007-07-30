@@ -17,8 +17,12 @@
 #include "String.h"
 #include <stdio.h> // FILE
 
-EDELIB_NAMESPACE {
+EDELIB_NS_BEGIN
 
+/**
+ * \enum FileErrors
+ * \brief Error codes returned by File class
+ */
 enum FileErrors {
 	FILE_SUCCESS = 0,  ///< successful operation
 	FILE_EACCESS,      ///< permission denied
@@ -28,6 +32,10 @@ enum FileErrors {
 	FILE_FLAG          ///< bad flag
 };
 
+/**
+ * \enum FileIOMode
+ * \brief Open and write flags for File class
+ */
 enum FileIOMode {
 	FIO_READ    = (1<<1),          ///< open file in read-only mode
 	FIO_WRITE   = (1<<2),          ///< open file in write mode, and truncate it to zero length
@@ -266,6 +274,5 @@ EDELIB_API bool file_rename(const char* from, const char* to);
  */
 EDELIB_API String file_path(const char* fname, bool check_link = false);
 
-}
-
-#endif
+EDELIB_NS_END
+#endif // __FILE_H__

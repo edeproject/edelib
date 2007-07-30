@@ -45,7 +45,7 @@ char* estrndup(const char* str, unsigned int maxlen) {
 }
 
 
-EDELIB_NAMESPACE {
+EDELIB_NS_BEGIN
 
 char* str_trimleft(char* str) {
 	EASSERT(str != NULL);
@@ -124,4 +124,4 @@ bool str_ends(const char* str, const char* test) {
 	return true;
 }
 
-}
+EDELIB_NS_END

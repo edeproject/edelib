@@ -24,7 +24,7 @@
 
 #define MIN_CHARS 6  // min. chars to start autocomplete
 
-EDELIB_NAMESPACE {
+EDELIB_NS_BEGIN
 
 void input_cb(fltk::Widget*, void* w) {
 	ComboBox* cbox = (ComboBox*)w;
@@ -392,4 +392,4 @@ const char* ComboBox::text(void) {
 	return 0;
 }
 
-}
+EDELIB_NS_END

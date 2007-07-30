@@ -19,8 +19,7 @@
 #include <fltk/Menu.h>
 #include <fltk/Input.h>
 
-
-EDELIB_NAMESPACE {
+EDELIB_NS_BEGIN
 
 enum {
 	COMBOBOX_STATIC        = 1,        ///< Non-editable ComboBox (like fltk::Choice)
@@ -152,5 +151,5 @@ class ComboBox : public fltk::Menu {
 #endif
 };
 
-}
+EDELIB_NS_END
 #endif

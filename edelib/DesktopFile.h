@@ -16,8 +16,12 @@
 #include "econfig.h"
 #include "Config.h"
 
-EDELIB_NAMESPACE {
+EDELIB_NS_BEGIN
 
+/**
+ * \enum DesktopFileErrors
+ * \brief Error codes from DesktopFile class
+ */
 enum DesktopFileErrors {
 	DESK_FILE_SUCCESS = 0,   ///< successful operation
 	DESK_FILE_EMPTY,         ///< file not loaded
@@ -25,6 +29,10 @@ enum DesktopFileErrors {
 	DESK_FILE_ERR_BAD        ///< malformed file, or not .desktop file
 };
 
+/**
+ * \enum DesktopFileType
+ * \brief Reported file type from DesktopFile::type()
+ */
 enum DesktopFileType {
 	DESK_FILE_TYPE_UNKNOWN = 0,   ///< Unknown type (Type key)
 	DESK_FILE_TYPE_APPLICATION,   ///< Application type
@@ -246,6 +254,5 @@ class DesktopFile : public Config {
 		void set_startup_notify(bool val);
 };
 
-}
-
-#endif
+EDELIB_NS_END
+#endif // __DESKTOPFILE_H__

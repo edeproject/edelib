@@ -16,7 +16,7 @@
 #include <stdlib.h> // strtol
 #include <stdio.h>  // snprintf
 
-EDELIB_NAMESPACE {
+EDELIB_NS_BEGIN
 
 // file fltk_cmap.h is produced by cmap.cxx/colormap.cxx in fltk distribution
 static unsigned int fltk_colomap[256] = {
@@ -102,4 +102,4 @@ void color_fltk_to_html(unsigned int color, char* buff) {
 	snprintf(buff, 8, "#%02x%02x%02x", r, g, b);
 }
 
-}
+EDELIB_NS_END

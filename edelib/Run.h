@@ -15,7 +15,7 @@
 
 #include "econfig.h"
 
-EDELIB_NAMESPACE {
+EDELIB_NS_BEGIN
 
 enum {
 	RUN_NOT_FOUND       = 65535,  ///< executable not found
@@ -46,6 +46,5 @@ enum {
  */
 EDELIB_API int run_program(const char* cmd, bool wait = true, bool root = false);
 
-}
-
-#endif
+EDELIB_NS_END
+#endif // __RUN_H__

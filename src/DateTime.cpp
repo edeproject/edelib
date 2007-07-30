@@ -30,7 +30,7 @@
 #define MONTH_UNIX(m)   (m - 1)
 #define MONTH_NORMAL(m) (m + 1)
 
-EDELIB_NAMESPACE {
+EDELIB_NS_BEGIN
 
 const char month_days[2][12] = {
 	{31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31},
@@ -375,7 +375,7 @@ void Time::set_now(void) {
 	msecval = 0;
 }
 
-} // EDELIB_NAMESPACE
+EDELIB_NS_END // EDELIB_NAMESPACE
 
 /*
  * This code is partialy working since I am not able to correctly extract

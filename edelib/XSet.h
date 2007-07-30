@@ -16,7 +16,7 @@
 #include <X11/Xlib.h>
 #include "econfig.h"
 
-EDELIB_NAMESPACE {
+EDELIB_NS_BEGIN
 
 /**
  * \class XSet
@@ -77,6 +77,5 @@ class XSet {
 		void test_blank(void);
 };
 
-}
-
-#endif
+EDELIB_NS_END
+#endif // __XSET_H__

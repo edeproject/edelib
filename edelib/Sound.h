@@ -21,7 +21,7 @@
 
 #define PCM_BUF_SIZE 4096
 
-EDELIB_NAMESPACE {
+EDELIB_NS_BEGIN
 
 /**
  * \class SoundSystem
@@ -78,5 +78,6 @@ class EDELIB_API SoundSystem {
 		 */
 		static bool play(const char* fname);
 };
-}
-#endif
+
+EDELIB_NS_END
+#endif // __SOUND_H__

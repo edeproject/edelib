@@ -18,7 +18,7 @@
 #include <FL/Fl_Group.h>
 #include <FL/Fl_Scrollbar.h>
 
-EDELIB_NAMESPACE {
+EDELIB_NS_BEGIN
 
 /**
  * \class ExpandableGroup
@@ -72,5 +72,6 @@ class EDELIB_API ExpandableGroup : public Fl_Group {
 		Fl_Scrollbar* get_scroll(void) { return vscrollbar; }
 #endif
 };
-}
-#endif
+
+EDELIB_NS_END
+#endif // __EXPANDABLEGROUP_H__

@@ -31,7 +31,7 @@
 #define WIDGET_H_SPACING 10		// horizontal spacing between two widgets
 #define BUFF_SIZE        1024
 
-EDELIB_NAMESPACE {
+EDELIB_NS_BEGIN
 
 using namespace fltk;
 
@@ -226,5 +226,4 @@ const char* input(const char *label, const char *deflt, ...) {
 	return m.get_input();
 }
 
-}
-
+EDELIB_NS_END

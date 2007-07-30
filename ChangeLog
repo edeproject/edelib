@@ -1,3 +1,20 @@
+2007-07-30  Sanel <karijes@users.sourceforge.net>
+
+	* Added const size() in List
+	* Added operator bool() in List too
+
+2007-07-28  Sanel <karijes@users.sourceforge.net>
+
+	* List.h now contains own list implementation, altought needs some tests
+	* Doxygen tags throught the code updated, due new doxygen version
+	* Doxyfile updated too
+	* Small replacement, '=' to KV_DELIM in Config
+	* List test added
+	* EDELIB_NAMESPACE replaced with EDELIB_NS_BEGIN/EDELIB_NS_END all over
+	the code
+	* system_data_dirs, system_config_dirs now uses list
+	* Replaced vector in IconTheme with list
+
 2007-07-26  Sanel <karijes@users.sourceforge.net>
 
 	* Added get_allocated() in Config

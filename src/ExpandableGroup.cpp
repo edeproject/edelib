@@ -22,7 +22,7 @@
 #define CHILD_OFFSET  10
 #define BORDER_OFFSET 10
 
-EDELIB_NAMESPACE {
+EDELIB_NS_BEGIN
 
 void vscroll_cb(Fl_Widget*, void* w) {
 	ExpandableGroup* eg = (ExpandableGroup*)w;
@@ -241,4 +241,4 @@ void ExpandableGroup::add(Fl_Widget* o) {
 	reposition_childs();
 }
 
-}
+EDELIB_NS_END

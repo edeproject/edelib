@@ -16,7 +16,7 @@
 	#include <locale.h>
 #endif
 
-EDELIB_NAMESPACE {
+EDELIB_NS_BEGIN
 
 const char* set_textdomain(const char* domain) {
 #ifdef USE_NLS
@@ -42,4 +42,4 @@ void init_locale_support(const char* appname, const char* dir) {
 #endif
 }
 
-}
+EDELIB_NS_END

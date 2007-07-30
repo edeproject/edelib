@@ -21,9 +21,13 @@
 #include <stdio.h>
 #include <string.h> // strlen
 
-EDELIB_NAMESPACE {
+EDELIB_NS_BEGIN
 
 IconTheme* IconTheme::pinstance = NULL;
+
+typedef list<String> StringList;
+typedef list<String>::iterator      StringListIter;
+typedef list<IconDirInfo>::iterator DirListIter;
 
 /*
  * Mandatory alternative theme if icon
@@ -157,21 +161,19 @@ bool IconTheme::cache_lookup(const char* icon, IconSizes sz, IconContext ctx, St
  *  4. rest
  */
 void IconTheme::init_base_dirs(void) {
-	theme_dirs.reserve(10);
-
 	// TODO: I will need some make_dir_path() functions somewhere
 	String path = dir_home();
 	path += "/.icons/";
 
 	theme_dirs.push_back(path);
 
-	vector<String> xdg_data_dirs;
+	StringList xdg_data_dirs;
 	unsigned int sz = system_data_dirs(xdg_data_dirs);
 
 	if(sz) {
-		for(unsigned int i = 0; i < sz; i++) {
+		for(StringListIter it = xdg_data_dirs.begin(); it != xdg_data_dirs.end(); ++it) {
 			path.clear();
-			path = xdg_data_dirs[i];
+			path = (*it);
 			path += "/icons/";
 
 			theme_dirs.push_back(path);
@@ -224,8 +226,8 @@ void IconTheme::load_theme(const char* theme) {
 	 * sign for theme directory
 	 */
 	const char* tt;
-	for(unsigned int i = 0; i < theme_dirs.size(); i++) {
-		tt = theme_dirs[i].c_str();
+	for(StringListIter it = theme_dirs.begin(); it != theme_dirs.end(); ++it) {
+		tt = (*it).c_str();
 
 		if(dir_exists(tt)) {
 			tpath = tt;
@@ -285,26 +287,26 @@ void IconTheme::load_theme(const char* theme) {
 	 *
 	 * For now Threshold is ignored
 	 */
-	vector<String> dl;
+	StringList dl;
 	stringtok(dl, buffer, ",");
 	delete [] buffer;
 
 	int sz = 0;
 	IconDirInfo dinfo;
-	for(unsigned int i = 0; i < dl.size(); i++) {
-		if(!c.get(dl[i].c_str(), "Size", sz, 0))
-			EWARNING(ESTRLOC ": Bad entry '%s' in %s, skipping...\n", dl[i].c_str(), ipath.c_str());
+	for(StringListIter it = dl.begin(); it != dl.end(); ++it) {
+		if(!c.get((*it).c_str(), "Size", sz, 0))
+			EWARNING(ESTRLOC ": Bad entry '%s' in %s, skipping...\n", (*it).c_str(), ipath.c_str());
 
 		dinfo.size = check_sz(sz);
 
-		if(!c.get(dl[i].c_str(), "Context", static_buffer, sizeof(static_buffer)))
-			EWARNING(ESTRLOC ": Bad entry '%s' in %s, skipping...\n", dl[i].c_str(), ipath.c_str());
+		if(!c.get((*it).c_str(), "Context", static_buffer, sizeof(static_buffer)))
+			EWARNING(ESTRLOC ": Bad entry '%s' in %s, skipping...\n", (*it).c_str(), ipath.c_str());
 
 		dinfo.context = figure_ctx(static_buffer);
 
 		// and finally record the path
 		dinfo.path = tpath;
-		dinfo.path += dl[i];
+		dinfo.path += (*it);
 
 		dirlist.push_back(dinfo);
 	}
@@ -333,12 +335,12 @@ void IconTheme::load_theme(const char* theme) {
 
 void IconTheme::read_inherits(const char* buff) {
 	EASSERT(buff != NULL);
-	vector<String> parents;
+	StringList parents;
 	stringtok(parents, buff, ",");
 
-	for(unsigned int i = 0; i < parents.size(); i++) { 
-		str_trim((char*)parents[i].c_str());
-		load_theme(parents[i].c_str());
+	for(StringListIter it = parents.begin(); it != parents.end(); ++it) { 
+		str_trim((char*)(*it).c_str());
+		load_theme((*it).c_str());
 	}
 }
 
@@ -365,10 +367,10 @@ String IconTheme::lookup(const char* icon, IconSizes sz, IconContext ctx) {
 	 * ICON_CONTEXT_ANY means context is ignored, but also means slower lookup
 	 * since all entries are searched
 	 */
-	for(unsigned int i = 0; i < dirlist.size(); i++) 
-		if(dirlist[i].size == sz && (dirlist[i].context == ctx || ctx == ICON_CONTEXT_ANY)) {
+	for(DirListIter it = dirlist.begin(); it != dirlist.end(); ++it) 
+		if((*it).size == sz && ((*it).context == ctx || ctx == ICON_CONTEXT_ANY)) {
 			for(int j = 0; j < ICON_EXT_SIZE; j++) {
-				ret = dirlist[i].path;
+				ret = (*it).path;
 				ret += dir_separator();
 				ret += icon;
 				ret += icon_extensions[j];
@@ -395,4 +397,4 @@ void IconTheme::load(const char* theme) {
 	IconTheme::instance()->load_theme(theme);
 }
 
-}
+EDELIB_NS_END

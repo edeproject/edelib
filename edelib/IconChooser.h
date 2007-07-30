@@ -16,7 +16,7 @@
 #include "econfig.h"
 #include "String.h"
 
-EDELIB_NAMESPACE {
+EDELIB_NS_BEGIN
 
 /**
  * icon_chooser() is a dialog containing a list of visible
@@ -38,5 +38,5 @@ EDELIB_NAMESPACE {
 
 EDELIB_API String icon_chooser(const char* dir);
 
-}
-#endif
+EDELIB_NS_END
+#endif // __ICONCHOOSER_H__

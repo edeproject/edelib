@@ -19,7 +19,7 @@
 #define BUFF_SIZE 256
 #define DENTRY_KEY  "Desktop Entry"
 
-EDELIB_NAMESPACE {
+EDELIB_NS_BEGIN
 
 DesktopFile::DesktopFile() : errcode(DESK_FILE_EMPTY), dtype(DESK_FILE_TYPE_UNKNOWN) {
 }
@@ -288,4 +288,4 @@ void DesktopFile::set_startup_notify(bool val) {
 	SET_KEY("StartupNotify", val);
 }
 
-}
+EDELIB_NS_END

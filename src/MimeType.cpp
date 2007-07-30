@@ -16,6 +16,7 @@
 #include <edelib/Util.h>
 #include <edelib/File.h>
 #include <edelib/StrUtil.h>
+#include <edelib/Vector.h>
 #include <string.h>  // strncmp, strchr
 
 #include "xdgmime/xdgmime.h"
@@ -26,7 +27,7 @@
 #define COMMENT_LOADED 2
 #define ICON_LOADED    4
 
-EDELIB_NAMESPACE {
+EDELIB_NS_BEGIN
 
 MimeType::MimeType() : status(0)
 {
@@ -155,4 +156,4 @@ const String& MimeType::icon_name(void) {
 	return micon;
 }
 
-}
+EDELIB_NS_END

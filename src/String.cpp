@@ -19,7 +19,7 @@
 #define PRINTF_BUFF 1024
 #define STERM '\0'
 
-EDELIB_NAMESPACE {
+EDELIB_NS_BEGIN
 
 // copy character num times into dest
 inline void chcpy(char* dest, const char& ch, String::size_type num) {
@@ -300,4 +300,4 @@ String operator+(const String& s1, const char* s2) {
 	return tmp;
 }
 
-}
+EDELIB_NS_END

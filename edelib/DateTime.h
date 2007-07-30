@@ -15,7 +15,7 @@
 
 #include "econfig.h"
 
-EDELIB_NAMESPACE {
+EDELIB_NS_BEGIN
 
 class EDELIB_API TimeZone {
 	private:
@@ -35,6 +35,10 @@ class EDELIB_API TimeZone {
 		const char* get_timezone(void);
 };
 
+/**
+ * \enum DateType
+ * \brief Types of date settable via Date::set()
+ */
 enum DateType {
 	DATE_LOCAL = 0,   ///< use local date
 	DATE_UTC          ///< use UTC date
@@ -103,6 +107,10 @@ class EDELIB_API Date {
 		unsigned short yearval;
 
 	public:
+		/**
+		 * \enum Month
+		 * \brief Abbreviated months
+		 */
 		enum Month { 
 			Jan = 1,   ///< January
 			Feb,       ///< February
@@ -119,10 +127,18 @@ class EDELIB_API Date {
 			MonthNow   ///< Current system month
 		};
 
+		/**
+		 * \enum Day
+		 * \brief Current day
+		 */
 		enum Day {
 			DayNow = 0  ///< Current system date
 		};
 
+		/**
+		 * \enum Year
+		 * \brief Current year
+		 */
 		enum Year { 
 			YearNow = 0 ///< Current system year
 		};
@@ -294,6 +310,5 @@ inline bool operator<(const Time& t1, const Time& t2)  { return (!(t1 > t2) && (
 inline bool operator<=(const Time& t1, const Time& t2) { return (t1 == t2 || t1 < t2); }
 #endif
 
-}
-
-#endif
+EDELIB_NS_END
+#endif // __DATETIME_H__
