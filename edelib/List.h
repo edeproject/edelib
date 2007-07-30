@@ -264,17 +264,12 @@ class List {
 		/**
 		 * Return size of list.
 		 */
-		unsigned int size(void) { return sz; }
-
-		/**
-		 * Return size of list.
-		 */
 		unsigned int size(void) const { return sz; }
 
 		/**
 		 * Return true if list is empty; otherwise false.
 		 */
-		bool empty(void) { return size() == 0; }
+		bool empty(void) const { return size() == 0; }
 };
 
 #define list List
