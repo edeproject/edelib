@@ -38,8 +38,11 @@ EDELIB_NS_BEGIN
  *   ls.push_back(4);
  *   ls.push_front(34);
  *   List<int>::iterator it = ls.begin();
- *   while(it != ls.end()) 
+ *
+ *   while(it != ls.end()) {
  *     printf("%i\n", (*it));
+ *     ++it;
+ *   }
  * \endcode
  *
  * Note that working with list iterators, great care must be taken where and when to retrieve
@@ -247,17 +250,7 @@ class List {
 		/**
 		 * Return iterator pointing <b>after</b> the end of the list.
 		 * <b>Do not</b> dereference that iterator requesting value
-		 * of latest element (this is required by Standard). To get last
-		 * element, decrement iterator value, like:
-		 * \code
-		 *   List<int> ls;
-		 *   ...
-		 *   List<int>::iterator it = ls.end();
-		 *   // printf("%i\n", (*it));   // BAD
-		 *
-		 *   --it;                   // correct
-		 *   printf("%i\n", (*it));  // correct
-		 * \endcode
+		 * of latest element. 
 		 */
 		iterator end(void) const { return iterator(last ? last->next : last); }
 
