@@ -95,6 +95,9 @@ class List {
 		ListNode* last;
 		unsigned int sz;
 
+		List(const List&);
+		List& operator=(const List&);
+
 	public:
 #ifndef SKIP_DOCS
 		class iterator {

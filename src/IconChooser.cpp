@@ -12,7 +12,6 @@
 
 #include <edelib/IconChooser.h>
 #include <edelib/Directory.h>
-#include <edelib/Vector.h>
 #include <edelib/ExpandableGroup.h>
 #include <edelib/Nls.h>
 #include <edelib/Debug.h>
@@ -184,7 +183,7 @@ void IconChooser::load(const char* dir) {
 	if(!dir_exists(dir))
 		return;
 
-	vector<String> lst;
+	list<String> lst;
 	if(!dir_list(dir, lst, true))
 		return;
 
@@ -201,13 +200,16 @@ void IconChooser::load(const char* dir) {
 	bool show_progress = false;
 
 	/*
-	 * lst_info contains coresponding indexes with vector<String> so we can deduce what
+	 * lst_info contains coresponding indexes with list<String> so we can deduce what
 	 * files to skip (not readable image or dimensions greater than allowed); skippable
 	 * are marked as 0
 	 */
 	int* lst_info = new int[lst.size()];
-	for(unsigned int i = 0; i < lst.size(); i++) {
-		img = Fl_Shared_Image::get(lst[i].c_str());
+	list<String>::iterator it = lst.begin();
+	list<String>::iterator it_end = lst.end();
+
+	for(int i = 0; it != it_end; ++it, i++){
+		img = Fl_Shared_Image::get((*it).c_str());
 
 		if(!img) {
 			lst_info[i] = 0;
@@ -250,12 +252,13 @@ void IconChooser::load(const char* dir) {
 	icongrp->set_visible_focus();
 
 	IconBox* preview;
-	for(unsigned int i = 0; i < lst.size(); i++) {
-		img = Fl_Shared_Image::get(lst[i].c_str());
+	it = lst.begin();
+	for(int i = 0; it != it_end; ++it, i++) {
+		img = Fl_Shared_Image::get((*it).c_str());
 
 		if(img && lst_info[i] == 1) {
 			preview = new IconBox(0, 0, imax_w, imax_h);
-			preview->set_icon_path(lst[i]);
+			preview->set_icon_path((*it));
 			// use background/selection from ExpandableGroup
 			preview->color(icongrp->color());
 			preview->selection_color(icongrp->color());

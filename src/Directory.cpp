@@ -311,6 +311,57 @@ const char* dir_separator(void) {
 	return "/";
 }
 
+bool dir_list(const char* dir, list<String>& lst, bool full_path, bool show_hidden) {
+	if(!dir_readable(dir))
+		return false;
+
+	String dirstr = dir;
+	if(dirstr == ".")
+		dirstr.assign(dir_current());
+
+	dirent** files;
+	int n = scandir(dirstr.c_str(), &files, NULL, alphasort);
+	if(n < 0)
+		return false;
+
+	lst.clear();
+
+	bool have_sep;
+	if(str_ends(dirstr.c_str(), dir_separator()))
+		have_sep = true;
+	else
+		have_sep = false;
+
+	String tmp;
+	tmp.reserve(PATH_MAX);
+	
+	// fill our list and clean in the same time
+	for(int i = 0; i < n; i++) {
+		if(!show_hidden && files[i]->d_name[0] == '.') {
+			free(files[i]);
+			continue;
+		}
+
+		if(full_path) {
+			tmp = dirstr;
+
+			if(!have_sep)
+				tmp += dir_separator();
+			tmp += files[i]->d_name;
+			lst.push_back(tmp);
+		}
+		else
+			lst.push_back(files[i]->d_name);
+
+		free(files[i]);
+	}
+
+	free(files);
+	return true;
+}
+
+// TODO: remove this since list is prefered
+#if 0
 bool dir_list(const char* dir, vector<String>& lst, bool full_path, bool show_hidden) {
 	if(!dir_readable(dir))
 		return false;
@@ -360,5 +411,6 @@ bool dir_list(const char* dir, vector<String>& lst, bool full_path, bool show_hi
 	free(files);
 	return true;
 }
+#endif
 
 EDELIB_NS_END

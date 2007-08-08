@@ -12,9 +12,7 @@
 
 #include <edelib/DirWatch.h>
 #include <edelib/String.h>
-#include <edelib/Vector.h>
 #include <edelib/Debug.h>
-
 #include <edelib/Directory.h>
 
 #ifndef _GNU_SOURCE
@@ -54,8 +52,7 @@ struct DirWatchEntry {
 	int    flags;    // user flags (DW_CREATE,...)
 	String name;     // directory full path
 
-	
-	vector<DirContentEntry> content; // directory content with recorded atime/ctime/mtime
+	list<DirContentEntry> content; // directory content with recorded atime/ctime/mtime
 	String what_changed;             // storage for what changed
 	int    changed_flag;             // DW_REPORT_CREATE, DW_REPORT_MODIFY,...
 };
@@ -65,8 +62,11 @@ struct DirWatchImpl {
 	void* callback_data;
 
 	struct sigaction  act;
-	vector<DirWatchEntry> entries;
+	list<DirWatchEntry*> entries;
 };
+
+typedef list<DirContentEntry>::iterator DirContentIter;
+typedef list<DirWatchEntry*>::iterator DirWatchIter;
 
 DirWatch* DirWatch::pinstance = NULL;
 
@@ -96,15 +96,19 @@ DirWatch::~DirWatch() {
 	if(!impl)
 		return;
 
-	unsigned int sz = impl->entries.size();
+	DirWatchIter it = impl->entries.begin();
+	DirWatchIter it_end = impl->entries.end();
 
-	for(unsigned int i = 0; i < sz; i++) {
-		if(impl->entries[i].fd != -1) {
-			close(impl->entries[i].fd);
-			EDEBUG(ESTRLOC ": Closed %s\n", impl->entries[i].name.c_str());
+	for(; it != it_end; ++it) {
+		if((*it)->fd != -1) {
+			close((*it)->fd);
+			EDEBUG(ESTRLOC ": Closed %s\n", (*it)->name.c_str());
 		}
+
+		delete (*it);
 	}
 
+	impl->entries.clear();
 	delete impl;
 }
 
@@ -199,13 +203,14 @@ bool DirWatch::add_entry(const char* dir, int flags) {
 					return false;
 				}
 
-				DirWatchEntry e;
-				e.fd = fd;
-				e.name = dir;
-				e.flags = flags;
+				// allocate it on heap to prevent copy ctors on list
+				DirWatchEntry* e = new DirWatchEntry;
+				e->fd = fd;
+				e->name = dir;
+				e->flags = flags;
 
 				// record needed data
-				fill_content(&e);
+				fill_content(e);
 
 				impl->entries.push_back(e);
 
@@ -224,12 +229,11 @@ bool DirWatch::have_entry(const char* dir) {
 
 	EASSERT(dir != NULL);
 
-	unsigned int sz = impl->entries.size();
-	DirWatchEntry* en;
+	DirWatchIter it = impl->entries.begin();
+	DirWatchIter it_end = impl->entries.end();
 
-	for(unsigned int i = 0; i < sz; i++) {
-		en = &impl->entries[i];
-		if(en->name == dir)
+	for(; it != it_end; ++it) {
+		if((*it)->name == dir)
 			return true;
 	}
 
@@ -243,16 +247,14 @@ bool DirWatch::remove_entry(const char* dir) {
 
 	EASSERT(dir != NULL);
 
-	unsigned int sz = impl->entries.size();
-	DirWatchEntry* en;
+	DirWatchIter it = impl->entries.begin();
+	DirWatchIter it_end = impl->entries.end();
 
-	for(unsigned int i = 0; i < sz; i++) {
-		en = &impl->entries[i];
-
-		if(en->name == dir && en->fd != -1) {
-			close(en->fd);
+	for(; it != it_end; ++it) {
+		if((*it)->name == dir && (*it)->fd != -1) {
+			close((*it)->fd);
 			// mark it as closed
-			en->fd = -1;
+			(*it)->fd = -1;
 			return true;
 		}
 	}
@@ -297,11 +299,14 @@ void DirWatch::run_callback(int fd) {
 DirWatchEntry* DirWatch::scan(int fd) {
 	EASSERT(impl != NULL);
 
-	unsigned int sz = impl->entries.size();
+	DirWatchIter it = impl->entries.begin();
+	DirWatchIter it_end = impl->entries.end();
+	DirWatchEntry* en;
 
-	for(unsigned int i = 0; i < sz; i++) {
-		if(impl->entries[i].fd == fd)
-			return &impl->entries[i];
+	for(; it != it_end; ++it) {
+		en = (*it);
+		if(en->fd == fd)
+			return en;
 	}
 
 	return NULL;
@@ -309,23 +314,23 @@ DirWatchEntry* DirWatch::scan(int fd) {
 
 void DirWatch::fill_content(DirWatchEntry* e) {
 	// TODO: maybe this via plain scandir ???
-	vector<String> lst;
+	list<String> lst;
 	// list with full path
 	if(!dir_list(e->name.c_str(), lst, true))
 		return;
 
-	unsigned int sz = lst.size();
-	e->content.reserve(sz);
+	list<String>::iterator sit = lst.begin();
+	list<String>::iterator sit_end = lst.end();
 
 	struct stat s;
-	for(unsigned int i = 0; i < sz; i++) {
-		if(lstat(lst[i].c_str(), &s) != 0) {
-			EWARNING(ESTRLOC ": lstat failed on %s\n", lst[i].c_str());
+	for(; sit != sit_end; ++sit) {
+		if(lstat((*sit).c_str(), &s) != 0) {
+			EWARNING(ESTRLOC ": lstat failed on %s\n", (*sit).c_str());
 			continue;
 		}
-		
+
 		DirContentEntry dc;
-		dc.name = lst[i];
+		dc.name = (*sit);
 		dc.atime = s.st_atime;
 		dc.mtime = s.st_mtime;
 		dc.ctime = s.st_ctime;
@@ -334,26 +339,33 @@ void DirWatch::fill_content(DirWatchEntry* e) {
 	}
 }
 
-DirContentEntry* in_content_list(vector<DirContentEntry>& cnt, const char* name) {
+DirContentEntry* in_content_list(list<DirContentEntry>& cnt, const char* name) {
 	if(!name)
 		return NULL;
 
-	unsigned int sz = cnt.size();
-	for(unsigned int i = 0; i < sz; i++) {
-		if(cnt[i].name == name)
-			return &cnt[i];
+	DirContentIter it = cnt.begin();
+	DirContentIter it_end = cnt.end();
+	DirContentEntry* en;
+
+	for(; it != it_end; ++it) {
+		en = &(*it);
+
+		if(en->name == name)
+			return en;
 	}
 
 	return NULL;
 }
 
-bool in_fresh_list(vector<String>& cnt, const char* name) {
+bool in_fresh_list(list<String>& cnt, const char* name) {
 	if(!name)
 		return false;
 
-	unsigned int sz = cnt.size();
-	for(unsigned int i = 0; i < sz; i++) {
-		if(cnt[i] == name)
+	list<String>::iterator it = cnt.begin();
+	list<String>::iterator it_end = cnt.end();
+
+	for(; it != it_end; ++it) {
+		if((*it) == name)
 			return true;
 	}
 
@@ -372,7 +384,7 @@ bool in_fresh_list(vector<String>& cnt, const char* name) {
  */
 const char* DirWatch::figure_changed(DirWatchEntry* e) {
 	// TODO: same as above
-	vector<String> fresh;
+	list<String> fresh;
 	/*
 	 * Scan now 'fresh' content, comparing to stored
 	 * one. First item not matching (new item/atime/mtime/ctime) will
@@ -391,6 +403,9 @@ const char* DirWatch::figure_changed(DirWatchEntry* e) {
 	bool rollower = false;
 	bool can_add = false;
 
+	list<String>::iterator sit;
+	list<String>::iterator sit_end;
+
 	if(fresh_sz > sz) {
 		// file created
 		//EDEBUG(ESTRLOC ": ==> file created\n");
@@ -399,10 +414,13 @@ const char* DirWatch::figure_changed(DirWatchEntry* e) {
 		if((fresh_sz - sz) != 1)
 			EWARNING(ESTRLOC ": new/stored missmatch sizes (%i) !!!\n", (fresh_sz - sz));
 
-		for(unsigned int i = 0; i < fresh_sz; i++) {
-			if(!in_content_list(e->content, fresh[i].c_str())) {
-				//EDEBUG(ESTRLOC ": ==> %i created %s\n", fresh_sz-sz, fresh[i].c_str());
-				e->what_changed = fresh[i].c_str();
+		sit = fresh.begin();
+		sit_end = fresh.end();
+
+		for(; sit != sit_end; ++sit) {
+			if(!in_content_list(e->content, (*sit).c_str())) {
+				//EDEBUG(ESTRLOC ": ==> %i created %s\n", fresh_sz-sz, (*sit).c_str());
+				e->what_changed = (*sit).c_str();
 				e->changed_flag = DW_REPORT_CREATE;
 				break;
 			}
@@ -415,10 +433,13 @@ const char* DirWatch::figure_changed(DirWatchEntry* e) {
 		if((sz - fresh_sz) != 1)
 			EWARNING(ESTRLOC ": stored/new missmatch sizes (%i) !!!\n", (sz - fresh_sz));
 
-		for(unsigned int i = 0; i < sz; i++) {
-			if(!in_fresh_list(fresh, e->content[i].name.c_str())) {
-				//EDEBUG(ESTRLOC ": ==> %i deleted %s\n", sz-fresh_sz, e->content[i].name.c_str());
-				e->what_changed = e->content[i].name.c_str();
+		DirContentIter cit = e->content.begin();
+		DirContentIter cit_end = e->content.end();
+
+		for(; cit != cit_end; ++cit) {
+			if(!in_fresh_list(fresh, (*cit).name.c_str())) {
+				//EDEBUG(ESTRLOC ": ==> %i deleted %s\n", sz-fresh_sz, (*cit).name.c_str());
+				e->what_changed = (*cit).name.c_str();
 				e->changed_flag = DW_REPORT_DELETE;
 				break;
 			}
@@ -427,24 +448,27 @@ const char* DirWatch::figure_changed(DirWatchEntry* e) {
 		// nothing added/deleted then flags/size/etc. is changed
 		EASSERT(fresh_sz == sz && "DirWatch internal error; sizes mismatch");
 
+		sit = fresh.begin();
+		sit_end = fresh.end();
 		DirContentEntry* centry = NULL;
-		for(unsigned int i = 0; i < fresh_sz; i++) {
+
+		for(; sit != sit_end; ++sit) {
 			can_add = false;
 
 			// try to stat file first
-			if(lstat(fresh[i].c_str(), &new_stat) != 0) {
-				EWARNING(ESTRLOC ": lstat on %s failed\n", fresh[i].c_str());
+			if(lstat((*sit).c_str(), &new_stat) != 0) {
+				EWARNING(ESTRLOC ": lstat on %s failed\n", (*sit).c_str());
 				continue;
 			}
 
-			centry = in_content_list(e->content, fresh[i].c_str());
+			centry = in_content_list(e->content, (*sit).c_str());
 			if(!centry) {
-				// This can happen too. I'm not sure why or kernel repor event little bit late ???
+				// This can happened too. I'm not sure why; or maybe kernel report event little bit later ???
 				rollower = true;
-				//EDEBUG(ESTRLOC ": didnt find %s\n", fresh[i].c_str());
+				//EDEBUG(ESTRLOC ": didnt find %s\n", (*sit).c_str());
 				break;
 			} else {
-			// TODO: add flags
+				// TODO: add flags
 				if(new_stat.st_atime != centry->atime) {
 					//EDEBUG(ESTRLOC ": ==> modified (atime) %s\n", centry->name.c_str());
 					centry->atime = new_stat.st_atime;
@@ -465,7 +489,7 @@ const char* DirWatch::figure_changed(DirWatchEntry* e) {
 
 				// found it, then quit from loop
 				if(can_add) {
-					e->what_changed = fresh[i].c_str();
+					e->what_changed = (*sit).c_str();
 					e->changed_flag = DW_REPORT_MODIFY;
 
 					const char* ret = e->what_changed.c_str();
@@ -491,14 +515,17 @@ const char* DirWatch::figure_changed(DirWatchEntry* e) {
 		//EDEBUG(ESTRLOC ": ++> rollower\n");
 		e->content.clear();
 
-		for(unsigned int i = 0; i < fresh_sz; i++) {
-			if(lstat(fresh[i].c_str(), &new_stat) != 0) {
-				EWARNING(ESTRLOC ": lstat failed on %s in rollower\n", fresh[i].c_str());
+		sit = fresh.begin();
+		sit_end = fresh.end();
+
+		for(; sit != sit_end; ++sit) {
+			if(lstat((*sit).c_str(), &new_stat) != 0) {
+				EWARNING(ESTRLOC ": lstat failed on %s in rollower\n", (*sit).c_str());
 				continue;
 			}
 			
 			DirContentEntry dc;
-			dc.name = fresh[i];
+			dc.name = (*sit);
 			dc.atime = new_stat.st_atime;
 			dc.mtime = new_stat.st_mtime;
 			dc.ctime = new_stat.st_ctime;

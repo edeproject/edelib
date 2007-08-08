@@ -27,7 +27,7 @@ UT_FUNC(DirectoryFunctions, "Test Directory functions")
 	UT_VERIFY( dir_home() != "" );
 	UT_VERIFY( dir_current() != "" );
 
-	vector<String> dlist;
+	list<String> dlist;
 	UT_VERIFY( dir_list("/this/directory/should/not/exist", dlist) == false );
 	UT_VERIFY( dir_list(".", dlist) == true );
 	UT_VERIFY( dlist.size() != 0 );

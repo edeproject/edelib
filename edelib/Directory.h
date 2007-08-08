@@ -15,7 +15,7 @@
 
 #include "econfig.h"
 #include "String.h"
-#include "Vector.h"
+#include "List.h"
 
 EDELIB_NS_BEGIN
 
@@ -125,7 +125,10 @@ EDELIB_API const char* dir_separator(void);
  * \param full_path if set will append directory name to the each entry
  * \param show_hidden if set will show hidden files
  */
-EDELIB_API bool dir_list(const char* dir, vector<String>& lst, bool full_path = false, bool show_hidden = false);
+EDELIB_API bool dir_list(const char* dir, list<String>& lst, bool full_path = false, bool show_hidden = false);
+
+//EDELIB_API bool dir_list(const char* dir, vector<String>& lst, bool full_path = false, bool show_hidden = false);
+
 
 EDELIB_NS_END
 #endif // __DIRECTORY_H__
