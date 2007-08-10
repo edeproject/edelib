@@ -1,3 +1,9 @@
+2007-08-10  Sanel <karijes@users.sourceforge.net>
+
+	* New List class which is now much more STL conformant (allowing --end()).
+	Looks like it generates few KB less code. Funny :)
+	* Few tests in list.cpp
+
 2007-08-8  Sanel <karijes@users.sourceforge.net>
 
 	* Explicit disable List(const List&) and operator=(const List&)

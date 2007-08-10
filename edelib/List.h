@@ -1,6 +1,7 @@
 /*
  * $Id$
  *
+ * A simple List class.
  * Part of edelib.
  * Copyright (c) 2005-2007 EDE Authors.
  *
@@ -17,6 +18,48 @@
 
 EDELIB_NS_BEGIN
 
+#ifndef SKIP_DOCS
+template <typename T>
+struct ListNode {
+	T* value;
+	ListNode* next;
+	ListNode* prev;
+
+	// for dummy node
+	ListNode() : value(0), next(0), prev(0) { }
+
+	// for real node
+	ListNode(const T& v) : value(new T(v)), next(0), prev(0) { }
+
+	~ListNode() { 
+		delete value; 
+		value = 0; 
+		next = prev = 0; 
+	}
+};
+
+template <typename T>
+struct ListIterator {
+	typedef ListNode<T> NodeType;
+
+	NodeType* node;
+
+	ListIterator(NodeType* n) : node(n) { }
+	ListIterator() : node(0) { }
+
+	T& operator*(void) const { 
+		EASSERT(node != 0 && "Bad code! Access to zero node!!!"); 
+		EASSERT(node->value != 0 && "Bad code! Dereferencing NULL value!!!"); 
+		return *(node->value); 
+	}
+
+	bool operator!=(const ListIterator& other) const { return node != other.node; }
+	bool operator==(const ListIterator& other) const { return node == other.node; }
+	ListIterator& operator++(void) { node = node->next; return *this; }
+	ListIterator& operator--(void) { node = node->prev; return *this; }
+};
+#endif
+
 /**
  * \class List
  * \brief Linked list class
@@ -26,12 +69,12 @@ EDELIB_NS_BEGIN
  * to implement all methods from std::list, since main goal is to keep it
  * small and simple, which will as result generate much smaller code.
  *
- * Also, size() method differ from std::list; some implementations run it
+ * Also, size() method differs from std::list; some implementations run it
  * in linear time, but some in constant time. This implementation returns size()
- * result in constant time.
+ * result always in constant time.
  *
  * Using list is the same as for std::list; all traversal is done via iterators.
- * Here is simple sample:
+ * Here is sample:
  * \code
  *   List<int> ls;
  *   ls.push_back(34);
@@ -83,102 +126,72 @@ EDELIB_NS_BEGIN
 template <typename T>
 class List {
 	private:
-		struct ListNode {
-			ListNode(const T& v) : value(v), next(0), prev(0) { }
+		typedef ListNode<T> Node;
+		typedef unsigned int size_type;
 
-			T value;
-			ListNode* next;
-			ListNode* prev;
-		};
-	
-		ListNode* start;
-		ListNode* last;
-		unsigned int sz;
+		size_type sz;
+		Node* tail;
 
 		List(const List&);
 		List& operator=(const List&);
 
 	public:
+		/*
+		 * This comment is not part of documentation, and in short explains
+		 * implementation details.
+		 *
+		 * List is implemented as circular doubly linked list, which means
+		 * that last node is pointing back to the first one (and reverse). 
+		 * Due the nature of traversing in circular lists, additional node 
+		 * (dummy node) is created so traversal (first != last) can be done.
+		 *
+		 * As you can see, only one node (tail) is used; it always pointing
+		 * to dummy node (which is always latest node). To get first element node, 
+		 * tail->first is used, and to get last (user visible), tail->prev is used. 
+		 * This implementation is needed so cases like --end() can return valid 
+		 * iterator to last element in the list.
+		 *
+		 * I tried to avoid dummy node creation, but implementing circular list
+		 * will be pain in the ass. Also, contrary popular std::list implementations I could
+		 * find, this node will be created only when insert()/push_back()/push_front()
+		 * are called; without those calls, list will not allocate it.
+		 */
 #ifndef SKIP_DOCS
-		class iterator {
-			private:
-				ListNode* curr;
-				iterator(ListNode* start) : curr(start) { }
-				friend class List<T>;
-
-			public:
-				iterator() : curr(0) { }
-
-				T& operator*(void) { 
-					EASSERT(curr != 0 && "Bad code! Dereferencing NULL iterator !!!"); 
-					return curr->value; 
-				}
-
-				iterator& operator++(void) { curr = curr->next; return *this; }
-				iterator& operator--(void) { curr = curr->prev; return *this; }
-				bool operator!=(const iterator& i) { return curr != i.curr; }
-				bool operator==(const iterator& i) { return curr == i.curr; }
-				operator bool(void) const { return !(curr == 0); }
-		};
+		typedef ListIterator<T> iterator;
 #endif
 
 		/**
 		 * Creates an empty list
 		 */
-		List() : start(0), last(0), sz(0) { }
+		List() : sz(0), tail(0) { }
 
 		/**
 		 * Clears data
 		 */
-		~List() { clear(); }
+		~List() { clear(); } 
 
 		/**
 		 * Clear all data
 		 */
-		void clear(void) {
-			if(!sz)
+		void clear(void) { 
+			if(!tail) {
+				EASSERT(sz == 0 && "Internal error! size() != 0, but list is empty !?!!");
 				return;
-
-			ListNode* next;
-			for(; start; start = next) {
-				next = start->next;
-				delete start;
 			}
 
+			Node* p = tail->next;
+			Node* t;
+			while(p != tail) {
+				t = p->next;
+				delete p;
+				p = t;
+			}
+
+			// delete dummy node
+			delete tail;
+
+			tail = 0;
 			sz = 0;
-			start = last = 0;
-		}
-
-		/**
-		 * Remove element given at iterator position.
-		 *
-		 * \return iterator pointing to the next element
-		 * \param it is element to be removed
-		 */
-		iterator erase(iterator& it) {
-			if(sz <= 1) {
-				clear();
-				return iterator();
-			}
-
-			if(it.curr == start) {
-				start = it.curr->next;
-				start->prev = 0;
-			} else if(it.curr == last) {
-				last = it.curr->prev;
-				last->next = 0;
-			} else {
-				EASSERT(it.curr->prev);
-				EASSERT(it.curr->next);
-				it.curr->prev->next = it.curr->next;
-				it.curr->next->prev = it.curr->prev;
-			}
-
-			iterator ret(it.curr);
-			++ret;
-			sz--;
-			delete it.curr;
-			return ret;
 		}
 
 		/**
@@ -189,86 +202,87 @@ class List {
 		 * \param it is location before to be inserted
 		 * \param val is value to insert
 		 */
-		iterator insert(iterator& it, const T& val) {
-			if(it.curr == 0 || it.curr == last) {
-				// push_back() increase sz
-				push_back(val);
-				return iterator(last);
-			} else if(it.curr == start) {
-				// push_front() increase sz
-				push_front(val);
-				return iterator(start);
+		iterator insert(iterator it, const T& val) {
+			// [23.2.2.3] insert() does not affect validity of iterators
+			Node* tmp = new Node(val);
+			if(!tail) {
+				// dummy node first
+				tail = new Node;
+				tail->next = tail->prev = tmp;
+				tmp->next = tmp->prev = tail;
 			} else {
-				ListNode* n = new ListNode(val);
-				n->next = it.curr;
-				n->prev = it.curr->prev;
-				it.curr->prev->next = n;
-				sz++;
-				return iterator(n);
+				tmp->next = it.node;
+				tmp->prev = it.node->prev;
+				it.node->prev->next = tmp;
+				it.node->prev = tmp;
 			}
+
+			sz++;
+			return iterator(tmp);
+		}
+
+		/**
+		 * Remove element given at iterator position.
+		 *
+		 * \return iterator pointing to the next element
+		 * \param it is element to be removed
+		 */
+		iterator erase(iterator it) {
+			if(sz <= 1) {
+				clear();
+				return 0;
+			}
+
+			// do not allow erase(l.end())
+			EASSERT(it.node != tail && "Bad code! erase() on end()!!!");
+
+			// [23.2.2.3] erase() invalidates only the iterators
+			it.node->prev->next = it.node->next;
+			it.node->next->prev = it.node->prev;
+
+			iterator ret(it.node);
+			++ret;
+			sz--;
+			delete it.node;
+			return ret;
 		}
 
 		/**
 		 * Adds new value to the end of the list.
 		 * \param val is value to be added
 		 */
-		void push_back(const T& val) {
-			sz++;
-			ListNode* n = new ListNode(val);
-
-			if(!start) {
-				start = n;
-				last = start;
-			} else {
-				n->prev = last;
-				last->next = n;
-				last = n;
-			}
-		}
+		void push_back(const T& val) { insert(end(), val); }
 
 		/**
 		 * Adds new value to the beginning of the list.
 		 * \param val is value to be added
 		 */
-		void push_front(const T& val) {
-			sz++;
-			ListNode* n = new ListNode(val);
-
-			if(!start) {
-				start = n;
-				last = start;
-			} else {
-				start->prev = n;
-				n->next = start;
-				n->prev = 0;
-				start = n;
-			}
-		}
+		void push_front(const T& val) { insert(begin(), val); }
 
 		/**
 		 * Return iterator pointing to the start of the list.
 		 */
-		iterator begin(void) const { return iterator(start); }
+		iterator begin(void) const { return (tail ? tail->next : 0); }
 
 		/**
 		 * Return iterator pointing <b>after</b> the end of the list.
 		 * <b>Do not</b> dereference that iterator requesting value
 		 * of latest element. 
 		 */
-		iterator end(void) const { return iterator(last ? last->next : last); }
+		iterator end(void) const { return tail; }
 
 		/**
 		 * Return size of list.
 		 */
-		unsigned int size(void) const { return sz; }
+		size_type size(void) const { return sz; }
 
 		/**
 		 * Return true if list is empty; otherwise false.
 		 */
-		bool empty(void) const { return size() == 0; }
+		bool empty(void) const { return sz == 0; }
 };
 
 #define list List
 
 EDELIB_NS_END
-#endif // __LIST_H__
+#endif

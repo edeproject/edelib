@@ -9,6 +9,8 @@ UT_FUNC(ListBasicTest, "Test basic list functions")
 	list<int> ls;
 	list<int>::iterator it;
 
+	UT_VERIFY( ls.begin() == ls.end() );
+
 	UT_VERIFY( ls.size() == 0 );
 	ls.push_back(223);
 	UT_VERIFY( ls.size() == 1 );
