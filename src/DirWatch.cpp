@@ -26,8 +26,9 @@
 	#include <sys/stat.h>
 #else
 	#include <signal.h>
-	#include <unistd.h>
 #endif
+
+#include <unistd.h>
 
 #include <stdio.h>          // sscanf
 #include <sys/utsname.h>    // uname
