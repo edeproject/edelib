@@ -1,3 +1,54 @@
+2007-08-19  Sanel <karijes@users.sourceforge.net>
+
+	* String code beautify (remove this before commit)
+	* MimeType (likewise)
+	* MimeType will now correctly use XDG_DATA_DIRS to search for comments
+	* Previous MimeType addon sucked; reimplemented better in xdgmime
+	via xdg_mime_find_data(). MimeType changed to reflect this
+	* Added efile as sample
+	* GetOS added to Jamrules
+
+2007-08-18  Sanel <karijes@users.sourceforge.net>
+
+	* Added regex copy (from sed) with few compilation/warning modifications
+	* split() in regex with tests
+	* Documented Regex class
+	* More tests in tests/regex.cpp
+	* rx/regexec.c some warning cleanup
+	* Added test/examples/elinks.cpp as sample of File/list/Regex usage
+
+2007-08-17  Sanel <karijes@users.sourceforge.net>
+
+	* search(), operator bool(), error codes added to Regex
+	* Tests for those too...
+	* shared.m4; removed '-shared' flag for .cpp files; not needed
+	* New MakeSharedLibrary rule; few fixes in rest jam files
+	* autogen.sh --compile option
+	* SharedLibraryFromObjects modified to correct create sonames, but I'm not
+	sure it works correctly
+
+2007-08-16  Sanel <karijes@users.sourceforge.net>
+
+	* Added Regex class with tests
+
+2007-08-15  Sanel <karijes@users.sourceforge.net>
+
+	* user_config_dir(), user_data_dir() and user_cache_dir() will, as
+	fallback, return value peeking inside $HOME env, as required from
+	freedesktop.org. Previous version was using '~/' directly which can cause 
+	problems with functions that don't understaind shell shortcuts. Now, if 
+	dir_home() fails, it will then use '~/'.
+
+	* util.cpp, removed tests for fallbacks in above directories since those
+	depends on HOME
+
+2007-08-13  Sanel <karijes@users.sourceforge.net>
+
+	* stringtok in MimeType uses list now
+	* file_path with list too; also if PATH does not contain anything, it will
+	return empty String
+	* dirwatch.cpp return 0 in main()
+
 2007-08-10  Sanel <karijes@users.sourceforge.net>
 
 	* New List class which is now much more STL conformant (allowing --end()).

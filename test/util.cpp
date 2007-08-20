@@ -13,19 +13,9 @@ UT_FUNC(XDGPathTest, "Test XDG paths")
 	puts(" *** XDGPathTest mess with some environment variables that are probably");
 	puts(" *** used by the current environment. Maybe strange things can be occured later");
 
-	UT_VERIFY( STR_EQUAL(user_config_dir(), "~/.config") );
-	UT_VERIFY( STR_EQUAL(user_data_dir(), "~/.local/share") );
-	UT_VERIFY( STR_EQUAL(user_cache_dir(), "~/.cache") );
-
 	setenv("XDG_CONFIG_HOME", "/dummy/place", 1);
 	UT_VERIFY( STR_EQUAL(user_config_dir(), "/dummy/place") );
-
-	setenv("XDG_CONFIG_HOME", "", 1);
-	UT_VERIFY( STR_EQUAL(user_config_dir(), "~/.config") );
 	unsetenv("XDG_CONFIG_HOME");
-
-	setenv("XDG_DATA_HOME", "", 1);
-	UT_VERIFY( STR_EQUAL(user_data_dir(), "~/.local/share") );
 
 	setenv("XDG_DATA_HOME", "/", 1);
 	UT_VERIFY( STR_EQUAL(user_data_dir(), "/") );
@@ -33,9 +23,6 @@ UT_FUNC(XDGPathTest, "Test XDG paths")
 	setenv("XDG_DATA_HOME", "/baz", 1);
 	UT_VERIFY( STR_EQUAL(user_data_dir(), "/baz") );
 	unsetenv("XDG_DATA_HOME");
-
-	setenv("XDG_CACHE_HOME", "", 1);
-	UT_VERIFY( STR_EQUAL(user_cache_dir(), "~/.cache") );
 
 	setenv("XDG_CACHE_HOME", "/", 1);
 	UT_VERIFY( STR_EQUAL(user_cache_dir(), "/") );

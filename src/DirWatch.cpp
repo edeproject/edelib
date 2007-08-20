@@ -463,7 +463,7 @@ const char* DirWatch::figure_changed(DirWatchEntry* e) {
 
 			centry = in_content_list(e->content, (*sit).c_str());
 			if(!centry) {
-				// This can happened too. I'm not sure why; or maybe kernel report event little bit later ???
+				// This can happened too. I'm not sure why; maybe kernel report events little bit later?
 				rollower = true;
 				//EDEBUG(ESTRLOC ": didnt find %s\n", (*sit).c_str());
 				break;
@@ -499,17 +499,6 @@ const char* DirWatch::figure_changed(DirWatchEntry* e) {
 		}
 	}
 
-#if 0
-	EDEBUG("------------ old ------------\n");
-	for(int i = 0; i < e->content.size(); i++)
-		EDEBUG(" %s\n", e->content[i].name.c_str());
-	EDEBUG("------------ old end ------------\n");
-
-	EDEBUG("------------ new ------------\n");
-	for(int i = 0; i < fresh.size(); i++)
-		EDEBUG(" %s\n", fresh[i].c_str());
-	EDEBUG("------------ new end ------------\n");
-#endif
 	if(rollower) {
 		// replace content
 		//EDEBUG(ESTRLOC ": ++> rollower\n");

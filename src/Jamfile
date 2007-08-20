@@ -18,10 +18,6 @@ XDGMIME_SRC = xdgmime.c
 			  xdgmimeparent.c 
 			  xdgmimecache.c ;
 
-# construct full path to directory
-#XDGMIME = [ FDirName $(TOP) src xdgmime ] ;
-# assign directory name to each XDGMIME_SRC item
-#XDGMIME = $(XDGMIME)/$(XDGMIME_SRC) ;
 XDGMIME = xdgmime/$(XDGMIME_SRC) ;
 
 SOURCE = Config.cpp 
@@ -42,6 +38,8 @@ SOURCE = Config.cpp
 		 TiXmlParser.cpp 
 		 MimeType.cpp
 		 DirWatch.cpp
+		 rx/regex.c
+		 Regex.cpp
 		 $(XDGMIME) ;
 
 # files that requires fltk or X11
@@ -53,24 +51,18 @@ SOURCE_GUI = XSet.cpp
 			 IconChooser.cpp 
 			 SevenSeg.cpp ;
 
-if $(FLTKLIBS)
-{
+if $(FLTKLIBS) {
 	SOURCE += $(SOURCE_GUI) ;
-}
-else
-{
+} else {
 	Echo "...building without FLTK support..." ;
 }
 
 LPATH = [ FFileName $(TOP) $(EDELIB_LIBDIR) $(EDELIB_NAME) ] ;
 
-if $(SHARED)
-{
+if $(SHARED) {
 	MakeSharedLibrary $(LPATH) : $(SOURCE) : $(FLTKLIBS) $(SOUNDLIBS) ;
 	InstallSharedLibrary $(libdir) : $(LPATH) ;
-}
-else
-{
+} else {
 	MakeStaticLibrary $(LPATH) : $(SOURCE) ;
 	InstallStaticLibrary $(libdir) : $(LPATH) ;
 }

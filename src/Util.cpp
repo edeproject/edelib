@@ -10,50 +10,59 @@
  * See COPYING for details.
  */
 
-#include <edelib/econfig.h>
 #include <edelib/Debug.h>
 #include <edelib/Util.h>
 #include <edelib/StrUtil.h>
+#include <edelib/Directory.h>
 
 #include <stdlib.h> // getenv
-#include <string.h> // strlen, strncpy
+#include <string.h> // strlen
 
-// default places according to freedesktop
-#define CONFIG_HOME_DEFAULT "~/.config"
-#define DATA_HOME_DEFAULT   "~/.local/share"
-#define CACHE_HOME_DEFAULT  "~/.cache"
-
-#define MAX_PATH 1024
+//#define MAX_PATH 1024
 
 EDELIB_NS_BEGIN
 
 typedef list<String> StringList;
 typedef list<String>::iterator StringListIter;
 
-String _config_get(const char* env, const char* fallback, unsigned int fallback_len) {
+String _config_get(const char* env, const char* fallback) {
+	int len = 0;
 	char* path = getenv(env);
 	if(!path)
-		return fallback;
+		goto bail;
 	/*
 	 * getenv() can return empty variable ("") and
 	 * will see it as existing; with additional checking
 	 * we make sure we have meaningfull data
 	 */
-	int len = strlen(path);
+	len = strlen(path);
 	if(!len)
-		return fallback;
+		goto bail;
 
 	// case when we got only one character in path
 	if(len == 1)
 		return path;
+	else {
+		String ret;
+		ret.reserve(len);
+		// assure path does not ends with slash.
+		if(path[len-1] == '/') 
+			ret.assign(path, len-1);
+		else
+			ret.assign(path);
+		return ret;
+	}
 
+bail:
 	String ret;
-	ret.reserve(len);
-	// assure path does not ends with slash.
-	if(path[len-1] == '/') 
-		ret.assign(path, len-1);
-	else
-		ret.assign(path);
+	ret.reserve(128);
+
+	ret = dir_home();
+	// unable to fetch HOME @#??#; fall to '~/'
+	if(ret.empty())
+		ret = "~/";
+
+	ret += fallback;
 	return ret;
 }
 
@@ -131,15 +140,15 @@ String _path_builder(const char* separator, bool ending, const char* p1, const c
 }
 
 String user_config_dir(void) { 
-	return _config_get("XDG_CONFIG_HOME", CONFIG_HOME_DEFAULT, sizeof(CONFIG_HOME_DEFAULT));
+	return _config_get("XDG_CONFIG_HOME", "/.config");
 }
 
 String user_data_dir(void) {
-	return _config_get("XDG_DATA_HOME", DATA_HOME_DEFAULT, sizeof(DATA_HOME_DEFAULT));
+	return _config_get("XDG_DATA_HOME", "/.local/share");
 }
 
 String user_cache_dir(void) {
-	return _config_get("XDG_CACHE_HOME", CACHE_HOME_DEFAULT, sizeof(CACHE_HOME_DEFAULT));
+	return _config_get("XDG_CACHE_HOME", "/.cache");
 }
 
 int system_config_dirs(StringList& lst) {

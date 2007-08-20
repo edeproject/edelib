@@ -14,14 +14,13 @@
 #include <edelib/TiXml.h>
 #include <edelib/Debug.h>
 #include <edelib/Util.h>
-#include <edelib/File.h>
 #include <edelib/StrUtil.h>
-#include <edelib/Vector.h>
-#include <string.h>  // strncmp, strchr
-
+#include <edelib/List.h>
 #include "xdgmime/xdgmime.h"
 
-#define MIME_DIR "/usr/share/mime"
+#include <string.h>  // strncmp
+
+//#define MIME_DIR "/usr/share/mime"
 
 #define MIME_LOADED    1
 #define COMMENT_LOADED 2
@@ -78,12 +77,20 @@ const String& MimeType::comment(void) {
 
 	String ttype = mtype;
 	ttype += ".xml";
-	String path = build_filename("/", MIME_DIR, ttype.c_str());
 
+#if 0
+	String path = build_filename("/", MIME_DIR, ttype.c_str());
 	if(!file_exists(path.c_str())) {
 		EDEBUG(ESTRLOC ": MimeType::comment() %s does not exists\n", path.c_str());
 		return mcmt;
 	}
+#endif
+
+	const char* p = xdg_mime_find_data(ttype.c_str());
+	if(!p)
+		return mcmt;
+
+	String path = p;
 	
 	TiXmlDocument doc(path.c_str());
 
@@ -126,7 +133,7 @@ const String& MimeType::icon_name(void) {
 	if(status & ICON_LOADED)
 		return micon;
 
-	vector<String> vs;
+	list<String> vs;
 	stringtok(vs, mtype, "/");
 
 	// failed, accepted is only type/name
@@ -135,21 +142,23 @@ const String& MimeType::icon_name(void) {
 
 	micon.clear();
 	micon.reserve(5);
+	list<String>::iterator it = vs.begin();
 
-	if(vs[0] == "inode") {
+	if((*it) == "inode") {
 		/*
 		 * XDG Mime guys decided that folders are named under 'inode/directory.xml'. 
 		 * But icon naming standard say it should contain name 'folder' (sigh!).
 		 */
-		if(vs[1] == "directory")
+		++it;
+		if((*it) == "directory")
 			micon = "folder";
 		else
-			micon = vs[1];
-	}
-	else {
-		micon = vs[0];
+			micon = (*it);
+	} else {
+		micon = (*it);
 		micon += '-';
-		micon += vs[1];
+		++it;
+		micon += (*it);
 	}
 
 	status |= ICON_LOADED;

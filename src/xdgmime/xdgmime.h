@@ -62,6 +62,7 @@ typedef void (*XdgMimeDestroy)  (void *user_data);
 #define xdg_mime_register_reload_callback     XDG_ENTRY(register_reload_callback)
 #define xdg_mime_remove_callback              XDG_ENTRY(remove_callback)
 #define xdg_mime_type_unknown                 XDG_ENTRY(type_unknown)
+#define xdg_mime_find_data                    XDG_ENTRY(find_data)
 #endif
 
 extern const char *xdg_mime_type_unknown;
@@ -80,6 +81,14 @@ int          xdg_mime_media_type_equal             (const char *mime_a,
 						    const char *mime_b);
 int          xdg_mime_mime_type_subclass           (const char *mime_a,
 						    const char *mime_b);
+
+/* Sanel: added
+ * This is used to lookup filename in xdgmime known directories
+ * (used to find certain comments). Returned value must be copied
+ * or could be overwritten by another call or nulled by xdg_mime_shutdown().
+ */
+const char   *xdg_mime_find_data(const char *name);
+
   /* xdg_mime_get_mime_parents() is deprecated since it does
    * not work correctly with caches. Use xdg_mime_list_parents() 
    * instead, but notice that that function expects you to free

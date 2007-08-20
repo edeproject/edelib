@@ -12,8 +12,7 @@
 JCACHEFILE = $(TOP)/.jamcache ;
 HCACHEFILE = $(TOP)/.jamhcache ;
 
-if $(NOJAMCFG)
-{
+if $(NOJAMCFG) {
 	# for testing purposes
 	LINKCMD = "ln -s" ;
 	SHARED = "" ;
@@ -29,13 +28,11 @@ if $(NOJAMCFG)
 	INSTALL_PROGRAM ?= "$(INSTALL)" ;
 	INSTALL_SCRIPT  ?= "$(INSTALL)" ;
 	EDELIB_VERSION  ?= "2.0.0a" ;
-}
-else
-{
+} else {
 	JAMCONFIG ?= $(TOP)/Jamconfig ;
 	include $(JAMCONFIG) ;
-	if ! $(JAMCONFIG_READ)
-	{
+
+	if ! $(JAMCONFIG_READ) {
 		Exit "Can't find Jamconfig. Did you run 'configure' first ?" ;
 	}
 
@@ -51,8 +48,8 @@ else
 # these variables should be here (not in Jamconfig) since RMDIR
 # is already defined as 'rm -f' in Jambase, and calling 'jam distclean'
 # will revert it's value when we remove Jamconfig
-RMDIR   = rm -R ;
-COPYDIR = cp -R ;
+RMDIR   = "rm -R" ;
+COPYDIR = "cp -R" ;
 
 # general flags we pull from Jamconfig, with addition of include
 # directory search, so compiler can find edelib include directory
@@ -64,8 +61,8 @@ STDLIB ?= stdc++ ;
 # variables used by jam directly
 # OPTIM is cleared so it don't collide with FLAGS
 OPTIM    = ;
-CCFLAGS  = $(FLAGS) $(LOCALFLAGS) ;
-C++FLAGS = $(FLAGS) $(LOCALFLAGS) ;
+CCFLAGS  = $(FLAGS) ;
+C++FLAGS = $(FLAGS) ;
 
 # directories used to place final library and 
 # by tests to construct correct paths
@@ -79,6 +76,16 @@ EDELIB_NAME = libedelib ;
 # directory name for installed documentation
 EDELIB_DOCDIR      = "$(EDELIB)-$(EDELIB_VERSION)" ;
 
+# used by SymLink
+SYMLINKSRCPATH = ;
+
+rule GetOS
+{
+	local var ;
+	var = [ MATCH "(.*[^ \t])" : $(JAMUNAME) ] ;
+	return "$(var[5]) $(var[0])" ;
+}
+
 # construct path from list members
 # same as FDirName, but targeted to files
 rule FFileName
@@ -87,10 +94,18 @@ rule FFileName
 }
 
 # Cleandir cleandir : <directory> ;
-# Removes directory in 'Clean clean' fassion
+# Removes directory in 'Clean clean' fashion
 actions piecemeal together existing Cleandir
 {
 	$(RMDIR) $(>)
+}
+
+# LinkAgainst <target> : <libraries> ;
+# The sam as jam's LinkLibraries, but will not mark those libraries 
+# for building. <libraries> should be in form '-lfoo'
+rule LinkAgainst
+{
+	LINKLIBS on $(1) = [ on $(1) return $(LINKLIBS) ] $(2) ;
 }
 
 # SymLink <link> : <source> : <optional-path-to-source> ;
@@ -98,89 +113,83 @@ actions piecemeal together existing Cleandir
 # it use LINKCMD variable and is expecting 'ln -s' style
 rule SymLink
 {
-	if ! $(LINKCMD)
-	{
-		Exit "Don't know how to make symbolic link!" ;
+	if ! $(LINKCMD) {
+		Echo "Don't know how to make symbolic link!" ;
+		return ;
 	}
 
 	Depends $(<) : $(>) ;
-	
-	# replace directory part at source, so LINKCMD can operate
-	# correctly; also mark it as NotFile since it does not exist
-	# (at least for jam since path is stripped) and jam will not yell about it
-	SymLink1 $(<) : $(>:D=$(3)) ;
-	NotFile $(>:D=$(3)) ;
 
+	if $(3) {
+		SYMLINKSRCPATH on $(<) = $(3) ;
+	} else {
+		# Can't be empty or SymLink1 will ignore source; also
+		# it is set on $(<) jam only via this way see it as valid variable
+		SYMLINKSRCPATH on $(<) = "" ;
+	}
+
+	SymLink1 $(<) : $(>) ;
 	Clean clean : $(<) ;
 }
 
 actions SymLink1
 {
-	# remove existing link and try to link, removing possible grist
-	$(RM) "$(<)" && $(LINKCMD) "$(>:G=)" "$(<)"
+	$(RM) "$(<)" && $(LINKCMD) "$(>:D=$(SYMLINKSRCPATH))" "$(<)"
 }
 
-# a hacked version of LibraryFromObjects
-# so we can make shared library
 rule SharedLibraryFromObjects
 {
-	local _i _l _s ;
-
-	# Add grist to file names
-	_s = [ FGristFiles $(>) ] ;
-	_l = $(<:S=$(SUFLIB)) ;
-
-	# library depends on its member objects
-	if $(KEEPOBJS) 
-	{
-		DEPENDS obj : $(_s) ;
-	}
-	else 
-	{
-		DEPENDS lib : $(_l) ;
+	if ! $(UNIX) {
+		Echo "Dynamic libraries can't be built on this OS for now" ;
+		return ;
 	}
 
-	# Leave this since we can't scan .o files inside
-	# shared binary; jam will then relay on object file
-	# (see comments below)
-	NOARSCAN = "1" ;
+	local s t t_only tmp ;
 
-	# Set LOCATE for the library and its contents.	The bound
-	# value shows up as $(NEEDLIBS) on the Link actions.
-	# For compatibility, we only do this if the library doesn't
-	# already have a path.
-	if ! $(_l:D) 
-	{
-		MakeLocate $(_l) $(_l)($(_s:BS)) : $(LOCATE_TARGET) ;
-	}
+	t = $(1) ;
+	s = [ FGristFiles $(2) ] ;
 
-	if $(NOARSCAN) 
-	{ 
-		# If we can't scan the library to timestamp its contents,
-		# we have to just make the library depend directly on the
-		# on-disk object files.  
+	# figure out correct library name for -soname flag; it should
+	# accept libname.so.X when given libname.so.X.X.X so ldconfig
+	# can generate correct symling (reading soname section from library)
+	if $(t:S) {
+		# remove .so.X.X.X
+		t_only = [ MATCH "(.*)\.so\.[0-9]\.[0-9]\.[0-9]$" : $(t) ] ;
+		# directory and grist too
+		t_only = $(t_only:D=:G=) ;
+		# pick X.X.X from .so.X.X.X
+		tmp = [ MATCH "\.([0-9])\.([0-9])\.([0-9])$" : $(t) ] ;
 
-		DEPENDS $(_l) : $(_s) ;
-	}
-	else
-	{
-		# If we can scan the library, we make the library depend
-		# on its members and each member depend on the on-disk
-		# object file.
-
-		DEPENDS $(_l) : $(_l)($(_s:BS)) ;
-
-		for _i in $(_s)
-		{
-			DEPENDS $(_l)($(_i:BS)) : $(_i) ;
+		if $(tmp[0]) {
+			t_only = $(t_only:S="$(SOEXT).$(tmp[0])") ;
+		} else {
+			Exit "Bad shared library name: $(t). Must be in form: 'libname.so.X.X.X'" ;
 		}
+
+	} else {
+		# no suffix, add SOEXT
+		t = $(t:S=$(SOEXT)) ;
 	}
 
-	Link $(_l) : $(_s) ;
-	Clean clean : $(_l) ;
+	Depends lib : $(t) ;
 
-	# If we can't scan the library, we have to leave the .o's around.
-	if ! ( $(NOARSCAN) || $(KEEPOBJS) ) { RmTemps $(_l) : $(_s) ; }
+	# This is used if library already does not have a path
+	if ! $(t:D) {
+		MakeLocate $(t) $(t)($(s:BS)) : $(LOCATE_TARGET) ;
+	}
+
+	if $(t_only) {
+		LINKFLAGS on $(t) = -shared -Wl,-soname,\"$(t_only)\" [ on $(t) return $(LINKFLAGS) ] ;
+	} else {
+		# will this work ?
+		LINKFLAGS on $(t) = -shared -Wl [ on $(t) return $(LINKFLAGS) ] ;
+	}
+
+	# Let target is dependant on source
+	Depends $(t) : $(s) ;
+
+	Link $(t) : $(s) ;
+	Clean clean : $(t) ;
 }
 
 # MakeStaticLibrary <libname> : <sources> ;
@@ -190,49 +199,44 @@ rule MakeStaticLibrary
 	Library $(<) : $(>) ;
 }
 
-# MakeStaticLibrary <libname> : <sources> : <optional-libraries> ;
-# Create shared library, creating symlink to it.
+# MakeSharedLibrary <libname> : <sources> ;
+# Create shared library (suffix will be appended), creating symlink to it.
 #
 # This is probably a good candidate for libtool backend, but
 # later is story for it's own; for now we stick with direct compiler flags
 # and if breaks something, addons will be done.
 # It use SOEXTFULL as full shared library extension and SOEXT as symlink 
 # extension to it.
-rule MakeSharedLibrary 
+rule MakeSharedLibrary
 {
+	local shlib = $(1) ;
+	local src = $(2) ;
+	local objects = [ FGristFiles $(src:S=$(SUFOBJ)) ] ;
+	local symlink ;
 
-	if ! $(UNIX) 
-	{
-		Exit "Dynamic libraries can't be built on this OS for now" ;
+	if ! $(SOFLAGS) {
+		Echo "SOFLAGS not defined; will not touch a thing" ;
+		return ;
 	}
 
-	# make sure we have defined this one
-	if ! $(SOEXTFULL) && ! $(SOEXT)
-	{
-		Exit "Library extension not defined" ;
-	}
-	
-	local target symlink target_only ;
-	target = $(<:S=$(SOEXTFULL)) ;
-	symlink  = $(<:S=$(SOEXT)) ;
+	CCFLAGS on $(objects) += $(SOFLAGS) ;
+	C++FLAGS on $(objects) += $(SOFLAGS) ;
 
-	# target name without directory part so compiler can recognize
-	# it as final library name and do linking without problems
-	target_only = $(target:D=) ;
+	# append suffixes
+	shlib = $(1:S=$(SOEXTFULL)) ;
+	symlink = $(1:S=$(SOEXT)) ;
 
-	# main linking part; for specific compilers, things should be tuned here
-	LINKFLAGS on $(target) = -shared -Wl,-soname,$(target_only) $(3) -l$(STDLIB) ;
+	SharedLibraryFromObjects $(shlib) : $(objects) ;
+	Objects $(src) ;
 
-	# overwrite SUFLIB; do not use SUFLIB on target = XYZ since
-	# 'on target' variables work only in actions, and SUFLIB is not
-	# used in MakeSharedLibrary action (I had to write here since docs sucks!)
-	SUFLIB = $(SOEXTFULL) ;
+	# copy target directory or symlink will be created
+	# in directory where jam was called
+	LOCATE on $(symlink) = [ on $(1) return $(LOCATE) ] ;
 
-	SharedLibraryFromObjects $(<) : $(>:S=$(SUFOBJ)) ;
-	Objects $(>) ;
-
-	SymLink $(symlink) : $(target) : "" ;
 	Depends lib : $(symlink) ;
+
+	SymLink $(symlink) : $(shlib) ;
+	Clean clean : $(symlink) ;
 }
 
 # MakeTest <target> : <sources> : <optional-libraries> ;
@@ -240,27 +244,20 @@ rule MakeSharedLibrary
 # for edelib specific tests
 rule MakeTest
 {
-	# make sure we depends all tests on correct library
-	# and in case when SHARED flag is on, we must check file with '.so' existance
-	local suffix ;
-	if $(SHARED)
-	{
-		suffix = $(SOEXT) ;
-	}
-	else
-	{
-		suffix = $(SUFLIB) ;
-	}
+	local addon_flags ldir ;
 
-	local elib = [ FFileName $(TOP) $(EDELIB_LIBDIR) $(EDELIB_NAME)$(suffix) ] ;
-	local ldir = [ FDirName $(TOP) $(EDELIB_LIBDIR) ] ;
-	Depends $(<)  : $(elib) ;
+	addon_flags = "-rdynamic" ;
+	#addon_flags = "-pg" ;
+
+	# construct path so compiler knows where is library
+	ldir = [ FDirName $(TOP) $(EDELIB_LIBDIR) ] ;
+
+	Depends $(<) : lib ;
 	Depends tests : $(<) ;
-	#LINKFLAGS on $(<) = -pg ;
-	LINKFLAGS on $(<) = -rdynamic ;
 
-	LINKLIBS on $(<) = -L$(ldir) -l$(EDELIB) $(3) -l$(STDLIB) ;
+	LINKFLAGS on $(<) = $(addon_flags) [ on $(<) return $(LINKFLAGS) ] ;
 	Main $(<) : $(>) ;
+	LinkAgainst $(<) : -L$(ldir) -l$(EDELIB) $(3) -l$(STDLIB) ;
 }
 
 # MakeApiDocumentation <full-path-to-directory> : <full-path-to-doxyfile> ;
@@ -437,8 +434,16 @@ actions Install1
 	$(INSTALL) "$(>)" "$(<:D)"
 }
 
-actions quietly Help
+rule Help
 {
+	Always $(<) ;
+	OSNAME on help = [ GetOS ] ;
+	Help1 help ;
+}
+
+actions quietly Help1
+{
+	echo "Detected OS: $(OSNAME)"
 	echo ""
 	echo "Build options:"
 	echo "   jam          build all"
@@ -450,14 +455,23 @@ actions quietly Help
 	echo ""
 	echo "Options can be grouped too so to make library"
 	echo "and tests, command is: 'jam lib tests'"
-	echo ""
 }
+
 Help help ;
 
 NotFile help install ;
 Always help ;
 
 # a generated junk
-Clean distclean : configure aclocal.m4 Jamconfig edelib-config
-	config.log config.status edelib/_conf.h.in edelib/_conf.h doc/Doxyfile edelib/Version.h ;
+Clean distclean : configure 
+				  aclocal.m4 
+				  Jamconfig 
+				  edelib-config
+				  config.log 
+				  config.status 
+				  edelib/_conf.h.in 
+				  edelib/_conf.h 
+				  doc/Doxyfile 
+				  edelib/Version.h ;
+
 Cleandir distclean : autom4te.cache ;

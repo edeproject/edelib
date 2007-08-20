@@ -11,12 +11,19 @@
 
 SubDir TOP test examples ;
 
-if $(FLTKLIBS)
-{
-	MakeTest egroup : egroup.cpp : $(FLTKLIBS) ;
-	MakeTest egroup2 : egroup2.cpp : $(FLTKLIBS) ;
-	MakeTest icon_chooser : icon_chooser.cpp : $(FLTKLIBS) ;
-	MakeTest sevenseg : sevenseg.cpp : $(FLTKLIBS) ;
-	MakeTest dirwatch : dirwatch.cpp : $(FLTKLIBS) ;
-#	MakeTest combobox : combobox.cpp : $(FLTKLIBS) ;
+ADDONLIB = ;
+
+if $(SHARED) {
+	ADDONLIB = $(SOUNDLIBS) ;
+}
+
+if $(FLTKLIBS) {
+	MakeTest egroup : egroup.cpp : $(FLTKLIBS) $(ADDONLIB) ;
+	MakeTest egroup2 : egroup2.cpp : $(FLTKLIBS) $(ADDONLIB) ;
+	MakeTest icon_chooser : icon_chooser.cpp : $(FLTKLIBS) $(ADDONLIB) ;
+	MakeTest sevenseg : sevenseg.cpp : $(FLTKLIBS) $(ADDONLIB) ;
+	MakeTest dirwatch : dirwatch.cpp : $(FLTKLIBS) $(ADDONLIB) ;
+	MakeTest elinks : elinks.cpp ;
+	MakeTest efile : efile.cpp ;
+#	MakeTest combobox : combobox.cpp : $(FLTKLIBS) $(ADDONLIB) ;
 }

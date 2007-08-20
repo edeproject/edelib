@@ -11,10 +11,9 @@
 
 SubDir TOP test ;
 
-# shared library requires linkage with FLTK
-if $(SHARED)
-{
-	ADDONLIB = $(FLTKLIBS) ;
+# shared library requires linkage with FLTK and sound libraries
+if $(SHARED) {
+	ADDONLIB = $(FLTKLIBS) $(SOUNDLIBS) ;
 }
 
 MakeTest run_tests : UnitTest.cpp 
@@ -28,6 +27,7 @@ MakeTest run_tests : UnitTest.cpp
 					desktopfile.cpp
 					string.cpp
 					list.cpp
+					regex.cpp
 					color.cpp
 					xml.cpp
 					mime.cpp
@@ -35,9 +35,7 @@ MakeTest run_tests : UnitTest.cpp
 					: 
 					$(ADDONLIB) $(FLTKLIBS) ;
 
-#MakeTest th : th.cpp ;
-#MakeTest pth : pth.cpp ;
-#MakeTest dd : dd.cpp ;
+#MakeTest url : url.cpp ;
 #MakeTest pp : pp.cpp ;
 #MakeTest perf/stringtok : perf/stringtok.cpp ;
 

@@ -60,7 +60,6 @@ void String::init(size_type len, size_type cap) {
 }
 
 void String::dispose(void) {
-
 	if(sdata != &null_data) {
 		delete [] sdata->chars;
 		delete sdata;
@@ -123,13 +122,11 @@ String& String::assign(const String& str) {
 }
 
 String& String::append(const char* str, size_type len) {
-
 	if(len + length() <= capacity()) {
 		memcpy(sdata->chars + length(), str, len);
 		sdata->length += len;
 		sdata->chars[sdata->length] = STERM;
-	}
-	else {
+	} else {
 		reserve((capacity() + len) * 2);
 		memcpy(sdata->chars + length(), str, len);
 		sdata->length += len;
@@ -144,8 +141,7 @@ String& String::append(size_type num, const char& ch) {
 		chcpy(sdata->chars + length(), ch, num);
 		sdata->length += num;
 		sdata->chars[sdata->length] = STERM;
-	}
-	else {
+	} else {
 		char* buff = new char[num];
 		chcpy(buff, ch, num);
 		append(buff, num);

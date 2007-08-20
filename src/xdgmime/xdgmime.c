@@ -61,6 +61,7 @@ XdgMimeCache **_caches = NULL;
 static int n_caches = 0;
 
 const char *xdg_mime_type_unknown = "application/octet-stream";
+
 /* Sanel: added */
 const char *xdg_mime_type_folder   = "inode/directory";
 const char *xdg_mime_type_chardev  = "inode/chardevice";
@@ -68,6 +69,9 @@ const char *xdg_mime_type_blockdev = "inode/blockdevice";
 const char *xdg_mime_type_fifo     = "inode/fifo";
 const char *xdg_mime_type_socket   = "inode/socket";
 const char *xdg_mime_type_symlink  = "inode/symlink";
+
+/* Sanel: added */
+static char *_mime_searched_data = NULL;
 
 enum
 {
@@ -270,12 +274,12 @@ xdg_run_command_on_dirs (XdgDirectoryFunc  func,
       dir = malloc (len + 1);
       strncpy (dir, ptr, len);
       dir[len] = '\0';
+
       stop_processing = (func) (dir, user_data);
       free (dir);
 
       if (stop_processing)
 	return;
-
       ptr = end_ptr;
     }
 }
@@ -386,6 +390,49 @@ xdg_check_dirs (void)
   return FALSE;
 }
 
+/* Sanel: added xdg_mime_find_data(), xdg_lookup_data() */
+static int
+xdg_lookup_data(const char* directory, const char* name)
+{
+  struct stat st;
+  assert (directory != NULL);
+
+  if (_mime_searched_data)
+    {
+       free(_mime_searched_data); 
+    }
+
+  _mime_searched_data = malloc (strlen(directory) + strlen("/mime/") + strlen(name) + 1);
+  strcpy(_mime_searched_data, directory);
+  strcat(_mime_searched_data, "/mime/");
+  strcat(_mime_searched_data, name);
+
+  /* If the file exists */
+  if (stat (_mime_searched_data, &st) == 0)
+    {
+       /* Found it, stop processing */
+       return TRUE;
+	}
+  else
+    {
+      free(_mime_searched_data);
+	  _mime_searched_data = NULL;
+	}
+  return FALSE; /* Keep processing */
+}
+
+void xdg_mime_init (void);
+
+const char *
+xdg_mime_find_data (const char *name)  
+{ 
+  xdg_mime_init ();
+
+  xdg_run_command_on_dirs ((XdgDirectoryFunc) xdg_lookup_data,
+               (char*) name);
+  return _mime_searched_data;
+}
+
 /* We want to avoid stat()ing on every single mime call, so we only look for
  * newer files every 5 seconds.  This will return TRUE if we need to reread the
  * mime data from disk.
@@ -414,7 +461,7 @@ xdg_check_time_and_dirs (void)
 /*static*/ void
 xdg_mime_init (void)
 {
-	puts("xdg_mime_init()");
+	/* puts("xdg_mime_init()"); */
 
   if (xdg_check_time_and_dirs ())
     {
@@ -613,13 +660,20 @@ xdg_mime_shutdown (void)
       _xdg_mime_parent_list_free (parent_list);
       parent_list = NULL;
     }
+
+  /* Sanel: added */
+  if (_mime_searched_data)
+    {
+      free(_mime_searched_data);
+      _mime_searched_data = NULL;
+    }
   
   for (list = callback_list; list; list = list->next)
     (list->callback) (list->data);
 
   need_reread = TRUE;
 
-  puts("xdg_mime_shutdown()");
+  /* puts("xdg_mime_shutdown()"); */
 }
 
 int

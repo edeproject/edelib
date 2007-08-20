@@ -14,7 +14,7 @@
 #include <edelib/File.h>
 #include <edelib/Debug.h>
 #include <edelib/StrUtil.h>
-#include <edelib/Vector.h>
+#include <edelib/List.h>
 
 #include <stdlib.h> // getenv
 #include <string.h> // strlen, strncpy
@@ -145,19 +145,29 @@ String file_path(const char* fname, bool check_link) {
 	if(!val)
 		return "";
 
-	vector<String> vs;
+	list<String> vs;
 	stringtok(vs, val, ":");
 
+	if(!vs.size())
+		return "";
+
+	list<String>::iterator it, it_end;
+	it = vs.begin();
+	it_end = vs.end();
+
 	struct stat s;
-	for(unsigned int i = 0; i < vs.size(); i++) {
+	const char* sptr;
+	for(; it != it_end; ++it) {
 		// assume PATH does not contains entries ending with '/'
-		vs[i] += '/';
-		vs[i] += fname;
-		if(file_exists(vs[i].c_str())) {
+		(*it) += '/';
+		(*it) += fname;
+		sptr = (*it).c_str();
+
+		if(file_exists(sptr)) {
 			if(!check_link) 
-				return vs[i];
-			else if((lstat(vs[i].c_str(), &s) == 0) && !S_ISLNK(s.st_mode)) {
-				return vs[i];
+				return (*it);
+			else if((lstat(sptr, &s) == 0) && !S_ISLNK(s.st_mode)) {
+				return (*it);
 			}
 		}
 	}
@@ -307,6 +317,7 @@ int File::readline(char* buff, int buffsz) {
 			i = EOF;
 			break;
 		}
+
 		*buffp++ = c;
 		if(c == '\n')
 			break;

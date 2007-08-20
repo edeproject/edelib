@@ -103,5 +103,7 @@ int main() {
 
 	Fl::run();
 	edelib::DirWatch::shutdown();
+
+	return 0;
 }
 
