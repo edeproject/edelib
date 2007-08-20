@@ -49,20 +49,18 @@ struct DirContentEntry {
 
 // watched directory
 struct DirWatchEntry {
-	int    fd;       // directory descriptor
-	int    flags;    // user flags (DW_CREATE,...)
-	String name;     // directory full path
+	int    fd;             // directory descriptor
+	int    flags;          // user flags (DW_CREATE,...)
+	int    changed_flag;   // DW_REPORT_CREATE, DW_REPORT_MODIFY,...
+	String name;           // directory full path
+	String what_changed;   // storage for what changed
 
 	list<DirContentEntry> content; // directory content with recorded atime/ctime/mtime
-	String what_changed;             // storage for what changed
-	int    changed_flag;             // DW_REPORT_CREATE, DW_REPORT_MODIFY,...
 };
 
 struct DirWatchImpl {
 	DirWatchCallback* callback;
 	void* callback_data;
-
-	struct sigaction  act;
 	list<DirWatchEntry*> entries;
 };
 
@@ -123,10 +121,12 @@ void DirWatch::init_once(void) {
 
 #ifdef HAVE_DNOTIFY
 	if(dir_notifier == DW_DNOTIFY) {
-		impl->act.sa_sigaction = dnotify_handler;
-		sigemptyset(&impl->act.sa_mask);
-		impl->act.sa_flags = SA_SIGINFO;
-		sigaction(ENOTIFY_SIGNAL, &impl->act, NULL);
+		struct sigaction act;
+
+		act.sa_sigaction = dnotify_handler;
+		sigemptyset(&(act.sa_mask));
+		act.sa_flags = SA_SIGINFO;
+		sigaction(ENOTIFY_SIGNAL, &act, NULL);
 	}
 #endif
 }
