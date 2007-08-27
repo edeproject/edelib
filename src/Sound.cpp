@@ -55,6 +55,10 @@ void SoundSystem::shutdown(void) {
 	SoundSystem::pinstance = NULL;
 }
 
+bool SoundSystem::inited(void) {
+	return (SoundSystem::pinstance != NULL);
+}
+
 SoundSystem* SoundSystem::instance(void) {
 	EASSERT(SoundSystem::pinstance != NULL && "Did you run SoundSystem::init() ?");
 

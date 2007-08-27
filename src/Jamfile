@@ -49,6 +49,7 @@ SOURCE = Config.cpp
 SOURCE_GUI = XSet.cpp
 			 ExpandableGroup.cpp
 			 IconChooser.cpp 
+			 MessageBox.cpp
 			 SevenSeg.cpp ;
 
 if $(FLTKLIBS) {

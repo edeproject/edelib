@@ -161,6 +161,12 @@ class EDELIB_API IconTheme
 		static void shutdown(void);
 
 		/**
+		 * Return true if init() was called, but not shutdown().
+		 * Otherwise return false.
+		 */
+		static bool inited(void);
+
+		/**
 		 * Appends directory to the list of directories where to
 		 * look named theme. Usually after this you should
 		 * call IconTheme::load();

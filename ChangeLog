@@ -1,3 +1,10 @@
+2007-08-27  Sanel <karijes@users.sourceforge.net>
+
+	* Added MessageBox class
+	* Added inited() to IconTheme and SoundSystem
+	* message(), ask(), input(), alert(), password() in MessageBox.cpp
+	* Dumped Ask.{cpp,h}
+
 2007-08-19  Sanel <karijes@users.sourceforge.net>
 
 	* String code beautify (remove this before commit)

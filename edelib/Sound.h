@@ -71,6 +71,12 @@ class EDELIB_API SoundSystem {
 		static void shutdown(void);
 
 		/**
+		 * Return true if init() was called, but not shutdown().
+		 * Otherwise return false.
+		 */
+		static bool inited(void);
+
+		/**
 		 * Plays given file. Ogg format is assumed.
 		 *
 		 * \return true if all went fine, otherwise false

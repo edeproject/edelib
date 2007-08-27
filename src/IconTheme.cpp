@@ -203,6 +203,10 @@ void IconTheme::shutdown(void) {
 	IconTheme::pinstance = NULL;
 }
 
+bool IconTheme::inited(void) {
+	return (IconTheme::pinstance != NULL);
+}
+
 IconTheme* IconTheme::instance(void) {
 	EASSERT(IconTheme::pinstance != NULL && "Did you run IconTheme::init() ?");
 	return IconTheme::pinstance;
