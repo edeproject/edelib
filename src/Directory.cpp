@@ -311,7 +311,7 @@ const char* dir_separator(void) {
 	return "/";
 }
 
-bool dir_list(const char* dir, list<String>& lst, bool full_path, bool show_hidden) {
+bool dir_list(const char* dir, list<String>& lst, bool full_path, bool show_hidden, bool clear) {
 	if(!dir_readable(dir))
 		return false;
 
@@ -324,7 +324,8 @@ bool dir_list(const char* dir, list<String>& lst, bool full_path, bool show_hidd
 	if(n < 0)
 		return false;
 
-	lst.clear();
+	if(clear)
+		lst.clear();
 
 	bool have_sep;
 	if(str_ends(dirstr.c_str(), dir_separator()))

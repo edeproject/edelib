@@ -316,6 +316,8 @@ Config::~Config() {
 bool Config::load(const char* fname) {
 	EASSERT(fname != NULL);
 
+	clear();
+
 #ifdef CONFIG_USE_STDIO
 	FILE *f = fopen(fname, "r");
 	if (!f) {
@@ -599,7 +601,6 @@ bool Config::get(const char* section, const char* key, int& ret, int deflt) {
 
 bool Config::get(const char* section, const char* key, bool& ret, bool deflt) {
 	GET_VALUE(section, key, ret, deflt);
-	//ret = (bool)atoi(value);
 
 	str_tolower((unsigned char*)value);
 	int len = strlen(value);

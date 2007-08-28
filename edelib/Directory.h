@@ -124,10 +124,10 @@ EDELIB_API const char* dir_separator(void);
  * \param lst is a content of directory
  * \param full_path if set will append directory name to the each entry
  * \param show_hidden if set will show hidden files
+ * \param clear if set (default yes) will clear previous lst content
  */
-EDELIB_API bool dir_list(const char* dir, list<String>& lst, bool full_path = false, bool show_hidden = false);
-
-//EDELIB_API bool dir_list(const char* dir, vector<String>& lst, bool full_path = false, bool show_hidden = false);
+EDELIB_API bool dir_list(const char* dir, list<String>& lst, bool full_path = false, 
+		bool show_hidden = false, bool clear = true);
 
 
 EDELIB_NS_END

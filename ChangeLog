@@ -1,3 +1,9 @@
+2007-08-28  Sanel <karijes@users.sourceforge.net>
+
+	* Added clear parameter to dir_list()
+	* Fixed a bug in Config; multiple load() calls would _append_ data, not
+	clear previous one. Now it will do opposite. Uh...
+
 2007-08-27  Sanel <karijes@users.sourceforge.net>
 
 	* Added MessageBox class

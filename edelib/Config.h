@@ -159,7 +159,7 @@ class EDELIB_API Config {
 		Config();
 		~Config();
 		/**
-		 * Access custom file on file system.
+		 * Load file. Config's internal content will be cleared.
 		 *
 		 * \return true if file reading was ok, otherwise false.
 		 * \param fname path to config file.
