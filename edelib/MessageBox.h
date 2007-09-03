@@ -23,6 +23,12 @@
 
 #define MSGBOX_MAX_BUTTONS 3 // Max buttons in dialog
 
+#define MSGBOX_ICON_ERROR    "dialog-error"
+#define MSGBOX_ICON_INFO     "dialog-information"
+#define MSGBOX_ICON_PASSWORD "dialog-password"
+#define MSGBOX_ICON_WARNING  "dialog-warning"
+#define MSGBOX_ICON_QUESTION "dialog-question"
+
 EDELIB_NS_BEGIN
 
 /**
@@ -65,7 +71,7 @@ enum MessageBoxButtonType {
  *    // add button
  *    mb.add_button("&Close");
  *    // show dialog
- *    mb.run();
+ *    mb.run_plain();
  * \endcode
  *
  * This sample will run dialog with provided text and one 'Close' button.
@@ -117,7 +123,7 @@ enum MessageBoxButtonType {
  *    mb.set_text("Would you like to quit");
  *    mb.add_button("&No", ...);
  *    mb.add_button("&Yes", ...);
- *    mb.run();
+ *    mb.run_plain();
  * \endcode
  * When multiple buttons are added, they should be added in reverse order, which means
  * that first added button will be at right edge of dialog and any further added will
@@ -128,7 +134,7 @@ enum MessageBoxButtonType {
  *    MessageBox mb(MSGBOX_INPUT);
  *    mb.set_text("Please input something");
  *    mb.add_button("&Close me", ...);
- *    mb.run();
+ *    mb.run_plain();
  *
  *    // when dialog is closed, getting input is like
  *    printf("You entered %s\n", mb.get_input());
@@ -148,7 +154,7 @@ enum MessageBoxButtonType {
  *    MessageBox mb(MSGBOX_INPUT_SECRET);
  *    mb.set_text("Please enter password");
  *    mb.add_button("&Close", MSGBOX_BUTTON_PLAIN, close_cb, &mb);
- *    mb.run();
+ *    mb.run_plain();
  *
  *    const char* ret = mb.get_input();
  *    if(ret)
@@ -156,6 +162,12 @@ enum MessageBoxButtonType {
  *    else
  *       printf("Nothing was entered");
  * \endcode
+ *
+ * Setting callbacks each time just to get some status can be cumbersome, so there is
+ * a run() function which is a shortcut for run_plain() with callbacks attached to each
+ * button. This function will close dialog and return number of pressed button (starting 
+ * from most right and 0); in case dialog was closed without pressing on any button
+ * (like calling hide() or closing it via window manager) it will return -1.
  */
 class MessageBox : public Fl_Window {
 	private:
@@ -179,6 +191,7 @@ class MessageBox : public Fl_Window {
 	public:
 		/**
 		 * Constructor which initialize internal data
+		 * \param t is MessageBoxType type
 		 */
 		MessageBox(MessageBoxType t = MSGBOX_PLAIN);
 
@@ -189,20 +202,24 @@ class MessageBox : public Fl_Window {
 
 		/**
 		 * Set message text
+		 * \param txt is message text
 		 */
 		void set_text(const char* txt);
 
 		/**
-		 * Set icon giving absolute path to one. If icon could not
-		 * be loaded, it will do nothing.
+		 * Set icon giving absolute path
+		 * \return true if icon was able to set
+		 * \param path is full path to icon
 		 */
-		void set_icon(const char* path);
+		bool set_icon(const char* path);
 
 		/**
 		 * Set icon using loaded theme. Given icon name should not
 		 * have an extension, nor should have path in it's name.
+		 * \return true if icon was found
+		 * \param name is icon name (without path and extension)
 		 */
-		void set_theme_icon(const char* name);
+		bool set_theme_icon(const char* name);
 
 		/**
 		 * Set XPM icon. Parameter should be pointer to XPM array.
@@ -252,9 +269,19 @@ class MessageBox : public Fl_Window {
 		void clear(MessageBoxType t = MSGBOX_PLAIN);
 
 		/**
-		 * Runs dialog untill called hide() or dialog was closed in normal way (clicking X in titlebar).
+		 * Runs dialog until called hide() or dialog was closed in normal way (clicking X in titlebar).
+		 * \param center if set, dialog will be centered at the screen
 		 */
-		void run(void);
+		void run_plain(bool center = true);
+
+		/**
+		 * Runs dialog until pressed some of it's buttons or was called hide() on dialog. 
+		 * \return -1 if nothing was pressed (but window was closed) or number of pressed button, starting
+		 *    from 0. Also, buttons are counted from right (most right, if pressed will be 0, second will
+		 *    be 1 and so).
+		 * \param center if set, dialog will be centered at the screen
+		 */
+		int run(bool center = true);
 };
 
 /**

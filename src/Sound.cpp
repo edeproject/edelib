@@ -14,6 +14,8 @@
 #include <edelib/econfig.h>
 #include <edelib/Debug.h>
 
+#include "ThreadableMember.h"
+
 #ifdef USE_SOUNDS
 	#include <vorbis/vorbisfile.h>
 	#include <vorbis/codec.h>
@@ -25,6 +27,10 @@ SoundSystem* SoundSystem::pinstance = NULL;
 
 SoundSystem::SoundSystem() {
 #ifdef USE_SOUNDS
+	default_driver = -1;
+	thread_id = 0;
+	thread_running = 0;
+
 	device = NULL;
 	ao_initialize();
 	default_driver = ao_default_driver_id();
@@ -36,6 +42,10 @@ SoundSystem::SoundSystem() {
 SoundSystem::~SoundSystem() {
 #ifdef USE_SOUNDS
 	ao_shutdown();
+	if(thread_running) {
+		EDEBUG(ESTRLOC ": Stopping running thread\n");
+		StopThread(thread_id);
+	}
 	EDEBUG(ESTRLOC ": SoundSystem shutdown\n");
 #endif
 }
@@ -61,18 +71,53 @@ bool SoundSystem::inited(void) {
 
 SoundSystem* SoundSystem::instance(void) {
 	EASSERT(SoundSystem::pinstance != NULL && "Did you run SoundSystem::init() ?");
-
 	return SoundSystem::pinstance;
 }
 
-bool SoundSystem::play(const char* fname) {
-	return SoundSystem::instance()->play_stream(fname);
+bool SoundSystem::play(const char* fname, bool block) {
+	int ret;
+	if(block)
+		ret = SoundSystem::instance()->play_stream(fname);
+	else
+		ret = SoundSystem::instance()->play_stream_in_background(fname);
+
+	return ret;
+}
+
+bool SoundSystem::playing(void) {
+	return SoundSystem::instance()->stream_playing();
+}
+
+void SoundSystem::stop(void) {
+	SoundSystem::instance()->stop_playing();
+}
+
+void SoundSystem::stop_playing(void) {
+	if(thread_running) {
+		StopThread(thread_id);
+		thread_running = 0;
+	}
+}
+
+bool SoundSystem::play_stream_in_background(const char* fname) {
+	// stop any running threads
+	stop_playing();
+
+	SoundSystem* si = SoundSystem::instance();
+
+	if(!RunInThread(*si, &SoundSystem::play_stream, fname, thread_id, &thread_running)) {
+		thread_running = false;
+		return false;
+	}
+
+	thread_running = true;
+	return true;
 }
 
 bool SoundSystem::play_stream(const char* fname) {
 #ifdef USE_SOUNDS
-
 	EASSERT(fname != NULL);
+
 	FILE* f = fopen(fname, "rb");
 	if(f == NULL) {
 		EWARNING("Can't open %s\n", fname);
@@ -111,7 +156,7 @@ bool SoundSystem::play_stream(const char* fname) {
 	device = ao_open_live(default_driver, &format, NULL);
 	//device = ao_open_live(ao_driver_id("oss"), &format, NULL);
 	if(device == NULL) {
-		EWARNING(ESTRLOC ": Can't open device");
+		EWARNING(ESTRLOC ": Can't open device\n");
 		ov_clear(&vf);
 		return false;
 	}
@@ -119,6 +164,7 @@ bool SoundSystem::play_stream(const char* fname) {
 	int current_section;
 	while(1) {
 		long ret = ov_read(&vf, pcm_out, sizeof(pcm_out), 0, 2, 1, &current_section);
+
 		if(ret == 0)
 			break;
 		else if(ret < 0)
@@ -129,7 +175,6 @@ bool SoundSystem::play_stream(const char* fname) {
 
 	ao_close(device);
 	device = NULL;
-
 	// NOTE: fclose(f) is not needed, since ov_clear() will close file
 	ov_clear(&vf);
 

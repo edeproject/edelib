@@ -47,6 +47,8 @@ class EDELIB_API SoundSystem {
 		ao_device* device;
 		ao_sample_format format;
 		int default_driver;
+		unsigned long int thread_id;
+		int thread_running;
 		char pcm_out[PCM_BUF_SIZE];
 #endif 
 		SoundSystem();
@@ -57,6 +59,9 @@ class EDELIB_API SoundSystem {
 	public:
 #ifndef SKIP_DOCS
 		bool play_stream(const char* fname);
+		bool play_stream_in_background(const char* fname);
+		void stop_playing(void);
+		bool stream_playing(void) { return thread_running; }
 		static SoundSystem* instance(void);
 #endif
 		/**
@@ -80,9 +85,23 @@ class EDELIB_API SoundSystem {
 		 * Plays given file. Ogg format is assumed.
 		 *
 		 * \return true if all went fine, otherwise false
-		 * \param  fname is full path to file
+		 * \param fname is full path to file
+		 * \param block if set to true (default), it will play file
+		 * in blocking mode, stopping program flow until playing was finished
 		 */
-		static bool play(const char* fname);
+		static bool play(const char* fname, bool block = 1);
+
+		/**
+		 * Only valid if play() is called in non-blocking mode. You should
+		 * call this function periodically to check if file playing was finished.
+		 */
+		static bool playing(void);
+
+		/**
+		 * Only valid if play() is called in non-blocking mode. It will stop
+		 * playing current stream.
+		 */
+		static void stop(void);
 };
 
 EDELIB_NS_END

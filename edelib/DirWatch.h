@@ -48,6 +48,7 @@ enum DirWatchReportFlags {
 	DW_REPORT_NONE   = -1,      ///< Not figured out what happened
 	DW_REPORT_CREATE = 0,       ///< A new item was created
 	DW_REPORT_MODIFY,           ///< Existing item was modified
+	DW_REPORT_RENAME,           ///< Existing item was renamed
 	DW_REPORT_DELETE            ///< Existing item was deleted
 };
 

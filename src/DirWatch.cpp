@@ -45,6 +45,7 @@ struct DirContentEntry {
 	time_t   atime;
 	time_t   ctime;
 	time_t   mtime;
+	off_t    size;
 };
 
 // watched directory
@@ -72,6 +73,10 @@ DirWatch* DirWatch::pinstance = NULL;
 #ifdef HAVE_DNOTIFY
 void dnotify_handler(int sig, siginfo_t* si, void* data) {
 	DirWatch::instance()->run_callback(si->si_fd);
+}
+
+void dnotify_overflow_handler(int sig, siginfo_t* si, void* data) {
+	EWARNING(ESTRLOC ": *** signal queue overflow ***\n");
 }
 #endif
 
@@ -127,6 +132,11 @@ void DirWatch::init_once(void) {
 		sigemptyset(&(act.sa_mask));
 		act.sa_flags = SA_SIGINFO;
 		sigaction(ENOTIFY_SIGNAL, &act, NULL);
+
+		/* let SIGIO catch realtime queue fills */
+		act.sa_sigaction = dnotify_overflow_handler;
+		sigemptyset(&(act.sa_mask));
+		sigaction(SIGIO, &act, NULL);
 	}
 #endif
 }
@@ -171,8 +181,10 @@ bool DirWatch::add_entry(const char* dir, int flags) {
 	init_once();
 	EASSERT(impl != NULL);
 
-	// return true even if entry is added
-	// TODO: entry can exists but have fd == -1, it will be report as added; fix this
+	/* 
+	 * return true even if entry is added
+	 * TODO: entry can exists but have fd == -1, it will be report as added; fix this
+	 */
 	if(have_entry(dir)) {
 		EDEBUG(ESTRLOC ": already %s registered, ignoring\n", dir);
 		return true;
@@ -289,11 +301,8 @@ void DirWatch::run_callback(int fd) {
 			EASSERT(en->what_changed == what && "Internal DirWatch error");
 		}
 
-		// filled from figure_changed()
-		int flag = en->changed_flag;
-
 		DirWatchCallback* cb = impl->callback;
-		cb(en->name.c_str(), what, flag, impl->callback_data);
+		cb(en->name.c_str(), what, en->changed_flag, impl->callback_data);
 	}
 }
 
@@ -335,6 +344,7 @@ void DirWatch::fill_content(DirWatchEntry* e) {
 		dc.atime = s.st_atime;
 		dc.mtime = s.st_mtime;
 		dc.ctime = s.st_ctime;
+		dc.size  = s.st_size;
 
 		e->content.push_back(dc);
 	}
@@ -393,7 +403,8 @@ const char* DirWatch::figure_changed(DirWatchEntry* e) {
 	 *
 	 * Here is catch too: if directory is too large scanning can take some
 	 * time; in the mean time, another event could be occured in the same directory
-	 * yielding miss. Really don't know how to handle these cases (at least for now).
+	 * yielding miss. The only way to handle this is to use some kind of queue
+	 * where events would be stored and in some interval send to client.
 	 */
 	if(!dir_list(e->name.c_str(), fresh, true))
 		return NULL;
@@ -402,107 +413,136 @@ const char* DirWatch::figure_changed(DirWatchEntry* e) {
 	unsigned int fresh_sz = fresh.size();
 	unsigned int sz = e->content.size();
 	bool rollower = false;
-	bool can_add = false;
+
+	e->changed_flag = DW_REPORT_NONE;
 
 	list<String>::iterator sit;
 	list<String>::iterator sit_end;
 
 	if(fresh_sz > sz) {
 		// file created
-		//EDEBUG(ESTRLOC ": ==> file created\n");
 		rollower = true;
 
 		if((fresh_sz - sz) != 1)
 			EWARNING(ESTRLOC ": new/stored missmatch sizes (%i) !!!\n", (fresh_sz - sz));
 
-		sit = fresh.begin();
-		sit_end = fresh.end();
+		if(e->flags & DW_CREATE) {
+			sit = fresh.begin();
+			sit_end = fresh.end();
 
-		for(; sit != sit_end; ++sit) {
-			if(!in_content_list(e->content, (*sit).c_str())) {
-				//EDEBUG(ESTRLOC ": ==> %i created %s\n", fresh_sz-sz, (*sit).c_str());
-				e->what_changed = (*sit).c_str();
-				e->changed_flag = DW_REPORT_CREATE;
-				break;
+			for(; sit != sit_end; ++sit) {
+				if(!in_content_list(e->content, (*sit).c_str())) {
+					/* EDEBUG(ESTRLOC ": ==> %i created %s\n", fresh_sz-sz, (*sit).c_str()); */
+					e->what_changed = (*sit).c_str();
+					e->changed_flag = DW_REPORT_CREATE;
+					break;
+				}
 			}
 		}
 	} else if (fresh_sz < sz) {
 		// file deleted
-		//EDEBUG(ESTRLOC ": ==> file deleted\n");
 		rollower = true;
 
 		if((sz - fresh_sz) != 1)
 			EWARNING(ESTRLOC ": stored/new missmatch sizes (%i) !!!\n", (sz - fresh_sz));
 
-		DirContentIter cit = e->content.begin();
-		DirContentIter cit_end = e->content.end();
+		if(e->flags & DW_DELETE) {
+			DirContentIter cit = e->content.begin();
+			DirContentIter cit_end = e->content.end();
 
-		for(; cit != cit_end; ++cit) {
-			if(!in_fresh_list(fresh, (*cit).name.c_str())) {
-				//EDEBUG(ESTRLOC ": ==> %i deleted %s\n", sz-fresh_sz, (*cit).name.c_str());
-				e->what_changed = (*cit).name.c_str();
-				e->changed_flag = DW_REPORT_DELETE;
-				break;
+			for(; cit != cit_end; ++cit) {
+				if(!in_fresh_list(fresh, (*cit).name.c_str())) {
+					/* EDEBUG(ESTRLOC ": ==> %i deleted %s\n", sz-fresh_sz, (*cit).name.c_str()); */
+					e->what_changed = (*cit).name.c_str();
+					e->changed_flag = DW_REPORT_DELETE;
+					break;
+				}
 			}
 		}
 	} else {
-		// nothing added/deleted then flags/size/etc. is changed
+		// nothing added/deleted then flags/size/etc. is changed or renamed
 		EASSERT(fresh_sz == sz && "DirWatch internal error; sizes mismatch");
 
-		sit = fresh.begin();
-		sit_end = fresh.end();
-		DirContentEntry* centry = NULL;
+		if(e->flags & DW_RENAME) {
+			DirContentIter cit = e->content.begin();
+			DirContentIter cit_end = e->content.end();
 
-		for(; sit != sit_end; ++sit) {
-			can_add = false;
-
-			// try to stat file first
-			if(lstat((*sit).c_str(), &new_stat) != 0) {
-				EWARNING(ESTRLOC ": lstat on %s failed\n", (*sit).c_str());
-				continue;
+			for(; cit != cit_end; ++cit) {
+				if(!in_fresh_list(fresh, (*cit).name.c_str())) {
+					e->what_changed = (*cit).name;
+					e->changed_flag = DW_REPORT_RENAME;
+					EDEBUG(" renamed %s\n", e->what_changed.c_str());
+					rollower = true;
+					break;
+				}
 			}
+		}
 
-			centry = in_content_list(e->content, (*sit).c_str());
-			if(!centry) {
-				// This can happened too. I'm not sure why; maybe kernel report events little bit later?
-				rollower = true;
-				//EDEBUG(ESTRLOC ": didnt find %s\n", (*sit).c_str());
-				break;
-			} else {
-				// TODO: add flags
-				if(new_stat.st_atime != centry->atime) {
-					//EDEBUG(ESTRLOC ": ==> modified (atime) %s\n", centry->name.c_str());
-					centry->atime = new_stat.st_atime;
-					can_add = true;
+		if(e->flags & (DW_ATTRIB | DW_MODIFY)) {
+			DirContentIter cit = e->content.begin();
+			DirContentIter cit_end = e->content.end();
+			sit = fresh.begin();
+			sit_end = fresh.end();
+
+			for(; (cit != cit_end) && (sit != sit_end); ++cit, ++sit) {
+				if((*cit).name != (*sit)) {
+					// file moved 
+					/* EDEBUG(ESTRLOC ": Name miss (%s != %s)\n", (*cit).name.c_str(), (*sit).c_str()); */
+					continue;
 				}
 
-				if(new_stat.st_ctime != centry->ctime) {
-					//EDEBUG(ESTRLOC ": ==> modified (ctime) %s\n", centry->name.c_str());
-					centry->ctime = new_stat.st_ctime;
-					can_add = true;
+				if(lstat((*sit).c_str(), &new_stat) != 0) {
+					EWARNING(ESTRLOC ": lstat on %s failed\n", (*sit).c_str());
+					continue;
 				}
 
-				if(new_stat.st_mtime != centry->mtime) {
-					//EDEBUG(ESTRLOC ": ==> modified (mtime) %s\n", centry->name.c_str());
-					centry->mtime = new_stat.st_mtime;
-					can_add = true;
-				}
+				if((e->flags & DW_MODIFY) && (*cit).size != new_stat.st_size) {
+					e->what_changed = (*cit).name;
+					/*
+					EDEBUG(" modified %s == %s (%i != %i)\n", 
+							e->what_changed.c_str(), (*sit).c_str(), (*cit).size, new_stat.st_size);
+					*/
 
-				// found it, then quit from loop
-				if(can_add) {
-					e->what_changed = (*sit).c_str();
 					e->changed_flag = DW_REPORT_MODIFY;
+					(*cit).size = new_stat.st_size;
+					// no rollower
+					return e->what_changed.c_str();
+				}
 
-					const char* ret = e->what_changed.c_str();
-					return ret;
+				
+				if((e->flags & DW_ATTRIB) && 
+						((*cit).atime != new_stat.st_atime) ||
+						((*cit).mtime != new_stat.st_mtime) ||
+						((*cit).ctime != new_stat.st_ctime)) {
+
+					e->what_changed = (*cit).name;
+
+					/*
+					EDEBUG(" attrib %s == %s (%i != %i) (%i != %i) (%i != %i)\n", 
+							e->what_changed.c_str(), (*sit).c_str(), 
+							(*cit).atime, new_stat.st_atime,
+							(*cit).mtime, new_stat.st_mtime,
+							(*cit).ctime, new_stat.st_ctime);
+					*/
+
+					e->changed_flag = DW_REPORT_MODIFY;
+					(*cit).atime = new_stat.st_atime;
+					(*cit).mtime = new_stat.st_mtime;
+					(*cit).ctime = new_stat.st_ctime;
+
+					// no rollower
+					return e->what_changed.c_str();
 				}
 			}
+
+			// missed name comparision (skip this event)
+			rollower = true;
 		}
 	}
 
 	if(rollower) {
 		// replace content
-		//EDEBUG(ESTRLOC ": ++> rollower\n");
+		// EDEBUG(ESTRLOC ": ++> rollower\n");
 		e->content.clear();
 
 		sit = fresh.begin();
@@ -519,6 +559,7 @@ const char* DirWatch::figure_changed(DirWatchEntry* e) {
 			dc.atime = new_stat.st_atime;
 			dc.mtime = new_stat.st_mtime;
 			dc.ctime = new_stat.st_ctime;
+			dc.size  = new_stat.st_size;
 
 			e->content.push_back(dc);
 		}

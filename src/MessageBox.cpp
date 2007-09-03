@@ -178,8 +178,14 @@ void MessageBox::fix_sizes(void) {
 		buttons[i]->position(buttons[i]->x() + xdiff + step, buttons[i]->y() + ydiff);
 }
 
-void MessageBox::run(void) {
+void MessageBox::run_plain(bool center) {
 	fix_sizes();
+
+	if(center) {
+		int X, Y, W, H;
+		Fl::screen_xywh(X, Y, W, H);
+		position(W/2 - w()/2, H/2 - h()/2);
+	}
 
 	if(!shown())
 		show();
@@ -188,31 +194,70 @@ void MessageBox::run(void) {
 		Fl::wait();
 }
 
+int MessageBox::run(bool center) {
+	if(!nbuttons) {
+		run_plain();
+		return -1;
+	}
+		
+	fix_sizes();
+
+	if(center) {
+		int X, Y, W, H;
+		Fl::screen_xywh(X, Y, W, H);
+		position(W/2 - w()/2, H/2 - h()/2);
+	}
+
+	if(!shown())
+		show();
+
+	Fl_Widget* widget;
+	while(1) {
+		widget = Fl::readqueue();
+		if(!widget) 
+			Fl::wait();
+
+		if(widget == this) {
+			hide();
+			return -1;
+		}
+
+		for(int i = 0; i < nbuttons; i++) {
+			if(buttons[i] == widget) {
+				hide();
+				return i;
+			}
+		}
+	}
+
+	hide();
+	return -1;
+}
+
 void MessageBox::set_text(const char* t) {
 	txt->copy_label(t);
 }
 
-void MessageBox::set_icon(const char* path) {
+bool MessageBox::set_icon(const char* path) {
 	fl_register_images();
 
 	Fl_Image* i = Fl_Shared_Image::get(path);
-	if(i)
-		img->image(i);
+	if(!i)
+		return false;
+
+	img->image(i);
+	return true;
 }
 
-void MessageBox::set_theme_icon(const char* name) {
+bool MessageBox::set_theme_icon(const char* name) {
 	if(!IconTheme::inited())
-		return;
+		return false;
 
 	String p = IconTheme::get(name, ICON_SIZE_MEDIUM);
 	if(p.empty())
-		return;
+		return false;
 
-	fl_register_images();
-
-	Fl_Image* i = Fl_Shared_Image::get(p.c_str());
-	if(i)
-		img->image(i);
+	return set_icon(p.c_str());
 }
 
 void MessageBox::set_xpm_icon(const char* const* arr) {
@@ -242,25 +287,12 @@ void MessageBox::focus_button(int b) {
 #define BUFF_LEN 1024
 static char internal_buff[BUFF_LEN];
 static char internal_ret_buff[BUFF_LEN];
-static int  retval = 0;
 
 static char msg_icon[BUFF_LEN]    = {0};
 static char alert_icon[BUFF_LEN]  = {0};
 static char ask_icon[BUFF_LEN]    = {0};
 static char input_icon[BUFF_LEN]  = {0};
 static char passwd_icon[BUFF_LEN] = {0};
-
-void close_cb(Fl_Widget*, void* m) {
-	MessageBox* mb = (MessageBox*)m;
-	retval = 0;
-	mb->hide();
-}
-
-void yes_cb(Fl_Widget*, void* m) {
-	MessageBox* mb = (MessageBox*)m;
-	retval = 1;
-	mb->hide();
-}
 
 #define DO_COPY(src, dest) \
 	if(src) { \
@@ -274,8 +306,6 @@ void themed_dialog_icons(const char* msg, const char* alert, const char* ask, co
 	DO_COPY(ask, ask_icon)
 	DO_COPY(input, input_icon)
 	DO_COPY(password, passwd_icon)
-
-	printf("%s\n", alert_icon);
 }
 
 void clear_dialog_icons(void) {
@@ -294,7 +324,7 @@ void message(const char *fmt, ...) {
 
 	MessageBox mb;
 	mb.set_text(internal_buff);
-	mb.add_button(_("&Close"), MSGBOX_BUTTON_PLAIN, close_cb, &mb);
+	mb.add_button(_("&Close"));
 
 	if(msg_icon[0] != 0)
 		mb.set_theme_icon(msg_icon);
@@ -312,13 +342,14 @@ void alert(const char *fmt, ...) {
 
 	MessageBox mb;
 	mb.set_text(internal_buff);
-	mb.add_button(_("&Close"), MSGBOX_BUTTON_PLAIN, close_cb, &mb);
+	mb.add_button(_("&Close"));
 
 	if(alert_icon[0] != 0)
 		mb.set_theme_icon(alert_icon);
 	else
 		mb.set_xpm_icon(warning_xpm);
 
+	mb.set_modal();
 	mb.run();
 }
 
@@ -328,20 +359,18 @@ int ask(const char *fmt, ...) {
 	vsnprintf(internal_buff, BUFF_LEN, fmt, ap);
 	va_end(ap);
 
-	retval = 0;
-
 	MessageBox mb;
 	mb.set_text(internal_buff);
-	mb.add_button(_("&No"), MSGBOX_BUTTON_PLAIN, close_cb, &mb);
-	mb.add_button(_("&Yes"), MSGBOX_BUTTON_PLAIN, yes_cb, &mb);
+	mb.add_button(_("&No"));
+	mb.add_button(_("&Yes"));
 
 	if(ask_icon[0] != 0)
 		mb.set_theme_icon(ask_icon);
 	// FIXME: set_xpm_icon()
 
-	mb.run();
-
-	return retval;
+	mb.set_modal();
+	int ret = mb.run();
+	return (ret > 0 ? ret : 0);
 }
 
 const char* input(const char *fmt, const char *deflt, ...) {
@@ -350,24 +379,23 @@ const char* input(const char *fmt, const char *deflt, ...) {
 	vsnprintf(internal_buff, BUFF_LEN, fmt, ap);
 	va_end(ap);
 
-	retval = 0;
-
 	MessageBox mb(MSGBOX_INPUT);
 	mb.set_text(internal_buff);
 
 	if(deflt)
 		mb.set_input(deflt);
 
-	mb.add_button(_("&Cancel"), MSGBOX_BUTTON_PLAIN, close_cb, &mb);
-	mb.add_button(_("&OK"), MSGBOX_BUTTON_PLAIN, yes_cb, &mb);
+	mb.add_button(_("&Cancel"));
+	mb.add_button(_("&OK"));
 
 	if(input_icon[0] != 0)
 		mb.set_theme_icon(input_icon);
 	// FIXME: set_xpm_icon()
 	
-	mb.run();
+	mb.set_modal();
+	int ret = mb.run();
 
-	if(!retval)
+	if(ret <= 0)
 		return NULL;
 	if(!mb.get_input())
 		return NULL;
@@ -384,24 +412,23 @@ const char* password(const char *fmt, const char *deflt, ...) {
 	vsnprintf(internal_buff, BUFF_LEN, fmt, ap);
 	va_end(ap);
 
-	retval = 0;
-
 	MessageBox mb(MSGBOX_INPUT_SECRET);
 	mb.set_text(internal_buff);
 
 	if(deflt)
 		mb.set_input(deflt);
 
-	mb.add_button(_("&Cancel"), MSGBOX_BUTTON_PLAIN, close_cb, &mb);
-	mb.add_button(_("&OK"), MSGBOX_BUTTON_PLAIN, yes_cb, &mb);
+	mb.add_button(_("&Cancel"));
+	mb.add_button(_("&OK"));
 
 	if(passwd_icon[0] != 0)
 		mb.set_theme_icon(passwd_icon);
 	// FIXME: set_xpm_icon()
 
-	mb.run();
+	mb.set_modal();
+	int ret = mb.run();
 
-	if(!retval)
+	if(ret <= 0)
 		return NULL;
 	if(!mb.get_input())
 		return NULL;

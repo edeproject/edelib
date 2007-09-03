@@ -1,3 +1,25 @@
+2007-09-03  Sanel <karijes@users.sourceforge.net>
+
+	* Hopefully better scanning in DirWatch. Still sucks, but less than
+	previous version
+
+2007-09-02  Sanel <karijes@users.sourceforge.net>
+
+	* Sound can be run in non-blocking mode via additional thread. Not fully 
+	tested.
+	* One line less in TODO ;)
+
+2007-09-01  Sanel <karijes@users.sourceforge.net>
+
+	* MessageBox run_plain() behaves as old run()
+	* run() now returns button pressed number and closes dialog
+	* set_icon() and set_theme_icon() returns status if icon was set
+	* ask()/message()/etc. are modal
+	* Added fd.o icon names in MessageBox
+	* run() and run_plain() in MessageBox accepts flag for dialog centering
+	* Removed that silly List to list define; now list is used for STL
+	compatibility
+
 2007-08-28  Sanel <karijes@users.sourceforge.net>
 
 	* Added clear parameter to dir_list()

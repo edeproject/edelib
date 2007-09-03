@@ -5,7 +5,6 @@ TODO list:
  * in Config, don't allow [] sections
  * what should set_textdomain_dir() and set_textdomain() return when NLS is disabled ?
  * Sound should have explicit option for setting various drivers
- * non-blocking Sound
  * documentation install strangely depends on xxx/doc/edelib-xxx/html directory; how ?
  * more checks on GenDocumentation since /usr/bin/env gawk -f does not work
  * add local snprintf/vsnprintf/scandir/dirent(???)

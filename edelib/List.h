@@ -61,7 +61,7 @@ struct ListIterator {
 #endif
 
 /**
- * \class List
+ * \class list
  * \brief Linked list class
  *
  * This implementation is very similar to std::list, providing subset of the 
@@ -76,11 +76,11 @@ struct ListIterator {
  * Using list is the same as for std::list; all traversal is done via iterators.
  * Here is sample:
  * \code
- *   List<int> ls;
+ *   list<int> ls;
  *   ls.push_back(34);
  *   ls.push_back(4);
  *   ls.push_front(34);
- *   List<int>::iterator it = ls.begin();
+ *   list<int>::iterator it = ls.begin();
  *
  *   while(it != ls.end()) {
  *     printf("%i\n", (*it));
@@ -91,31 +91,31 @@ struct ListIterator {
  * Note that working with list iterators, great care must be taken where and when to retrieve
  * iterators for start and end of the list. For example, this code is <b>invalid</b>:
  * \code
- *   List<int> ls;
+ *   list<int> ls;
  *
  *   // BAD, pointer to first element will be changed if list is empty
- *   List<int>::iterator it = ls.begin();
+ *   list<int>::iterator it = ls.begin();
  *   ls.push_back(34);
  *
  *   // or...
- *   List<int>::iterator it = ls.begin();
+ *   list<int>::iterator it = ls.begin();
  *   // push_front() will invalidate previously retrieved iterator
  *   ls.push_front(34);
  *
  *   // or...
  *   ls.push_front(34);
- *   List<int>::iterator it = ls.begin();
+ *   list<int>::iterator it = ls.begin();
  *   // insert at the start invalidated begin()
  *   ls.insert(it, 33);
  * \endcode
  *
  * Correct way is retrieve iterator <b>just before</b> iterator will be used, like:
  * \code
- *   List<int> ls;
+ *   list<int> ls;
  *   ls.push_back(34);
  *   ls.push_back(4);
  *   ls.push_front(4);
- *   List<int>::iterator it = ls.begin();
+ *   list<int>::iterator it = ls.begin();
  *   // rest...
  * \endcode
  *
@@ -124,7 +124,7 @@ struct ListIterator {
  * always crash when above cases occurs, so be carefull :-P.
  */
 template <typename T>
-class List {
+class list {
 	private:
 		typedef ListNode<T> Node;
 		typedef unsigned int size_type;
@@ -132,8 +132,8 @@ class List {
 		size_type sz;
 		Node* tail;
 
-		List(const List&);
-		List& operator=(const List&);
+		list(const list&);
+		list& operator=(const list&);
 
 	public:
 		/*
@@ -163,12 +163,12 @@ class List {
 		/**
 		 * Creates an empty list
 		 */
-		List() : sz(0), tail(0) { }
+		list() : sz(0), tail(0) { }
 
 		/**
 		 * Clears data
 		 */
-		~List() { clear(); } 
+		~list() { clear(); } 
 
 		/**
 		 * Clear all data
@@ -281,8 +281,6 @@ class List {
 		 */
 		bool empty(void) const { return sz == 0; }
 };
-
-#define list List
 
 EDELIB_NS_END
 
