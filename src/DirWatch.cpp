@@ -66,7 +66,7 @@ struct DirWatchImpl {
 };
 
 typedef list<DirContentEntry>::iterator DirContentIter;
-typedef list<DirWatchEntry*>::iterator DirWatchIter;
+typedef list<DirWatchEntry*>::iterator  DirWatchIter;
 
 DirWatch* DirWatch::pinstance = NULL;
 

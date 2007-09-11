@@ -132,6 +132,7 @@ bool DesktopFile::try_exec(char* val, int len) {
 	}
 
 	strncpy(val, buff, len);
+	val[len-1] = '\0';
 	delete [] buff;
 	return true;
 }

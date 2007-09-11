@@ -126,6 +126,14 @@ const String& MimeType::comment(void) {
 	return mcmt;
 }
 
+bool MimeType::subclass_of(const char* mime) {
+	EASSERT(mime != NULL);
+	if(!(status & MIME_LOADED))
+		return false;
+
+	return (xdg_mime_mime_type_subclass(mtype.c_str(), mime) == 1);
+}
+
 const String& MimeType::icon_name(void) {
 	if(!(status & MIME_LOADED) && mtype.empty())
 		return micon;

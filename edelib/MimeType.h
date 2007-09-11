@@ -79,6 +79,12 @@ class EDELIB_API MimeType {
 		const String& comment(void);
 
 		/**
+		 * Returns true if current mime type is subclass of given parameter name,
+		 * or false if not.
+		 */
+		bool subclass_of(const char* mime);
+
+		/**
 		 * Return the name of potential icon, using name according to freedesktop.org
 		 * icon name specification. It will <b>not</b> return file with extension
 		 * since further those could be explicitely choosed, <b>nor</b> will return

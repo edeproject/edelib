@@ -1,3 +1,8 @@
+2007-09-09  Sanel <karijes@users.sourceforge.net>
+
+	* In MimeType added subclass_of() to check mime parents
+	* In DesktopFile try_exec(), strncpy known stuff ;)
+
 2007-09-03  Sanel <karijes@users.sourceforge.net>
 
 	* Hopefully better scanning in DirWatch. Still sucks, but less than

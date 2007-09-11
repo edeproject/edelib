@@ -133,9 +133,8 @@ UT_FUNC(ListComparison, "Test std::list comparison")
 	list<int> els;
 	list<int>::iterator eit;
 
-	// uh, remove that define !!!
-	std::List<int> sls;
-	std::List<int>::iterator sit;
+	std::list<int> sls;
+	std::list<int>::iterator sit;
 
 	for(int i = 0; i < 10; i++) {
 		els.push_back(i);
