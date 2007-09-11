@@ -21,7 +21,7 @@
 #include <FL/Fl_Input.h>
 #include <FL/Fl_Pixmap.h>
 
-#define MSGBOX_MAX_BUTTONS 3 // Max buttons in dialog
+#define MSGBOX_MAX_BUTTONS 4 // Max buttons in dialog
 
 #define MSGBOX_ICON_ERROR    "dialog-error"
 #define MSGBOX_ICON_INFO     "dialog-information"
