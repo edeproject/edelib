@@ -117,7 +117,7 @@ enum MessageBoxButtonType {
  *       be deleted twice, crashing program probably.
  *
  * Adding more buttons is done via calling add_button() multiple times. You can add
- * max 3 buttons to dialog. This is dialog with 'Yes' and 'No' buttons:
+ * max 4 buttons to dialog. This is dialog with 'Yes' and 'No' buttons:
  * \code
  *    MessageBox mb;
  *    mb.set_text("Would you like to quit");
