@@ -98,6 +98,12 @@ UT_FUNC(DateOperatorsTest, "Test date operators")
 	UT_VERIFY( d2.month() == d1.month() );
 	UT_VERIFY( d2.day() == d1.day() );
 	UT_VERIFY( d2.days_in_month() == d1.days_in_month() );
+
+	d1.set(2004, 5, 5);
+	d2.set(2005, 5, 5);
+
+	UT_VERIFY( d2 > d1 );
+	UT_VERIFY( d2 != d1 );
 }
 
 UT_FUNC(DateCaveat, "Test date caveat")
