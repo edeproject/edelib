@@ -104,6 +104,62 @@ UT_FUNC(DateOperatorsTest, "Test date operators")
 
 	UT_VERIFY( d2 > d1 );
 	UT_VERIFY( d2 != d1 );
+
+	++d1;
+	UT_VERIFY( d1.year() == 2004 );
+	UT_VERIFY( d1.month() == 5 );
+	UT_VERIFY( d1.day() == 6 );
+
+	d1.set(2004, 1, 30);
+	++d1;
+	UT_VERIFY( d1.year() == 2004 );
+	UT_VERIFY( d1.month() == 1 );
+	UT_VERIFY( d1.day() == 31 );
+
+	d1.set(2004, 1, 31);
+	++d1;
+	UT_VERIFY( d1.year() == 2004 );
+	UT_VERIFY( d1.month() == 2 );
+	UT_VERIFY( d1.day() == 1 );
+
+	// 2004 was leap year
+	d1.set(2004, 2, 29);
+	++d1;
+	UT_VERIFY( d1.year() == 2004 );
+	UT_VERIFY( d1.month() == 3 );
+	UT_VERIFY( d1.day() == 1 );
+
+	d1.set(2004, 12, 31);
+	++d1;
+	UT_VERIFY( d1.year() == 2005 );
+	UT_VERIFY( d1.month() == 1 );
+	UT_VERIFY( d1.day() == 1 );
+
+	// decrements
+	d1.set(2004, 5, 5);
+	--d1;
+	UT_VERIFY( d1.year() == 2004 );
+	UT_VERIFY( d1.month() == 5 );
+	UT_VERIFY( d1.day() == 4 );
+
+	d1.set(2005, 1, 1);
+	--d1;
+	UT_VERIFY( d1.year() == 2004 );
+	UT_VERIFY( d1.month() == 12 );
+	UT_VERIFY( d1.day() == 31 );
+
+	// 2004 was leap year
+	d1.set(2004, 3, 1);
+	--d1;
+	UT_VERIFY( d1.year() == 2004 );
+	UT_VERIFY( d1.month() == 2 );
+	UT_VERIFY( d1.day() == 29 );
+
+	d1.set(2004, 5, 5);
+	d2 = d1;
+	--d1;
+	++d1;
+	UT_VERIFY( d1 == d2 );
 }
 
 UT_FUNC(DateCaveat, "Test date caveat")
@@ -123,8 +179,8 @@ UT_FUNC(TimeTest, "Test time")
 	UT_VERIFY( t.sec() == 10 );
 	UT_VERIFY( t.msec() == 233 );
 
-	UT_VERIFY( t.is_valid(25, 0, 0, 0) == false );
-	UT_VERIFY( t.is_valid(0, 0, 0, 0) == true );
+	UT_VERIFY( Time::is_valid(25, 0, 0, 0) == false );
+	UT_VERIFY( Time::is_valid(0, 0, 0, 0) == true );
 }
 
 UT_FUNC(TimeOperatorsTest, "Test time operators")

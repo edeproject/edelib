@@ -17,22 +17,51 @@
 
 EDELIB_NS_BEGIN
 
+/**
+ * \class TimeZone
+ * \brief A class for getting time from desired time zone
+ */
 class EDELIB_API TimeZone {
 	private:
-		char* pathval;
 		char* zoneval;
-		char* tzone;
+		char* zcode;
 		unsigned long timeval;
 
-		bool load(const char* path, const char* zone);
+		bool load(const char* zone);
 		bool load_local(void);
 		void clear(void);
 	public:
+		/**
+		 * Empty constructor
+		 */
 		TimeZone();
+
+		/**
+		 * Clears internal data
+		 */
 		~TimeZone();
-		bool set(const char* path, const char* zone);
-		unsigned long time(void);
-		const char* get_timezone(void);
+
+		/**
+		 * Set zone. Previously set zone (and it's data) will be cleared
+		 * replacing with the current one
+		 */
+		bool set(const char* zone);
+
+		/**
+		 * Return code from set zone
+		 */
+		const char* code(void)   { return (zcode ? zcode : "??"); }
+
+		/**
+		 * Return zone name
+		 */
+		const char* zone(void)   { return (zoneval ? zoneval : "Unknown"); }
+
+		/**
+		 * Return time from given zone. Time is encoded number (same as time_t type)
+		 * so it can be used with various time functions that accepts time_t type
+		 */
+		unsigned long time(void) { return timeval; }
 };
 
 /**
@@ -191,26 +220,8 @@ class EDELIB_API Date {
 		 */
 		bool system_set(void);
 
-		/**
-		 * Check if given year is leap year
-		 *
-		 * \return true if it is or false if not
-		 * \param y is year to check
-		 */
-		bool leap_year(unsigned short y) const;
-
 		/** Check internal year value if is leap year */
 		bool leap_year(void) const { return leap_year(yearval); }
-
-		/**
-		 * Validate given year/month/day values, including leap year check
-		 *
-		 * \return true if date is correct, or false if not
-		 * \param y is year
-		 * \param m is month
-		 * \param d is day
-		 */
-		bool is_valid(unsigned short y, unsigned char m, unsigned char d) const;
 
 		/** Return internal day value */
 		unsigned char  day(void) const    { return dayval; }
@@ -233,15 +244,6 @@ class EDELIB_API Date {
 		 */
 		const char*    month_name(void);
 
-		/**
-		 * Return number of days in given year and month. Given data must
-		 * be valid date
-		 *
-		 * \return number of days for given year/month
-		 * \param y is year to check
-		 * \param m is month to check
-		 */
-		unsigned char  days_in_month(unsigned short y, unsigned char m) const; 
 
 		/** Return number of days of internal year/month value */
 		unsigned char  days_in_month() const; 
@@ -254,6 +256,56 @@ class EDELIB_API Date {
 
 		/** Return day of year of currently set date */
 		unsigned short day_of_year() const;
+
+		/**
+		 * Increase current date by one. First day value is increased, then if
+		 * that day is last in month, month is increased, then if that month is
+		 * last in year, year is increased.
+		 */
+		Date& operator++();
+
+		/**
+		 * Suffix increment
+		 */
+		Date operator++(int);
+
+		/**
+		 * Reverse from operator++()
+		 */
+		Date& operator--();
+
+		/**
+		 * Suffix decrement
+		 */
+		Date operator--(int);
+
+		/**
+		 * Check if given year is leap year
+		 *
+		 * \return true if it is or false if not
+		 * \param y is year to check
+		 */
+		static bool leap_year(unsigned short y);
+
+		/**
+		 * Return number of days in given year and month. Given data must
+		 * be valid date
+		 *
+		 * \return number of days for given year/month
+		 * \param y is year to check
+		 * \param m is month to check
+		 */
+		static unsigned char days_in_month(unsigned short y, unsigned char m); 
+
+		/**
+		 * Validate given year/month/day values, including leap year check
+		 *
+		 * \return true if date is correct, or false if not
+		 * \param y is year
+		 * \param m is month
+		 * \param d is day
+		 */
+		static bool is_valid(unsigned short y, unsigned char m, unsigned char d);
 };
 
 #ifndef SKIP_DOCS
@@ -286,7 +338,6 @@ class EDELIB_API Time {
 
 		~Time();
 		bool set(unsigned char h, unsigned char m, unsigned char s = 0, unsigned short ms = 0);
-		bool is_valid(unsigned char h, unsigned char m, unsigned char s, unsigned short ms);
 		void set_now(void);
 
 		bool system_set(void);
@@ -295,6 +346,8 @@ class EDELIB_API Time {
 		unsigned char min(void) const  { return minval; }
 		unsigned char sec(void) const  { return secval; }
 		unsigned short msec(void) const { return msecval; }
+
+		static bool is_valid(unsigned char h, unsigned char m, unsigned char s, unsigned short ms);
 };
 
 #ifndef SKIP_DOCS

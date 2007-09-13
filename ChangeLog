@@ -1,3 +1,11 @@
+2007-09-13  Sanel <karijes@users.sourceforge.net>
+
+	* Made some Date and Time members static
+	* TimeZone fix for correct time retreival for given zone
+	* datetime.cpp test updated too
+	* Assertion in days_in_month() for month parameter
+	* ++ and -- operators in Date
+
 2007-09-11  Sanel <karijes@users.sourceforge.net>
 
 	* Test in datetime.cpp for Vedran's fix in operator>()

@@ -24,20 +24,23 @@
 #include <sys/time.h> // for settimeofday()
 #endif
 
-// to keep in one place :P
-#define YEAR_UNIX(y)    (y - 1900)
-#define YEAR_NORMAL(y)  (y + 1900)
+#define YEAR_BASE       1900
+#define YEAR_UNIX(y)    (y - YEAR_BASE)
+#define YEAR_NORMAL(y)  (y + YEAR_BASE)
 #define MONTH_UNIX(m)   (m - 1)
 #define MONTH_NORMAL(m) (m + 1)
 
+extern char* tzname[2];
+extern int   daylight;
+
 EDELIB_NS_BEGIN
 
-const char month_days[2][12] = {
+static const char month_days[2][12] = {
 	{31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31},
 	{31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31} //Leap year
 };
 
-const short days_in_year[2][12] = {
+static const short days_in_year[2][12] = {
 	{0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334 },
 	{0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335} //Leap year
 };
@@ -76,10 +79,10 @@ void get_system_time(struct tm* tt, bool local) {
 		struct tm* tcurr;
 		tcurr = localtime(&ct);
 		/*
-		* copy values;
-		* FIXME: really needed since localtime()
-		* returnst pointer to internal static data ?
-		*/
+		 * copy values;
+		 * FIXME: really needed since localtime()
+		 * returnst pointer to internal static data ?
+		 */
 		*tt = *tcurr;
 #endif
 	} else {
@@ -94,27 +97,18 @@ void get_system_time(struct tm* tt, bool local) {
 	}
 }
 
-TimeZone::TimeZone() : pathval(0), zoneval(0), tzone(0), timeval(0) { }
+TimeZone::TimeZone() : zoneval(0), zcode(0), timeval(0) { 
+}
 
 TimeZone::~TimeZone() {
 	clear();
 }
 
-bool TimeZone::load(const char* path, const char* zone) {
-	if (!path || !zone)
+bool TimeZone::load(const char* zone) {
+	if (!zone)
 		return false;
 
-	pathval = strdup(path);
 	zoneval = strdup(zone);
-
-	unsigned int len = strlen(pathval) + strlen(zoneval) + 5;
-	char* fullpth = new char[len];
-
-	snprintf(fullpth, len, "%s/%s", pathval, zoneval);
-	// TODO: file_exists
-
-	delete [] fullpth;
-
 	/*
 	 * localtime() depends on TZ environment variable, and
 	 * setting it to desired zone, it will yield correct time
@@ -125,22 +119,35 @@ bool TimeZone::load(const char* path, const char* zone) {
 	 */
 	char* old = 0;
 	char* otz = getenv("TZ");
-	if (otz)
+	if(otz)
 		old = strdup(otz);
-	setenv("TZ", zoneval, 1);
 
 	struct tm tmp;
 	time_t curr = ::time(0);
+
+	setenv("TZ", zoneval, 1);
+	tzset();
+
 	localtime_r(&curr, &tmp);
 
-	if (tzname[0])
-		tzone = strdup(tzname[0]);
+	const char* c = tzname[tmp.tm_isdst];
+	if(c)
+		zcode = strdup(c);
 
-	if (old) {
+	if(old) {
 		setenv("TZ", old, 1);
 		free(old);
 	} else
 		unsetenv("TZ");
+
+	tzset();
+	//printf("--> %s\n", asctime(&tmp));
+
+	/* 
+	 * Make sure daylight is calculated in too or mktime() will 
+	 * wrongly calculate offset. daylight as tzname[] are set by tzset()
+	 */
+	tmp.tm_isdst = daylight;
 
 	timeval = mktime(&tmp);
 	return true;
@@ -151,40 +158,28 @@ bool TimeZone::load_local(void) {
 	time_t curr = ::time(0);
 	localtime_r(&curr, &tmp);
 
+	// FIXME: daylight needed here ???
 	timeval = mktime(&tmp);
 	return true;
 }
 
 void TimeZone::clear(void) {
-	if (pathval) {
-		free(pathval);
-		pathval = 0;
-		puts("clear pathval");
-	}
-
-	if (zoneval) {
+	if(zoneval) {
 		free(zoneval);
 		zoneval = 0;
 		puts("clear zoneval");
 	}
 
-	if (tzone) {
-		free(tzone);
-		tzone = 0;
-		puts("clear tzone");
+	if(zcode) {
+		free(zcode);
+		zcode = 0;
+		puts("clear zcode");
 	}
 }
 
-bool TimeZone::set(const char* path, const char* zone) {
-	return load(path, zone);
-}
-
-unsigned long TimeZone::time(void) {
-	return timeval;
-}
-
-const char* TimeZone::get_timezone(void) {
-	return tzone;
+bool TimeZone::set(const char* zone) {
+	clear();
+	return load(zone);
 }
 
 
@@ -204,7 +199,7 @@ Date& Date::operator=(const Date& d) {
 Date::~Date() { }
 
 bool Date::set(unsigned short y, unsigned char m, unsigned char d, DateType t) {
-	EASSERT(is_valid(y, m, d) && "Invalid date");
+	EASSERT(Date::is_valid(y, m, d) && "Invalid date");
 
 	if (y == YearNow || m == MonthNow || d == DayNow) {
 		struct tm tmp;
@@ -271,7 +266,8 @@ bool Date::system_set(void) {
 #endif
 }
 
-bool Date::is_valid(unsigned short y, unsigned char m, unsigned char d) const {
+// static
+bool Date::is_valid(unsigned short y, unsigned char m, unsigned char d) {
 	/*
 	 * Checks for d == 0 || y == 0 are not done since
 	 * YearNow == 0 and DayNow == 0.
@@ -280,21 +276,24 @@ bool Date::is_valid(unsigned short y, unsigned char m, unsigned char d) const {
 	if (m == 0)
 		return false;
 
-	if (m > Date::MonthNow || d > days_in_month(y, m))
+	if (m > Date::MonthNow || d > Date::days_in_month(y, m))
 		return false;
 	return true;
 }
 
-bool Date::leap_year(unsigned short y) const {
+// static
+bool Date::leap_year(unsigned short y) {
 	return ((y & 3) == 0 && (y % 100 != 0) || (y % 400 == 0));
 }
 
-unsigned char Date::days_in_month(unsigned short y, unsigned char m) const {
-	return month_days[leap_year(y)][m-1];
+// static
+unsigned char Date::days_in_month(unsigned short y, unsigned char m) {
+	EASSERT(m <= 31);
+	return month_days[Date::leap_year(y)][m-1];
 }
 
 unsigned char Date::days_in_month() const {
-	return days_in_month(yearval, monthval);
+	return Date::days_in_month(yearval, monthval);
 }
 
 unsigned char Date::day_of_week() const {
@@ -320,10 +319,54 @@ const char* Date::month_name(void) {
 	return month_names[monthval-1];
 }
 
+Date& Date::operator++() {
+	if(++dayval > days_in_month()) {
+		dayval = 1;
+		if(++monthval > 12) {
+			monthval = 1;
+			++yearval;
+		}
+	}
+
+	EASSERT(Date::is_valid(year(), month(), day()) == true);
+	return *this;
+}
+
+Date Date::operator++(int) {
+	Date tmp(*this);
+	++(*this);
+	return tmp;
+}
+
+Date& Date::operator--() {
+	if(--dayval < 1) {
+		if(--monthval < 1) {
+			monthval = 12;
+
+			--yearval;
+			// keep UNIX compatible
+			if(yearval < 1900)
+				yearval = 1900;
+		}
+
+		dayval = days_in_month();
+	}
+
+	EASSERT(Date::is_valid(year(), month(), day()) == true);
+	return *this;
+}
+
+Date Date::operator--(int) {
+	Date tmp(*this);
+	--(*this);
+	return tmp;
+}
+
 Time::Time() : hourval(0), minval(0), secval(0), msecval(0) {}
 
 Time::~Time() {}
 
+// static
 bool Time::is_valid(unsigned char h, unsigned char m, unsigned char s, unsigned short ms) {
 	if (h <= 23 && m <= 59 && s <= 59 && ms <= 999)
 		return true;
