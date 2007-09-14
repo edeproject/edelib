@@ -18,7 +18,7 @@ docdir      ?= "@datadir@/doc" ;
 includedir  ?= "@includedir@" ;
 libdir      ?= "@libdir@" ;
 mandir      ?= "@mandir@" ;
-srcdir		?= "@abs_srcdir@" ;
+srcdir      ?= "@abs_srcdir@" ;
 sysconfdir  ?= "@sysconfdir@" ;
 
 # programs
@@ -32,8 +32,8 @@ INSTALL_DATA    ?= "@INSTALL_DATA@" ;
 INSTALL_PROGRAM ?= "@INSTALL_PROGRAM@" ;
 INSTALL_SCRIPT  ?= "@INSTALL_SCRIPT@" ;
 SYMLINKCMD      ?= "@LN_S@" ;
-SED		        ?= "@SED@" ;
-AWK		        ?= "@AWK@" ;
+SED             ?= "@SED@" ;
+AWK             ?= "@AWK@" ;
 
 # build options
 ALLFLAGS  ?= "@ALLFLAGS@" ;

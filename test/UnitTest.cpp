@@ -1,8 +1,10 @@
+#include "UnitTest.h"
+
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
 #include <assert.h>
-#include "UnitTest.h"
 
 #define SAFE_FREE(obj)    if(obj) { free(obj); obj = NULL; }
 #define SAFE_DELETE(obj)  if(obj) { delete obj; obj = NULL; }
@@ -137,13 +139,22 @@ void UnitTestSuite::run(bool verbose) {
 	unsigned int i = 1;
 	int passed = 0;
 	int failed = 0;
+
+	clock_t start_time;
+	double  elapsed = 0, total_elapsed = 0;
+
 	for (UTList* t = tlist->first; t; t = t->next, i++) {
+		start_time = clock();
 		t->test->execute();
+		elapsed = double(clock() - start_time) / CLOCKS_PER_SEC;
+		total_elapsed += elapsed;
 
 		if (t->test->failed()) {
 			failed++;
 
-			printf("Test %2i: %20s (%-30s): %30s\n", i, t->test->name(), t->test->description(), "FAILED!");
+			printf("Test %2i: %20s (%-30s): %30s (%g)\n", 
+					i, t->test->name(), t->test->description(), "FAILED!", elapsed);
+
 			if (t->test->msglist_size()) {
 				for (const UTMsgList* ml = t->test->msglist(); ml; ml = ml->next) {
 					if (ml->file)
@@ -155,14 +166,17 @@ void UnitTestSuite::run(bool verbose) {
 			printf("\n");
 		} else {
 			passed++;
-			if (verbose)
-				printf("Test %2i: %20s (%-30s): %30s\n", i, t->test->name(), t->test->description(), "Success");
+
+			if (verbose) {
+				printf("Test %2i: %20s (%-30s): %30s (%g)\n", 
+						i, t->test->name(), t->test->description(), "Success", elapsed);
+			}
 		}
 	}
 
 	if (!verbose)
 		return;
 
-	printf("\n--------------------------------------------\n");
-	printf("Tests: %i    Passed: %i    Failed: %i\n", ntests, passed, failed);
+	printf("\n-------------------------------------------------------\n");
+	printf("Tests: %i    Passed: %i    Failed: %i    (time: %g)\n", ntests, passed, failed, total_elapsed);
 }

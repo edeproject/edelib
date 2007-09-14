@@ -33,29 +33,30 @@ DSOLIBNAME="libedelib.so"
 LIBNAMELINK="-ledelib"
 
 # libraries
-LDLIBS="@LDLIBS@"
+LDLIBS_EXTERN="@LDLIBS@"
 SOUNDLIBS="@SOUNDLIBS@"
 FLTKLIBS="@FLTKLIBS@"
 
-LDLIBS="$LIBNAMELINK $SOUNDLIBS $FLTKLIBS $LDLIBS"
-LDSTATIC="$libdir/$LIBNAME $LDLIBS"
+LDLIBS="$LIBNAMELINK $FLTKLIBS $LDLIBS_EXTERN"
+LDSTATIC="$libdir/$LIBNAME $FLTKLIBS $LDLIBS_EXTERN"
 LIBS="$libdir/$LIBNAME"
 
-usage ()
-{
+usage() {
 	echo "Usage: edelib-config [OPTIONS]
 Options:
     [--prefix[=DIR]]  return/set where edelib is installed
     [--exec-prefix[=DIR]]
     [--version]
 
-Options telling what information we request
+Options telling what to use:
+    [--use-sound]     use sound libraries
+
+Options telling what information we request:
     [--cflags]        return flags to compile C using edelib
     [--cxxflags]      return flags to compile C++ using edelib
     [--ldflags]       return flags to link against edelib
     [--ldstaticflags] return flags to link against static edelib library
                       even if there are DSOs installed
-
     [--libs]          return edelib libraries full path for dependencies
 
 Options compiling and linking an application:
@@ -101,6 +102,9 @@ do
 	  ;;
 	--version)
 	  echo $VERSION
+	  ;;
+	--use-sound)
+	  use_sound=yes
 	  ;;
 	--cflags)
 	  echo_cflags=yes
@@ -190,6 +194,12 @@ fi
 
 if test "$echo_exec_prefix" = "yes"; then
 	echo $exec_prefix
+fi
+
+if test "$use_sound" = "yes"; then
+	# reconstruct LDLIBS again because of linkage order
+	LDLIBS="$LIBNAMELINK $SOUNDLIBS $FLTKLIBS $LDLIBS_EXTERN"
+	LDSTATIC="$libdir/$LIBNAME $SOUNDLIBS $FLTKLIBS $LDLIBS_EXTERN"
 fi
 
 if test "$echo_cflags" = "yes"; then
