@@ -167,13 +167,11 @@ void TimeZone::clear(void) {
 	if(zoneval) {
 		free(zoneval);
 		zoneval = 0;
-		puts("clear zoneval");
 	}
 
 	if(zcode) {
 		free(zcode);
 		zcode = 0;
-		puts("clear zcode");
 	}
 }
 

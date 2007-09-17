@@ -33,7 +33,6 @@ SoundSystem::SoundSystem() {
 
 	device = NULL;
 	ao_initialize();
-	default_driver = ao_default_driver_id();
 
 	EDEBUG(ESTRLOC ": SoundSystem init\n");
 #endif
@@ -41,20 +40,72 @@ SoundSystem::SoundSystem() {
 
 SoundSystem::~SoundSystem() {
 #ifdef USE_SOUNDS
-	ao_shutdown();
 	if(thread_running) {
 		EDEBUG(ESTRLOC ": Stopping running thread\n");
 		StopThread(thread_id);
 	}
+
+	ao_shutdown();
 	EDEBUG(ESTRLOC ": SoundSystem shutdown\n");
 #endif
 }
 
-void SoundSystem::init(void) {
+bool SoundSystem::setup_driver(int driver) {
+	const char* name;
+	// names must be libao compatible
+	switch(driver) {
+		case SDR_NULL:
+			name = "null";
+			break;
+		case SDR_ALSA:
+			name = "alsa";
+			break;
+		case SDR_ALSA_09:
+			name = "alsa09";
+			break;
+		case SDR_ESD:
+			name = "esd";
+			break;
+		case SDR_OSS:
+			name = "oss";
+			break;
+		case SDR_SUN:
+			name = "sun";
+			break;
+		case SDR_AIX:
+			name = "aixs";
+			break;
+		case SDR_DEFAULT:
+		default: 
+			name = 0; // let NULL means default
+	}
+
+	if(!name)
+		default_driver = ao_default_driver_id();
+	else
+		default_driver = ao_driver_id(name);
+
+	/* 
+	 * assume: if we can't get device info, something is wrong
+	 * and disable further playing 
+	 */
+	bool ret = (default_driver != -1);
+	ao_info* ai = ao_driver_info(default_driver);
+
+	if(ret && ai)
+		EDEBUG(ESTRLOC ": Playing with %s (%s) driver\n", ai->name, ai->short_name);
+	else
+		EWARNING(ESTRLOC ": Can't get device info. Playing nothing\n");
+
+	return ret;
+}
+
+bool SoundSystem::init(SoundDriver driver) {
 	if(SoundSystem::pinstance != NULL)
-		return;
+		return true;
 
 	SoundSystem::pinstance = new SoundSystem();
+	return SoundSystem::pinstance->setup_driver(driver);
 }
 
 void SoundSystem::shutdown(void) {
@@ -93,13 +144,16 @@ void SoundSystem::stop(void) {
 }
 
 void SoundSystem::stop_playing(void) {
+#ifdef USE_SOUNDS
 	if(thread_running) {
 		StopThread(thread_id);
 		thread_running = 0;
 	}
+#endif
 }
 
 bool SoundSystem::play_stream_in_background(const char* fname) {
+#ifdef USE_SOUNDS
 	// stop any running threads
 	stop_playing();
 
@@ -111,12 +165,17 @@ bool SoundSystem::play_stream_in_background(const char* fname) {
 	}
 
 	thread_running = true;
+#endif
 	return true;
 }
 
 bool SoundSystem::play_stream(const char* fname) {
 #ifdef USE_SOUNDS
 	EASSERT(fname != NULL);
+
+	// assure we don't play with unopened device
+	if(default_driver == -1)
+		return false;
 
 	FILE* f = fopen(fname, "rb");
 	if(f == NULL) {
@@ -154,7 +213,6 @@ bool SoundSystem::play_stream(const char* fname) {
 
 	// now open device
 	device = ao_open_live(default_driver, &format, NULL);
-	//device = ao_open_live(ao_driver_id("oss"), &format, NULL);
 	if(device == NULL) {
 		EWARNING(ESTRLOC ": Can't open device\n");
 		ov_clear(&vf);

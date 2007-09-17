@@ -157,8 +157,8 @@ UT_FUNC(DateOperatorsTest, "Test date operators")
 
 	d1.set(2004, 5, 5);
 	d2 = d1;
-	--d1;
-	++d1;
+	--d1; --d1;
+	++d1; ++d1;
 	UT_VERIFY( d1 == d2 );
 }
 

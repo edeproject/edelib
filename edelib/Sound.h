@@ -24,6 +24,21 @@
 EDELIB_NS_BEGIN
 
 /**
+ * \enum SoundDriver
+ * \brief Driver types for SoundSystem class
+ */
+enum SoundDriver {
+	SDR_NULL = 0,        ///< Null driver; no sound (of course)
+	SDR_DEFAULT,         ///< System default driver
+	SDR_ALSA,            ///< ALSA driver; works only with ALSA 0.5.x
+	SDR_ALSA_09,         ///< ALSA driver with 0.9.x and 1.0.x API
+	SDR_ESD,             ///< Driver for Enlightenment sound daemon
+	SDR_OSS,             ///< OSS driver
+	SDR_SUN,             ///< Sun audio driver
+	SDR_AIX              ///< AIX audio driver
+};
+
+/**
  * \class SoundSystem
  * \brief A class responsible for playing sound files.
  *
@@ -38,11 +53,9 @@ EDELIB_NS_BEGIN
  * usually should be placed before application loads gui data, and SoundSystem::shutdown()
  * when sound will not be played.
  */
-
 class EDELIB_API SoundSystem {
 	private:
 		static SoundSystem* pinstance;
-
 #ifdef USE_SOUNDS
 		ao_device* device;
 		ao_sample_format format;
@@ -53,6 +66,8 @@ class EDELIB_API SoundSystem {
 #endif 
 		SoundSystem();
 		~SoundSystem();
+
+		bool setup_driver(int driver);
 
 		SoundSystem(const SoundSystem&);
 		SoundSystem& operator=(SoundSystem&);
@@ -65,10 +80,11 @@ class EDELIB_API SoundSystem {
 		static SoundSystem* instance(void);
 #endif
 		/**
-		 * Initialize internal data and device. This function <b>must</b>
+		 * Initialize internal data and device using desired driver (list is in SoundDriver).
+		 * Return false if initialization fails. This function <b>must</b>
 		 * be called before SoundSystem::play().
 		 */
-		static void init(void);
+		static bool init(SoundDriver driver = SDR_DEFAULT);
 
 		/**
 		 * Clears internal data and close device.

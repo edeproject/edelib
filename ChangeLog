@@ -1,3 +1,8 @@
+2007-09-16  Sanel <karijes@users.sourceforge.net>
+	
+	* In SoundSystem init() driver can be given
+	* init() will return some status
+
 2007-09-14  Sanel <karijes@users.sourceforge.net>
 
 	* UnitTest have clock measurements
