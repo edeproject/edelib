@@ -1,3 +1,12 @@
+2007-09-17  Sanel <karijes@users.sourceforge.net>
+
+	* sound.m4, disable checks for mad library
+	* Uh... finally fixed odd bug in MessageBox caused due non-resizable group 
+	where readqueue() would miss any event produced by child that was laying
+	outside group bounds (the odd thing was for childs that was partially
+	laying outsid group; part of the child inside group bounds would report
+	event, but part of the same child outside those bounds would not ;P)
+
 2007-09-16  Sanel <karijes@users.sourceforge.net>
 	
 	* In SoundSystem init() driver can be given

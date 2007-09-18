@@ -28,8 +28,8 @@ AC_DEFUN([EDE_SOUND], [
 		AC_CHECK_LIB(vorbisfile, ov_clear, [have_vorbisfile_lib=yes], [have_vorbisfile_lib=no])
 
 		dnl checks for libmad
-		AC_CHECK_HEADER(mad.h, [have_mad_h=yes], [have_mad_h=no])
-		AC_CHECK_LIB(mad, mad_decoder_finish, [have_mad_lib=yes], [have_mad_lib=no])
+		dnl AC_CHECK_HEADER(mad.h, [have_mad_h=yes], [have_mad_h=no])
+		dnl AC_CHECK_LIB(mad, mad_decoder_finish, [have_mad_lib=yes], [have_mad_lib=no])
 
 		if eval "test $have_vorbis_lib = yes" && eval "test $have_vorbisfile_lib = yes"; then
 			sresult="ogg"
@@ -37,11 +37,11 @@ AC_DEFUN([EDE_SOUND], [
 			AC_DEFINE(USE_OGG, 1, [Define to 1 if you want to enable ogg decoder for sounds])
 		fi
 
-		if eval "test $have_mad_lib = yes"; then
-			sresult="$sresult mp3"
-			slibs="$slibs -lmad"
-			AC_DEFINE(USE_MAD, 1, [Define to 1 if you want to enable mp3 decoder for sounds via libmad])
-		fi
+		dnl if eval "test $have_mad_lib = yes"; then
+		dnl 	sresult="$sresult mp3"
+		dnl		slibs="$slibs -lmad"
+		dnl		AC_DEFINE(USE_MAD, 1, [Define to 1 if you want to enable mp3 decoder for sounds via libmad])
+		dnl fi
 
 		AC_MSG_CHECKING(sound support)
 		if eval "test $have_ao_lib = yes"; then

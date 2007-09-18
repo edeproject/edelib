@@ -20,6 +20,7 @@
 #include <FL/Fl_Shared_Image.h>
 #include <FL/Fl_Pixmap.h>
 
+#include <stdlib.h>
 #include <stdarg.h>           //
 #include <stdio.h>            //
 #include "icons/warning.xpm"  // used by message(), ask()...
@@ -35,16 +36,6 @@ EDELIB_NS_BEGIN
 MessageBox::MessageBox(MessageBoxType t) : Fl_Window(WIN_W, WIN_H),
 	img(0), txt(0), inpt(0), pix(0), mbt(t), nbuttons(0) {
 	begin();
-		/* 
-		 * This is a hack (using addon group inside window)
-		 * since Fl_Window::clear(), in clear() mess up communication
-		 * with wm yielding wrong initial window sizes.
-		 *
-		 * This group does _not_ resizes when window do because
-		 * it will summon layout code messing everything. Widgets
-		 * will overwritte it's bounds which is not a problem untill
-		 * group get resized.
-		 */
 		gr = new Fl_Group(0, 0, w(), h());
 		init();
 	end();
@@ -56,7 +47,6 @@ MessageBox::~MessageBox() {
 
 void MessageBox::init(void) {
 	gr->begin();
-
 	img = new Fl_Box(10, 10, 60, 55);
 
 	if(mbt == MSGBOX_PLAIN) {
@@ -72,21 +62,18 @@ void MessageBox::init(void) {
 	txt->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT | FL_ALIGN_WRAP);
 
 	b_start = w() - 10;
-
 	gr->end();
 }
 
 void MessageBox::clear(MessageBoxType t) {
-	gr->clear();
-
 	img = 0; txt = 0; inpt = 0; nbuttons = 0;
 	b_start = 0;
-
 	mbt = t;
 
-	init_sizes();
+	gr->clear();
 
 	size(WIN_W, WIN_H);
+	gr->size(w(), h());
 
 	init();
 }
@@ -106,6 +93,8 @@ void MessageBox::add_button(Fl_Button* b, MessageBoxButtonType bt) {
 		W += 10; // some spaces between label an button edges
 		if(bt == MSGBOX_BUTTON_RETURN)
 			W += 30; // increase again since Fl_Return_Button have that stupid marker
+		else
+			W += 10; // ordinary button
 		b_start -= W;
 	} else {
 		W = 90;
@@ -114,6 +103,7 @@ void MessageBox::add_button(Fl_Button* b, MessageBoxButtonType bt) {
 
 	b->resize(b_start, 75, W, 25);
 	b_start -= 5; // space between buttons
+
 	gr->add(b);
 	buttons[nbuttons] = b;
 	nbuttons++;
@@ -172,10 +162,15 @@ void MessageBox::fix_sizes(void) {
 
 	txt->size(W + step, H);
 
+	// force group to not resize any children or will mess everything up
+	gr->resizable(0);
+
+	gr->size(w() + xdiff + step, h() + ydiff);
 	size(w() + xdiff + step, h() + ydiff);
 
 	for(int i = 0; i < nbuttons; i++)
 		buttons[i]->position(buttons[i]->x() + xdiff + step, buttons[i]->y() + ydiff);
+
 }
 
 void MessageBox::run_plain(bool center) {
@@ -208,30 +203,30 @@ int MessageBox::run(bool center) {
 		position(W/2 - w()/2, H/2 - h()/2);
 	}
 
-	if(!shown())
-		show();
+	show();
 
 	Fl_Widget* widget;
+	int ret = -1;
 	while(1) {
 		widget = Fl::readqueue();
-		if(!widget) 
+		if(!widget) {
 			Fl::wait();
-
-		if(widget == this) {
-			hide();
-			return -1;
-		}
-
-		for(int i = 0; i < nbuttons; i++) {
-			if(buttons[i] == widget) {
-				hide();
-				return i;
+		} else if(widget == this) {
+			ret = -1;
+			goto dialog_end;
+		} else {
+			for(int i = 0; i < nbuttons; i++) {
+				if(buttons[i] == widget) {
+					ret = i;
+					goto dialog_end;
+				}
 			}
 		}
 	}
 
+dialog_end:
 	hide();
-	return -1;
+	return ret;
 }
 
 void MessageBox::set_text(const char* t) {
@@ -354,13 +349,15 @@ void alert(const char *fmt, ...) {
 }
 
 int ask(const char *fmt, ...) {
+	char buffer[BUFF_LEN];
 	va_list ap;
+
 	va_start(ap, fmt);
-	vsnprintf(internal_buff, BUFF_LEN, fmt, ap);
+	vsnprintf(buffer, BUFF_LEN - 1, fmt, ap);
 	va_end(ap);
 
 	MessageBox mb;
-	mb.set_text(internal_buff);
+	mb.set_text(buffer);
 	mb.add_button(_("&No"));
 	mb.add_button(_("&Yes"));
 
