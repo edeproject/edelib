@@ -406,6 +406,13 @@ class EDELIB_API Config {
 		bool exist(const char* section);
 
 		/**
+		 * Check if key exists in given section.
+		 *
+		 * \return true if exists, of false if not.
+		 */
+		bool key_exist(const char* section, const char* key);
+
+		/**
 		 * Return number of sections.
 		 *
 		 * \return number of sections.

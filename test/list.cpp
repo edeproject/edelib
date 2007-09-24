@@ -91,6 +91,28 @@ UT_FUNC(ListTestInsert, "Test list insert")
 	UT_VERIFY( (*it) == 44 );
 }
 
+UT_FUNC(ListTestFrontBack, "Test list front()/back()")
+{
+	list<int> ls;
+	ls.push_back(3);
+	ls.push_back(5);
+	ls.push_back(1);
+	ls.push_back(0);
+
+	UT_VERIFY( ls.front() == 3 );
+	UT_VERIFY( ls.back() == 0 );
+
+	ls.erase( --(ls.end()) );
+	UT_VERIFY( ls.back() == 1 );
+
+	ls.erase(ls.begin());
+	UT_VERIFY( ls.front() == 5 );
+
+	ls.clear();
+	ls.push_back(10);
+	UT_VERIFY( ls.front() == ls.back() );
+}
+
 UT_FUNC(ListTestErase, "Test list erase")
 {
 	list<int> ls;

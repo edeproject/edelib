@@ -13,8 +13,7 @@ UT_FUNC(ConfigTest, "Test Config class")
 {
 	Config c;
 	c.load("ede.conf");
-	if(c)
-	{
+	if(c) {
 		UT_VERIFY(c == true);
 		char buff[128];
 		UT_VERIFY(c.get("Desktop", "Color", buff, sizeof(buff)-1) == true);
@@ -45,13 +44,27 @@ UT_FUNC(ConfigTest, "Test Config class")
 		UT_VERIFY(c.get("Panel", "RunBrowser5", dummy3, true) == true);
 		UT_VERIFY( dummy3 == false );
 
+		// section/key exist
+		UT_VERIFY( c.exist("Panel") == true );
+		UT_VERIFY( c.exist("IconManager") == true );
+		UT_VERIFY( c.exist("Mouse") == true );
+		UT_VERIFY( c.exist("Screen") == true );
+
+		UT_VERIFY( c.key_exist("Panel", "RunBrowser") == true );
+		UT_VERIFY( c.key_exist("IconManager", "Label Fontsize") == true );
+		UT_VERIFY( c.key_exist("Mouse", "Thresh") == true );
+		UT_VERIFY( c.key_exist("Screen", "Pattern") == true );
+
+		UT_VERIFY( c.key_exist("Screen", "Pattern None") == false );
+		UT_VERIFY( c.key_exist("ScreenXXX", "Pattern None") == false );
+		UT_VERIFY( c.key_exist("Screen", "") == false );
+
 		// test write
 		c.set("Panel", "AutoHide", 45);
 		c.set("Mouse", "Thresh", 65);
 		c.save(".ede.conf");
 
-		if(c.load(".ede.conf"))
-		{
+		if(c.load(".ede.conf")) {
 			int dd;
 			UT_VERIFY(c.get("Panel", "AutoHide", dd, 0) == true);
 			UT_VERIFY(dd == 45);
@@ -59,9 +72,7 @@ UT_FUNC(ConfigTest, "Test Config class")
 			UT_VERIFY(c.get("Mouse", "Thresh", dd, 0) == true);
 			UT_VERIFY(dd == 65);
 		}
-	}
-	else
-	{
+	} else {
 		UT_FAIL("No ede.conf, but expected to be");
 	}
 }
@@ -72,8 +83,7 @@ UT_FUNC(ConfigTestLocaleRead, "Test Config locale read")
 	c.load("test.desktop");
 	if(!c)
 		UT_FAIL("No test.desktop, but expected to be");
-	else
-	{
+	else {
 		char buff[128];
 		setenv("LANG", "en_US", 1);
 		UT_VERIFY(c.get_localized("Desktop Entry", "Name", buff, 128) == true);

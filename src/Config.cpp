@@ -541,6 +541,13 @@ bool Config::exist(const char* section) {
 	return (find_section(section) != NULL);
 }
 
+bool Config::key_exist(const char* section, const char* key) {
+	ConfigSection* cs = find_section(section);
+	if(!cs)
+		return false;
+	return (cs->find_entry(key) != NULL);
+}
+
 unsigned int Config::num_sections(void) {
 	return sectnum;
 }

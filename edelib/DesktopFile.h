@@ -15,6 +15,7 @@
 
 #include "econfig.h"
 #include "Config.h"
+#include "String.h"
 
 EDELIB_NS_BEGIN
 
@@ -184,6 +185,30 @@ class DesktopFile : public Config {
 		bool startup_notify(void);
 
 		/**
+		 * Get full value from <em>OnlyShowIn</em>. This value
+		 * will be in form: <em>foo;baz;</em>.
+		 */
+		bool only_show_in(char* val, int len);
+
+		/**
+		 * Get list of values from <em>OnlyShowIn</em> key.
+		 * If key wasn't found, list will not be altered.
+		 */
+		bool only_show_in(list<String>& lst);
+
+		/**
+		 * Get full value from <em>NotShowIn</em>. This value
+		 * will be in form: <em>foo;baz;</em>.
+		 */
+		bool not_show_in(char* val, int len);
+
+		/**
+		 * Get list of values from <em>NotShowIn</em> key.
+		 * If key wasn't found, list will not be altered.
+		 */
+		bool not_show_in(list<String>& lst);
+
+		/**
 		 * Set type of desktop file
 		 */
 		void set_type(DesktopFileType t);
@@ -252,6 +277,18 @@ class DesktopFile : public Config {
 		 * Set StartupNotify key
 		 */
 		void set_startup_notify(bool val);
+
+		/**
+		 * Set OnlyShowIn key. Note that only OnlyShowIn or NotShowIn keys
+		 * can exists. If one of them is already set, this function will do nothing.
+		 */
+		void set_only_show_in(const list<String>& lst);
+
+		/**
+		 * Set NotShowIn key. Note that only OnlyShowIn or NotShowIn keys
+		 * can exists. If one of them is already set, this function will do nothing.
+		 */
+		void set_not_show_in(const list<String>& lst);
 };
 
 EDELIB_NS_END

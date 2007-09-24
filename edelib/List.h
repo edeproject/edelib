@@ -272,6 +272,26 @@ class list {
 		iterator end(void) const { return tail; }
 
 		/**
+		 * Return reference to first element in the list.
+		 */
+		T& front(void) { return *(begin()); }
+
+		/**
+		 * Return const reference to first element in the list.
+		 */
+		const T& front(void) const { return *(begin()); }
+
+		/**
+		 * Return reference to last element in the list.
+		 */
+		T& back(void) { return *(--end()); }
+
+		/**
+		 * Return const reference to last element in the list.
+		 */
+		const T& back(void) const { return *(--end()); }
+
+		/**
 		 * Return size of list.
 		 */
 		size_type size(void) const { return sz; }

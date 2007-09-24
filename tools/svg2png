@@ -6,9 +6,19 @@ import os
 import sys
 import stat
 
-INKSCAPE = "/usr/bin/inkscape"
-#SIZES = ["16x16", "22x22", "32x32", "48x48", "64x64"]
-SIZES = ["32x32", "64x64"]
+inkscape_path = None
+rsvg_path = None
+
+SIZES = ["16x16", "22x22", "32x32", "48x48", "64x64"]
+
+def find_converter(name):
+	env_list = os.environ["PATH"].split(":")
+
+	for i in env_list:
+		path = "%s/%s" % (i, name)
+		if os.access(path, os.F_OK) and os.access(path, os.X_OK):
+			return path
+	return None
 
 def convert_ext(name):
 	if name[-4:] == ".svg":
@@ -17,8 +27,7 @@ def convert_ext(name):
 		return name
 
 def dir_exists(path):
-	# first use this since stat() scream
-	# if not exists
+	# first use this since stat() scream if not exists
 	if not os.access(path, os.F_OK):
 		return False
 	mode = os.stat(path)[stat.ST_MODE]
@@ -32,9 +41,8 @@ def skip_base(path):
 def visit(arg, dirname, names):
 	destdir = skip_base(dirname)
 	for name in names:
-		# os.walk will first walk on the top
-		# of source directory before enters it's childs
-		# we are interested only in childs
+		# os.walk will first walk on the top of source directory before 
+		# enters it's childs; we are interested only in childs
 		if len(destdir) == 0:
 			continue
 		for sz in SIZES:
@@ -46,7 +54,11 @@ def visit(arg, dirname, names):
 				os.makedirs(findir)
 
 			dsticon = "%s/%s" % (findir, convert_ext(name))
-			cmd = "%s -e %s -w %s -h %s %s" % (INKSCAPE, dsticon, w, h, srcicon)
+
+			if inkscape_path:
+				cmd = "%s -e %s -w %s -h %s %s" % (inkscape_path, dsticon, w, h, srcicon)
+			elif rsvg_path:
+				cmd = "%s -w %s -h %s %s %s" % (rsvg_path, w, h, srcicon, dsticon)
 
 			print "%s -> %s" % (srcicon, dsticon)
 			if os.system(cmd) != 0:
@@ -59,7 +71,7 @@ def convert(srcdir, dstdir):
 def help():
 	print "Usage: svg2png source dest"
 	print "Convert [source] icon theme (assumed all are .svg)"
-	print "to .png equivalent one, using inkscape."
+	print "to .png equivalent one, using rsvg or inkscape."
 	print ""
 	print "Directory layout will be created according to the sizes"
 	print "defined in SIZES at the top of this file."
@@ -68,6 +80,20 @@ def main():
 	if len(sys.argv) != 3:
 		help()
 		return
+
+	cpath = find_converter("inkscape")
+	if cpath:
+		inkscape_path = cpath
+	else:
+		cpath = find_converter("rsvg")
+		if cpath:
+			rsvg_path = cpath
+		else:
+			print "\nUnable to find either inkscape or rsvg. If you have installed"
+			print "one of them, append it's directory path to PATH environment.\n"
+			print "But if you don't have installed neither of them... well..."
+			print "you know what to do then :P\n"
+			return
 
 	src = sys.argv[1]
 	dst = sys.argv[2]

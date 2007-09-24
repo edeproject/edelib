@@ -1,3 +1,16 @@
+2007-09-23  Sanel <karijes@users.sourceforge.net>
+
+	* list have front()/back()
+	* Tests added too
+	* Removed old commented code from MimeType
+	* svg2png can detect either rsvg or inkscape if are installed and use one
+	of them
+	* Added key_exist() in Config
+	* exist() and key_exist() tests in config.cpp
+	* Added getting/setting OnlyShowIn/NotShowIn values in DesktopFile
+	* Detail tests for DesktopFile file class including above addition
+	* Removed few finished entries from TODO
+
 2007-09-17  Sanel <karijes@users.sourceforge.net>
 
 	* sound.m4, disable checks for mad library

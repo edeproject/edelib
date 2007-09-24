@@ -4,7 +4,6 @@ TODO list:
  * error checks during stream read/write in File (ferror)
  * in Config, don't allow [] sections
  * what should set_textdomain_dir() and set_textdomain() return when NLS is disabled ?
- * Sound should have explicit option for setting various drivers
  * documentation install strangely depends on xxx/doc/edelib-xxx/html directory; how ?
  * more checks on GenDocumentation since /usr/bin/env gawk -f does not work
  * add local snprintf/vsnprintf/scandir/dirent(???)
@@ -15,6 +14,5 @@ TODO list:
  * Finish dir_remove_rec
  * What Config as localized keys should read: LC_MESSAGES or LANG ??? I'm using for now LANG,
    but fd.o people said it should be LC_MESSAGES. Inspect this.
- * More tests for DesktopFile
  * Add inotify for DirWatch.
  * DirWatch on *BSDs, solaris and etc.

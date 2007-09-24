@@ -13,6 +13,7 @@
 #include <edelib/DesktopFile.h>
 #include <edelib/File.h>
 #include <edelib/Debug.h>
+#include <edelib/StrUtil.h>
 
 #include <string.h> // strncmp, strncpy
 
@@ -203,6 +204,46 @@ bool DesktopFile::startup_notify(void) {
 	return ret;
 }
 
+bool DesktopFile::only_show_in(char* val, int len) {
+	if(errcode != DESK_FILE_SUCCESS)
+		return false;
+	if(!Config::get(DENTRY_KEY, "OnlyShowIn", val, len))
+		return false;
+	return true;
+}
+
+bool DesktopFile::only_show_in(list<String>& lst) {
+	if(errcode != DESK_FILE_SUCCESS)
+		return false;
+
+	char buff[256];
+	if(!Config::get(DENTRY_KEY, "OnlyShowIn", buff, sizeof(buff)-1))
+		return false;
+
+	stringtok(lst, buff, ";");
+	return true;
+}
+
+bool DesktopFile::not_show_in(char* val, int len) {
+	if(errcode != DESK_FILE_SUCCESS)
+		return false;
+	if(!Config::get(DENTRY_KEY, "NotShowIn", val, len))
+		return false;
+	return true;
+}
+
+bool DesktopFile::not_show_in(list<String>& lst) {
+	if(errcode != DESK_FILE_SUCCESS)
+		return false;
+
+	char buff[256];
+	if(!Config::get(DENTRY_KEY, "NotShowIn", buff, sizeof(buff)-1))
+		return false;
+
+	stringtok(lst, buff, ";");
+	return true;
+}
+
 void DesktopFile::set_type(DesktopFileType t) {
 	if(errcode != DESK_FILE_SUCCESS && errcode != DESK_FILE_EMPTY)
 		return;
@@ -287,6 +328,58 @@ void DesktopFile::set_terminal(bool val) {
 
 void DesktopFile::set_startup_notify(bool val) {
 	SET_KEY("StartupNotify", val);
+}
+
+void DesktopFile::set_only_show_in(const list<String>& lst) {
+	/* 
+	 * Desktop entry specs requires only one of OnlyShowIn or NotShowIn
+	 * can exists in one section 
+	 */
+	if(Config::key_exist(DENTRY_KEY, "NotShowIn"))
+		return;
+
+	if(lst.empty())
+		return;
+
+	if(errcode != DESK_FILE_SUCCESS && errcode != DESK_FILE_EMPTY)
+		return;
+
+	String all;
+	all.reserve(256);
+	list<String>::iterator it = lst.begin(), it_end = lst.end();
+
+	for(; it != it_end; ++it) {
+		all += (*it);
+		all += ';'; // intentionally since value must ends with ':'
+	}
+
+	Config::set(DENTRY_KEY, "OnlyShowIn", all.c_str());
+}
+
+void DesktopFile::set_not_show_in(const list<String>& lst) {
+	/* 
+	 * Desktop entry specs requires only one of OnlyShowIn or NotShowIn
+	 * can exists in one section 
+	 */
+	if(Config::key_exist(DENTRY_KEY, "OnlyShowIn"))
+		return;
+
+	if(lst.empty())
+		return;
+
+	if(errcode != DESK_FILE_SUCCESS && errcode != DESK_FILE_EMPTY)
+		return;
+
+	String all;
+	all.reserve(256);
+	list<String>::iterator it = lst.begin(), it_end = lst.end();
+
+	for(; it != it_end; ++it) {
+		all += (*it);
+		all += ';'; // intentionally since value must ends with ':'
+	}
+
+	Config::set(DENTRY_KEY, "NotShowIn", all.c_str());
 }
 
 EDELIB_NS_END

@@ -20,8 +20,6 @@
 
 #include <string.h>  // strncmp
 
-//#define MIME_DIR "/usr/share/mime"
-
 #define MIME_LOADED    1
 #define COMMENT_LOADED 2
 #define ICON_LOADED    4
@@ -77,14 +75,6 @@ const String& MimeType::comment(void) {
 
 	String ttype = mtype;
 	ttype += ".xml";
-
-#if 0
-	String path = build_filename("/", MIME_DIR, ttype.c_str());
-	if(!file_exists(path.c_str())) {
-		EDEBUG(ESTRLOC ": MimeType::comment() %s does not exists\n", path.c_str());
-		return mcmt;
-	}
-#endif
 
 	const char* p = xdg_mime_find_data(ttype.c_str());
 	if(!p)

@@ -344,7 +344,7 @@ void alert(const char *fmt, ...) {
 	else
 		mb.set_xpm_icon(warning_xpm);
 
-	mb.set_modal();
+	//mb.set_modal();
 	mb.run();
 }
 
@@ -389,7 +389,7 @@ const char* input(const char *fmt, const char *deflt, ...) {
 		mb.set_theme_icon(input_icon);
 	// FIXME: set_xpm_icon()
 	
-	mb.set_modal();
+	//mb.set_modal();
 	int ret = mb.run();
 
 	if(ret <= 0)
@@ -422,7 +422,7 @@ const char* password(const char *fmt, const char *deflt, ...) {
 		mb.set_theme_icon(passwd_icon);
 	// FIXME: set_xpm_icon()
 
-	mb.set_modal();
+	//mb.set_modal();
 	int ret = mb.run();
 
 	if(ret <= 0)
