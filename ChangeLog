@@ -1,3 +1,8 @@
+2007-10-22  Sanel <karijes@users.sourceforge.net>
+
+	* Added XSETTINGS classes. Manager part missing
+	* Added xsettings_setter.c, xsettings_client.c in examples
+
 2007-09-23  Sanel <karijes@users.sourceforge.net>
 
 	* list have front()/back()

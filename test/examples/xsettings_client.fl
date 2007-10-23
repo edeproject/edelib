@@ -1,0 +1,16 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0108 
+header_name {.h} 
+code_name {.cxx}
+Function {} {open
+} {
+  Fl_Window {} {
+    label {XSETTINGS client} open selected
+    xywh {453 294 200 130} type Double visible
+  } {
+    Fl_Box {} {
+      label label
+      xywh {10 9 180 112} box DOWN_BOX color 7 align 21
+    }
+  }
+} 

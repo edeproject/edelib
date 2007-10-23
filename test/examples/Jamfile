@@ -23,6 +23,8 @@ if $(FLTKLIBS) {
 	MakeTest icon_chooser : icon_chooser.cpp : $(FLTKLIBS) $(ADDONLIB) ;
 	MakeTest sevenseg : sevenseg.cpp : $(FLTKLIBS) $(ADDONLIB) ;
 	MakeTest dirwatch : dirwatch.cpp : $(FLTKLIBS) $(ADDONLIB) ;
+	MakeTest xsettings_setter : xsettings_setter.cpp : $(FLTKLIBS) $(ADDONLIB) ;
+	MakeTest xsettings_client : xsettings_client.cpp : $(FLTKLIBS) $(ADDONLIB) ;
 #	MakeTest combobox : combobox.cpp : $(FLTKLIBS) $(ADDONLIB) ;
 }
 

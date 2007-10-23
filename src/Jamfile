@@ -47,6 +47,8 @@ SOURCE = Config.cpp
 #			 ComboBox.cpp 
 
 SOURCE_GUI = XSet.cpp
+			 XSettingsCommon.cpp
+			 XSettingsClient.cpp
 			 ExpandableGroup.cpp
 			 IconChooser.cpp 
 			 MessageBox.cpp
