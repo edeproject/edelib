@@ -31,13 +31,13 @@ MakeTest run_tests : UnitTest.cpp
 					color.cpp
 					xml.cpp
 					mime.cpp
+					xsettings.cpp
 					run_tests.cpp
 					: 
 					$(ADDONLIB) $(FLTKLIBS) ;
 
-#MakeTest url : url.cpp ;
-#MakeTest pp : pp.cpp ;
 #MakeTest perf/stringtok : perf/stringtok.cpp ;
+MakeTest pp : pp.cpp : $(FLTKLIBS) ;
 
 Clean clean : [ FFileName $(TOP) test .foo.txt ] ;
 Clean clean : [ FFileName $(TOP) test .ede.conf ] ;

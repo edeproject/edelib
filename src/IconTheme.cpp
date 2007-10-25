@@ -94,8 +94,7 @@ IconContext figure_ctx(const String& ctx) {
 }
 
 
-IconTheme::IconTheme() : fvisited(false), curr_theme("")
-{
+IconTheme::IconTheme() : fvisited(false), curr_theme("") {
 	for(int i = 0; i < CACHED_ICONS_SIZE; i++)
 		icached[i] = NULL;
 
@@ -103,7 +102,6 @@ IconTheme::IconTheme() : fvisited(false), curr_theme("")
 }
 
 IconTheme::~IconTheme() {
-
 	for(int i = 0; i < CACHED_ICONS_SIZE; i++) {
 		delete icached[i];
 		icached[i] = NULL;

@@ -51,6 +51,7 @@ SoundSystem::~SoundSystem() {
 }
 
 bool SoundSystem::setup_driver(int driver) {
+#ifdef USE_SOUNDS
 	const char* name;
 	// names must be libao compatible
 	switch(driver) {
@@ -98,6 +99,12 @@ bool SoundSystem::setup_driver(int driver) {
 		EWARNING(ESTRLOC ": Can't get device info. Playing nothing\n");
 
 	return ret;
+#else // USE_SOUNDS
+
+	// FIXME: return true or false ???
+	return false;
+
+#endif // USE_SOUNDS
 }
 
 bool SoundSystem::init(SoundDriver driver) {

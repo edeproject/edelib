@@ -12,6 +12,7 @@
  */
 
 #include <edelib/XSettingsClient.h>
+#include <edelib/Debug.h>
 #include <stdio.h>  // puts
 #include <string.h> // strcmp
 #include <limits.h> // LONG_MAX
@@ -23,8 +24,8 @@ static int ignore_xerrors(Display* display, XErrorEvent* xev) {
 	return True;
 }
 
-static void notify_changes(XSettingsData* client, XSettingsList* old_settings, XSettingsCallback cb, void* cb_data) {
-	if(!cb)
+static void notify_changes(XSettingsData* client, XSettingsList* old_settings, XSettingsCallback callback, void* cb_data) {
+	if(!callback)
 		return;
 
 	XSettingsList* old_iter = old_settings;
@@ -33,20 +34,20 @@ static void notify_changes(XSettingsData* client, XSettingsList* old_settings, X
 	while(old_iter || new_iter) {
 		int cmp;
 
-		if(old_iter && new_iter) {
+		if(old_iter && new_iter)
 			cmp = strcmp(old_iter->setting->name, new_iter->setting->name);
-		} else if(old_iter)
+		else if(old_iter)
 			cmp = -1;
 		else
 			cmp = 1;
 
 		if(cmp < 0)
-			cb(old_iter->setting->name, XSETTINGS_ACTION_DELETED, NULL, cb_data);
+			callback(old_iter->setting->name, XSETTINGS_ACTION_DELETED, NULL, cb_data);
 		else if(cmp == 0) {
 			if(!xsettings_setting_equal(old_iter->setting, new_iter->setting))
-				cb(old_iter->setting->name, XSETTINGS_ACTION_CHANGED, new_iter->setting, cb_data);
+				callback(old_iter->setting->name, XSETTINGS_ACTION_CHANGED, new_iter->setting, cb_data);
 		} else
-			cb(new_iter->setting->name, XSETTINGS_ACTION_NEW, new_iter->setting, cb_data);
+			callback(new_iter->setting->name, XSETTINGS_ACTION_NEW, new_iter->setting, cb_data);
 		
 		if(old_iter)
 			old_iter = old_iter->next;
@@ -58,14 +59,12 @@ static void notify_changes(XSettingsData* client, XSettingsList* old_settings, X
 XSettingsClient::XSettingsClient() : client_data(NULL), settings_cb(NULL), settings_cb_data(NULL) { }
 
 XSettingsClient::~XSettingsClient() { 
-	if(client_data) {
-		xsettings_list_free(client_data->settings);
-		delete client_data->settings;
-		delete client_data;
-	}
+	clear();
 }
 
 void XSettingsClient::check_manager_window(void) {
+	EASSERT(client_data != NULL);
+
 	XGrabServer(client_data->display); // required by spec
 
 	client_data->manager_win = XGetSelectionOwner(client_data->display, client_data->selection_atom);
@@ -79,6 +78,8 @@ void XSettingsClient::check_manager_window(void) {
 }
 
 void XSettingsClient::read_settings(void) {
+	EASSERT(client_data != NULL);
+
 	Atom type;
 	int format;
 	unsigned long n_items, bytes_after;
@@ -117,15 +118,15 @@ void XSettingsClient::read_settings(void) {
 	xsettings_list_free(old_settings);
 }
 
-bool XSettingsClient::init(XSettingsCallback cb, void* data) { 
+bool XSettingsClient::init(Display* dpy, int screen, XSettingsCallback cb, void* data) { 
 	if(client_data)
 		return true;
 
 	callback(cb, data);
 
 	client_data = new XSettingsData;
-	client_data->display = fl_display;
-	client_data->screen = fl_screen;
+	client_data->display = dpy;
+	client_data->screen = screen;
 	client_data->manager_win = None;
 	client_data->settings = NULL;
 	client_data->serial = 0;
@@ -146,6 +147,16 @@ bool XSettingsClient::init(XSettingsCallback cb, void* data) {
 	check_manager_window();
 
 	return true;
+}
+
+void XSettingsClient::clear(void) {
+	if(!client_data)
+		return;
+
+	xsettings_list_free(client_data->settings);
+	/* delete client_data->settings; */
+	delete client_data;
+	client_data = NULL;
 }
 
 void XSettingsClient::callback(XSettingsCallback cb, void* data) {
@@ -175,6 +186,8 @@ int XSettingsClient::process_xevent(const XEvent* xev) {
 }
 
 void XSettingsClient::set(const char* name, int val) {
+	EASSERT(client_data != NULL && "init() must be called before this function");
+
 	if(!client_data->manager_win)
 		return;
 
@@ -184,16 +197,11 @@ void XSettingsClient::set(const char* name, int val) {
 	setting.data.v_int = val;
 
 	xsettings_manager_set_setting(client_data, &setting);
-	xsettings_manager_notify(client_data);
-#if 0
-	XGrabServer(client_data->display);
-	xsettings_manager_notify(client_data);
-	XUngrabServer(client_data->display);
-	XFlush(client_data->display);
-#endif
 }
 
 void XSettingsClient::set(const char* name, const char* val) {
+	EASSERT(client_data != NULL && "init() must be called before this function");
+
 	if(!client_data->manager_win)
 		return;
 
@@ -203,17 +211,11 @@ void XSettingsClient::set(const char* name, const char* val) {
 	setting.data.v_string = (char*)val;
 
 	xsettings_manager_set_setting(client_data, &setting);
-	xsettings_manager_notify(client_data);
-#if 0
-	XGrabServer(client_data->display);
-	xsettings_manager_notify(client_data);
-	XUngrabServer(client_data->display);
-	XFlush(client_data->display);
-#endif
 }
 
 void XSettingsClient::set(const char* name, unsigned short red, unsigned short green, 
 		unsigned short blue, unsigned short alpha) {
+	EASSERT(client_data != NULL && "init() must be called before this function");
 
 	if(!client_data->manager_win)
 		return;
@@ -227,13 +229,15 @@ void XSettingsClient::set(const char* name, unsigned short red, unsigned short g
 	setting.data.v_color.alpha = alpha;
 
 	xsettings_manager_set_setting(client_data, &setting);
+}
+
+void XSettingsClient::manager_notify(void) {
+	EASSERT(client_data != NULL && "init() must be called before this function");
+
+	if(!client_data->manager_win)
+		return;
+
 	xsettings_manager_notify(client_data);
-#if 0
-	XGrabServer(client_data->display);
-	xsettings_manager_notify(client_data);
-	XUngrabServer(client_data->display);
-	XFlush(client_data->display);
-#endif
 }
 
 EDELIB_NS_END

@@ -12,8 +12,8 @@
  */
 
 #include <edelib/XSettingsCommon.h>
+#include <edelib/Debug.h>
 #include <string.h>  // strcmp, memcpy
-#include <stdio.h>   // puts
 
 #include <X11/Xmd.h> // CARDX
 #include <X11/X.h>   // MSBFirst, LSBFirst
@@ -36,8 +36,8 @@ bool xsettings_list_add(XSettingsList** list, XSettingsSetting* setting) {
 		if(cmp < 0)
 			break;
 		else if(cmp == 0) {
+			// duplicate entry
 			delete node;
-			puts("Found duplicate entry");
 			return false;
 		}
 
@@ -251,12 +251,12 @@ XSettingsList* xsettings_decode(unsigned char* data, /*size_t*/ int len, unsigne
 
 	// check byte order in selection
 	if(!fetch_card8(&buffer, (CARD8*)&buffer.byte_order)) {
-		puts("Can't get byte order");
+		EWARNING(ESTRLOC ": Can't get byte order\n");
 		goto fail;
 	}
 
 	if(buffer.byte_order != MSBFirst && buffer.byte_order != LSBFirst) {
-		puts("Invalid byte order");
+		EWARNING(ESTRLOC ": Invalid byte order\n");
 		goto fail;
 	}
 
@@ -264,7 +264,7 @@ XSettingsList* xsettings_decode(unsigned char* data, /*size_t*/ int len, unsigne
 
 	// encoded serial by manager
 	if(!fetch_card32(&buffer, &manager_serial, local_byte_order)) {
-		puts("Can't get serial");
+		EWARNING(ESTRLOC ": Can't get serial\n");
 		goto fail;
 	}
 
@@ -272,7 +272,7 @@ XSettingsList* xsettings_decode(unsigned char* data, /*size_t*/ int len, unsigne
 		*serial = manager_serial;
 
 	if(!fetch_card32(&buffer, &n_entries, local_byte_order)) {
-		puts("Can't get number of entries");
+		EWARNING(ESTRLOC ": Can't get number of entries\n");
 		return NULL;
 	}
 
@@ -283,21 +283,21 @@ XSettingsList* xsettings_decode(unsigned char* data, /*size_t*/ int len, unsigne
 		/* size_t */ int pad_len;
 
 		if(!fetch_card8(&buffer, &type)) {
-			puts("Can't get type");
+			EWARNING(ESTRLOC ": Can't get type\n");
 			goto fail;
 		}
 
 		buffer.pos += 1;
 
 		if(!fetch_card16(&buffer, &name_len, local_byte_order)) {
-			puts("Can't get name length");
+			EWARNING(ESTRLOC ": Can't get name length\n");
 			goto fail;
 		}
 
 		pad_len = XSETTINGS_PAD(name_len, 4);
 
 		if(BYTES_LEFT(&buffer) < pad_len) {
-			puts("Invalid settings size");
+			EWARNING(ESTRLOC ": Invalid settings size\n");
 			goto fail;
 		}
 
@@ -310,7 +310,7 @@ XSettingsList* xsettings_decode(unsigned char* data, /*size_t*/ int len, unsigne
 		buffer.pos += pad_len;
 
 		if(!fetch_card32(&buffer, &v_int, local_byte_order)) {
-			puts("Can't get serial");
+			EWARNING(ESTRLOC ": Can't get serial\n");
 			goto fail;
 		}
 
@@ -319,7 +319,7 @@ XSettingsList* xsettings_decode(unsigned char* data, /*size_t*/ int len, unsigne
 		switch(type) {
 			case XSETTINGS_TYPE_INT:
 				if(!fetch_card32(&buffer, &v_int, local_byte_order)) {
-					puts("Can't get int value");
+					EWARNING(ESTRLOC ": Can't get int value\n");
 					goto fail;
 				}
 
@@ -327,14 +327,14 @@ XSettingsList* xsettings_decode(unsigned char* data, /*size_t*/ int len, unsigne
 				break;
 			case XSETTINGS_TYPE_STRING:
 				if(!fetch_card32(&buffer, &v_int, local_byte_order)) {
-					puts("Can't get string size");
+					EWARNING(ESTRLOC ": Can't get string size\n");
 					goto fail;
 				}
 
 				pad_len = XSETTINGS_PAD(v_int, 4);
 				if(v_int + 1 == 0 || /* guard against wrap-around */
 						BYTES_LEFT(&buffer) < pad_len) {
-					puts("Wrong string size");
+					EWARNING(ESTRLOC ": Wrong string size\n");
 					goto fail;
 				}
 
@@ -345,22 +345,22 @@ XSettingsList* xsettings_decode(unsigned char* data, /*size_t*/ int len, unsigne
 				break;
 			case XSETTINGS_TYPE_COLOR:
 				if(!fetch_ushort(&buffer, &setting->data.v_color.red, local_byte_order)) {
-					puts("Can't get red color");
+					EWARNING(ESTRLOC ": Can't get red color\n");
 					goto fail;
 				}
 
 				if(!fetch_ushort(&buffer, &setting->data.v_color.green, local_byte_order)) {
-					puts("Can't get green color");
+					EWARNING(ESTRLOC ": Can't get green color\n");
 					goto fail;
 				}
 
 				if(!fetch_ushort(&buffer, &setting->data.v_color.blue, local_byte_order)) {
-					puts("Can't get blue color");
+					EWARNING(ESTRLOC ": Can't get blue color\n");
 					goto fail;
 				}
 
 				if(!fetch_ushort(&buffer, &setting->data.v_color.alpha, local_byte_order)) {
-					puts("Can't get alpha color");
+					EWARNING(ESTRLOC ": Can't get alpha color\n");
 					goto fail;
 				}
 				break;
@@ -481,7 +481,7 @@ void xsettings_manager_set_setting(XSettingsData* data, XSettingsSetting* settin
 		if(xsettings_setting_equal(old_setting, setting))
 			return;
 
-		printf("removing %s\n", setting->name);
+		EDEBUG(ESTRLOC ": removing %s\n", setting->name);
 		xsettings_list_remove(&data->settings, setting->name);
 	}
 
@@ -491,7 +491,7 @@ void xsettings_manager_set_setting(XSettingsData* data, XSettingsSetting* settin
 	if(!xsettings_list_add(&data->settings, new_setting))
 		xsettings_setting_free(new_setting);
 
-	printf("adding %s\n", new_setting->name);
+	EDEBUG(ESTRLOC ": adding %s\n", new_setting->name);
 }
 
 EDELIB_NS_END

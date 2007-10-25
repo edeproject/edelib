@@ -1,3 +1,25 @@
+2007-10-25  Sanel <karijes@users.sourceforge.net>
+
+	* In XSettingsManager after set(), notify() must be called. This will
+	(on initial startup) keep serials to zero which is compatible with
+	XSETTINGS referent implementation
+	* The same done for XSettingsClient
+	* Window class added
+
+2007-10-24  Sanel <karijes@users.sourceforge.net>
+
+	* Documented XSettingsClient
+	* Copy ctor and operator= are private in XSettingsClient
+	* setup_driver() guarded with USE_SOUNDS
+	* XSettingsManager added with documentation
+	* XSettingsClient now explicitly accepts Display/screen variables
+
+2007-10-23  Sanel <karijes@users.sourceforge.net>
+
+	* xsettings_list_find in XSettingsCommon.h should accept XSettingsList*
+	not XSettingsList**. Compiler missed this !@#$
+	* Added xsettings.cpp file with tests
+
 2007-10-22  Sanel <karijes@users.sourceforge.net>
 
 	* Added XSETTINGS classes. Manager part missing

@@ -86,7 +86,7 @@ int main() {
 	win->show();
 
 	XSettingsClient cl;
-	if(!cl.init(xsettings_cb, NULL)) {
+	if(!cl.init(fl_display, fl_screen, xsettings_cb, NULL)) {
 		puts("Can't run XSETTINGS client");
 		return 1;
 	}

@@ -25,6 +25,7 @@ void button1_cb(Fl_Widget*, void*) {
 		return;
 	button1->color(color_rgb_to_fltk(r, g, b));
 	xs_client->set("Test/Background", r, g, b, 0);
+	xs_client->manager_notify();
 }
 
 void button2_cb(Fl_Widget*, void*) {
@@ -33,16 +34,17 @@ void button2_cb(Fl_Widget*, void*) {
 		return;
 	button2->color(color_rgb_to_fltk(r, g, b));
 	xs_client->set("Test/Foreground", r, g, b, 0);
+	xs_client->manager_notify();
 }
 
 void check_cb(Fl_Widget*, void*) {
-	printf("%i\n", check_button->value());
 	xs_client->set("Test/CheckValue", check_button->value());
+	xs_client->manager_notify();
 }
 
 void type_cb(Fl_Widget*, void*) {
-	printf("typing %s\n", input_field->value());
 	xs_client->set("Test/Text", input_field->value());
+	xs_client->manager_notify();
 }
 
 int main(int argc, char **argv) {
@@ -50,7 +52,7 @@ int main(int argc, char **argv) {
 	fl_open_display();
 
 	XSettingsClient cl;
-	if(!cl.init(NULL, NULL)) {
+	if(!cl.init(fl_display, fl_screen)) {
 		puts("Can't run XSETTINGS client");
 		return 1;
 	}
