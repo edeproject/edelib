@@ -37,7 +37,6 @@ MakeTest run_tests : UnitTest.cpp
 					$(ADDONLIB) $(FLTKLIBS) ;
 
 #MakeTest perf/stringtok : perf/stringtok.cpp ;
-MakeTest pp : pp.cpp : $(FLTKLIBS) ;
 
 Clean clean : [ FFileName $(TOP) test .foo.txt ] ;
 Clean clean : [ FFileName $(TOP) test .ede.conf ] ;
