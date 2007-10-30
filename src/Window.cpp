@@ -123,6 +123,8 @@ Window::Window(int W, int H, const char* l) : Fl_Window(W, H, l), inited(false) 
 }
 
 Window::~Window() {
+	if(IconTheme::inited())
+		IconTheme::shutdown();
 }
 
 void Window::init(void) {
