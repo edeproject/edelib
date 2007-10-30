@@ -130,7 +130,6 @@ void Window::init(void) {
 		return;
 
 	fl_open_display();
-	fl_register_images();
 
 	IconTheme::init(DEFAULT_ICON_THEME);
 
