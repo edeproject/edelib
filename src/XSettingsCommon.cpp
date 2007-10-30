@@ -494,4 +494,8 @@ void xsettings_manager_set_setting(XSettingsData* data, XSettingsSetting* settin
 	EDEBUG(ESTRLOC ": adding %s\n", new_setting->name);
 }
 
+void xsettings_manager_delete_setting(XSettingsData* data, const char* name) {
+	xsettings_list_remove(&data->settings, name);
+}
+
 EDELIB_NS_END

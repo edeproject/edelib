@@ -14,20 +14,46 @@
 #define __WINDOW_H__
 
 #include "econfig.h"
-#include <FL/Fl_Window.h>
 #include "XSettingsClient.h"
+#include <FL/Fl_Window.h>
 
 EDELIB_NS_BEGIN
 
+/**
+ * \class Window
+ * \brief Window class
+ *
+ * This is Window class similar to FLTK's Fl_Window, but with XSETTINGS support.
+ * \todo finish documentation
+ */
 class EDELIB_API Window : public Fl_Window {
 	private:
+		bool inited;
 		XSettingsClient xs;
+	public:
+		/**
+		 * Constructor
+		 */
+		Window(int X, int Y, int W, int H, const char* l = 0);
+
+		/**
+		 * Constructor
+		 */
+		Window(int W, int H, const char* l = 0);
+
+		/**
+		 * \todo finish
+		 */
 		void init(void);
 
-	public:
-		Window(int X, int Y, int W, int H, const char* l = 0);
-		Window(int W, int H, const char* l = 0);
+		/**
+		 * Destructor
+		 */
 		virtual ~Window();
+
+		/**
+		 * Shows a window
+		 */
 		virtual void show(void);
 };
 

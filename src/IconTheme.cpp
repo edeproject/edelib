@@ -159,7 +159,6 @@ bool IconTheme::cache_lookup(const char* icon, IconSizes sz, IconContext ctx, St
  *  4. rest
  */
 void IconTheme::init_base_dirs(void) {
-	// TODO: I will need some make_dir_path() functions somewhere
 	String path = dir_home();
 	path += "/.icons/";
 

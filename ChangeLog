@@ -1,3 +1,9 @@
+2007-10-29  Sanel <karijes@users.sourceforge.net>
+
+	* xsettings_manager_delete_setting added in XSettingsCommon.cpp
+	* Small docs for Window class
+	* New settings property in Window class and fixed small color issues
+
 2007-10-25  Sanel <karijes@users.sourceforge.net>
 
 	* In XSettingsManager after set(), notify() must be called. This will

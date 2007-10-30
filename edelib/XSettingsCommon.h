@@ -208,6 +208,7 @@ void xsettings_encode(const XSettingsSetting* setting, XSettingsBuffer* buffer);
 #ifndef SKIP_DOCS
 void xsettings_manager_notify(XSettingsData* data);
 void xsettings_manager_set_setting(XSettingsData* data, XSettingsSetting* setting);
+void xsettings_manager_delete_setting(XSettingsData* data, const char* name);
 #endif
 
 EDELIB_NS_END
