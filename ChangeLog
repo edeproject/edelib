@@ -1,3 +1,10 @@
+2007-10-31  Sanel <karijes@users.sourceforge.net>
+
+	* XSETTINGS code in Window
+	* puts/printf cleanup from XSettingsClient
+	* manager_running() added to XSettingsClient
+	* More checks in Window code
+
 2007-10-29  Sanel <karijes@users.sourceforge.net>
 
 	* xsettings_manager_delete_setting added in XSettingsCommon.cpp

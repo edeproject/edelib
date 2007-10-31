@@ -13,7 +13,8 @@
 
 #include <edelib/XSettingsClient.h>
 #include <edelib/Debug.h>
-#include <stdio.h>  // puts
+
+#include <stdio.h>  // snprintf
 #include <string.h> // strcmp
 #include <limits.h> // LONG_MAX
 #include <FL/x.h>
@@ -102,9 +103,9 @@ void XSettingsClient::read_settings(void) {
 
 		if(result == Success && type != None) {
 			if(type != client_data->xsettings_atom)
-				puts("Invalid type for XSETTINGS property");
+				EWARNING(ESTRLOC ": Invalid type for XSETTINGS property\n");
 			else if(format != 8)
-				printf("Invalid format for XSETTINGS property %d\n", format);
+				EWARNING(ESTRLOC ": Invalid format for XSETTINGS property %d\n", format);
 			else {
 				// parse settings
 				client_data->settings = xsettings_decode(data, n_items, &client_data->serial);
@@ -132,7 +133,7 @@ bool XSettingsClient::init(Display* dpy, int screen, XSettingsCallback cb, void*
 	client_data->serial = 0;
 
 	char buff[256];
-	snprintf(buff, sizeof(buff)-1, "_XSETTINGS_S%d", fl_screen);
+	snprintf(buff, sizeof(buff), "_XSETTINGS_S%d", fl_screen);
 
 	client_data->selection_atom = XInternAtom(client_data->display, buff, False);
 	client_data->manager_atom = XInternAtom(client_data->display, "MANAGER", False);
@@ -154,9 +155,23 @@ void XSettingsClient::clear(void) {
 		return;
 
 	xsettings_list_free(client_data->settings);
-	/* delete client_data->settings; */
 	delete client_data;
 	client_data = NULL;
+}
+
+/*
+ * FIXME: the same code is already in XSettingsManager.
+ * Probably should be replaced with single xsettings_manager_running() function ?
+ */
+/* static */
+bool XSettingsClient::manager_running(Display* dpy, int screen) {
+	char buff[256];
+	sprintf(buff, "_XSETTINGS_S%d", screen);
+
+	Atom selection = XInternAtom(dpy, buff, False);
+	if(XGetSelectionOwner(dpy, selection))
+		return true;
+	return false;
 }
 
 void XSettingsClient::callback(XSettingsCallback cb, void* data) {
@@ -173,8 +188,8 @@ int XSettingsClient::process_xevent(const XEvent* xev) {
 		}
 	} else if(xev->xany.window == client_data->manager_win) {
 		if(xev->xany.type == DestroyNotify) {
-			puts("Manager quit");
 			check_manager_window();
+			EDEBUG(ESTRLOC ": Manager quit\n");
 			return True;
 		} else if(xev->xany.type == PropertyNotify) {
 			read_settings();

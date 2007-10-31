@@ -471,6 +471,15 @@ void xsettings_manager_notify(XSettingsData* data) {
 	XChangeProperty(data->display, data->manager_win, data->xsettings_atom, data->xsettings_atom,
 			8, PropModeReplace, buffer.data, buffer.len);
 
+	/*
+	 * Let X flushes it's stuff, especially for cases when client wrote something
+	 * and then quits. In latter case data will not be written.
+	 * Is this fltk specific issue ?
+	 *
+	 * FIXME: probably good idea would be to grab X untill property is written
+	 */
+	XFlush(data->display);
+
 	delete [] buffer.data;
 }
 
@@ -490,8 +499,8 @@ void xsettings_manager_set_setting(XSettingsData* data, XSettingsSetting* settin
 
 	if(!xsettings_list_add(&data->settings, new_setting))
 		xsettings_setting_free(new_setting);
-
-	EDEBUG(ESTRLOC ": adding %s\n", new_setting->name);
+	else
+		EDEBUG(ESTRLOC ": adding %s\n", new_setting->name);
 }
 
 void xsettings_manager_delete_setting(XSettingsData* data, const char* name) {

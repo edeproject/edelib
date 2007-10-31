@@ -14,15 +14,18 @@
 #include <edelib/Color.h>
 #include <edelib/MessageBox.h>
 #include <edelib/IconTheme.h>
+#include <edelib/Debug.h>
+
 #include <string.h>
 #include <stdio.h>
 #include <FL/Fl.h>
 #include <FL/x.h>
-
-extern int FL_NORMAL_SIZE;
+#include <FL/Fl_Shared_Image.h>
 
 #define DEFAULT_ICON_THEME "edeneu"
 #define DEFAULT_FONT_SIZE  12
+
+extern int FL_NORMAL_SIZE;
 
 EDELIB_NS_BEGIN
 
@@ -42,7 +45,7 @@ static void xsettings_cb(const char* name, XSettingsAction action, XSettingsSett
 	if(strcmp(name, "Fltk/Background") == 0) {
 		unsigned char r, g, b;
 
-		if(action == XSETTINGS_ACTION_DELETED) {
+		if(action == XSETTINGS_ACTION_DELETED || setting->type != XSETTINGS_TYPE_COLOR) {
 			// FL_GRAY
 			r = g = b = 192;
 		} else {
@@ -56,7 +59,7 @@ static void xsettings_cb(const char* name, XSettingsAction action, XSettingsSett
 	} else if(strcmp(name, "Fltk/Background2") == 0) {
 		unsigned char r, g, b;
 
-		if(action == XSETTINGS_ACTION_DELETED) {
+		if(action == XSETTINGS_ACTION_DELETED || setting->type != XSETTINGS_TYPE_COLOR) {
 			// FL_WHITE
 			r = g = b = 255;
 		} else {
@@ -70,7 +73,7 @@ static void xsettings_cb(const char* name, XSettingsAction action, XSettingsSett
 	} else if(strcmp(name, "Fltk/Foreground") == 0) {
 		unsigned char r, g, b;
 
-		if(action == XSETTINGS_ACTION_DELETED) {
+		if(action == XSETTINGS_ACTION_DELETED || setting->type != XSETTINGS_TYPE_COLOR) {
 			// FL_BLACK
 			r = g = b = 0;
 		} else {
@@ -83,7 +86,7 @@ static void xsettings_cb(const char* name, XSettingsAction action, XSettingsSett
 		changed = true;
 	} else if(strcmp(name, "Fltk/FontSize") == 0) {
 		int normal_size;
-		if(action == XSETTINGS_ACTION_DELETED)
+		if(action == XSETTINGS_ACTION_DELETED || setting->type != XSETTINGS_TYPE_INT)
 			normal_size = DEFAULT_FONT_SIZE;
 		else
 			normal_size = setting->data.v_int;
@@ -101,25 +104,28 @@ static void xsettings_cb(const char* name, XSettingsAction action, XSettingsSett
 			IconTheme::shutdown();
 
 		const char* icon_theme;
-		if(action == XSETTINGS_ACTION_DELETED)
+		if(action == XSETTINGS_ACTION_DELETED || setting->type != XSETTINGS_TYPE_STRING)
 			icon_theme = DEFAULT_ICON_THEME;
 		else
 			icon_theme = setting->data.v_string;
 
 		IconTheme::init(icon_theme);
 		changed = true;
+	} else if(win->xsettings_callback()) {
+		// finally pass data to the user
+		changed = (*win->xsettings_callback())(name, action, setting, win->xsettings_callback_data());
 	}
 
 	if(changed)
 		win->redraw();
 }
 
-Window::Window(int X, int Y, int W, int H, const char* l) : Fl_Window(X, Y, W, H, l), inited(false) { 
-	init();
+Window::Window(int X, int Y, int W, int H, const char* l) : Fl_Window(X, Y, W, H, l), 
+	inited(false), loaded_components(0), xs_cb(NULL), xs_cb_old(NULL), xs_cb_data(NULL) { 
 }
 
-Window::Window(int W, int H, const char* l) : Fl_Window(W, H, l), inited(false) { 
-	init();
+Window::Window(int W, int H, const char* l) : Fl_Window(W, H, l),
+	inited(false), loaded_components(0), xs_cb(NULL), xs_cb_old(NULL), xs_cb_data(NULL) { 
 }
 
 Window::~Window() {
@@ -127,18 +133,23 @@ Window::~Window() {
 		IconTheme::shutdown();
 }
 
-void Window::init(void) {
+void Window::init(int component) {
 	if(inited)
 		return;
 
-	fl_open_display();
+	if(component & WIN_INIT_IMAGES)
+		fl_register_images();
 
-	IconTheme::init(DEFAULT_ICON_THEME);
+	if(component & WIN_INIT_ICON_THEME)
+		IconTheme::init(DEFAULT_ICON_THEME);
 
 	// setup icons for dialogs
 	themed_dialog_icons(MSGBOX_ICON_INFO, MSGBOX_ICON_ERROR, MSGBOX_ICON_QUESTION, 
 			MSGBOX_ICON_QUESTION, MSGBOX_ICON_PASSWORD);
 
+	fl_open_display();
+
+	// FIXME: what if failed ?
 	if(xs.init(fl_display, fl_screen, xsettings_cb, this)) {
 		xcli = &xs;
 		Fl::add_handler(xevent_handler);
@@ -147,9 +158,9 @@ void Window::init(void) {
 	inited = true;
 }
 
-void Window::show(void) {
-	Fl_Window::show();
-	init();
+XSettingsClient* Window::xsettings(void) {
+	EASSERT(inited == true && "init() must be called before this function");
+	return &xs;
 }
 
 EDELIB_NS_END

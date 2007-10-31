@@ -138,6 +138,14 @@ class XSettingsClient {
 		void clear(void);
 
 		/**
+		 * Checks if manager is running
+		 * \return true if does otherwise false
+		 * \param dpy is display
+		 * \param screen is screen
+		 */
+		static bool manager_running(Display* dpy, int screen);
+
+		/**
 		 * Set callback for listening changes
 		 * \param cb is callback parameter
 		 * \param data is data passed to the callback function
@@ -148,48 +156,6 @@ class XSettingsClient {
 		 * This function should be placed in loop with X events
 		 */
 		int process_xevent(const XEvent* xev);
-
-		/*
-		 * FIXME: already handled by callback(). 
-		 * Really need this ???
-		 */
-#if 0
-		/**
-		 * Gets integer value from named setting
-		 * \return false if failed otherwise true
-		 * \param name is setting name
-		 * \param ret is where to place value
-		 * \param dfl is default value if failed
-		 */
-		bool get(const char* name, int& ret, int dfl = 0);
-
-		/**
-		 * Gets string (char*) value from named setting
-		 * \return false if failed otherwise true
-		 * \param name is setting name
-		 * \param ret is where to place value
-		 * \param size is length of place
-		 */
-		bool get(const char* name, char* ret, unsigned int size);
-
-		/**
-		 * Same sa get() with char* parameter except returned data
-		 * must be cleared with delete[] operator. If getting was failed,
-		 * nothing will be allocated
-		 */
-		bool get_allocated(const char* name, char* ret, unsigned int size);
-
-		/**
-		 * Gets RGBA value from named setting
-		 * \return false if failed otherwise true
-		 * \param name is setting name
-		 * \param r_ret is where to place red component
-		 * \param g_ret is where to place green component
-		 * \param b_ret is where to place blue component
-		 * \param a_ret is where to place alpha component
-		 */
-		bool get(const char* name, int& r_ret, int& g_ret, int& b_ret, int& a_ret);
-#endif
 
 		/**
 		 * Set integer value on manager

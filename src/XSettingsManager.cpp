@@ -117,7 +117,6 @@ void XSettingsManager::clear(void) {
 	manager_data->manager_win = None;
 
 	xsettings_list_free(manager_data->settings);
-	/* delete manager_data->settings; */
 	delete manager_data;
 	manager_data = NULL;
 }
