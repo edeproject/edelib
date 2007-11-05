@@ -2,6 +2,7 @@
 
 	* In Window added another way of updating data via external (from other
 	programs) calls
+	* test/strutil.cpp use list now
 
 2007-10-31  Sanel <karijes@users.sourceforge.net>
 

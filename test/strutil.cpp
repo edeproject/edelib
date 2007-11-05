@@ -1,5 +1,5 @@
 #include <edelib/StrUtil.h>
-#include <edelib/Vector.h>
+#include <edelib/List.h>
 #include <string.h>
 #include "UnitTest.h"
 
@@ -67,34 +67,41 @@ UT_FUNC(strtest, "Test strutil")
 
 UT_FUNC(stringtok, "Test stringtok")
 {
-	vector<String> vs;
-	stringtok(vs, "//this///is//sample//string", "/");
-	UT_VERIFY( vs.size() == 4 ); 
-	vs.clear();
+	list<String> ls;
+	list<String>::iterator ls_it;
+	stringtok(ls, "//this///is//sample//string", "/");
+	UT_VERIFY( ls.size() == 4 ); 
+	ls.clear();
 
 	// bug or feature ???
-	stringtok(vs, "//this///is//sample/string", "//");
-	UT_VERIFY( vs.size() == 4 ); 
-	vs.clear();
+	stringtok(ls, "//this///is//sample/string", "//");
+	UT_VERIFY( ls.size() == 4 ); 
+	ls.clear();
 
 	// bug or feature ???
-	stringtok(vs, "/|this/|is//sample/string", "/|");
-	UT_VERIFY( vs.size() == 4 ); 
-	vs.clear();
+	stringtok(ls, "/|this/|is//sample/string", "/|");
+	UT_VERIFY( ls.size() == 4 ); 
+	ls.clear();
 
-	stringtok(vs, "stringblastringblastring", "string");
-	UT_VERIFY( vs.size() == 2 );
-	UT_VERIFY( vs[0] == "bla" );
-	UT_VERIFY( vs[1] == "bla" );
-	vs.clear();
+	stringtok(ls, "stringblastringblastring", "string");
+	UT_VERIFY( ls.size() == 2 );
+	UT_VERIFY( ls.front() == "bla" );
+	UT_VERIFY( ls.back() == "bla" );
+	ls.clear();
 
-	stringtok(vs, "foo,baz,foo,baz,foo,baz,foo,gaz", ",");
-	UT_VERIFY( vs.size() == 8 );
-	UT_VERIFY( vs[7] == "gaz" );
-	UT_VERIFY( vs[1] == "baz" );
-	vs.clear();
+	stringtok(ls, "foo,baz,foo,baz,foo,baz,foo,gaz", ",");
+	UT_VERIFY( ls.size() == 8 );
+
+	ls_it = ls.end();
+	--ls_it;
+	UT_VERIFY( *ls_it == "gaz" );
+
+	ls_it = ls.begin();
+	++ls_it;
+	UT_VERIFY( *ls_it == "baz" );
+	ls.clear();
 
 	// if not found, vector is filled with string value
-	stringtok(vs, "foo baz foo", "");
-	UT_VERIFY( vs.size() == 1 );
+	stringtok(ls, "foo baz foo", "");
+	UT_VERIFY( ls.size() == 1 );
 }
