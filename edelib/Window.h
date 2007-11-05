@@ -34,6 +34,8 @@ enum WindowComponents {
 #ifndef SKIP_DOCS
 typedef bool (WindowXSettingsCallback)(const char* name, XSettingsAction action, 
 		const XSettingsSetting* setting, void* data);
+
+typedef void (WindowSettingsCallback)(void* data);
 #endif
 
 /**
@@ -50,10 +52,15 @@ class EDELIB_API Window : public Fl_Window {
 		bool inited;
 		int  loaded_components;
 		XSettingsClient xs;
+		unsigned long pref_atom; /* TODO: this should be Atom type */
+		unsigned int  pref_uid;
 
 		WindowXSettingsCallback* xs_cb;
 		WindowXSettingsCallback* xs_cb_old;
 		void* xs_cb_data;
+
+		WindowSettingsCallback* s_cb;
+		void* s_cb_data;
 
 	public:
 		/**
@@ -76,6 +83,44 @@ class EDELIB_API Window : public Fl_Window {
 		 * before show() (event if WIN_INIT_NONE is given) since will load XSETTINGS code
 		 */
 		void init(int component = WIN_INIT_ALL);
+
+		/**
+		 * Set UID (unique ID) for this window
+		 */
+		void settings_uid(unsigned int uid) { pref_uid = uid; }
+
+		/**
+		 * Get window UID
+		 */
+		unsigned int settings_uid(void) { return pref_uid; }
+
+		/**
+		 * Register callback for changes. Changes will be called with Window::update_settings()
+		 * \param cb is callback function
+		 * \param data is data passed to the callback
+		 */
+		void settings_callback(WindowSettingsCallback& cb, void* data = NULL) { s_cb = cb; s_cb_data = data; }
+
+		/**
+		 * Returns callback used for settings
+		 */
+		WindowSettingsCallback* settings_callback(void) { return s_cb; }
+
+		/**
+		 * Returns data assigned that should be passed to the settings_callback
+		 */
+		void* settings_callback_data(void) { return s_cb_data; }
+
+		/**
+		 * Returns atom used for settings. Internaly used by Window class
+		 */
+		unsigned long preferences_atom(void) { return pref_atom; }
+	
+		/**
+		 * Update settings for window with give uid
+		 * \param uid window which will update it's settings
+		 */
+		static void update_settings(unsigned int uid);
 
 		/**
 		 * Returns pointer to XSettingsClient member. init() must be called
@@ -113,6 +158,11 @@ class EDELIB_API Window : public Fl_Window {
 		 * callback completely.
 		 */
 		void restore_xsettings_callback(void) { xs_cb = xs_cb_old; }
+
+		/**
+		 * Show a window
+		 */
+		virtual void show(void);
 };
 
 EDELIB_NS_END
