@@ -86,6 +86,8 @@ IconContext figure_ctx(const String& ctx) {
 	// gnome addons; 'Emblems' are ignored
 	if(ctx == "Stock")
 		return ICON_CONTEXT_STOCK;
+	if(ctx == "Emblems")
+		return ICON_CONTEXT_EMBLEM;
 	if(ctx == "Misc")
 		return ICON_CONTEXT_MISC;
 

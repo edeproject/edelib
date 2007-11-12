@@ -16,3 +16,4 @@ TODO list:
    but fd.o people said it should be LC_MESSAGES. Inspect this.
  * Add inotify for DirWatch.
  * DirWatch on *BSDs, solaris and etc.
+ * Replace list::sort() with own version

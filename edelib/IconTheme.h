@@ -92,6 +92,7 @@ enum IconContext {
 	ICON_CONTEXT_FILESYSTEM,          ///< Icons representing objects that are part of system
 	ICON_CONTEXT_MIMETYPE,            ///< Icons representing MIME types
 	ICON_CONTEXT_STOCK,               ///< Icons representing stock objects (gnome themes usually)
+	ICON_CONTEXT_EMBLEM,              ///< Icons representing emblem objects (gnome themes usually)
 	ICON_CONTEXT_MISC                 ///< Misc icons (gnome themes usually)
 };
 

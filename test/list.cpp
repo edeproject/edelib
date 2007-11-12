@@ -149,6 +149,62 @@ UT_FUNC(ListTestErase, "Test list erase")
 	UT_VERIFY( (*it) == 3 );
 }
 
+static bool reverse_cmp(const int& v1, const int& v2) { return v1 > v2; }
+
+UT_FUNC(ListTestSort, "Test list sort")
+{
+	list<int> ls;
+	list<int>::iterator it, it_end;
+
+	ls.push_back(2);
+	ls.push_back(3);
+
+	ls.sort();
+	UT_VERIFY( ls.front() == 2 );
+	UT_VERIFY( ls.back() == 3 );
+
+	ls.clear();
+
+	ls.push_back(5);
+	ls.push_back(0);
+
+	ls.sort();
+	UT_VERIFY( ls.front() == 0 );
+	UT_VERIFY( ls.back() == 5 );
+
+	ls.clear();
+
+	for(int i = 0; i < 20; i++)
+		ls.push_back(i);
+
+	ls.sort();
+	
+	it = ls.begin(), it_end = ls.end();
+	for(int i = 0; it != it_end; i++, ++it)
+		UT_VERIFY( *it == i );
+
+	ls.clear();
+
+	int array_random[] = {262, 362, 390, 345, 215, 289, 1, 167, 226, 77, 384, 390, 295, 2, 189, 321, 295, 104, 171, 550};
+	int array_sorted[] = {1, 2, 77, 104, 167, 171, 189, 215, 226, 262, 289, 295, 295, 321, 345, 362, 384, 390, 390, 550};
+	int array_rsorted[] = {550, 390, 390, 384, 362, 345, 321, 295, 295, 289, 262, 226, 215, 189, 171, 167, 104, 77, 2, 1};
+
+	for(unsigned int i = 0; i < sizeof(array_random)/sizeof(int); i++)
+		ls.push_back(array_random[i]);
+
+	ls.sort();
+
+	it = ls.begin();
+	for(unsigned int i = 0; i < sizeof(array_sorted)/sizeof(int); i++, ++it)
+		UT_VERIFY( *it == array_sorted[i] );
+
+	ls.sort(reverse_cmp);
+
+	it = ls.begin();
+	for(unsigned int i = 0; i < sizeof(array_rsorted)/sizeof(int); i++, ++it)
+		UT_VERIFY( *it == array_rsorted[i] );
+}
+
 #include <list>
 UT_FUNC(ListComparison, "Test std::list comparison")
 {
@@ -225,4 +281,24 @@ UT_FUNC(ListComparison, "Test std::list comparison")
 	sit = sls.erase(sit);
 
 	UT_VERIFY( (*eit) == (*sit) );
+
+	// check sort
+	els.clear();
+	sls.clear();
+
+	int array[] = {10, 3, 43, 34, 455, 455, 0, 0, 0, 1, 1, 1, 23, 120, 5, 234, 34, 78, 10, 12, 55, 123};
+	for(unsigned int i = 0; i < sizeof(array)/sizeof(int); i++) {
+		els.push_back(i);
+		sls.push_back(i);
+	}
+
+	els.sort();
+	sls.sort();
+
+	UT_VERIFY( els.size() == sls.size() );
+	eit = els.begin();
+	sit = sls.begin();
+
+	for(unsigned int i = 0; i < els.size(); i++, ++eit, ++sit)
+		UT_VERIFY( *eit == *sit );
 }

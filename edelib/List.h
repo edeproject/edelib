@@ -32,6 +32,7 @@ struct ListNode {
 	ListNode(const T& v) : value(new T(v)), next(0), prev(0) { }
 
 	~ListNode() { 
+		//EDEBUG("ListNode::~ListNode\n");
 		delete value; 
 		value = 0; 
 		next = prev = 0; 
@@ -128,12 +129,15 @@ class list {
 	private:
 		typedef ListNode<T> Node;
 		typedef unsigned int size_type;
+		typedef bool (*SortCmp)(const T& val1, const T& val2);
 
 		size_type sz;
 		Node* tail;
 
 		list(const list&);
 		list& operator=(const list&);
+
+		static bool default_sort_cmp(const T& val1, const T& val2) { return val1 < val2; }
 
 	public:
 		/*
@@ -300,6 +304,119 @@ class list {
 		 * Return true if list is empty; otherwise false.
 		 */
 		bool empty(void) const { return sz == 0; }
+
+#ifndef SKIP_DOCS
+		void __do_merge(iterator first1, iterator last1, iterator last2, SortCmp cmp) {
+			size_type sz = 0;
+			for(iterator i = first1; i != last1; sz++, ++i) 
+				;
+
+			for(iterator first2 = last1; sz > 0 && first2 != last2; ) {
+				if(cmp(*first2, *first1)) {
+					iterator it_next = first2;
+					++it_next;
+
+					/* transfer */
+					it_next.node->prev->next = first1.node;
+					first2.node->prev->next = it_next.node;
+					first1.node->prev->next = first2.node;
+
+					Node* tmp = first1.node->prev;
+
+					first1.node->prev = it_next.node->prev;
+					it_next.node->prev = first2.node->prev;
+					first2.node->prev = tmp;
+					/* transfer ends */
+
+					first2 = it_next;
+				} else {
+					++first1;
+					--sz;
+				}
+			}
+		}
+
+		/* combsort11 implementation */
+		void comb_sort(SortCmp cmp = 0) {
+			if(size() <= 1)
+				return;
+
+			if(!cmp)
+				cmp = default_sort_cmp;
+
+			unsigned int gap = size();
+			bool swapped;
+
+			iterator it;
+			do {
+				swapped = false;
+				/* shrink factor */
+				gap = (unsigned int)(gap / 1.3);
+				if(gap == 9 || gap == 10)
+					gap = 11;
+				else if(gap < 1)
+					gap = 1;
+
+				it = begin();
+				for(unsigned int i = 0; i < size() - gap; i++, ++it) {
+					iterator tmp = it;
+
+					for(unsigned int j = 0; j < gap; j++)
+						++tmp;
+
+					if(cmp(*tmp, *it)) {
+						/* exchange values not nodes */
+						T* val = tmp.node->value;
+						tmp.node->value = it.node->value;
+						it.node->value = val;
+					}
+				}
+			} while(gap > 1 || swapped);
+		}
+#endif
+
+		/**
+		 * Sorts list. If cmp function is given (in form <em>bool cmp(const T& v1, const T& v2)</em>,
+		 * elements will be compared with it.
+		 */
+		void sort(SortCmp cmp = 0) {
+			if(size() <= 1)
+				return;
+
+			if(!cmp)
+				cmp = default_sort_cmp;
+
+			iterator it1, it2, it3;
+
+			for(size_type i = 1; i < size(); i *= 2) {
+				it1 = begin();
+				it2 = begin();
+				it3 = begin();
+
+				for(size_type j = i; j > 0 && it2 != end(); j--)
+					++it2;
+
+				for(size_type j = i * 2; j > 0 && it3 != end(); j--)
+					++it3;
+
+				size_type msz = size() + (2 * i) / (i * 2);
+
+				for(size_type m = 0; m < msz; m++) {
+					if(it1 != end() && it2 != end()) {
+						/* merge */
+						__do_merge(it1, it2, it3, cmp);
+						
+						it1 = it3;
+						it2 = it3;
+
+						for(size_type j = i; j > 0 && it2 != end(); j--)
+							++it2;
+						for(size_type j = i * 2; j > 0 && it3 != end(); j--)
+							++it3;
+					}
+				}
+			}
+		}
 };
 
 EDELIB_NS_END
