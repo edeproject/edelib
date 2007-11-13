@@ -336,7 +336,7 @@ class list {
 			}
 		}
 
-		/* combsort11 implementation */
+		/* Combsort11 implementation */
 		void comb_sort(SortCmp cmp = 0) {
 			if(size() <= 1)
 				return;
@@ -344,10 +344,14 @@ class list {
 			if(!cmp)
 				cmp = default_sort_cmp;
 
+			T*** elist = new T **[size()];
+			unsigned int cc = 0;
+			for(iterator i = begin(); i != end(); ++i, cc++)
+				elist[cc] = &i.node->value;
+
 			unsigned int gap = size();
 			bool swapped;
 
-			iterator it;
 			do {
 				swapped = false;
 				/* shrink factor */
@@ -357,21 +361,65 @@ class list {
 				else if(gap < 1)
 					gap = 1;
 
-				it = begin();
-				for(unsigned int i = 0; i < size() - gap; i++, ++it) {
-					iterator tmp = it;
-
-					for(unsigned int j = 0; j < gap; j++)
-						++tmp;
-
-					if(cmp(*tmp, *it)) {
+				for(unsigned int i = 0; i < size() - gap; i++) {
+					if(cmp(**elist[i + gap], **elist[i])) {
 						/* exchange values not nodes */
-						T* val = tmp.node->value;
-						tmp.node->value = it.node->value;
-						it.node->value = val;
+						T* val = *elist[i];
+						*elist[i] = *elist[i + gap];
+						*elist[i + gap] = val;
+
+						swapped = true;
 					}
 				}
 			} while(gap > 1 || swapped);
+
+			delete [] elist;
+		}
+
+		Node* __merge(Node* a, Node* b, SortCmp cmp) {
+			Node head;
+			Node* c = &head;
+			Node* cprev = 0;
+
+			while(a != 0 && b != 0) {
+				if(cmp(*a->value, *b->value)) {
+					c->next = a;
+					a = a->next;
+				} else {
+					c->next = b;
+					b = b->next;
+				}
+
+				c = c->next;
+				c->prev = cprev;
+				cprev = c;
+			}
+
+			if(a == 0)
+				c->next = b;
+			else
+				c->next = a;
+
+			c->next->prev = c;
+
+			return head.next;
+		}
+
+		Node* __mergesort(Node* c, SortCmp cmp) {
+			Node* a, *b;
+			if(c->next == 0)
+				return c;
+			a = c;
+			b = c->next;
+
+			while((b != 0) && (b->next != 0)) {
+				c = c->next;
+				b = b->next->next;
+			}
+
+			b = c->next;
+			c->next = 0;
+			return __merge(__mergesort(a, cmp), __mergesort(b, cmp), cmp);
 		}
 #endif
 
@@ -385,6 +433,29 @@ class list {
 
 			if(!cmp)
 				cmp = default_sort_cmp;
+
+			/*
+			Node* nn = __mergesort(tail->next, cmp);
+			tail->next = nn;
+			EDEBUG("= %p %p %p %p\n", tail, nn, nn->prev, nn->prev->prev);
+			*/
+
+			tail->prev->next = 0;
+			Node* nn= __mergesort(tail->next, cmp);
+			tail->next = nn;
+			nn->prev = tail;
+
+			while(1) {
+				if(nn->next)
+					nn = nn->next;
+				else {
+					nn->next = tail;
+					tail->prev = nn;
+					break;
+				}
+			}
+			
+			return;
 
 			iterator it1, it2, it3;
 
