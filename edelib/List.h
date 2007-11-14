@@ -139,6 +139,51 @@ class list {
 
 		static bool default_sort_cmp(const T& val1, const T& val2) { return val1 < val2; }
 
+		Node* merge_nodes(Node* a, Node* b, SortCmp cmp) {
+			Node head;
+			Node* c = &head;
+			Node* cprev = 0;
+
+			while(a != 0 && b != 0) {
+				if(cmp(*a->value, *b->value)) {
+					c->next = a;
+					a = a->next;
+				} else {
+					c->next = b;
+					b = b->next;
+				}
+
+				c = c->next;
+				c->prev = cprev;
+				cprev = c;
+			}
+
+			if(a == 0)
+				c->next = b;
+			else
+				c->next = a;
+
+			c->next->prev = c;
+			return head.next;
+		}
+
+		Node* mergesort(Node* c, SortCmp cmp) {
+			Node* a, *b;
+			if(c->next == 0)
+				return c;
+			a = c;
+			b = c->next;
+
+			while((b != 0) && (b->next != 0)) {
+				c = c->next;
+				b = b->next->next;
+			}
+
+			b = c->next;
+			c->next = 0;
+			return merge_nodes(mergesort(a, cmp), mergesort(b, cmp), cmp);
+		}
+
 	public:
 		/*
 		 * This comment is not part of documentation, and in short explains
@@ -305,38 +350,43 @@ class list {
 		 */
 		bool empty(void) const { return sz == 0; }
 
-#ifndef SKIP_DOCS
-		void __do_merge(iterator first1, iterator last1, iterator last2, SortCmp cmp) {
-			size_type sz = 0;
-			for(iterator i = first1; i != last1; sz++, ++i) 
-				;
+		/**
+		 * Sorts list. If cmp function is given (in form <em>bool cmp(const T& v1, const T& v2)</em>,
+		 * elements will be compared with it.
+		 */
+		void sort(SortCmp cmp = 0) {
+			if(size() <= 1)
+				return;
 
-			for(iterator first2 = last1; sz > 0 && first2 != last2; ) {
-				if(cmp(*first2, *first1)) {
-					iterator it_next = first2;
-					++it_next;
+			if(!cmp)
+				cmp = default_sort_cmp;
 
-					/* transfer */
-					it_next.node->prev->next = first1.node;
-					first2.node->prev->next = it_next.node;
-					first1.node->prev->next = first2.node;
+			// unlink nodes first making first->prev and last->next zero
+			tail->prev->next = 0;
 
-					Node* tmp = first1.node->prev;
+			Node* nn = mergesort(tail->next, cmp);
 
-					first1.node->prev = it_next.node->prev;
-					it_next.node->prev = first2.node->prev;
-					first2.node->prev = tmp;
-					/* transfer ends */
+			tail->next = nn;
+			nn->prev = tail;
 
-					first2 = it_next;
-				} else {
-					++first1;
-					--sz;
+			/* 
+			 * Search last node and let tail points to it. 
+			 * Althought this looks like overhead, this sort is still twice faster that std::list sort.
+			 * Alternative optimization would be that __mergesort() returns end node.
+			 */
+			while(1) {
+				if(nn->next)
+					nn = nn->next;
+				else {
+					nn->next = tail;
+					tail->prev = nn;
+					break;
 				}
 			}
 		}
 
-		/* Combsort11 implementation */
+#ifndef SKIP_DOCS
+		// Combsort11 implementation; used for comparison only
 		void comb_sort(SortCmp cmp = 0) {
 			if(size() <= 1)
 				return;
@@ -375,119 +425,7 @@ class list {
 
 			delete [] elist;
 		}
-
-		Node* __merge(Node* a, Node* b, SortCmp cmp) {
-			Node head;
-			Node* c = &head;
-			Node* cprev = 0;
-
-			while(a != 0 && b != 0) {
-				if(cmp(*a->value, *b->value)) {
-					c->next = a;
-					a = a->next;
-				} else {
-					c->next = b;
-					b = b->next;
-				}
-
-				c = c->next;
-				c->prev = cprev;
-				cprev = c;
-			}
-
-			if(a == 0)
-				c->next = b;
-			else
-				c->next = a;
-
-			c->next->prev = c;
-
-			return head.next;
-		}
-
-		Node* __mergesort(Node* c, SortCmp cmp) {
-			Node* a, *b;
-			if(c->next == 0)
-				return c;
-			a = c;
-			b = c->next;
-
-			while((b != 0) && (b->next != 0)) {
-				c = c->next;
-				b = b->next->next;
-			}
-
-			b = c->next;
-			c->next = 0;
-			return __merge(__mergesort(a, cmp), __mergesort(b, cmp), cmp);
-		}
 #endif
-
-		/**
-		 * Sorts list. If cmp function is given (in form <em>bool cmp(const T& v1, const T& v2)</em>,
-		 * elements will be compared with it.
-		 */
-		void sort(SortCmp cmp = 0) {
-			if(size() <= 1)
-				return;
-
-			if(!cmp)
-				cmp = default_sort_cmp;
-
-			/*
-			Node* nn = __mergesort(tail->next, cmp);
-			tail->next = nn;
-			EDEBUG("= %p %p %p %p\n", tail, nn, nn->prev, nn->prev->prev);
-			*/
-
-			tail->prev->next = 0;
-			Node* nn= __mergesort(tail->next, cmp);
-			tail->next = nn;
-			nn->prev = tail;
-
-			while(1) {
-				if(nn->next)
-					nn = nn->next;
-				else {
-					nn->next = tail;
-					tail->prev = nn;
-					break;
-				}
-			}
-			
-			return;
-
-			iterator it1, it2, it3;
-
-			for(size_type i = 1; i < size(); i *= 2) {
-				it1 = begin();
-				it2 = begin();
-				it3 = begin();
-
-				for(size_type j = i; j > 0 && it2 != end(); j--)
-					++it2;
-
-				for(size_type j = i * 2; j > 0 && it3 != end(); j--)
-					++it3;
-
-				size_type msz = size() + (2 * i) / (i * 2);
-
-				for(size_type m = 0; m < msz; m++) {
-					if(it1 != end() && it2 != end()) {
-						/* merge */
-						__do_merge(it1, it2, it3, cmp);
-						
-						it1 = it3;
-						it2 = it3;
-
-						for(size_type j = i; j > 0 && it2 != end(); j--)
-							++it2;
-						for(size_type j = i * 2; j > 0 && it3 != end(); j--)
-							++it3;
-					}
-				}
-			}
-		}
 };
 
 EDELIB_NS_END
