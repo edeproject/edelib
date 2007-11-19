@@ -3,6 +3,7 @@
 	* Replaced dnotify.m4 with notify.m4 where are (now) performed checks for
 	inotify, dnotify and FAM presence
 	* Replaced EDE_ with EDELIB_ in *.m4 and configure.in files
+	* kqueue checks added in notify.m4
 
 2007-11-13  Sanel <karijes@users.sourceforge.net>
 
