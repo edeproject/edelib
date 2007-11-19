@@ -8,7 +8,7 @@ dnl This program is licenced under terms of the
 dnl GNU General Public Licence version 2 or newer.
 dnl See COPYING for details.
 
-AC_DEFUN([EDE_CHECK_FLTK], [
+AC_DEFUN([EDELIB_CHECK_FLTK], [
 	dnl AC_MSG_NOTICE(whether is fltk (minimum 1.1.7) present)
 	AC_PATH_PROG(FLTK_CONFIG, fltk-config)
 	if test -n "$FLTK_CONFIG"; then

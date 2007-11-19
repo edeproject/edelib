@@ -10,8 +10,7 @@ dnl See COPYING for details.
 
 dnl Enable sound param and check for facility
 dnl For now only .ogg via libao
-AC_DEFUN([EDE_SOUND], [
-
+AC_DEFUN([EDELIB_SOUND], [
 	AC_ARG_ENABLE(sounds, [  --disable-sounds        disable sound support],, enable_sounds=yes)
 
 	if eval "test $enable_sounds = yes"; then

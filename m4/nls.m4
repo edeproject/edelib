@@ -9,7 +9,7 @@ dnl GNU General Public Licence version 2 or newer.
 dnl See COPYING for details.
 
 dnl Set --enable-nls option, with checking of additional functions
-AC_DEFUN([EDE_NLS], [
+AC_DEFUN([EDELIB_NLS], [
 	AC_MSG_CHECKING(whether NLS is requested)
 	AC_ARG_ENABLE(nls, [  --disable-nls           disable locale support],,enable_nls=yes)
 	if eval "test $enable_nls = yes"; then

@@ -10,7 +10,7 @@ dnl See COPYING for details.
 
 dnl Check do we have jam installed and try to determine version
 dnl where is minimal supported 2.3
-AC_DEFUN([EDE_PROG_JAM], [
+AC_DEFUN([EDELIB_PROG_JAM], [
 	AC_PATH_PROG(JAM, jam)
 
 	if test -n "$JAM"; then

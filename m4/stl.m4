@@ -11,7 +11,7 @@ dnl See COPYING for details.
 dnl Some distributions split packages between STL runtime
 dnl and development versions; this will ensure we have development packages
 dnl Code is based on AC_CXX_HAVE_STL from Todd Veldhuizen and Luc Maisonobe
-AC_DEFUN([EDE_CHECK_STL], [
+AC_DEFUN([EDELIB_CHECK_STL], [
 	AC_MSG_CHECKING(for reasonable STL support)
 	AC_LANG_CPLUSPLUS
 	AC_TRY_COMPILE([

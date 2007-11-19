@@ -49,32 +49,32 @@ AC_PATH_PROG(SED, sed)
 AC_PATH_PROG(MSGFMT, msgfmt)
 AC_PATH_PROG(XGETTEXT, xgettext)
 AC_PATH_PROG(DOXYGEN, doxygen)
-EDE_PROG_JAM
+EDELIB_PROG_JAM
 
 dnl call this quickly as possible so underlying scripts 
 dnl can change make-like variables to jam-like
-EDE_INIT_JAM
+EDELIB_INIT_JAM
 
 dnl basic headers
 AC_HEADER_STDC
-EDE_DATETIME
-EDE_CHECK_STL
+EDELIB_DATETIME
+EDELIB_CHECK_STL
 AC_CHECK_HEADER(string.h,AC_DEFINE(HAVE_STRING_H, 1, [Define to 1 if you have string.h file]))
 AC_CHECK_FUNC(snprintf, AC_DEFINE(HAVE_SNPRINTF, 1, [Define to 1 if you have snprintf()]))
 AC_CHECK_FUNC(vsnprintf, AC_DEFINE(HAVE_VSNPRINTF, 1, [Define to 1 if you have vsnprintf()]))
 
-EDE_DEVELOPMENT
+EDELIB_DEVELOPMENT
 
-EDE_CHECK_X11
+EDELIB_CHECK_X11
 dnl user fired --without-x, we disable fltk checks
 if eval "test $have_x = yes"; then
-	EDE_CHECK_FLTK
+	EDELIB_CHECK_FLTK
 fi
 
-EDE_DNOTIFY
-EDE_SHARED
-EDE_NLS
-EDE_SOUND
+EDELIB_NOTIFY
+EDELIB_SHARED
+EDELIB_NLS
+EDELIB_SOUND
 
 if test -n "$OPTIMFLAGS"; then
 	ALLFLAGS="$ALLFLAGS $OPTIMFLAGS"

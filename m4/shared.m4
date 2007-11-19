@@ -10,7 +10,7 @@ dnl See COPYING for details.
 
 dnl Add --enable-shared option
 dnl Also the bone of this code is based from FLTK's configure.in script
-AC_DEFUN([EDE_SHARED], [
+AC_DEFUN([EDELIB_SHARED], [
 	AC_ARG_ENABLE(shared, [  --enable-shared         enable shared library],,enable_shared=no)
 	if eval "test $enable_shared = no"; then
 		SHAREDCXXFLAGS=""

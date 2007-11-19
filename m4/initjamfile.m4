@@ -5,10 +5,10 @@ dnl Part of edelib.
 dnl Based on code from Autojam (c) Matze Braun <matze@braunis.de>
 
 #----------------------------------------------------------------------------
-#  EDE_INIT_JAM
+#  EDELIB_INIT_JAM
 #    This rule fixes several issues related to autoconf being make centric
 #----------------------------------------------------------------------------
-AC_DEFUN([EDE_INIT_JAM],
+AC_DEFUN([EDELIB_INIT_JAM],
     [
      AC_OUTPUT_INSTALLDIRS
      AC_FIX_INSTALL])

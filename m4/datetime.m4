@@ -9,7 +9,7 @@ dnl GNU General Public Licence version 2 or newer.
 dnl See COPYING for details.
 
 dnl Date/time functions checks
-AC_DEFUN([EDE_DATETIME], [
+AC_DEFUN([EDELIB_DATETIME], [
 	AC_CHECK_FUNC(gmtime_r, [have_gmtime_r=yes], [have_gmtime_r=no])
 	if eval "test $have_gmtime_r = yes"; then
 		AC_DEFINE(HAVE_GMTIME_R, 1, [Define to 1 if you have gmtime_r()])
@@ -29,6 +29,4 @@ AC_DEFUN([EDE_DATETIME], [
 	if eval "test $have_stime = yes"; then
 		AC_DEFINE(HAVE_STIME, 1, [Define to 1 if you have stime()])
 	fi
-
-
 ])

@@ -9,7 +9,7 @@ dnl GNU General Public Licence version 2 or newer.
 dnl See COPYING for details.
 
 dnl --enable-debug and --enable-profile options
-AC_DEFUN([EDE_DEVELOPMENT], [
+AC_DEFUN([EDELIB_DEVELOPMENT], [
 	AC_ARG_ENABLE(debug, [  --enable-debug          enable debug],,enable_debug=no)
 	if eval "test $enable_debug = yes"; then
 		DEBUGFLAGS="$DEBUGFLAGS -g3"

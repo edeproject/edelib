@@ -8,7 +8,7 @@ dnl This program is licenced under terms of the
 dnl GNU General Public Licence version 2 or newer.
 dnl See COPYING for details.
 
-AC_DEFUN([EDE_CHECK_X11], [
+AC_DEFUN([EDELIB_CHECK_X11], [
 	dnl generic X11 checkers
 	AC_PATH_X
 	AC_PATH_XTRA
