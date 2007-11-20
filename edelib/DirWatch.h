@@ -37,7 +37,9 @@ enum DirWatchFlags {
 enum DirWatchNotifier {
 	DW_NONE    = 0,             ///< None notifier; watching disabled
 	DW_DNOTIFY = 1,             ///< dnotify (linux kernel >= 2.4.19)
-	DW_INOTIFY = 2              ///< inotify (TODO: version)
+	DW_INOTIFY = 2,             ///< inotify (linux kernel >= 2.6.13)
+	DW_KQUEUE  = 3,             ///< BSDs (TODO)
+	DW_FAM     = 4,             ///< FAM/gamin (TODO)
 };
 
 /**
@@ -63,23 +65,25 @@ typedef void (DirWatchCallback)(const char* dir, const char* w, int flags, void*
  * \class DirWatch
  * \brief Directory changes notifier
  *
- * DirWatch can be used to monitor certain directories for changes of
- * their content (files, subdirectories, etc.). Those changes could be
- * addition, removing, accessing or attribution changes.
+ * DirWatch can be used to monitor certain directories for their content changes
+ * (their files). Those changes can be creating, removing, altering or attributes
+ * changes.
  *
  * \note DirWatch <em>can't</em> be used to monitor files directly; 
  * use directory where file belongs to.
- *
- * \note DirWatch for now working only on linux with kernels >= 2.4.19
  *
  * To accept events, you should initialize DirWatch, add appropriate directories
  * with desired notification flags and register callback. That callback will be
  * called when event occured on target directory with appropriate filled parameters.
  * Some of the parameters can be NULL or -1, depending if DirWatch was able to
- * figure out what was happened
+ * figure out what was happened.
  *
  * After initialization, application should go into <em>loop state</em> so it can
- * wait for events.
+ * wait for the events. This is not a problem for GUI applications since they already
+ * use event loops.
+ *
+ * \note DirWatch relies on FLTK loop, so code like <em>Fl::wait()</em> must be provided
+ * for non GUI applications.
  *
  * This is sample:
  * \code
@@ -106,8 +110,11 @@ typedef void (DirWatchCallback)(const char* dir, const char* w, int flags, void*
  *
  *   // go into loop (this should not be used in case of GUI application
  *   // since toolkits already provide similar infinite loops
- *   while(1)
- *      pause();
+ *   while(1) {
+ *      // do not use Fl::wait() or FLTK will not be able to poll events from
+ *      // notification code; here we refresh loop each 5 seconds
+ *      Fl::wait(5);
+ *   }
  *
  *   //... and when application is done, shutdown() will clear allocated data
  *   DirWatch::shutdown();
@@ -121,8 +128,8 @@ typedef void (DirWatchCallback)(const char* dir, const char* w, int flags, void*
  * creating and other two for attributes changes. This mostly depends on the way how file is created.
  * Final application should be prepared for this.
  *
- * When DirWatch is able to figure out what was changed, it will report that; if not 
- * given values will be NULL or -1:
+ * When DirWatch was not able to figure out what was changed, <em>what_changed</em> could be
+ * set to NULL or <em>flag</em> could be set -1.
  * \code
  *    // sample callback
  *    void notify_cb(const char* dir, const char* what_changed, int flag) {
@@ -131,13 +138,12 @@ typedef void (DirWatchCallback)(const char* dir, const char* w, int flags, void*
  *       ...
  *    }
  * \endcode
- * Final application <b>must</b> check given parameters.
  *
  * When tracking events, at first sight some reports will look odd or maybe wrong; this is
  * related to program/whatever that cause this event. Eg. when you open some file for editing
  * with vim (probably other editors), you will often get DW_CREATE/DW_DELETE events since
- * they create another temporary file, copy old content in it, modify it and move it to
- * file you supposed to edit. Also programs could create some temporary files and delete them.
+ * vim creates another temporary file, copy old content in it, modify it and move it to
+ * file you supposed to edit.
  *
  * Removing registered directories is done with remove(), but given directory name
  * must be equal to one passed to add(), like:
@@ -150,8 +156,7 @@ typedef void (DirWatchCallback)(const char* dir, const char* w, int flags, void*
  *    DirWatch::remove("/home/baz/");
  * \endcode
  *
- * After directory is removed from notifier, further events about changes in it
- * will not be delivered.
+ * After directory is removed from notifier, further change events in it will not be delivered.
  *
  * If you want to deliver some data in callback, you can use <em>void*</em> parameter
  * (avid reader will notice similarities with fltk callbacks :P). To remind:
@@ -166,32 +171,32 @@ typedef void (DirWatchCallback)(const char* dir, const char* w, int flags, void*
  *   DirWatch::callback(notify_cb, mywidget);
  * \endcode
  *
- * DirWatch can report how is communicating with kernel (should I notice that for now is
- * for linux only) via notifier() member returning one of DirWatchNotifier elements, so
- * application can decide what to do in case of some, like:
+ * DirWatch can report what backend it use for notification via notifier() member
+ * who will return one of the DirWatchNotifier elements. Then application can choose special
+ * case for some backend when is compiled in.
  * \code
  *   if(DirWatch::notifier() == DW_DNOTIFY)
  *     puts("I'm using dnotify");
  *   else if(DirWatch::notifier() == DW_INOTIFY)
  *     puts("I'm using inotify");
- *   else
- *     puts("Unable to watch");
+ *   else if
+ *     // you got the point :)
  * \endcode
- *
- * \note inotify support is one of TODOs
  */
 class DirWatch {
 	private:
 		static DirWatch* pinstance;
 
 		DirWatchImpl*    impl;
-		DirWatchNotifier dir_notifier;
+		DirWatchNotifier backend_notifier;
 
-		void init_once(void);
+		bool init_backend(void);
+		/*
 		DirWatchEntry* scan(int fd);
 
 		const char* figure_changed(DirWatchEntry* e);
 		void fill_content(DirWatchEntry* e);
+		*/
 
 		DirWatch(const DirWatch&);
 		DirWatch& operator=(DirWatch&);
@@ -215,13 +220,13 @@ class DirWatch {
 		bool have_entry(const char* dir);
 		void add_callback(DirWatchCallback* cb, void* data);
 		void run_callback(int fd);
-		DirWatchNotifier get_notifier(void) { return dir_notifier; }
+		DirWatchNotifier get_notifier(void) { return backend_notifier; }
 #endif
 		/**
 		 * Prepare internal data. This <b>must</b> be called
 		 * before any further add()
 		 */
-		static void init(void);
+		static bool init(void);
 
 		/**
 		 * Shutdown watcher and clean data. Any further add() call 

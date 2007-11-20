@@ -1,3 +1,12 @@
+2007-11-20  Sanel <karijes@users.sourceforge.net>
+
+	* Updated docs for DirWatch class
+	* Added DirWatchInotify.cpp DirWatchGeneric.cpp and moved old dnotify code
+	in DirWatchDnotify.cpp. Now desired backend will be choosen during compile
+	time. As dummy fallback will be used DirWatchGeneric which will do
+	nothing. dnotify is still not merged into new code and fam/kqueue are
+	pending for implementation
+
 2007-11-19  Sanel <karijes@users.sourceforge.net>
 
 	* Replaced dnotify.m4 with notify.m4 where are (now) performed checks for
