@@ -43,4 +43,3 @@ Clean clean : [ FFileName $(TOP) test .ede.conf ] ;
 
 # include examples directory
 SubInclude TOP test examples ;
-SubInclude TOP test t ;
