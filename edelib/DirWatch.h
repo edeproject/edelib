@@ -35,11 +35,10 @@ enum DirWatchFlags {
  * \brief Notifier type used by DirWatch
  */
 enum DirWatchNotifier {
-	DW_NONE    = 0,             ///< None notifier; watching disabled
-	DW_DNOTIFY = 1,             ///< dnotify (linux kernel >= 2.4.19)
-	DW_INOTIFY = 2,             ///< inotify (linux kernel >= 2.6.13)
-	DW_KQUEUE  = 3,             ///< BSDs (TODO)
-	DW_FAM     = 4,             ///< FAM/gamin (TODO)
+	DW_NONE = 0,                ///< None notifier; watching disabled
+	DW_INOTIFY,                 ///< inotify (linux kernel >= 2.6.13)
+	DW_KQUEUE,                  ///< BSDs
+	DW_FAM                      ///< FAM/gamin
 };
 
 /**
@@ -112,7 +111,7 @@ typedef void (DirWatchCallback)(const char* dir, const char* w, int flags, void*
  *   // since toolkits already provide similar infinite loops
  *   while(1) {
  *      // do not use Fl::wait() or FLTK will not be able to poll events from
- *      // notification code; here we refresh loop each 5 seconds
+ *      // notification code; here we restart loop each 5 seconds
  *      Fl::wait(5);
  *   }
  *

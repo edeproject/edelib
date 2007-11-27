@@ -1,3 +1,36 @@
+2007-11-26  Sanel <karijes@users.sourceforge.net>
+
+	* Let jam distclean remove .jamcache and .jamhcache files
+	* Versioning is done in single place in configure.in
+	* Fixed issue in inotify DirWatch when file is moved in/out watched
+	directory so DirWatch can report DW_REPORT_CREATE/DW_REPORT_DELETE
+	correctly
+
+2007-11-25  Sanel <karijes@users.sourceforge.net>
+
+	* Added mime.m4 which should check presence of XDG MIME database
+	* DirWatchFam.cpp added with FAM/Gamin implementation
+	* DirWatchInotify.cpp returns true if directory already registered, the
+	same behaviour as for DirWatchFam.cpp
+	* Removed DW_DNOTIFY from DirWatch header and dirwatch.cpp example
+	* Removed DirWatchDnotify.cpp file
+	* One less entry in TODO
+	* DirWatchGeneric.cpp will return true for every function, so it can be
+	used in code without interruption, althought will do nothing ;-)
+	* Removed dnotify checks in notify.m4
+	* Made DirWatch be compiled when FLTK is present since it depends on
+	FLTK's descriptor watching code
+	* Handle FAMAcknowledge event too
+	* Removed obsolete comment from IconTheme
+	* Removed obsolete commented code from Directory.cpp
+
+2007-11-23  Sanel <karijes@users.sourceforge.net>
+
+	* In notify.m4 added checks for FAMNoExists and --enable-fam-only option
+	which will force FAM usage (if exists) regardless of present kernel
+	notifier
+	* DirWatchInotify cleanings
+
 2007-11-20  Sanel <karijes@users.sourceforge.net>
 
 	* Updated docs for DirWatch class

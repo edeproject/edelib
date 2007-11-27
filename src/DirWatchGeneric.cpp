@@ -21,15 +21,15 @@ DirWatch::~DirWatch() {
 }
 
 bool DirWatch::init_backend(void) {
-	return false;
+	return true;
 }
 
 bool DirWatch::add_entry(const char* dir, int flags) {
-	return false;
+	return true;
 }
 
 bool DirWatch::remove_entry(const char* dir) {
-	return false;
+	return true;
 }
 
 void DirWatch::add_callback(DirWatchCallback* cb, void* data) {

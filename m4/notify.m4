@@ -31,6 +31,7 @@ AC_DEFUN([__INOTIFY_CHECK], [
 ])
 
 dnl dnotify checks (linux)
+dnl not used
 AC_DEFUN([__DNOTIFY_CHECK], [
 	AC_MSG_CHECKING([for dnotify presence])
 
@@ -100,17 +101,44 @@ AC_DEFUN([__FAM_CHECK], [
 	if eval "test $have_fam = yes"; then
 		AC_DEFINE(HAVE_FAM, 1, [Define to 1 if you have FAM installed])
 		AC_MSG_RESULT(yes)
+
+		FAMLIB="-lfam"
+
+		dnl check do FAM have FAMNoExists function (gamin only)
+		tmp_libs="$LIBS"
+		LIBS="$LIBS $FAMLIB"
+		AC_CHECK_FUNC([FAMNoExists], [have_famnoexists=yes], [have_famnoexists=no])
+		if eval "test $have_famnoexists"; then
+			AC_DEFINE(HAVE_FAMNOEXISTS, 1, [Define to 1 if you have FAMNoExists in FAM implementation])
+		fi
+
+		LIBS="$tmp_libs"
 	else
 		AC_MSG_RESULT(no)
 	fi
+
 ])
 
 dnl Checks for the file system notification support.
-dnl First will be checked for inotify, then for dnotify, then for kqueue (BSDs)
-dnl and at last for fam/gamin
+dnl First will be checked for inotify, then for kqueue (BSDs); if none of them
+dnl exists or was given --enable-fam-only, FAM/Gamin will be used
 AC_DEFUN([EDELIB_NOTIFY], [
-	__INOTIFY_CHECK
-	__DNOTIFY_CHECK
-	__KQUEUE_CHECK
-	__FAM_CHECK
+	AC_ARG_ENABLE(fam_only, [  --enable-fam-only       use FAM regardless of what kernel-level systems are available]
+		,[enable_fam_only=yes], [enable_fam_only=no])
+	if eval "test $enable_fam_only = yes"; then
+		__FAM_CHECK
+	else
+		dnl make sure none of the kernel notifiers are available before
+		dnl FAM fallback so we don't link code with libfam
+		__INOTIFY_CHECK
+		__KQUEUE_CHECK
+
+		if eval "test $have_inotify = no" && eval "test $have_kqueue = no"; then
+			__FAM_CHECK
+		fi
+	fi
+
+	dnl FIXME: make this part of LIBS variable
+	dnl FAMLIB will be set only when tests for FAM are passed
+	FLTKLIBS="$FLTKLIBS $FAMLIB"
 ])

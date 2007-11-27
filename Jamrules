@@ -472,6 +472,8 @@ Clean distclean : configure
 				  edelib/_conf.h.in 
 				  edelib/_conf.h 
 				  doc/Doxyfile 
-				  edelib/Version.h ;
+				  edelib/Version.h 
+				  $(JCACHEFILE)
+				  $(HCACHEFILE) ;
 
 Cleandir distclean : autom4te.cache ;

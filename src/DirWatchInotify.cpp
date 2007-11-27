@@ -22,7 +22,6 @@ EDELIB_NS_BEGIN
 
 struct DirWatchEntry {
 	String name;      // directory full path
-	int flags;        // flags for this directory
 	int dir_fd;       // directory descriptor
 };
 
@@ -41,7 +40,7 @@ void watch_callback(int fd, void* data) {
 	char buff[BUFF_LEN];
 	int len = 0;
 	int i = 0;
-	int myflags = 0;
+	int report = 0;
 	struct inotify_event* event;
 	DirWatchImpl* impl = (DirWatchImpl*)data;
 	DirEntryIter it, it_end;
@@ -69,24 +68,27 @@ again:
 		/* scan for directory descriptor */
 		for(it = impl->entries.begin(); it != it_end; ++it) {
 			if((*it)->dir_fd == event->wd) {
-				if(event->mask & IN_DELETE)
-					myflags = DW_REPORT_DELETE;
-				else if(event->mask & IN_CREATE)
-					myflags = DW_REPORT_CREATE;
+				/*
+				 * When file is moved (but not deleted) in/out watched directory, inotify
+				 * will not emit IN_CREATE/IN_DELETE but IN_MOVED_TO/IN_MOVED_FROM instead.
+				 * To allow compatibility with Gamin backend we will see IN_MOVED_XXX events
+				 * as entry creating/deleting. The same applies for watch_callback() reports.
+				 */
+				if(event->mask & (IN_DELETE | IN_MOVED_FROM))
+					report = DW_REPORT_DELETE;
+				else if(event->mask & (IN_CREATE | IN_MOVED_TO))
+					report = DW_REPORT_CREATE;
 				else if(event->mask & IN_MODIFY)
-					myflags = DW_REPORT_MODIFY;
+					report = DW_REPORT_MODIFY;
 				else if(event->mask & IN_ATTRIB)
-					myflags = DW_REPORT_MODIFY;
+					report = DW_REPORT_MODIFY;
 				else {
 					/* unknown flag; should not happened; just continue */
 					continue;
 				}
 
-				impl->tmp_storage = event->name;
-				EDEBUG(ESTRLOC ": Changed %s in %s\n", event->name, (*it)->name.c_str());
-
 				/* call callback and quit loop */
-				cb((*it)->name.c_str(), impl->tmp_storage.c_str(), myflags, impl->callback_data);
+				cb((*it)->name.c_str(), event->name, report, impl->callback_data);
 				return;
 			}
 		}
@@ -104,7 +106,7 @@ DirWatch::~DirWatch() {
 
 	DirEntryIter it = impl->entries.begin(), it_end = impl->entries.end();
 	for(; it != it_end; ++it) {
-		/* TODO: remove watch */
+		inotify_rm_watch(impl->inotify_fd, (*it)->dir_fd);
 		delete *it;
 	}
 
@@ -142,12 +144,12 @@ bool DirWatch::add_entry(const char* dir, int flags) {
 	DirEntryIter it = impl->entries.begin(), it_end = impl->entries.end();
 	for(; it != it_end; ++it) {
 		if((*it)->name == dir)
-			return false;
+			return true;
 	}
 
 	int inotify_flags = 0;
-	if(flags & DW_CREATE) inotify_flags |= IN_CREATE;
-	if(flags & DW_DELETE) inotify_flags |= IN_DELETE;
+	if(flags & DW_CREATE) inotify_flags |= IN_CREATE | IN_MOVED_TO;
+	if(flags & DW_DELETE) inotify_flags |= IN_DELETE | IN_MOVED_FROM;
 	if(flags & DW_MODIFY) inotify_flags |= IN_MODIFY;
 	if(flags & DW_ATTRIB) inotify_flags |= IN_ATTRIB;
 	/* ignore other flags */
@@ -158,7 +160,6 @@ bool DirWatch::add_entry(const char* dir, int flags) {
 
 	DirWatchEntry* new_entry = new DirWatchEntry;
 	new_entry->name = dir;
-	new_entry->flags = flags;
 	new_entry->dir_fd = fd;
 
 	impl->entries.push_back(new_entry);

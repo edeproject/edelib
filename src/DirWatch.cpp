@@ -16,6 +16,11 @@
 #include <edelib/Directory.h>
 #include <edelib/List.h>
 
+/*
+ * NOTE: DirWatch.cpp revision 2081 contained dnotify implementation
+ * but was removed due bad performances (that is why gamin was invented).
+ * This note is for me in case I need to dig out dnotify support again :-P
+ */
 EDELIB_NS_BEGIN
 
 DirWatch* DirWatch::pinstance = NULL;
@@ -60,9 +65,8 @@ EDELIB_NS_END
 
 #ifdef HAVE_INOTIFY
 	#include "DirWatchInotify.cpp"
-#elif HAVE_DNOTIFY
-	#include "DirWatchDnotify.cpp"
+#elif HAVE_FAM
+	#include "DirWatchFam.cpp"
 #else
 	#include "DirWatchGeneric.cpp"
 #endif
-

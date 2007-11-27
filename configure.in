@@ -8,19 +8,21 @@ dnl This program is licenced under terms of the
 dnl GNU General Public Licence version 2 or newer.
 dnl See COPYING for details.
 
+m4_define([edelib_major_version], [2])
+m4_define([edelib_minor_version], [0])
+m4_define([edelib_patch_version], [0])
+m4_define([edelib_version], [edelib_major_version.edelib_minor_version.edelib_patch_version])
+
 AC_PREREQ(2.13)
 
-AC_INIT(edelib, 2.0.0a, [karijes@users.sourceforge.net])
+AC_INIT(edelib, edelib_version, [karijes@users.sourceforge.net])
 
 AC_CONFIG_SRCDIR(edelib/Nls.h)
 AC_CONFIG_HEADER(edelib/_conf.h:edelib/_conf.h.in)
 
-dnl stupid autoconf does not allow any variables
-dnl before AC_INIT(), without messing with m4;
-dnl so increasing version data in AC_INIT() should be reflected here too
-EDELIB_MAJOR_VERSION=2
-EDELIB_MINOR_VERSION=0
-EDELIB_PATCH_VERSION=0
+EDELIB_MAJOR_VERSION=edelib_major_version
+EDELIB_MINOR_VERSION=edelib_minor_version
+EDELIB_PATCH_VERSION=edelib_patch_version
 EDELIB_API_VERSION=$PACKAGE_VERSION
 
 dnl some systems (guess, OpenBSD) ships ginstall as separate
@@ -59,14 +61,14 @@ dnl basic headers
 AC_HEADER_STDC
 EDELIB_DATETIME
 EDELIB_CHECK_STL
-AC_CHECK_HEADER(string.h,AC_DEFINE(HAVE_STRING_H, 1, [Define to 1 if you have string.h file]))
+AC_CHECK_HEADER(string.h, AC_DEFINE(HAVE_STRING_H, 1, [Define to 1 if you have string.h file]))
 AC_CHECK_FUNC(snprintf, AC_DEFINE(HAVE_SNPRINTF, 1, [Define to 1 if you have snprintf()]))
 AC_CHECK_FUNC(vsnprintf, AC_DEFINE(HAVE_VSNPRINTF, 1, [Define to 1 if you have vsnprintf()]))
 
 EDELIB_DEVELOPMENT
 
 EDELIB_CHECK_X11
-dnl user fired --without-x, we disable fltk checks
+dnl user fired --without-x, we disable FLTK checks
 if eval "test $have_x = yes"; then
 	EDELIB_CHECK_FLTK
 fi
@@ -75,6 +77,7 @@ EDELIB_NOTIFY
 EDELIB_SHARED
 EDELIB_NLS
 EDELIB_SOUND
+EDELIB_MIME
 
 if test -n "$OPTIMFLAGS"; then
 	ALLFLAGS="$ALLFLAGS $OPTIMFLAGS"

@@ -37,7 +37,6 @@ SOURCE = Config.cpp
 		 TiXml.cpp
 		 TiXmlParser.cpp 
 		 MimeType.cpp
-		 DirWatch.cpp
 		 rx/regex.c
 		 Regex.cpp
 		 $(XDGMIME) ;
@@ -46,7 +45,8 @@ SOURCE = Config.cpp
 #SOURCE_GUI = Ask.cpp
 #			 ComboBox.cpp 
 
-SOURCE_GUI = XSet.cpp
+SOURCE_GUI = DirWatch.cpp
+			 XSet.cpp
 			 XSettingsCommon.cpp
 			 XSettingsClient.cpp
 			 XSettingsManager.cpp
