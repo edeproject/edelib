@@ -81,8 +81,8 @@ int main() {
 		log = new Fl_Text_Buffer();
 		td->buffer(log);
 
-		if(edelib::DirWatch::notifier() == edelib::DW_DNOTIFY)
-			log->append("Loaded with dnotify\n");
+		if(edelib::DirWatch::notifier() == edelib::DW_FAM)
+			log->append("Loaded with FAM\n");
 		else if(edelib::DirWatch::notifier() == edelib::DW_INOTIFY)
 			log->append("Loaded with inotify\n");
 		else
