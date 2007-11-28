@@ -1,3 +1,9 @@
+2007-11-28  Sanel <karijes@users.sourceforge.net>
+
+	* Implemented icon() in Window which will correctly set an titlebar icon
+	with transparency. Also added libxpm.m4 for libXpm checks since icon()
+	use it.
+
 2007-11-26  Sanel <karijes@users.sourceforge.net>
 
 	* Let jam distclean remove .jamcache and .jamhcache files

@@ -71,6 +71,8 @@ EDELIB_CHECK_X11
 dnl user fired --without-x, we disable FLTK checks
 if eval "test $have_x = yes"; then
 	EDELIB_CHECK_FLTK
+	dnl check for libXpm after FLTK since FLTKLIBS will contain Xpm library if found
+	EDELIB_CHECK_LIBXPM
 fi
 
 EDELIB_NOTIFY

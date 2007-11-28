@@ -62,6 +62,8 @@ class EDELIB_API Window : public Fl_Window {
 		WindowSettingsCallback* s_cb;
 		void* s_cb_data;
 
+		const char* const* icon_pixmap;
+
 	public:
 		/**
 		 * Constructor
@@ -158,6 +160,13 @@ class EDELIB_API Window : public Fl_Window {
 		 * callback completely.
 		 */
 		void restore_xsettings_callback(void) { xs_cb = xs_cb_old; }
+
+		/**
+		 * Set a window icon (icon that will be shown in titlebar). To allow compatibility
+		 * with FLTK, this function must be called <em>before</em> show() or icon will not
+		 * be shown.
+		 */
+		void icon(const char* const * pix) { icon_pixmap = pix; }
 
 		/**
 		 * Show a window
