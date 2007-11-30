@@ -11,7 +11,7 @@
 	icon() member from Fl_Window
 	* Let ALLFLAGS contains FLTKFLAGS (in Jamconfig.in) so jam can pick up
 	correctly X11 paths
-	* Added FontChooser dialog
+	* Added font chooser dialog
 
 2007-11-29  Sanel <karijes@users.sourceforge.net>
 
