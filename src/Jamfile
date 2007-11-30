@@ -41,10 +41,6 @@ SOURCE = Config.cpp
 		 Regex.cpp
 		 $(XDGMIME) ;
 
-# files that requires fltk or X11
-#SOURCE_GUI = Ask.cpp
-#			 ComboBox.cpp 
-
 SOURCE_GUI = DirWatch.cpp
 			 XSet.cpp
 			 XSettingsCommon.cpp
