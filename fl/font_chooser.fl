@@ -1,0 +1,35 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0108 
+header_name {.h} 
+code_name {.cxx}
+Function {} {open selected
+} {
+  Fl_Window {} {
+    label {Choose font} open
+    xywh {381 321 450 320} type Double visible
+  } {
+    Fl_Browser {} {
+      label {Font:}
+      xywh {10 25 335 170} align 5
+    }
+    Fl_Input {} {
+      label {Size:}
+      xywh {350 25 90 25} align 5
+    }
+    Fl_Browser {} {
+      xywh {350 55 90 140} align 5
+    }
+    Fl_Input {} {
+      label {Preview:}
+      xywh {10 220 430 55} align 5
+    }
+    Fl_Button {} {
+      label {&OK}
+      xywh {255 285 90 25}
+    }
+    Fl_Button {} {
+      label {&Cancel}
+      xywh {350 285 90 25}
+    }
+  }
+} 
