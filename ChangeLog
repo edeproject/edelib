@@ -1,3 +1,24 @@
+2007-11-30  Sanel <karijes@users.sourceforge.net>
+
+	* Work on Window class; now it is by default double buffered, inheriting
+	Fl_Double_Window, but can be switched to Fl_Window too
+	* Fixed bug in DirWatchInotify where continuous events would not be
+	reported (two directories are watched, file is moved from one to second
+	watched directory)
+	* Added create_window_xid() which do the same job as Fl_X::make_xid() but
+	with function parameter where can be done work before window is mapped
+	* icon() is now known as window_icon() so to not collide with default
+	icon() member from Fl_Window
+	* Let ALLFLAGS contains FLTKFLAGS (in Jamconfig.in) so jam can pick up
+	correctly X11 paths
+
+2007-11-29  Sanel <karijes@users.sourceforge.net>
+
+	* Added checks for daylight variable; FreeBSD does not have it (presumably
+	other BSD's). Is this glibc extension ?
+	* Cleared some old code from Window.cpp
+	* Let SoundSystem be correctly compiled when sounds are disabled
+
 2007-11-28  Sanel <karijes@users.sourceforge.net>
 
 	* Implemented icon() in Window which will correctly set an titlebar icon

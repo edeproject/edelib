@@ -29,4 +29,22 @@ AC_DEFUN([EDELIB_DATETIME], [
 	if eval "test $have_stime = yes"; then
 		AC_DEFINE(HAVE_STIME, 1, [Define to 1 if you have stime()])
 	fi
+
+	dnl Check for daylight variable in time.h. FreeBSD (possible other BSDs don't have it)
+	AC_MSG_CHECKING([for daylight variable])
+	AC_LANG_SAVE
+	AC_LANG_C
+	AC_TRY_COMPILE([
+		#include <time.h>
+	],[
+		extern int daylight;
+	],[have_daylight=yes],[have_daylight=no])
+	AC_LANG_RESTORE
+
+	if eval "test $have_daylight = yes"; then
+		AC_DEFINE(HAVE_DAYLIGHT, 1, [Define to 1 if you have daylight variable])
+		AC_MSG_RESULT(yes)
+	else
+		AC_MSG_RESULT(no)
+	fi
 ])

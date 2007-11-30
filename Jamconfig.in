@@ -35,12 +35,12 @@ SYMLINKCMD      ?= "@LN_S@" ;
 SED             ?= "@SED@" ;
 AWK             ?= "@AWK@" ;
 
-# build options
-ALLFLAGS  ?= "@ALLFLAGS@" ;
-
 # for fltk and X11
 FLTKFLAGS ?= "@FLTKFLAGS@" ;
 FLTKLIBS  ?= "@FLTKLIBS@" ;
+
+# build options
+ALLFLAGS  ?= "@ALLFLAGS@ @FLTKFLAGS@" ;
 
 # sound
 SOUNDLIBS ?= "@SOUNDLIBS@" ;

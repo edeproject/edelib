@@ -16,7 +16,7 @@
 #include "econfig.h"
 #include "XSettingsClient.h"
 #include "IconTheme.h"
-#include <FL/Fl_Window.h>
+#include <FL/Fl_Double_Window.h>
 
 EDELIB_NS_BEGIN
 
@@ -42,14 +42,23 @@ typedef void (WindowSettingsCallback)(void* data);
  * \class Window
  * \brief Window class
  *
- * This is Window class similar to FLTK's Fl_Window with addition of icon themes,
+ * This is Window class similar to FLTK's Fl_Window and Fl_Double_Window with addition of icon themes,
  * xsettings, dialog icons setup and image initialization code, often called prior program startup.
  *
  * It will also clean loaded data (e.g. call IconTheme::shutdown()).
+ *
+ * Contrary FLTK's Fl_Window and Fl_Double_Window, which are separate classes, this class can be
+ * both of them (actually you can choose will window be single buffered or double buffered). If member
+ * single_buffer() is set to true, window will behave as Fl_Window, if not (default), window will
+ * be as Fl_Double_Window.
+ *
+ * Make sure to call single_buffer() <em>before</em> show() if you want to change single/double buffering
+ * scheme.
  */
-class EDELIB_API Window : public Fl_Window {
+class EDELIB_API Window : public Fl_Double_Window {
 	private:
 		bool inited;
+		bool sbuffer;
 		int  loaded_components;
 		XSettingsClient xs;
 		unsigned long pref_atom; /* TODO: this should be Atom type */
@@ -85,6 +94,7 @@ class EDELIB_API Window : public Fl_Window {
 		 * before show() (event if WIN_INIT_NONE is given) since will load XSETTINGS code
 		 */
 		void init(int component = WIN_INIT_ALL);
+
 
 		/**
 		 * Set UID (unique ID) for this window
@@ -166,13 +176,77 @@ class EDELIB_API Window : public Fl_Window {
 		 * with FLTK, this function must be called <em>before</em> show() or icon will not
 		 * be shown.
 		 */
-		void icon(const char* const * pix) { icon_pixmap = pix; }
+		void window_icon(const char* const * pix) { icon_pixmap = pix; }
+
+		/**
+		 * Get a window icon
+		 */
+		const char* const* window_icon(void) { return icon_pixmap; }
 
 		/**
 		 * Show a window
 		 */
 		virtual void show(void);
+
+		/**
+		 * Show a window
+		 */
+		virtual void show(int argc, char** argv) { Fl_Window::show(argc, argv); }
+
+		/**
+		 * Set window either to single buffered
+		 */
+		void single_buffer(bool s) { sbuffer = s; }
+
+		/**
+		 * Returns if window is single buffered
+		 */
+		bool single_buffer(void) { return sbuffer; }
+
+		/**
+		 * Flush window content
+		 */
+		virtual void flush(void) { 
+			if(!sbuffer) 
+				Fl_Double_Window::flush();
+			else 
+				Fl_Window::flush(); 
+		}
+
+		/**
+		 * Resize window
+		 */
+		virtual void resize(int X, int Y, int W, int H) {
+			if(!sbuffer)
+				Fl_Double_Window::resize(X, Y, W, H);
+			else
+				Fl_Window::resize(X, Y, W, H);
+		}
+
+		/**
+		 * Hide window
+		 */
+		virtual void hide(void) {
+			if(!sbuffer)
+				Fl_Double_Window::hide();
+			else
+				Fl_Window::hide();
+		}
 };
+
+/**
+ * This function is intended to be used inside inherited show() member (from Fl_Window familly)
+ * and do the same job as Fl_X::make_xid(). The main difference is that it will call before_map_func()
+ * (if given) before window is actually mapped. 
+ *
+ * This is usefull for cases when window data must exists (when FLTK creates them) so some properties
+ * can be set before mapping on the screen (actually these properties can be set after window was mapped 
+ * but many window managers, panels, etc. will not be notified correctly and will not use them; of course
+ * not all properies must be set before window was mapped, but for those that must, this function is intended).
+ *
+ * In short, if you have not clue what I was talking about, then you don't need this function at all ;-).
+ */
+void create_window_xid(Fl_Window* win, void (*before_map_func)(Fl_Window*) = NULL, int background_pixel = -1);
 
 EDELIB_NS_END
 

@@ -87,9 +87,8 @@ again:
 					continue;
 				}
 
-				/* call callback and quit loop */
+				/* call callback but do not quit since we can get continuous events */
 				cb((*it)->name.c_str(), event->name, report, impl->callback_data);
-				return;
 			}
 		}
 

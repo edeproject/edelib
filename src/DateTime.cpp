@@ -31,18 +31,21 @@
 #define MONTH_NORMAL(m) (m + 1)
 
 extern char* tzname[2];
-extern int   daylight;
+
+#ifdef HAVE_DAYLIGHT
+extern int daylight;
+#endif
 
 EDELIB_NS_BEGIN
 
 static const char month_days[2][12] = {
 	{31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31},
-	{31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31} //Leap year
+	{31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31} // Leap year
 };
 
 static const short days_in_year[2][12] = {
 	{0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334 },
-	{0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335} //Leap year
+	{0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335} // Leap year
 };
 
 const char *day_names[] = {
@@ -141,14 +144,14 @@ bool TimeZone::load(const char* zone) {
 		unsetenv("TZ");
 
 	tzset();
-	//printf("--> %s\n", asctime(&tmp));
 
 	/* 
 	 * Make sure daylight is calculated in too or mktime() will 
 	 * wrongly calculate offset. daylight as tzname[] are set by tzset()
 	 */
+#ifdef HAVE_DAYLIGHT
 	tmp.tm_isdst = daylight;
-
+#endif
 	timeval = mktime(&tmp);
 	return true;
 }

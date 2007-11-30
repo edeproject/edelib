@@ -61,9 +61,10 @@ class EDELIB_API SoundSystem {
 		ao_sample_format format;
 		int default_driver;
 		unsigned long int thread_id;
-		int thread_running;
 		char pcm_out[PCM_BUF_SIZE];
 #endif 
+		int thread_running;
+
 		SoundSystem();
 		~SoundSystem();
 

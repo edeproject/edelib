@@ -133,6 +133,7 @@ SoundSystem* SoundSystem::instance(void) {
 }
 
 bool SoundSystem::play(const char* fname, bool block) {
+#ifdef USE_SOUNDS
 	int ret;
 	if(block)
 		ret = SoundSystem::instance()->play_stream(fname);
@@ -140,10 +141,17 @@ bool SoundSystem::play(const char* fname, bool block) {
 		ret = SoundSystem::instance()->play_stream_in_background(fname);
 
 	return ret;
+#else
+	return false;
+#endif
 }
 
 bool SoundSystem::playing(void) {
+#ifdef USE_SOUNDS
 	return SoundSystem::instance()->stream_playing();
+#else
+	return false;
+#endif
 }
 
 void SoundSystem::stop(void) {
