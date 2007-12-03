@@ -187,6 +187,9 @@ void IconChooser::load(const char* dir) {
 	if(!dir_list(dir, lst, true))
 		return;
 
+	if(lst.empty())
+		return;
+
 	/*
 	 * TODO: replace this this with
 	 * something better
@@ -199,15 +202,14 @@ void IconChooser::load(const char* dir) {
 	int iw, ih;
 	bool show_progress = false;
 
+	list<String>::iterator it = lst.begin(), it_end = lst.end();
+
 	/*
 	 * lst_info contains coresponding indexes with list<String> so we can deduce what
 	 * files to skip (not readable image or dimensions greater than allowed); skippable
 	 * are marked as 0
 	 */
 	int* lst_info = new int[lst.size()];
-	list<String>::iterator it = lst.begin();
-	list<String>::iterator it_end = lst.end();
-
 	for(int i = 0; it != it_end; ++it, i++){
 		img = Fl_Shared_Image::get((*it).c_str());
 

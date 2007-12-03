@@ -1,3 +1,18 @@
+2007-12-02  Sanel <karijes@users.sourceforge.net>
+
+	* Removed clear parameter from dir_list
+	* Added show_dots parameter in dir_list
+	* dir_list() will clear list before items are added
+
+2007-12-01  Sanel <karijes@users.sourceforge.net>
+
+	* Let daylight variable checks do linking not compiling only since
+	variable is externaly declared
+	* Rewrote dir_list so it does not use scandir() any more due portability
+	* Also fixed bug where previous dir_list() didn't show '.' and '..'
+	directories
+	* Replaced dir_separator() with DIR_SEPARATOR and DIR_SEPARATOR_STR
+
 2007-11-30  Sanel <karijes@users.sourceforge.net>
 
 	* Work on Window class; now it is by default double buffered, inheriting
@@ -11,7 +26,7 @@
 	icon() member from Fl_Window
 	* Let ALLFLAGS contains FLTKFLAGS (in Jamconfig.in) so jam can pick up
 	correctly X11 paths
-	* Added font chooser dialog
+	* Added FontChooser dialog
 
 2007-11-29  Sanel <karijes@users.sourceforge.net>
 

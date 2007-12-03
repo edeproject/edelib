@@ -236,7 +236,7 @@ void IconTheme::load_theme(const char* theme) {
 			tpath += curr_theme;
 
 			if(dir_exists(tpath.c_str())) {
-				tpath += dir_separator();
+				tpath += DIR_SEPARATOR_STR;
 
 				ipath = tpath;
 				ipath += "index.theme";
@@ -373,7 +373,7 @@ String IconTheme::lookup(const char* icon, IconSizes sz, IconContext ctx) {
 		if((*it).size == sz && ((*it).context == ctx || ctx == ICON_CONTEXT_ANY)) {
 			for(int j = 0; j < ICON_EXT_SIZE; j++) {
 				ret = (*it).path;
-				ret += dir_separator();
+				ret += DIR_SEPARATOR_STR;
 				ret += icon;
 				ret += icon_extensions[j];
 

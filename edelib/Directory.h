@@ -17,6 +17,9 @@
 #include "String.h"
 #include "List.h"
 
+#define DIR_SEPARATOR '/'
+#define DIR_SEPARATOR_STR "/"
+
 EDELIB_NS_BEGIN
 
 /** 
@@ -87,7 +90,7 @@ EDELIB_API bool dir_rename(const char* from, const char* to);
  *
  * This function is alternative to this code:
  * \code
- *   vector<String> dlist;
+ *   list<String> dlist;
  *   dir_list(path, dlist);
  *   dlist.empty() == true;
  * \endcode
@@ -106,11 +109,6 @@ EDELIB_API String dir_home(void);
  */
 EDELIB_API String dir_current(void);
 
-/** 
- * Returns platform specific separator to delimit directories in path 
- */
-EDELIB_API const char* dir_separator(void);
-
 /**
  * List content of given directory. If directory is accessible, given
  * parameter will be filled with the content.
@@ -119,15 +117,17 @@ EDELIB_API const char* dir_separator(void);
  * will <b>not</b> accept ".." (directory up), nor will resolve chainings on 
  * it (like "../../../").
  *
+ * list content will be cleared before items are added.
+ *
  * \return true if target directory reading went fine; otherwise false
  * \param dir target directory
  * \param lst is a content of directory
  * \param full_path if set will append directory name to the each entry
  * \param show_hidden if set will show hidden files
- * \param clear if set (default yes) will clear previous lst content
+ * \param show_dots if set will show <em>.</em> and <em>..</em> directories
  */
-EDELIB_API bool dir_list(const char* dir, list<String>& lst, bool full_path = false, 
-		bool show_hidden = false, bool clear = true);
+EDELIB_API bool dir_list(const char* dir, list<String>& lst, bool full_path = false, bool show_hidden = false,
+		bool show_dots = false);
 
 
 EDELIB_NS_END

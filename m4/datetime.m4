@@ -34,10 +34,11 @@ AC_DEFUN([EDELIB_DATETIME], [
 	AC_MSG_CHECKING([for daylight variable])
 	AC_LANG_SAVE
 	AC_LANG_C
-	AC_TRY_COMPILE([
+	AC_TRY_LINK([
 		#include <time.h>
 	],[
 		extern int daylight;
+		int d = daylight;
 	],[have_daylight=yes],[have_daylight=no])
 	AC_LANG_RESTORE
 
