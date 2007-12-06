@@ -259,14 +259,16 @@ static void xsettings_cb(const char* name, XSettingsAction action, XSettingsSett
 }
 
 Window::Window(int X, int Y, int W, int H, const char* l) : Fl_Double_Window(X, Y, W, H, l), 
-	inited(false), sbuffer(false), loaded_components(0), pref_uid(0), xs_cb(NULL), xs_cb_old(NULL), xs_cb_data(NULL),
+	inited(false), sbuffer(false), loaded_components(0), pref_atom(0), pref_uid(0), 
+	xs_cb(NULL), xs_cb_old(NULL), xs_cb_data(NULL),
 	s_cb(NULL), s_cb_data(NULL), icon_pixmap(NULL) { 
 
 	type(EWINDOW);
 }
 
 Window::Window(int W, int H, const char* l) : Fl_Double_Window(W, H, l),
-	inited(false), sbuffer(false), loaded_components(0), pref_uid(0), xs_cb(NULL), xs_cb_old(NULL), xs_cb_data(NULL), 
+	inited(false), sbuffer(false), loaded_components(0), pref_atom(0), pref_uid(0), 
+	xs_cb(NULL), xs_cb_old(NULL), xs_cb_data(NULL), 
 	s_cb(NULL), s_cb_data(NULL), icon_pixmap(NULL) { 
 
 	type(EWINDOW);

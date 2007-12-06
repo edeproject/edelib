@@ -42,17 +42,17 @@ int** sizes = 0;
 int pickedsize = DEFAULT_SIZE;
 int pickedfont = 0;
 
-void cancel_cb(Fl_Widget*, void*) {
+static void cancel_cb(Fl_Widget*, void*) {
 	pickedfont = -1;
 	pickedsize = -1;
 	win->hide();
 }
 
-void ok_cb(Fl_Widget*, void*) {
+static void ok_cb(Fl_Widget*, void*) {
 	win->hide();
 }
 
-void size_cb(Fl_Widget*, long) {
+static void size_cb(Fl_Widget*, long) {
 	int i = size_browser->value();
 	if(!i)
 		return;
@@ -66,7 +66,7 @@ void size_cb(Fl_Widget*, long) {
 	preview_input->redraw();
 }
 
-void size_input_cb(Fl_Widget*, void*) {
+static void size_input_cb(Fl_Widget*, void*) {
 	const char* typed = size_input->value();
 	if(!typed)
 		return;
@@ -89,7 +89,7 @@ void size_input_cb(Fl_Widget*, void*) {
 	preview_input->redraw();
 }
 
-void font_cb(Fl_Widget*, long) {
+static void font_cb(Fl_Widget*, long) {
 	int fn = font_browser->value();
 	if(!fn)
 		return;

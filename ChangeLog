@@ -1,3 +1,12 @@
+2007-12-05  Sanel <karijes@users.sourceforge.net>
+
+	* Better compilation of test suite when edelib was compiled without X11
+	and FLTK support
+	* Fixed uninitialized variable valgrind detected in Window class
+	* jam install now finaly works as should be
+	* Let 'test' use '-z' in mime.m4, Solaris shell don't like 'test ! ...'
+	construct
+
 2007-12-02  Sanel <karijes@users.sourceforge.net>
 
 	* Removed clear parameter from dir_list

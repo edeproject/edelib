@@ -113,18 +113,18 @@ class IconChooser : public Fl_Window {
 		String& get_start(void) { return start; }
 };
 
-void cancel_cb(Fl_Widget*, void* w) {
+static void cancel_cb(Fl_Widget*, void* w) {
 	IconChooser* ic = (IconChooser*)w;
 	ic->hide();
 }
 
-void ok_cb(Fl_Widget*, void* w) {
+static void ok_cb(Fl_Widget*, void* w) {
 	IconChooser* ic = (IconChooser*)w;
 	if(ic->find_focused())
 		ic->hide();
 }
 
-void browse_cb(Fl_Widget*, void* w) {
+static void browse_cb(Fl_Widget*, void* w) {
 	IconChooser* ic = (IconChooser*)w;
 	const char* dd = fl_dir_chooser(_("Choose icon directory..."), ic->get_start().c_str(), false);
 	if(!dd)

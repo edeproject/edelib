@@ -7,12 +7,48 @@
 # This program is licenced under terms of the 
 # GNU General Public Licence version 2 or newer.
 # See COPYING for details.
+#
 
-SubDir TOP ;
+SubDir TOP test ;
 
-SubInclude TOP src ;
-SubInclude TOP test ;
-SubInclude TOP doc ;
+# shared library requires linkage with FLTK and sound libraries
+if $(SHARED) {
+	ADDONLIB = $(FLTKLIBS) $(SOUNDLIBS) ;
+}
 
-InstallDirectory  [ FDirName $(includedir) ] : edelib ;
-InstallProgram    [ FDirName $(bindir) ] : edelib-config ;
+TEST_FILES = UnitTest.cpp 
+			utest.cpp 
+			util.cpp
+			strutil.cpp 
+			file.cpp
+			directory.cpp
+			datetime.cpp
+			conf.cpp
+			desktopfile.cpp
+			string.cpp
+			list.cpp
+			regex.cpp
+			color.cpp
+			xml.cpp
+			mime.cpp
+			run_tests.cpp ;
+
+# xsettings.cpp depends on X11 and FLTKLIBS provides needed libraries
+if $(FLTKLIBS) {
+	TEST_FILES += xsettings.cpp ;
+
+	if ! $(SHARED) {
+		ADDONLIB = $(FLTKLIBS) ;
+	}
+}
+
+MakeTest run_tests : $(TEST_FILES) : $(ADDONLIB) ;
+
+#MakeTest perf/stringtok : perf/stringtok.cpp ;
+
+Clean clean : [ FFileName $(TOP) test .foo.txt ] ;
+Clean clean : [ FFileName $(TOP) test .ede.conf ] ;
+
+# include examples directory
+SubInclude TOP test examples ;
+SubInclude TOP test t ;

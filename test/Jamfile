@@ -16,25 +16,33 @@ if $(SHARED) {
 	ADDONLIB = $(FLTKLIBS) $(SOUNDLIBS) ;
 }
 
-MakeTest run_tests : UnitTest.cpp 
-					utest.cpp 
-					util.cpp
-					strutil.cpp 
-					file.cpp
-					directory.cpp
-					datetime.cpp
-					conf.cpp
-					desktopfile.cpp
-					string.cpp
-					list.cpp
-					regex.cpp
-					color.cpp
-					xml.cpp
-					mime.cpp
-					xsettings.cpp
-					run_tests.cpp
-					: 
-					$(ADDONLIB) $(FLTKLIBS) ;
+TEST_FILES = UnitTest.cpp 
+			utest.cpp 
+			util.cpp
+			strutil.cpp 
+			file.cpp
+			directory.cpp
+			datetime.cpp
+			conf.cpp
+			desktopfile.cpp
+			string.cpp
+			list.cpp
+			regex.cpp
+			color.cpp
+			xml.cpp
+			mime.cpp
+			run_tests.cpp ;
+
+# xsettings.cpp depends on X11 and FLTKLIBS provides needed libraries
+if $(FLTKLIBS) {
+	TEST_FILES += xsettings.cpp ;
+
+	if ! $(SHARED) {
+		ADDONLIB = $(FLTKLIBS) ;
+	}
+}
+
+MakeTest run_tests : $(TEST_FILES) : $(ADDONLIB) ;
 
 #MakeTest perf/stringtok : perf/stringtok.cpp ;
 
@@ -43,3 +51,4 @@ Clean clean : [ FFileName $(TOP) test .ede.conf ] ;
 
 # include examples directory
 SubInclude TOP test examples ;
+SubInclude TOP test t ;
