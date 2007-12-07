@@ -190,6 +190,7 @@ _xdg_glob_hash_insert_text (XdgGlobHashNode *glob_hash_node,
       (character < glob_hash_node->character))
     {
       node = _xdg_glob_hash_node_new ();
+      node->mime_type = NULL; /* XXX Sanel: added */
       node->character = character;
       node->next = glob_hash_node;
       glob_hash_node = node;
@@ -213,6 +214,7 @@ _xdg_glob_hash_insert_text (XdgGlobHashNode *glob_hash_node,
 	  if (character < node->character)
 	    {
 	      node = _xdg_glob_hash_node_new ();
+	      node->mime_type = NULL; /* XXX Sanel: added */
 	      node->character = character;
 	      node->next = prev_node->next;
 	      prev_node->next = node;
@@ -232,6 +234,7 @@ _xdg_glob_hash_insert_text (XdgGlobHashNode *glob_hash_node,
       if (! found_node)
 	{
 	  node = _xdg_glob_hash_node_new ();
+	  node->mime_type = NULL; /* XXX Sanel: added */
 	  node->character = character;
 	  node->next = prev_node->next;
 	  prev_node->next = node;

@@ -1,3 +1,18 @@
+2007-12-07  Sanel <karijes@users.sourceforge.net>
+	
+	* Removed check for awk
+	* Removed check for kqueue
+
+2007-12-06  Sanel <karijes@users.sourceforge.net>
+
+	* Use LocalDepends and LocalClean in Jamrules
+	* Let mime_type be NULL when new node was created in xdgmimeglob.c. This
+	should assure we don't get odd crashes in xdgmime
+	* Generating README gives more problems than it solves it (especially for
+	platforms without gawk by default) so genreadme and index.dox are removed
+	and README and INSTALL are added
+	* Removed unused files from docs too
+
 2007-12-05  Sanel <karijes@users.sourceforge.net>
 
 	* Better compilation of test suite when edelib was compiled without X11

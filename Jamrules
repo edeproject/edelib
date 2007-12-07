@@ -79,6 +79,12 @@ EDELIB_DOCDIR      = "$(EDELIB)-$(EDELIB_VERSION)" ;
 # used by SymLink
 SYMLINKSRCPATH = ;
 
+# Haiku jam have builtin LocalClean and LocalDepends
+if ! $(INVOCATION_SUBDIR_SET) {
+	rule LocalClean { Clean $(1) : $(2) ; }
+	rule LocalDepends { Depends $(1) : $(2) ; }
+}
+
 rule GetOS
 {
 	local var ;
@@ -118,7 +124,7 @@ rule SymLink
 		return ;
 	}
 
-	Depends $(<) : $(>) ;
+	LocalDepends $(<) : $(>) ;
 
 	if $(3) {
 		SYMLINKSRCPATH on $(<) = $(3) ;
@@ -129,7 +135,7 @@ rule SymLink
 	}
 
 	SymLink1 $(<) : $(>) ;
-	Clean clean : $(<) ;
+	LocalClean clean : $(<) ;
 }
 
 actions SymLink1
@@ -171,7 +177,7 @@ rule SharedLibraryFromObjects
 		t = $(t:S=$(SOEXT)) ;
 	}
 
-	Depends lib : $(t) ;
+	LocalDepends lib : $(t) ;
 
 	# This is used if library already does not have a path
 	if ! $(t:D) {
@@ -186,10 +192,10 @@ rule SharedLibraryFromObjects
 	}
 
 	# Let target is dependant on source
-	Depends $(t) : $(s) ;
+	LocalDepends $(t) : $(s) ;
 
 	Link $(t) : $(s) ;
-	Clean clean : $(t) ;
+	LocalClean clean : $(t) ;
 }
 
 # MakeStaticLibrary <libname> : <sources> ;
@@ -233,10 +239,10 @@ rule MakeSharedLibrary
 	# in directory where jam was called
 	LOCATE on $(symlink) = [ on $(1) return $(LOCATE) ] ;
 
-	Depends lib : $(symlink) ;
+	LocalDepends lib : $(symlink) ;
 
 	SymLink $(symlink) : $(shlib) ;
-	Clean clean : $(symlink) ;
+	LocalClean clean : $(symlink) ;
 }
 
 # MakeTest <target> : <sources> : <optional-libraries> ;
@@ -252,8 +258,8 @@ rule MakeTest
 	# construct path so compiler knows where is library
 	ldir = [ FDirName $(TOP) $(EDELIB_LIBDIR) ] ;
 
-	Depends $(<) : lib ;
-	Depends tests : $(<) ;
+	LocalDepends $(<) : lib ;
+	LocalDepends tests : $(<) ;
 
 	LINKFLAGS on $(<) = $(addon_flags) [ on $(<) return $(LINKFLAGS) ] ;
 	Main $(<) : $(>) ;
@@ -268,9 +274,9 @@ rule MakeApiDocumentation
 {
 	if $(DOXYGEN) 
 	{
-		Depends doc : $(<) ;
-		Depends $(<) : $(>) ;
-		Depends all : doc ;
+		LocalDepends doc : $(<) ;
+		LocalDepends $(<) : $(>) ;
+		LocalDepends all : doc ;
 
 		MakeApiDocumentation1 $(<) : $(>) ;
 		Cleandir clean : $(<) ;
@@ -291,26 +297,6 @@ actions piecemeal MakeApiDocumentation1
 {
 	cd $(>:D)
 	$(DOXYGEN) $(>:B) ;
-}
-
-# GenDocumentation <path-to-target> : <path-to-command> <path-to-source> ;
-# Aimed for generating text files from doxygen source;
-# probably this should be called GenerateFile or something.
-rule GenDocumentation
-{
-	local target = $(<) ;
-	local cmd = $(>[1]) ;
-	local src = $(>[2]) ;
-
-	Depends $(target) : $(src) ;
-	Depends $(src) : $(cmd) ;
-	Depends doc : $(target) ;
-	Clean clean : $(target) ;
-}
-
-actions GenDocumentation
-{
-	./$(>[1]) $(>[2]) > $(<) ;
 }
 
 # MakeInstallPrivate <location-dir> : <targets> : <opt-file-mode> : <opt-chown> : <opt-chgrp> ;
@@ -446,7 +432,7 @@ NotFile help install ;
 Always help ;
 
 # a generated junk
-Clean distclean : configure 
+LocalClean distclean : configure 
 				  aclocal.m4 
 				  Jamconfig 
 				  edelib-config

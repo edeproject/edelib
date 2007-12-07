@@ -1,0 +1,38 @@
+edelib installation
+-------------------
+
+To build library, you will need a following tools and libraries:
+ 
+ * C++ compiler
+ * autoconf
+ * FLTK 1.1.x (including FLTK prerequisites)
+ * some Jam derivative
+ * doxygen (for building API documentation)
+
+FLTK library can be obtained from http://www.fltk.org.
+
+As build tool instead standard Make, Jam is used. Jam is Make-like tool with it's own
+syntax and you can find more about at Perforce jam pages (http://www.perforce.com/jam/jam.html)
+
+Since in the wild exists many Jam versions and modifications, copy of the version that is used
+for development is on our repository where you can download it. Also one of the goals
+is to keep current code buildable on other jam versions, so it will work also on:
+
+ * original jam (http://www.perforce.com/jam/jam.html)
+ * ftjam (http://www.freetype.org/jam.html)
+ * boost jam (http://www.boost.org)
+
+For manual building a Jam tool, please look at the Jam's documentation. After you got the binary,
+you can either install it at usuall paths or copy it in edelib root directory.
+
+To build edelib, run:
+
+ 1. If you downloaded source from our repository, firstly you have to type './autogen.sh'.
+    If not, just skip this step.
+
+ 2. Run'./configure'. You can tune building options via parameters passed to the configure
+    script, and to see available just run './configure --help'.
+
+ 3. Run 'jam' or './jam' if you placed Jam's binary in edelib root path
+
+When (hopefully) jam finished it's work, running 'jam install' will install needed files.

@@ -15,13 +15,11 @@ SubDir TOP doc ;
 # was changed
 html_      = [ FDirName $(TOP) doc html ] ;
 doxyfile_  = [ FDirName $(TOP) doc Doxyfile ] ;
-readmesrc_ = [ FDirName $(TOP) doc index.dox ] ;
-genreadme_ = [ FDirName $(TOP) doc genreadme ] ;
 readme_    = [ FDirName $(TOP) README ] ;
+install_   = [ FDirName $(TOP) INSTALL ] ;
 
 MakeApiDocumentation $(html_) : $(doxyfile_) ;
 
-GenDocumentation $(readme_) : $(genreadme_) $(readmesrc_) ;
-
 InstallDocumentation [ FDirName $(docdir) $(EDELIB_DOCDIR) ] : $(readme_) ;
+InstallDocumentation [ FDirName $(docdir) $(EDELIB_DOCDIR) ] : $(install_) ;
 InstallDirectory     [ FDirName $(docdir) $(EDELIB_DOCDIR) ] : html ;

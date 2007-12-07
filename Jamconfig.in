@@ -33,7 +33,6 @@ INSTALL_PROGRAM ?= "@INSTALL_PROGRAM@" ;
 INSTALL_SCRIPT  ?= "@INSTALL_SCRIPT@" ;
 SYMLINKCMD      ?= "@LN_S@" ;
 SED             ?= "@SED@" ;
-AWK             ?= "@AWK@" ;
 
 # for fltk and X11
 FLTKFLAGS ?= "@FLTKFLAGS@" ;

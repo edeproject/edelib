@@ -45,7 +45,6 @@ prefix=`echo $prefix | sed -e 's/\/\+$//g'`
 
 AC_PROG_CXX
 AC_PROG_INSTALL
-AC_PROG_AWK
 AC_PROG_LN_S
 AC_PATH_PROG(SED, sed)
 AC_PATH_PROG(MSGFMT, msgfmt)
