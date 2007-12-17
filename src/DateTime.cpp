@@ -14,8 +14,9 @@
 #include <edelib/DateTime.h>
 #include <edelib/Nls.h>
 #include <edelib/Debug.h>
+#include <edelib/Missing.h>
 
-#include <stdlib.h> // free, getenv, setenv
+#include <stdlib.h> // free, getenv
 #include <string.h> // strdup, strlen
 #include <time.h>
 #include <stdio.h>
@@ -128,7 +129,7 @@ bool TimeZone::load(const char* zone) {
 	struct tm tmp;
 	time_t curr = ::time(0);
 
-	setenv("TZ", zoneval, 1);
+	edelib_setenv("TZ", zoneval, 1);
 	tzset();
 
 	localtime_r(&curr, &tmp);
@@ -138,10 +139,10 @@ bool TimeZone::load(const char* zone) {
 		zcode = strdup(c);
 
 	if(old) {
-		setenv("TZ", old, 1);
+		edelib_setenv("TZ", old, 1);
 		free(old);
 	} else
-		unsetenv("TZ");
+		edelib_unsetenv("TZ");
 
 	tzset();
 

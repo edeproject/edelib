@@ -1,6 +1,6 @@
 #include <edelib/Util.h>
+#include <edelib/Missing.h>
 #include <string.h>
-#include <stdlib.h>
 #include <stdio.h>
 #include "UnitTest.h"
 
@@ -13,30 +13,30 @@ UT_FUNC(XDGPathTest, "Test XDG paths")
 	puts(" *** XDGPathTest mess with some environment variables that are probably");
 	puts(" *** used by the current environment. Maybe strange things can be occured later");
 
-	setenv("XDG_CONFIG_HOME", "/dummy/place", 1);
+	edelib_setenv("XDG_CONFIG_HOME", "/dummy/place", 1);
 	UT_VERIFY( STR_EQUAL(user_config_dir(), "/dummy/place") );
-	unsetenv("XDG_CONFIG_HOME");
+	edelib_unsetenv("XDG_CONFIG_HOME");
 
-	setenv("XDG_DATA_HOME", "/", 1);
+	edelib_setenv("XDG_DATA_HOME", "/", 1);
 	UT_VERIFY( STR_EQUAL(user_data_dir(), "/") );
 
-	setenv("XDG_DATA_HOME", "/baz", 1);
+	edelib_setenv("XDG_DATA_HOME", "/baz", 1);
 	UT_VERIFY( STR_EQUAL(user_data_dir(), "/baz") );
-	unsetenv("XDG_DATA_HOME");
+	edelib_unsetenv("XDG_DATA_HOME");
 
-	setenv("XDG_CACHE_HOME", "/", 1);
+	edelib_setenv("XDG_CACHE_HOME", "/", 1);
 	UT_VERIFY( STR_EQUAL(user_cache_dir(), "/") );
 
-	setenv("XDG_CACHE_HOME", "/home/foo", 1);
+	edelib_setenv("XDG_CACHE_HOME", "/home/foo", 1);
 	UT_VERIFY( STR_EQUAL(user_cache_dir(), "/home/foo") );
-	unsetenv("XDG_CACHE_HOME");
+	edelib_unsetenv("XDG_CACHE_HOME");
 
-	setenv("XDG_CACHE_HOME", "/home/foo/withslash/", 1);
+	edelib_setenv("XDG_CACHE_HOME", "/home/foo/withslash/", 1);
 	UT_VERIFY( STR_EQUAL(user_cache_dir(), "/home/foo/withslash") );
-	unsetenv("XDG_CACHE_HOME");
+	edelib_unsetenv("XDG_CACHE_HOME");
 
 	list<String> lst;
-	setenv("XDG_DATA_DIRS", "/home/foo:/home/baz:/home/taz", 1);
+	edelib_setenv("XDG_DATA_DIRS", "/home/foo:/home/baz:/home/taz", 1);
 	int ret = system_data_dirs(lst);
 
 	list<String>::iterator it = lst.begin();
@@ -48,17 +48,17 @@ UT_FUNC(XDGPathTest, "Test XDG paths")
 	++it;
 	UT_VERIFY( (*it) == "/home/taz" );
 
-	unsetenv("XDG_DATA_DIRS");
+	edelib_unsetenv("XDG_DATA_DIRS");
 	lst.clear();
 
-	setenv("XDG_DATA_DIRS", "/home/foo", 1);
+	edelib_setenv("XDG_DATA_DIRS", "/home/foo", 1);
 	ret = system_data_dirs(lst);
 	it = lst.begin();
 
 	UT_VERIFY( ret == 1 );
 	UT_VERIFY( (*it) == "/home/foo" );
 
-	unsetenv("XDG_DATA_DIRS");
+	edelib_unsetenv("XDG_DATA_DIRS");
 	lst.clear();
 
 	// in case of empty XDG_DATA_DIRS
@@ -72,7 +72,7 @@ UT_FUNC(XDGPathTest, "Test XDG paths")
 
 	lst.clear();
 
-	setenv("XDG_CONFIG_DIRS", "/etc/myconf:/etc/yourconf:/usr/local/share/conf:/some/path/conf", 1);
+	edelib_setenv("XDG_CONFIG_DIRS", "/etc/myconf:/etc/yourconf:/usr/local/share/conf:/some/path/conf", 1);
 	ret = system_config_dirs(lst);
 	it = lst.begin();
 
@@ -85,10 +85,10 @@ UT_FUNC(XDGPathTest, "Test XDG paths")
 	++it;
 	UT_VERIFY( (*it) == "/some/path/conf" );
 
-	unsetenv("XDG_CONFIG_DIRS");
+	edelib_unsetenv("XDG_CONFIG_DIRS");
 	lst.clear();
 
-	setenv("XDG_CONFIG_DIRS", "/etc/mydirconf", 1);
+	edelib_setenv("XDG_CONFIG_DIRS", "/etc/mydirconf", 1);
 	ret = system_config_dirs(lst);
 	it = lst.begin();
 
@@ -96,7 +96,7 @@ UT_FUNC(XDGPathTest, "Test XDG paths")
 	UT_VERIFY( lst.size() == 1 );
 	UT_VERIFY( (*it) == "/etc/mydirconf" );
 
-	unsetenv("XDG_CONFIG_DIRS");
+	edelib_unsetenv("XDG_CONFIG_DIRS");
 	lst.clear();
 
 	// in case of empty XDG_CONFIG_DIRS

@@ -1,7 +1,7 @@
 #include <edelib/Config.h>
 #include <edelib/File.h>
+#include <edelib/Missing.h>
 #include <string.h>
-#include <stdlib.h>
 #include "UnitTest.h"
 
 #define CCHARP(str)           ((const char*)str)
@@ -85,63 +85,63 @@ UT_FUNC(ConfigTestLocaleRead, "Test Config locale read")
 		UT_FAIL("No test.desktop, but expected to be");
 	else {
 		char buff[128];
-		setenv("LANG", "en_US", 1);
+		edelib_setenv("LANG", "en_US", 1);
 		UT_VERIFY(c.get_localized("Desktop Entry", "Name", buff, 128) == true);
 		UT_VERIFY( STR_EQUAL(buff, "Home Folder") );
-		unsetenv("LANG");
+		edelib_unsetenv("LANG");
 
 		// the real stuff :P
-		setenv("LANG", "es_PE", 1);
+		edelib_setenv("LANG", "es_PE", 1);
 		UT_VERIFY(c.get_localized("Desktop Entry", "Name", buff, 128) == true);
 		UT_VERIFY( STR_EQUAL(buff, "Carpeta personal") );
-		unsetenv("LANG");
+		edelib_unsetenv("LANG");
 
-		setenv("LANG", "et_EE", 1);
+		edelib_setenv("LANG", "et_EE", 1);
 		UT_VERIFY(c.get_localized("Desktop Entry", "Name", buff, 128) == true);
 		UT_VERIFY( STR_EQUAL(buff, "Kodukataloog") );
-		unsetenv("LANG");
+		edelib_unsetenv("LANG");
 
-		setenv("LANG", "et_EE.iso885915", 1);
+		edelib_setenv("LANG", "et_EE.iso885915", 1);
 		UT_VERIFY(c.get_localized("Desktop Entry", "Name", buff, 128) == true);
 		UT_VERIFY( STR_EQUAL(buff, "Kodukataloog") );
-		unsetenv("LANG");
+		edelib_unsetenv("LANG");
 
-		setenv("LANG", "et_EE.utf8", 1);
+		edelib_setenv("LANG", "et_EE.utf8", 1);
 		UT_VERIFY(c.get_localized("Desktop Entry", "Name", buff, 128) == true);
 		UT_VERIFY( STR_EQUAL(buff, "Kodukataloog") );
-		unsetenv("LANG");
+		edelib_unsetenv("LANG");
 
-		setenv("LANG", "eu_ES@euro", 1);
+		edelib_setenv("LANG", "eu_ES@euro", 1);
 		UT_VERIFY(c.get_localized("Desktop Entry", "Name", buff, 128) == true);
 		UT_VERIFY( STR_EQUAL(buff, "Etxea") );
-		unsetenv("LANG");
+		edelib_unsetenv("LANG");
 
-		setenv("LANG", "eu_ES.utf8", 1);
+		edelib_setenv("LANG", "eu_ES.utf8", 1);
 		UT_VERIFY(c.get_localized("Desktop Entry", "Name", buff, 128) == true);
 		UT_VERIFY( STR_EQUAL(buff, "EtxeaUTF8") );
-		unsetenv("LANG");
+		edelib_unsetenv("LANG");
 
-		setenv("LANG", "eu_ES", 1);
+		edelib_setenv("LANG", "eu_ES", 1);
 		UT_VERIFY(c.get_localized("Desktop Entry", "Name", buff, 128) == true);
 		UT_VERIFY( STR_EQUAL(buff, "Etxea") );
-		unsetenv("LANG");
+		edelib_unsetenv("LANG");
 
-		setenv("LANG", "fr_BE", 1);
+		edelib_setenv("LANG", "fr_BE", 1);
 		UT_VERIFY(c.get_localized("Desktop Entry", "Name", buff, 128) == true);
 		UT_VERIFY( STR_EQUAL(buff, "Dossier personnel") );
-		unsetenv("LANG");
+		edelib_unsetenv("LANG");
 
-		setenv("LANG", "fr_LU@Latin", 1);
+		edelib_setenv("LANG", "fr_LU@Latin", 1);
 		UT_VERIFY(c.get_localized("Desktop Entry", "Name", buff, 128) == true);
 		UT_VERIFY( STR_EQUAL(buff, "Dossier personnel Latin") );
-		unsetenv("LANG");
+		edelib_unsetenv("LANG");
 
-		setenv("LANG", "fr_CH.utf8", 1);
+		edelib_setenv("LANG", "fr_CH.utf8", 1);
 		UT_VERIFY(c.get_localized("Desktop Entry", "Name", buff, 128) == true);
 		UT_VERIFY( STR_EQUAL(buff, "Dossier personnel UTF8") );
-		unsetenv("LANG");
+		edelib_unsetenv("LANG");
 
-		setenv("LANG", "en_US", 1);
+		edelib_setenv("LANG", "en_US", 1);
 	}
 }
 
@@ -149,21 +149,21 @@ UT_FUNC(ConfigTestLocaleSave, "Test Config locale save")
 {
 	Config c;
 
-	setenv("LANG", "fr_CH.utf8", 1);
+	edelib_setenv("LANG", "fr_CH.utf8", 1);
 	c.set_localized("Sample", "Key", "value fr_CH.utf8");
-	unsetenv("LANG");
+	edelib_unsetenv("LANG");
 
-	setenv("LANG", "en_US", 1);
+	edelib_setenv("LANG", "en_US", 1);
 	c.set_localized("Sample", "Key", "value en_US");
-	unsetenv("LANG");
+	edelib_unsetenv("LANG");
 
-	setenv("LANG", "et_EE", 1);
+	edelib_setenv("LANG", "et_EE", 1);
 	c.set_localized("Sample", "Key", "value et_EE");
-	unsetenv("LANG");
+	edelib_unsetenv("LANG");
 
-	setenv("LANG", "eu_ES@euro", 1);
+	edelib_setenv("LANG", "eu_ES@euro", 1);
 	c.set_localized("Sample", "Key", "value eu_ES@euro");
-	unsetenv("LANG");
+	edelib_unsetenv("LANG");
 
 	c.save("foo.conf");
 
@@ -175,25 +175,25 @@ UT_FUNC(ConfigTestLocaleSave, "Test Config locale save")
 	}
 
 	char buff[128];
-	setenv("LANG", "fr_CH.utf8", 1);
+	edelib_setenv("LANG", "fr_CH.utf8", 1);
 	UT_VERIFY( c.get_localized("Sample", "Key", buff, 128) == true );
 	UT_VERIFY( STR_EQUAL(buff, "value fr_CH.utf8") );
-	unsetenv("LANG");
+	edelib_unsetenv("LANG");
 
-	setenv("LANG", "en_US", 1);
+	edelib_setenv("LANG", "en_US", 1);
 	UT_VERIFY( c.get_localized("Sample", "Key", buff, 128) == true );
 	UT_VERIFY( STR_EQUAL(buff, "value en_US") );
-	unsetenv("LANG");
+	edelib_unsetenv("LANG");
 
-	setenv("LANG", "et_EE", 1);
+	edelib_setenv("LANG", "et_EE", 1);
 	UT_VERIFY( c.get_localized("Sample", "Key", buff, 128) == true );
 	UT_VERIFY( STR_EQUAL(buff, "value et_EE") );
-	unsetenv("LANG");
+	edelib_unsetenv("LANG");
 
-	setenv("LANG", "eu_ES@euro", 1);
+	edelib_setenv("LANG", "eu_ES@euro", 1);
 	UT_VERIFY( c.get_localized("Sample", "Key", buff, 128) == true );
 	UT_VERIFY( STR_EQUAL(buff, "value eu_ES@euro") );
-	unsetenv("LANG");
+	edelib_unsetenv("LANG");
 
 	// empty one
 	UT_VERIFY( c.get_localized("Sample", "Key", buff, 128) == true );

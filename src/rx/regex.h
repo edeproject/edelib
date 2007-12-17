@@ -548,7 +548,11 @@ extern int regcomp (regex_t *__restrict __preg,
 
 extern int regexec (const regex_t *__restrict __preg,
 		    const char *__restrict __string, size_t __nmatch,
+#ifdef __restrict_arr
 		    regmatch_t __pmatch[__restrict_arr],
+#else
+		    regmatch_t *__pmatch,
+#endif
 		    int __eflags);
 
 extern size_t regerror (int __errcode, const regex_t *__restrict __preg,

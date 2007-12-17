@@ -27,22 +27,16 @@ UT_FUNC(MimeTypeTest, "Test MimeType")
 	UT_VERIFY( mt.type() == "text/html" );
 	UT_VERIFY( mt.icon_name() == "text-html" );
 
-	mt.set("../doc/genreadme");
-	UT_VERIFY( mt.type() == "application/x-awk" );
-	UT_VERIFY( mt.comment() == "AWK script" );
-	UT_VERIFY( mt.icon_name() == "application-x-awk" );
-	UT_VERIFY( mt.subclass_of("application/x-executable") );
-
 	// duplicate, should not run tokenizer
-	UT_VERIFY( mt.icon_name() == "application-x-awk" );
-	UT_VERIFY( mt.icon_name() == "application-x-awk" );
-	UT_VERIFY( mt.icon_name() == "application-x-awk" );
-	
+	UT_VERIFY( mt.icon_name() == "text-html" );
+	UT_VERIFY( mt.icon_name() == "text-html" );
+	UT_VERIFY( mt.icon_name() == "text-html" );
+
 	// duplicate, should not reload comment
-	UT_VERIFY( mt.comment() == "AWK script" );
-	UT_VERIFY( mt.comment() == "AWK script" );
-	UT_VERIFY( mt.comment() == "AWK script" );
-	UT_VERIFY( mt.comment() == "AWK script" );
+	UT_VERIFY( mt.comment() == "HTML document" );
+	UT_VERIFY( mt.comment() == "HTML document" );
+	UT_VERIFY( mt.comment() == "HTML document" );
+	UT_VERIFY( mt.comment() == "HTML document" );
 
 	// empty mime, do nothing
 	MimeType mt2;

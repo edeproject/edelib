@@ -1,3 +1,11 @@
+2007-12-12  Sanel <karijes@users.sourceforge.net>
+
+	* Added Missing.{h,c} with various functions that are missing on other
+	unix'es beside linux
+	* Added some #ifdefs for __restrict_arr in rx/regex.h since older gcc
+	versions will not correctly resolve 'regmatch_t __pmatch[__restrict_arr]'
+	construct
+
 2007-12-07  Sanel <karijes@users.sourceforge.net>
 	
 	* Removed check for awk

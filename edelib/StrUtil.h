@@ -16,18 +16,6 @@
 #include "econfig.h"
 #include "String.h"
 
-/*
- * Intentionaly outside namespace so I can provide either system
- * or local implementations
- */
-#ifndef SKIP_DOCS
-
-unsigned int estrnlen(const char* str, unsigned int maxlen);
-char*        estrndup(const char* str, unsigned int maxlen);
-
-#endif // SKIP_DOCS
-
-
 EDELIB_NS_BEGIN
 
 /**

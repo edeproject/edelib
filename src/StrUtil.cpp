@@ -16,34 +16,6 @@
 
 #include <ctype.h>
 #include <string.h>
-#include <stdlib.h> // malloc
-
-unsigned int estrnlen(const char* str, unsigned int maxlen) {
-#ifdef HAVE_STRNLEN
-	return strnlen(str, maxlen);
-#else
-	if(!str)
-		return 0;
-
-	const char* p = str;
-	unsigned int s = 0;
-
-	for(; *p != '\0' && s < maxlen; p++, s++)
-		;
-	return s;
-#endif
-}
-
-char* estrndup(const char* str, unsigned int maxlen) {
-	unsigned int len = estrnlen(str, maxlen);
-	char* nstr = (char*)malloc(len + 1);
-	if(nstr == NULL)
-		return NULL;
-
-	nstr[len] = '\0';
-	return (char *)memcpy(nstr, str, len);
-}
-
 
 EDELIB_NS_BEGIN
 
