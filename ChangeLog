@@ -1,3 +1,11 @@
+2008-01-20  Sanel <karijes@users.sourceforge.net>
+
+	* First changelog entry in 2008 !!! ;)
+	* Fixed crashing in font chooser 
+	* Completed (at some point) font chooser documentation
+	* Added default_name and default_size as parameters for font_chooser()
+	function
+
 2007-12-12  Sanel <karijes@users.sourceforge.net>
 
 	* Added Missing.{h,c} with various functions that are missing on other

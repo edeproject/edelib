@@ -136,6 +136,10 @@ void load_fonts(const char* family) {
 	sizes = new int*[numfaces];
 	numsizes = new int[numfaces];
 
+	// so 'delete sizes[i]' don't crash dialog
+	for(int i = 0; i < numfaces; i++)
+		sizes[i] = 0;
+
 	int* s;
 	int fs;
 	for(int i = 0; i < numfaces; i++) {
@@ -153,7 +157,7 @@ void load_fonts(const char* family) {
 	}
 }
 
-int font_chooser(const char* name, const char* family, int& retsize) {
+int font_chooser(const char* name, const char* family, int& retsize, const char* default_name, int default_size) {
 	win = new Fl_Window(450, 320, name);
 	win->begin();
 		font_browser = new Fl_Hold_Browser(10, 25, 335, 170, _("Font:"));
@@ -181,11 +185,36 @@ int font_chooser(const char* name, const char* family, int& retsize) {
 	win->end();
 
 	load_fonts(family);
+
 	font_browser->value(1);
-	font_cb(font_browser, 0);
 	size_browser->value(DEFAULT_SIZE);
 	size_input->value(DEFAULT_SIZE_STR);
-	size_input->textsize(DEFAULT_SIZE);
+
+	// try to set default values (TODO: scanning again !)
+	if(default_name) {
+		for(int i = 1; i <= font_browser->size(); i++) {
+			if(strcmp(default_name, font_browser->text(i)) == 0) {
+				font_browser->value(i);
+				break;
+			}
+		}
+	}
+
+	if(default_size > 0) {
+		char num[128];
+		sprintf(num, "%d", default_size);
+		for(int i = 1; i < size_browser->size(); i++) {
+			if(strcmp(num, size_browser->text(i)) == 0) {
+				size_browser->value(i);
+				size_input->value(num);
+
+				break;
+			}
+		}
+	}
+
+	// now update widgets
+	font_cb(font_browser, 0);
 
 	win->show();
 	while(win->shown())
@@ -196,7 +225,9 @@ int font_chooser(const char* name, const char* family, int& retsize) {
 		delete sizes[i];
 	delete [] sizes;
 
-	retsize = pickedsize;
+	if(retsize)
+		retsize = pickedsize;
+
 	return pickedfont;
 }
 
