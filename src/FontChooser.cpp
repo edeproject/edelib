@@ -48,10 +48,10 @@ static int picked_font;
 static int picked_style;
 
 struct FontDetails {
-	const char* name;
-	int* sizes;
-	int num_sizes;
-	int fltk_font;
+	const char* name;   // points to FLTK internal name (not allocated)
+	int* sizes;         // allocated list of sizes
+	int num_sizes;      // number of items in above list
+	int fltk_font;      // FLTK font
 };
 
 struct FontFamily {
@@ -64,7 +64,7 @@ struct FontFamily {
 static FontFamily* font_family;
 static int font_family_size;
 
-FontDetails* picked_font_details;
+static FontDetails* curr_font_details;
 
 static void cancel_cb(Fl_Widget*, void*) {
 	picked_font = -1;
@@ -85,8 +85,8 @@ static void size_cb(Fl_Widget*, long) {
 		 * and if not found in sizes of selected font, use it's first available size
 		 */
 		bool found = false;
-		for(int i = 0; i < picked_font_details->num_sizes; i++) {
-			if(picked_font_details->sizes[i] == picked_size) {
+		for(int i = 0; i < curr_font_details->num_sizes; i++) {
+			if(curr_font_details->sizes[i] == picked_size) {
 				found = true;
 				break;
 			}
@@ -106,7 +106,7 @@ static void size_cb(Fl_Widget*, long) {
 
 			size_browser->value(pos);
 		} else {
-			picked_size = picked_font_details->sizes[0];
+			picked_size = curr_font_details->sizes[0];
 			size_browser->value(1);
 		}
 
@@ -118,8 +118,10 @@ static void size_cb(Fl_Widget*, long) {
 		size_input->value(size_browser->text(fs));
 	}
 
+	picked_font = curr_font_details->fltk_font;
+
 	preview_input->textsize(picked_size);
-	preview_input->textfont(picked_font_details->fltk_font);
+	preview_input->textfont(picked_font);
 	preview_input->redraw();
 }
 
@@ -181,7 +183,7 @@ static void style_cb(Fl_Widget*, long) {
 		EASSERT(0 && "Unknown font name");
 	}
 
-	picked_font_details = fd;
+	curr_font_details = fd;
 
 	// now fill size browser
 	size_browser->clear();
@@ -228,6 +230,15 @@ static void font_cb(Fl_Widget*, long) {
 
 	// let style_cb handle the rest
 	style_cb(0, 0);
+}
+
+static void clean_font_details(FontDetails* fd) {
+	// we can accept NULL (due not found regular/bold/... structs) so check this
+	if(!fd)
+		return;
+
+	delete [] fd->sizes;
+	delete fd;
 }
 
 static void load_fonts(const char* family) {
@@ -308,26 +319,25 @@ static void load_fonts(const char* family) {
 				EDEBUG(ESTRLOC ": duplicate for: '%s' (previous was: '%s')\n",
 						fd->name, font_family[font_family_size].bold->name);
 
-				delete [] fd->sizes;
-				delete fd;
+				clean_font_details(fd);
 			} else 
 				font_family[font_family_size].bold = fd;
+
 		} else if(ftype == FL_ITALIC) {
 			if(font_family[font_family_size].italic) {
 				EDEBUG(ESTRLOC ": duplicate for: '%s' (previous was: '%s')\n",
 						fd->name, font_family[font_family_size].italic->name);
 
-				delete [] fd->sizes;
-				delete fd;
+				clean_font_details(fd);
 			} else
 				font_family[font_family_size].italic = fd;
+
 		} else if(ftype == (FL_BOLD | FL_ITALIC)) {
 			if(font_family[font_family_size].bold_italic) {
 				EDEBUG(ESTRLOC ": duplicate for: '%s' (previous was: '%s')\n",
 						fd->name, font_family[font_family_size].bold_italic->name);
 
-				delete [] fd->sizes;
-				delete fd;
+				clean_font_details(fd);
 			} else
 				font_family[font_family_size].bold_italic = fd;
 		}
@@ -398,25 +408,10 @@ int font_chooser(const char* name, const char* family, int& retsize, const char*
 		Fl::wait();
 
 	for(int i = 0; i <= font_family_size; i++) {
-		if(font_family[i].regular) {
-			delete [] font_family[i].regular->sizes;
-			delete font_family[i].regular;
-		}
-
-		if(font_family[i].bold) {
-			delete [] font_family[i].bold->sizes;
-			delete font_family[i].bold;
-		}
-
-		if(font_family[i].italic) {
-			delete [] font_family[i].italic->sizes;
-			delete font_family[i].italic;
-		}
-
-		if(font_family[i].bold_italic) {
-			delete [] font_family[i].bold_italic->sizes;
-			delete font_family[i].bold_italic;
-		}
+		clean_font_details(font_family[i].regular);
+		clean_font_details(font_family[i].bold);
+		clean_font_details(font_family[i].italic);
+		clean_font_details(font_family[i].bold_italic);
 	}
 
 	if(retsize)
