@@ -2,15 +2,23 @@
 version 1.0108 
 header_name {.h} 
 code_name {.cxx}
-Function {} {open selected
+Function {} {open
 } {
   Fl_Window {} {
     label {Choose font} open
-    xywh {381 321 450 320} type Double visible
+    xywh {397 232 450 320} type Double resizable visible
   } {
+    Fl_Box {} {selected
+      xywh {20 56 30 24} labelsize 14 resizable
+      code0 {/* resizable box */}
+    }
     Fl_Browser {} {
       label {Font:}
-      xywh {10 25 335 170} align 5
+      xywh {10 25 170 170} align 5
+    }
+    Fl_Browser {} {
+      label {Style:}
+      xywh {185 25 160 170} align 5
     }
     Fl_Input {} {
       label {Size:}

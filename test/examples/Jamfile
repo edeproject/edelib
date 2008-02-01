@@ -21,11 +21,11 @@ if $(FLTKLIBS) {
 	MakeTest egroup : egroup.cpp : $(FLTKLIBS) $(ADDONLIB) ;
 	MakeTest egroup2 : egroup2.cpp : $(FLTKLIBS) $(ADDONLIB) ;
 	MakeTest icon_chooser : icon_chooser.cpp : $(FLTKLIBS) $(ADDONLIB) ;
+	MakeTest font_chooser : font_chooser.cpp : $(FLTKLIBS) $(ADDONLIB) ;
 	MakeTest sevenseg : sevenseg.cpp : $(FLTKLIBS) $(ADDONLIB) ;
 	MakeTest dirwatch : dirwatch.cpp : $(FLTKLIBS) $(ADDONLIB) ;
 	MakeTest xsettings_setter : xsettings_setter.cpp : $(FLTKLIBS) $(ADDONLIB) ;
 	MakeTest xsettings_client : xsettings_client.cpp : $(FLTKLIBS) $(ADDONLIB) ;
-#	MakeTest combobox : combobox.cpp : $(FLTKLIBS) $(ADDONLIB) ;
 }
 
 MakeTest elinks : elinks.cpp ;

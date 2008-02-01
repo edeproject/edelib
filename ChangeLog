@@ -1,3 +1,13 @@
+2008-02-01  Sanel <karijes@users.sourceforge.net>
+
+	* Improved font chooser both in dialog and font scanning. Dialog contains
+	'styles' for regular/bold/italic/... and font scanning will try to group
+	fonts into families. It is not perfect since can miss some fonts,
+	especailly when there are a huge number of fonts, yielding that regular
+	points to bold face or similar, but I don't know can it be better due bad
+	FLTK font list engine
+	* Added small test for font chooser
+
 2008-01-20  Sanel <karijes@users.sourceforge.net>
 
 	* First changelog entry in 2008 !!! ;)
