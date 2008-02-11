@@ -32,7 +32,7 @@ enum RegexMode {
 
 /**
  * \enum RegexErrors
- * \param Error codes from Regex class
+ * \brief Error codes from Regex class
  */
 enum RegexErrors {
 	RX_SUCCESS = 0,   ///< successfull compilation

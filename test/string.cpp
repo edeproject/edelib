@@ -214,6 +214,44 @@ UT_FUNC(StringPrintf, "Test string printf")
 	UT_VERIFY( s.capacity() == 0 );
 }
 
+UT_FUNC(StringReplace, "Test string replace1")
+{
+	String s = "some sample demo";
+	s.replace('e', 'E');
+	UT_VERIFY( s == "somE samplE dEmo");
+
+	s = "abAbAaAaAbbAbAbbbAbbbBBBa";
+	s.replace('a', 'A');
+	UT_VERIFY( s == "AbAbAAAAAbbAbAbbbAbbbBBBA" );
+
+	s.replace('A', 'a');
+	UT_VERIFY( s == "ababaaaaabbababbbabbbBBBa" );
+
+	s.replace('B', 'b');
+	UT_VERIFY( s == "ababaaaaabbababbbabbbbbba" );
+
+	s.replace('f', 'F');
+	UT_VERIFY( s == "ababaaaaabbababbbabbbbbba" );
+
+	s = "this is sample text without meaning";
+	s.replace(' ', '_');
+	UT_VERIFY( s == "this_is_sample_text_without_meaning");
+
+	s = "this is    some    t e x t  w i t h  a lot of        spaces";
+	s.replace(' ', '-');
+	UT_VERIFY( s == "this-is----some----t-e-x-t--w-i-t-h--a-lot-of--------spaces" );
+
+	s = "b";
+	// should not do anything
+	s.replace('b', 'b');
+	UT_VERIFY( s == "b");
+
+	s.clear();
+	// should not do anything
+	s.replace('x', 'x');
+	UT_VERIFY( s.length() == 0 );
+}
+
 #include <string>
 UT_FUNC(StringComparison, "Test std::string comparison")
 {

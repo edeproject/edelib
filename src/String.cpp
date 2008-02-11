@@ -249,6 +249,28 @@ String::size_type String::find(char ch, size_type offset) const {
 	return npos;
 }
 
+String& String::replace(char c1, char c2) {
+	if(!length())
+		return *this;
+
+	/* 
+	 * Never allow to replace terminating character or to add one.
+	 * TODO: the same must be for append() members
+	 */
+	EASSERT(c1 != STERM && c2 != STERM && "Replacing (or using as replacement) 0 character is not allowed");
+
+	if(c1 == c2)
+		return *this;
+
+	size_type i = 0;
+	for(char* p = (char*)data(); *p != STERM && i < length(); p++, i++) {
+		if(*p == c1)
+			*p = c2;
+	}
+
+	return *this;
+}
+
 String operator+(const String& s1, const String& s2) {
 	String tmp;
 

@@ -144,17 +144,20 @@ int config_getline(char** buff, int* len, File* f) {
  * explicit string comparisons should be maded, after
  * matching hash is found
  */
-unsigned int do_hash(const char* key, int keylen) {
+static unsigned int do_hash(const char* key, int keylen) {
 	unsigned hash ;
 	int i;
+
 	for (i = 0, hash = 0; i < keylen ;i++) {
 		hash += (long)key[i] ;
 		hash += (hash<<10);
 		hash ^= (hash>>6) ;
 	}
+
 	hash += (hash <<3);
 	hash ^= (hash >>11);
 	hash += (hash <<15);
+
 	return hash ;
 }
 
@@ -162,7 +165,7 @@ unsigned int do_hash(const char* key, int keylen) {
  * scan section in [section]
  * returned value is terminated with '\0'
  */
-bool scan_section(char* line, char* buff, int buffsz) {
+static bool scan_section(char* line, char* buff, int buffsz) {
 	char* buffp = buff;
 	bool status = false;
 
@@ -185,7 +188,7 @@ bool scan_section(char* line, char* buff, int buffsz) {
  * scans key = value part
  * returned values are terminated with '\0'
  */
-bool scan_keyvalues(char* line, char* key, char* val, int linesz, int keysz, int valsz) {
+static bool scan_keyvalues(char* line, char* key, char* val, int linesz, int keysz, int valsz) {
 	char* linep = line;
 
 	char* pos = strchr(line, KV_DELIM);
@@ -457,7 +460,7 @@ bool Config::save(const char* fname) {
 		fprintf(f, "[%s]\n", (*sit)->sname);
 
 		for (eit = (*sit)->entry_list.begin(); eit != (*sit)->entry_list.end(); ++eit)
-			fprintf(f, "   %s = %s\n", (*eit)->key, (*eit)->value);
+			fprintf(f, "%s=%s\n", (*eit)->key, (*eit)->value);
 
 		fprintf(f, "\n");
 	}
@@ -467,7 +470,7 @@ bool Config::save(const char* fname) {
 		f.printf("[%s]\n", (*sit)->sname);
 
 		for (eit = (*sit)->entry_list.begin(); eit != (*sit)->entry_list.end(); ++eit)
-			f.printf("   %s = %s\n", (*eit)->key, (*eit)->value);
+			f.printf("%s=%s\n", (*eit)->key, (*eit)->value);
 
 		f.printf("\n");
 	}

@@ -24,6 +24,7 @@ TEST_FILES = UnitTest.cpp
 			directory.cpp
 			datetime.cpp
 			conf.cpp
+			resource.cpp
 			desktopfile.cpp
 			string.cpp
 			list.cpp

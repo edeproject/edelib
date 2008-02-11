@@ -303,13 +303,22 @@ class EDELIB_API String {
 		const char* data(void) const  { return sdata->chars; }
 
 		/** Retrun size of character data */
-		size_type   length(void) const { return sdata->length; }
+		size_type length(void) const { return sdata->length; }
 
 		/** Retrun size of internal buffer */
-		size_type  capacity(void) const { return sdata->capacity; }
+		size_type capacity(void) const { return sdata->capacity; }
 
 		/** Checks if string is empty */
-		bool       empty(void) const  { return length() == 0; }
+		bool empty(void) const  { return length() == 0; }
+
+		/** 
+		 * Replace every occurence of c1 with the c2
+		 *
+		 * \return itself
+		 * \param c1 is character that will be replaced
+		 * \param c2 is character used for replacement
+		 */
+		String& replace(char c1, char c2);
 
 		/** Returns character at given index */
 		char& operator[](size_type index);

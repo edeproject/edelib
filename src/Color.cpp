@@ -23,7 +23,7 @@ static unsigned int fltk_colomap[256] = {
 #include "fltk_cmap.h"
 };
 
-unsigned int hex2int(char hex) {
+static unsigned int hex2int(char hex) {
 	int val = -1;
 
 	if(hex >= 'A' && hex <= 'F')
@@ -48,7 +48,6 @@ void color_fltk_to_rgb(unsigned int color, unsigned char& r, unsigned char& g, u
 	 * with this code.
 	 */
 	if(color > 0 && (!(color & 0xffffff00))) {
-		//EDEBUG(ESTRLOC ": color_fltk_to_rgb() got value from FLTK2 colormap! Use fltk::split_color() instead\n");
 		unsigned int c = color;
 		color = fltk_colomap[c];
 	}

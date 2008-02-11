@@ -365,9 +365,10 @@ rule InstallSharedLibrary
 }
 
 # InstallProgram <location-dir> : <program> ;
+# EXEMODE is not used (jam set it to 711)
 rule InstallProgram
 {
-	MakeInstallPrivate $(<) : $(>) : $(EXEMODE) ;
+	MakeInstallPrivate $(<) : $(>) ;
 }
 
 # InstallDocumentation <location-dir> : <file> ;

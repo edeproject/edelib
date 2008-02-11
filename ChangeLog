@@ -1,3 +1,28 @@
+2008-02-11  Sanel <karijes@users.sourceforge.net>
+
+	* In Config.cpp made static functions that are visible only inside
+	this file
+	* In Jamrules removed EXEMODE from installation; jam by default set it to
+	711
+
+2008-02-10  Sanel <karijes@users.sourceforge.net>
+
+	* Resource will not add '/ede/' to XDG paths. This should be set via XDG
+	env variables
+	* Modified Resource test too
+	* Removed old comment from color_fltk_to_rgb
+	* Made static hex2int() in Color.cpp
+
+2008-02-09  Sanel <karijes@users.sourceforge.net>
+
+	* Some Config output formating tuning
+	* Added Resource class
+	* Fixed documentation tag in Regex.h
+
+2008-02-02  Sanel <karijes@users.sourceforge.net>
+
+	* Added replace(char, char) in String with tests
+
 2008-02-01  Sanel <karijes@users.sourceforge.net>
 
 	* Improved font chooser both in dialog and font scanning. Dialog contains
