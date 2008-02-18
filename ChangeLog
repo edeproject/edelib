@@ -1,3 +1,13 @@
+2008-02-17  Sanel <karijes@users.sourceforge.net>
+
+	* Added edelib_strlcat() with tests
+
+2008-02-16  Sanel <karijes@users.sourceforge.net>
+
+	* Added missing.cpp in test suite so it can test various functions form
+	Missing.{h,cpp}
+	* Added edelib_strlcpy() with tests
+
 2008-02-11  Sanel <karijes@users.sourceforge.net>
 
 	* In Config.cpp made static functions that are visible only inside

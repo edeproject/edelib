@@ -19,6 +19,7 @@ if $(SHARED) {
 TEST_FILES = UnitTest.cpp 
 			utest.cpp 
 			util.cpp
+			missing.cpp
 			strutil.cpp 
 			file.cpp
 			directory.cpp

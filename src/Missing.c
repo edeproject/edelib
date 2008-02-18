@@ -80,6 +80,7 @@ int edelib_setenv(const char* name, const char* value, int overwrite) {
 	if(!value)
 		value = "";
 
+	/* a known leak that can't be avoided */
 	nval = (char*)malloc(strlen(name) + strlen(value) + 2);
 	if(!nval)
 		return -1;
@@ -146,5 +147,47 @@ char* edelib_strndup(const char* str, unsigned int maxlen) {
 
 	nstr[len] = '\0';
 	return (char*)memcpy(nstr, str, len);
+#endif
+}
+
+unsigned long edelib_strlcpy(char* dst, const char* src, unsigned long sz) {
+#ifdef HAVE_STRLCPY
+	return strlcpy(dst, src, sz);
+#else
+	unsigned long len = strlen(src);
+
+	if(sz) {
+		unsigned long s = (len >= sz) ? sz - 1 : len;
+		memcpy(dst, src, s);
+		dst[s] = '\0';
+	}
+
+	return len;
+#endif
+}
+
+unsigned long edelib_strlcat(char* dst, const char* src, unsigned long sz) {
+#ifdef HAVE_STRLCAT
+	return strlcat(dst, src, sz);
+#else
+	unsigned long len1, len2, ret;
+	char* p;
+	
+	len1 = strlen(src);
+	p = memchr(dst, '\0', sz);
+	if(!p)
+		return sz + len1;
+
+	len2 = p - dst;
+	ret = len1 + len2;
+
+	if(ret >= sz) {
+		len1 = sz - len2 - 1;
+		memcpy(p, src, len1);
+		p[len1] = '\0';
+	} else
+		memcpy(p, src, len1 + 1);
+
+	return ret;
 #endif
 }

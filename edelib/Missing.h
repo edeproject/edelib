@@ -28,22 +28,36 @@ extern "C" {
  * Implementation of setenv() function. Older libc implementations on various
  * UNIX-es does not provide it.
  */
-int edelib_setenv(const char* name, const char* value, int overwrite);
+EDELIB_API int edelib_setenv(const char* name, const char* value, int overwrite);
 
 /**
  * Implementation of unsetenv() function.
  */
-int edelib_unsetenv(const char* name);
+EDELIB_API int edelib_unsetenv(const char* name);
 
 /**
  * Implementation of strnlen() function.
  */
-unsigned int edelib_strnlen(const char* str, unsigned int maxlen);
+EDELIB_API unsigned int edelib_strnlen(const char* str, unsigned int maxlen);
 
 /**
  * Implementation of strndup() function.
  */
-char* edelib_strndup(const char* str, unsigned int maxlen);
+EDELIB_API char* edelib_strndup(const char* str, unsigned int maxlen);
+
+/**
+ * Implementation of strlcpy() function. This function operates similar
+ * to the strncpy() except it will always terminate string with '\\0' character,
+ * unless sz == 0. Returns strlen(src).
+ */
+EDELIB_API unsigned long edelib_strlcpy(char* dst, const char* src, unsigned long sz);
+
+/**
+ * Implementation of strlcat() function. This function operates similar
+ * to the strncat() except it will always terminate string with '\\0' character,
+ * unless sz == 0. At most sz-1 characters will be copied. Returns strlen(dst) + strlen(src).
+ */
+EDELIB_API unsigned long edelib_strlcat(char* dst, const char* src, unsigned long sz);
 
 #ifdef __cplusplus
 }
