@@ -74,8 +74,9 @@ const char *month_names[] = {
 	_("December")
 };
 
-void get_system_time(struct tm* tt, bool local) {
+static void get_system_time(struct tm* tt, bool local) {
 	time_t ct = time(0);
+
 	if (local) {
 #ifdef HAVE_LOCALTIME_R
 		localtime_r(&ct, tt);
@@ -93,8 +94,8 @@ void get_system_time(struct tm* tt, bool local) {
 #ifdef HAVE_GMTIME_R
 		gmtime_r(&ct, tt);
 #else
-		struct tm* tcurr;
 		// same applies as for localtime() above
+		struct tm* tcurr;
 		tcurr = gmtime(&ct);
 		*tt = *tcurr;
 #endif
@@ -201,7 +202,7 @@ Date& Date::operator=(const Date& d) {
 Date::~Date() { }
 
 bool Date::set(unsigned short y, unsigned char m, unsigned char d, DateType t) {
-	EASSERT(Date::is_valid(y, m, d) && "Invalid date");
+	E_ASSERT(Date::is_valid(y, m, d) && "Invalid date");
 
 	if (y == YearNow || m == MonthNow || d == DayNow) {
 		struct tm tmp;
@@ -247,13 +248,12 @@ bool Date::system_set(void) {
 	tmp.tm_mon  = MONTH_UNIX(month());
 	tmp.tm_mday  = day();
 
-	printf("year: %i real: %i my: %i\n", tmp.tm_year, YEAR_UNIX(year()), year());
-
 	time_t tt = mktime(&tmp);
 
 #ifdef HAVE_SETTIMEOFDAY
 	struct timeval tv;
 	tv.tv_sec = tt;
+	tv.tv_usec = 0; // or settimeofday() will fail
 	if (settimeofday(&tv, 0) == -1)
 		return false;
 	else
@@ -290,7 +290,7 @@ bool Date::leap_year(unsigned short y) {
 
 // static
 unsigned char Date::days_in_month(unsigned short y, unsigned char m) {
-	EASSERT(m <= 31);
+	E_ASSERT(m <= 31);
 	return month_days[Date::leap_year(y)][m-1];
 }
 
@@ -310,13 +310,13 @@ unsigned short Date::day_of_year() const {
 }
 
 const char* Date::day_name(void) {
-	EASSERT(dayval <= 7);
+	E_ASSERT(dayval <= 7);
 	// days are counted from 0
 	return day_names[day_of_week()-1];
 }
 
 const char* Date::month_name(void) {
-	EASSERT(monthval <= 12);
+	E_ASSERT(monthval <= 12);
 	// months are counted from 1
 	return month_names[monthval-1];
 }
@@ -330,7 +330,7 @@ Date& Date::operator++() {
 		}
 	}
 
-	EASSERT(Date::is_valid(year(), month(), day()) == true);
+	E_ASSERT(Date::is_valid(year(), month(), day()) == true);
 	return *this;
 }
 
@@ -354,7 +354,7 @@ Date& Date::operator--() {
 		dayval = days_in_month();
 	}
 
-	EASSERT(Date::is_valid(year(), month(), day()) == true);
+	E_ASSERT(Date::is_valid(year(), month(), day()) == true);
 	return *this;
 }
 
@@ -376,7 +376,7 @@ bool Time::is_valid(unsigned char h, unsigned char m, unsigned char s, unsigned 
 }
 
 Time::Time(const Time& t) {
-	if (!is_valid(t.hour(), t.min(), t.sec(), t.msec()))
+	if (!Time::is_valid(t.hour(), t.min(), t.sec(), t.msec()))
 		return;
 	hourval = t.hour();
 	minval = t.min();
@@ -387,7 +387,7 @@ Time::Time(const Time& t) {
 Time& Time::operator=(const Time& t) {
 	if (&t == this)
 		return *this;
-	if (!is_valid(t.hour(), t.min(), t.sec(), t.msec()))
+	if (!Time::is_valid(t.hour(), t.min(), t.sec(), t.msec()))
 		return *this;
 
 	hourval = t.hour();
@@ -397,15 +397,13 @@ Time& Time::operator=(const Time& t) {
 	return *this;
 }
 
-bool Time::set(unsigned char h, unsigned char m, unsigned char s, unsigned short ms) {
-	EASSERT(is_valid(h, m, s, ms));
+void Time::set(unsigned char h, unsigned char m, unsigned char s, unsigned short ms) {
+	E_ASSERT(Time::is_valid(h, m, s, ms));
 
 	hourval = h;
 	minval = m;
 	secval = s;
 	msecval = ms;
-
-	return true;
 }
 
 void Time::set_now(void) {
@@ -420,112 +418,47 @@ void Time::set_now(void) {
 	msecval = 0;
 }
 
-EDELIB_NS_END // EDELIB_NAMESPACE
-
-/*
- * This code is partialy working since I am not able to correctly extract
- * time delta from zone file. On other hand rest is fine.
- *
- * The code is still here for possible future improvements and desired
- * replacement with above environment setting stuff.
- */
-
-#if 0
-unsigned long __myntohl(const unsigned char* c) {
-	unsigned long ret = (((unsigned long)c[0])<<24) +
-						(((unsigned long)c[1])<<16) +
-						(((unsigned long)c[2])<<8) +
-						((unsigned long)c[3]);
-	return ret;
-}
-
-unsigned long convert_time(unsigned long curr_time, char* tzfile) {
-	int tzisgmtcnt = ntohl(*(int*)(tzfile+20));
-	int tzisstdcnt = ntohl(*(int*)(tzfile+24));
-	int tzleapcnt = ntohl(*(int*)(tzfile+28));
-	int tztimecnt = ntohl(*(int*)(tzfile+32));
-	int tztypecnt = ntohl(*(int*)(tzfile+36));
-	int tzcharcnt = ntohl(*(int*)(tzfile+40));
+#include <errno.h>
+bool Time::system_set(void) {
+	struct tm tmp;
 
 	/*
-		printf("tzisgmtcnt: %i tzisstdcnt: %i tzleapcnt: %i tztimecnt: %i tztypecnt: %i tzcharcnt: %i\n",
-				tzisgmtcnt, tzisstdcnt, tzleapcnt, tztimecnt, tztypecnt, tzcharcnt);
-	*/
-	// ???
-	int daylight = (tztimecnt>0);
-	//daylight = (tztimecnt>0);
+	 * Make sure to fetch current time so the clock can be synchronised. 
+	 * You don't want to know what happens if is not.
+	 *
+	 * Also, here is fetched _local_ time intentionaly so we don't mess
+	 * localtime and UTC deltas.
+	 *
+	 * FIXME: how then to handle UTC Date and local Time when wanna to set
+	 * them??? Oh my!
+	 *
+	 * NOTE: milliseconds are not used
+	 */
+	get_system_time(&tmp, true);
 
-	// ???
-	// daylight saving time
-	int isdst;
+	tmp.tm_hour = hourval;
+	tmp.tm_min  = minval;
+	tmp.tm_sec  = secval;
 
-	// this should be in class
-	long int timezon;
+	time_t tt = mktime(&tmp);
 
-	unsigned char* tzname[2];
-
-	// jump headers
-	unsigned char* off = (unsigned char*)(tzfile + 20 + 6 * 4);
-
-	for (int i = 0; i < tztimecnt; i++) {
-		if ((time_t)__myntohl(off + i * 4) >= curr_time) {
-			unsigned char* tz = off;
-			off += tztimecnt * 4;
-			i = off[i - 1];
-			off += tztimecnt;
-			tz += tztimecnt * 5 + tzleapcnt * 4 + tztypecnt * 6;
-			off += i * 6;
-
-			isdst = off[4];
-
-			tzname[0] = tz + off[5];
-			printf("-> %s\n", tz+off[5]);
-			timezon = -(__myntohl(off));
-
-			return (curr_time - timezon);
-		}
-	}
-	return curr_time;
-}
-
-bool TimeZone::load(void) {
-	if (!pathval || !zoneval)
+#ifdef HAVE_SETTIMEOFDAY
+	struct timeval tv;
+	tv.tv_sec = tt;
+	tv.tv_usec = 0; // or settimeofday() will fail
+	if (settimeofday(&tv, 0) == -1)
 		return false;
-
-	unsigned int len = strlen(pathval) + strlen(zoneval) + 5;
-	char* fullpth = new char[len];
-
-	snprintf(fullpth, len, "%s/%s", pathval, zoneval);
-	puts(fullpth);
-
-	int fd = open(fullpth, O_RDONLY);
-	if (fd < 0) {
-		printf("Failed to open %s\n", fullpth);
-		delete [] fullpth;
+	else
+		return true;
+#elif defined (HAVE_STIME)
+	if (stime(&tt) == -1)
 		return false;
-	}
-
-	unsigned int filelen = lseek(fd, 0, SEEK_END);
-
-	char* tzfile = (char*)mmap(0, len, PROT_READ, MAP_SHARED, fd, 0);
-	if (tzfile == MAP_FAILED) {
-		printf("Failed to mmap %s\n", fullpth);
-		delete [] fullpth;
-		return false;
-	}
-
-	if (ntohl(*(int*)tzfile) != 0x545a6966) {
-		printf("ntohl failed for %s\n", fullpth);
-		delete [] fullpth;
-		return false;
-	}
-
-	timeval = convert_time(::time(0), tzfile);
-
-	close(fd);
-	delete [] fullpth;
-
-	return true;
-}
-
+	else
+		return true;
+#else
+	return false;
 #endif
+}
+
+EDELIB_NS_END
+

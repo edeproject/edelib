@@ -323,7 +323,10 @@ inline bool operator<(const Date& d1, const Date& d2)  { return (!(d1 > d2) && (
 inline bool operator<=(const Date& d1, const Date& d2) { return (d1 == d2 || d1 < d2); }
 #endif
 
-
+/**
+ * \class Time
+ * \brief A class for time manipulation.
+ */
 class EDELIB_API Time {
 	private:
 		unsigned char hourval;
@@ -332,21 +335,78 @@ class EDELIB_API Time {
 		unsigned short msecval;
 	
 	public:
+		/**
+		 * Constructor that will set all time members to 0.
+		 * This is valid time.
+		 */
 		Time();
+
+		/**
+		 * Construct time via previously declared value
+		 */
 		Time(const Time& t);
+
+		/**
+		 * Assign previously declared value. Current time will be replaced.
+		 */
 		Time& operator=(const Time& t);
 
+		/**
+		 * Destructor
+		 */
 		~Time();
-		bool set(unsigned char h, unsigned char m, unsigned char s = 0, unsigned short ms = 0);
+
+		/**
+		 * Set time values. Values should be valid time, or assertion will be triggered.
+		 *
+		 * \param h is hour
+		 * \param m is minutes
+		 * \param s is seconds
+		 * \param ms is milliseconds
+		 */
+		void set(unsigned char h, unsigned char m, unsigned char s = 0, unsigned short ms = 0);
+
+		/**
+		 * Read system time and fill internal values
+		 */
 		void set_now(void);
 
+		/**
+		 * Tries to set system time with current values. This function requires
+		 * priviledged user. It behaves the same as Date::system_set() (see it's documentation
+		 * for detail description).
+		 */
 		bool system_set(void);
 
+		/**
+		 * Returns hour
+		 */
 		unsigned char hour(void) const { return hourval; }
+
+		/**
+		 * Returns minutes
+		 */
 		unsigned char min(void) const  { return minval; }
+
+		/**
+		 * Returns seconds
+		 */
 		unsigned char sec(void) const  { return secval; }
+
+		/**
+		 * Returns milliseconds
+		 */
 		unsigned short msec(void) const { return msecval; }
 
+		/**
+		 * Check if given parameters can be valid time
+		 *
+		 * \return true if time is valid
+		 * \param h is hour
+		 * \param m is minutes
+		 * \param s is seconds
+		 * \param ms is milliseconds
+		 */
 		static bool is_valid(unsigned char h, unsigned char m, unsigned char s, unsigned short ms);
 };
 
