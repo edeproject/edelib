@@ -1,3 +1,21 @@
+2008-02-24  Sanel <karijes@users.sourceforge.net>
+
+	* Added E_RETURN_IF_FAIL and E_RETURN_VAL_IF_FAIL macros
+	* Little reformatting in xdgmime.h
+	* Fixed issue with update_settings() in Window.cpp; when client calls this
+	with receiver uid, receiver will get event even if client immediately
+	hides itself. Previously this wasn't the case.
+	* Added double_buffer() member in Window
+	* Revised Window documentation and cleaned unused code in Window.cpp
+
+2008-02-23  Sanel <karijes@users.sourceforge.net>
+
+	* Added _edelib_assert()
+	* Default debug macros are E_DEBUG, E_ASSERT, E_STRLOC, E_FATAL, althought
+	rest of the code need to be changed to reflect this changes
+	* Pretty print when stack is dumped
+	* Efatal (and the rest) is changed to _edelib_fatal() and similar
+
 2008-02-17  Sanel <karijes@users.sourceforge.net>
 
 	* Added edelib_strlcat() with tests

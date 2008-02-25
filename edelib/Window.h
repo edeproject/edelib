@@ -13,7 +13,6 @@
 #ifndef __WINDOW_H__
 #define __WINDOW_H__
 
-#include "econfig.h"
 #include "XSettingsClient.h"
 #include "IconTheme.h"
 #include <FL/Fl_Double_Window.h>
@@ -25,9 +24,9 @@ EDELIB_NS_BEGIN
  * \brief Components used to be loaded with the window
  */
 enum WindowComponents {
-	WIN_INIT_NONE       = (1 << 1),   ///< Do not load anything except XSETTINGS code
-	WIN_INIT_ICON_THEME = (1 << 2),   ///< Load IconTheme code
-	WIN_INIT_IMAGES     = (1 << 3),   ///< Call fl_register_images
+	WIN_INIT_NONE       = (1 << 1),                               ///< Do not load anything except XSETTINGS code
+	WIN_INIT_ICON_THEME = (1 << 2),                               ///< Load IconTheme code
+	WIN_INIT_IMAGES     = (1 << 3),                               ///< Call fl_register_images
 	WIN_INIT_ALL        = (WIN_INIT_ICON_THEME | WIN_INIT_IMAGES) ///< Load above
 };
 
@@ -47,8 +46,8 @@ typedef void (WindowSettingsCallback)(void* data);
  *
  * It will also clean loaded data (e.g. call IconTheme::shutdown()).
  *
- * Contrary FLTK's Fl_Window and Fl_Double_Window, which are separate classes, this class can be
- * both of them (actually you can choose will window be single buffered or double buffered). If member
+ * Contrary to FLTK's Fl_Window and Fl_Double_Window which are separate classes, this class can be
+ * both of them (actually you can chose will window be single buffered or double buffered). If member
  * single_buffer() is set to true, window will behave as Fl_Window, if not (default), window will
  * be as Fl_Double_Window.
  *
@@ -194,17 +193,23 @@ class EDELIB_API Window : public Fl_Double_Window {
 		virtual void show(int argc, char** argv) { Fl_Window::show(argc, argv); }
 
 		/**
-		 * Set window either to single buffered
+		 * Set window either to single or double buffered. Only valid if called before show().
 		 */
 		void single_buffer(bool s) { sbuffer = s; }
 
 		/**
-		 * Returns if window is single buffered
+		 * Returns true if window is single buffered
 		 */
 		bool single_buffer(void) { return sbuffer; }
 
 		/**
-		 * Flush window content
+		 * Returns true if window is double buffered
+		 */
+		bool double_buffer(void) { return !single_buffer(); }
+
+		/**
+		 * Flush window content. If you inherit this class and re-implement flush(),
+		 * make sure you call this flush() not the one from Fl_Window or Fl_Double_Window.
 		 */
 		virtual void flush(void) { 
 			if(!sbuffer) 
@@ -214,7 +219,8 @@ class EDELIB_API Window : public Fl_Double_Window {
 		}
 
 		/**
-		 * Resize window
+		 * Resize window. If you inherit this class and re-implement resize(),
+		 * make sure you call this resize() not the one from Fl_Window or Fl_Double_Window.
 		 */
 		virtual void resize(int X, int Y, int W, int H) {
 			if(!sbuffer)
@@ -224,7 +230,8 @@ class EDELIB_API Window : public Fl_Double_Window {
 		}
 
 		/**
-		 * Hide window
+		 * Hide window. If you inherit this class and re-implement hide(),
+		 * make sure you call this hide() not the one from Fl_Window or Fl_Double_Window.
 		 */
 		virtual void hide(void) {
 			if(!sbuffer)

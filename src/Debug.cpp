@@ -23,23 +23,26 @@
 #define EMsgWarn          EDELIB_NS::MsgWarn
 #define EMsgFatal         EDELIB_NS::MsgFatal
 
-#ifndef __GLIBC__
-	#define DUMP_STACK(fd) 0
-#else
+#ifdef __GLIBC__
 #include <execinfo.h>
-void __dump_stack(int fd) {
+
+static void __dump_stack(int fd) {
 	// stacktrace depth calls
 	void* strace[256];
    	const int sz = backtrace(strace, int (sizeof(strace) / sizeof(*strace)));
 	// fd means stdout/stderr/...
    	backtrace_symbols_fd(strace, sz, fd);
 }
-	
-#define DUMP_STACK(fd) __dump_stack(fd)
+
+#define DUMP_STACK(err, fd)                   \
+	fprintf(err, "----- Stack dump -----\n"); \
+	__dump_stack(fd);                         \
+	fprintf(err, "----------------------\n")
+#else
+#define DUMP_STACK(err, fd)
 #endif
 
-
-EMsgHandlerType default_msg_handler = 0;
+static EMsgHandlerType default_msg_handler = 0;
 
 void InstallMsgHandler(EMsgHandlerType m) {
 	default_msg_handler = m;
@@ -49,8 +52,7 @@ void InstallMsgHandler(EMsgHandlerType m) {
  * NOTE: content buffers are intentionaly declared in
  * each function due possible threaded environment
  */
-
-void EDebug(const char* fmt, ...) {
+void _edelib_debug(const char* fmt, ...) {
 	char buff[ERROR_BUFFLEN];
 	va_list ap;
 	va_start(ap, fmt);
@@ -63,7 +65,7 @@ void EDebug(const char* fmt, ...) {
 		fprintf(stderr, "%s", buff);
 }
 
-void EWarning(const char* fmt, ...) {
+void _edelib_warning(const char* fmt, ...) {
 	char buff[ERROR_BUFFLEN];
 	va_list ap;
 	va_start(ap, fmt);
@@ -76,7 +78,12 @@ void EWarning(const char* fmt, ...) {
 		fprintf(stderr, "%s", buff);
 }
 
-void EFatal(const char* fmt, ...) {
+void _edelib_assert(int cond, const char* cond_text, const char* file, int line, const char* func) {
+	if(!cond)	
+		_edelib_fatal("Assertion failed: \"%s\" in %s (%d), function: \"%s\"\n", cond_text, file, line, func);
+}
+
+void _edelib_fatal(const char* fmt, ...) {
 	char buff[ERROR_BUFFLEN];
 	va_list ap;
 	va_start(ap, fmt);
@@ -88,12 +95,10 @@ void EFatal(const char* fmt, ...) {
 	else {
 		fprintf(stderr, "%s", buff);
 		/*
-		 * glibc redefined stderr pointing it to internal IO struct,
-		 * so here is used good-old-defalut-normal-every_one_use_it
-		 * alias for it. Yuck!
+		 * glibc redefined stderr pointing it to internal IO struct, so here is used 
+		 * good-old-defalut-normal-every_one_use_it alias for it. Yuck!
 		 */
-		DUMP_STACK(2);
-
+		DUMP_STACK(stderr, 2);
 		abort();
 	}
 }

@@ -37,8 +37,8 @@ extern int FL_NORMAL_SIZE;
 
 EDELIB_NS_BEGIN
 
-XSettingsClient* xcli = NULL;
-Window* local_window  = NULL;
+static XSettingsClient* xcli = NULL;
+static Window* local_window  = NULL;
 
 char fl_show_iconic;	// hack for iconize()
 int fl_disable_transient_for; // secret method of removing TRANSIENT_FOR
@@ -69,77 +69,11 @@ static void send_client_message(::Window w, Atom a, unsigned int uid) {
 	XSendEvent(fl_display, w, False, mask, &xev);
 }
 
-#if 0
-static bool get_uint_property_value(::Window w, Atom at, unsigned int& val) {
-	Atom type;
-	int format;
-	unsigned long n, extra;
-	unsigned char* data = 0;
-
-	int status = XGetWindowProperty(fl_display, w, at, 0L, 0x7fffffff, False, XA_CARDINAL, &type, &format, &n, &extra, 
-			(unsigned char**)&data);
-
-	if(status == Success && type != None) {
-		val = int(*(long*)data);
-		XFree(data);
-		return true;
-	}
-
-	return false;
-}
-
-static bool get_uint_property_value_from_tree(::Window w, Atom at, ::Window& w_ret, unsigned int& val) {
-	unsigned int nchildren = 0;
-	bool status = false;
-	::Window dummy, *children = 0;
-
-	if(get_uint_property_value(w, at, val)) {
-		w_ret = w;
-		return true;
-	}
-
-	XQueryTree(fl_display, w, &dummy, &dummy, &children, &nchildren);
-	if(!nchildren)
-		return false;
-
-	for(unsigned int i = 0; i < nchildren && !status; i++) {
-		if(get_uint_property_value(children[i], at, val)) {
-			w_ret = children[i];
-			status = true;
-			break;
-		} else
-			status = get_uint_property_value_from_tree(children[i], at, w_ret, val);
-	}
-
-	XFree(children);
-	return status;
-}
-
-static bool set_uint_property_value(::Window w, Atom at, unsigned int val) {
-	long prop = val;
-	XChangeProperty(fl_display, w, at, XA_CARDINAL, 32, PropModeReplace, (unsigned char*)&prop, 1);
-	return true;
-}
-#endif
-
 /*
  * FIXME: make sure this function route events to window; e.g. ClientMessage
  * so window can install handler and re-read ClientMessage again
  */
 static int xevent_handler(int id) {
-#if 0
-	if(local_window && local_window->settings_callback()) {
-		if(fl_xevent->type == ClientMessage) {
-			Atom message = fl_xevent->xclient.message_type;
-			if(message == local_window->preferences_atom() && 
-					(unsigned int)fl_xevent->xclient.data.l[0] == local_window->settings_uid()) {
-				EDEBUG("==> %x\n", local_window->settings_callback_data());
-				(*local_window->settings_callback())(local_window->settings_callback_data());
-			}
-		}
-	}
-#endif 
-
 	if(fl_xevent->type == ClientMessage) {
 		Fl_Window* win = 0;
 		Atom message = fl_xevent->xclient.message_type;
@@ -170,10 +104,8 @@ static int xevent_handler(int id) {
 		}
 	}
 
-	if(xcli) 
-		return xcli->process_xevent(fl_xevent);
-	else
-		return 0;
+	E_RETURN_VAL_IF_FAIL(xcli != NULL, 0);
+	return xcli->process_xevent(fl_xevent);
 }
 
 static void xsettings_cb(const char* name, XSettingsAction action, XSettingsSetting* setting, void* data) {
@@ -323,19 +255,13 @@ void Window::init(int component) {
 
 /* static */
 void Window::update_settings(unsigned int uid) {
+	/* 
+	 * Fetch _CHANGE_SETTINGS atom (note 'True'). If noone app set
+	 * this, it will fail and we will do nothing.
+	 */
 	Atom pref = XInternAtom(fl_display, "_CHANGE_SETTINGS", True);
-	// noone app set our atom
 	if(pref == None)
 		return;
-
-#if 0
-	::Window root = RootWindow(fl_display, fl_screen);
-	::Window win_ret;
-	unsigned int val = 0;
-
-	if(get_uint_property_value_from_tree(root, pref, win_ret, val))
-		send_client_message(win_ret, pref);
-#endif
 
 	/*
 	 * Alternative version:
@@ -356,6 +282,7 @@ void Window::update_settings(unsigned int uid) {
 			send_client_message(children[i], pref, uid);
 
 	XFree(children);
+	XFlush(fl_display);
 }
 
 XSettingsClient* Window::xsettings(void) {
@@ -401,8 +328,9 @@ void Window::show(void) {
 		// Don't set background pixel for double-buffered windows...
 		int background_pixel = -1;
 
-		if(type() == FL_WINDOW && ((box() == 1) || (box() & 2) && (box() <= 15)))
+		if(type() == FL_WINDOW && ((box() == 1) || (box() & 2) && (box() <= 15))) {
 			background_pixel = int(fl_xpixel(color()));
+		}
 
 		create_window_xid(this, set_titlebar_icon, background_pixel);
 	} else

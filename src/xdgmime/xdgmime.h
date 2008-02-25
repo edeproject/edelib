@@ -87,13 +87,13 @@ int          xdg_mime_mime_type_subclass           (const char *mime_a,
  * (used to find certain comments). Returned value must be copied
  * or could be overwritten by another call or nulled by xdg_mime_shutdown().
  */
-const char   *xdg_mime_find_data(const char *name);
+const char   *xdg_mime_find_data                   (const char *name);
 
-  /* xdg_mime_get_mime_parents() is deprecated since it does
-   * not work correctly with caches. Use xdg_mime_list_parents() 
-   * instead, but notice that that function expects you to free
-   * the array it returns. 
-   */
+/* xdg_mime_get_mime_parents() is deprecated since it does
+ * not work correctly with caches. Use xdg_mime_list_parents() 
+ * instead, but notice that that function expects you to free
+ * the array it returns. 
+ */
 const char **xdg_mime_get_mime_parents		   (const char *mime);
 char **      xdg_mime_list_mime_parents		   (const char *mime);
 const char  *xdg_mime_unalias_mime_type		   (const char *mime);
