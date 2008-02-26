@@ -14,10 +14,9 @@ list_and_print() {
 	echo "<mime-info>"
 
 	for mime in $content; do
-		# bash specific; remove mime directory keeping
-		# only subdirectory and mime name. subdirectory keeps
-		# mime type (they are formed in mime-type/mime-name.xml)
-		mtype=${mime/$1\//}
+		# in line mime_dir/type/mime remove 'mime_dir/' keeping
+		# type/mime which is full mime description
+		mtype=`echo $mime | sed "s|$1/||g"`
 		echo "  <mime-type type=\"$mtype\" icon=\"\" />"
 	done
 
