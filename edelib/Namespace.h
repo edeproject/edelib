@@ -9,14 +9,14 @@
  * See COPYING for details.
  */
 
-/* this file is here just to allow doxygen to see
- * pickup namespace information
+/* 
+ * this file is here just to allow doxygen to see
+ * pickup namespace information 
  */
 
-/*! \namespace edelib
-
-This is a main namespace where all edelib components laid.
-Also namespace usage can be optional, and disabled during
-compilation phase.
-
-*/
+/**
+ * \namespace edelib
+ * This is a main namespace where all edelib components laid.
+ * Also namespace usage can be optional, and disabled during
+ * compilation phase.
+ */

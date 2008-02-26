@@ -217,6 +217,8 @@ class EDELIB_API Date {
 		 * Since these functions requires priviledged user, if they are present
 		 * but user is not allow to set date, this function will return false too.
 		 * Contrary this, it will return true if able to set date.
+		 *
+		 * \todo This should be probably a static function
 		 */
 		bool system_set(void);
 
@@ -326,13 +328,19 @@ inline bool operator<=(const Date& d1, const Date& d2) { return (d1 == d2 || d1 
 /**
  * \class Time
  * \brief A class for time manipulation.
+ *
+ * This class allows you to manipulate with time, fetch or set one.
+ * Hour can be 0 <= hour < 24. Minutes and seconds  are in 0 <= val < 60.
+ *
+ * \note Time where hour is 0 is always less than time where hour is 23.
+ *
+ * \todo Time is missing local/UTC option.
  */
 class EDELIB_API Time {
 	private:
 		unsigned char hourval;
 		unsigned char minval;
 		unsigned char secval;
-		unsigned short msecval;
 	
 	public:
 		/**
@@ -362,12 +370,13 @@ class EDELIB_API Time {
 		 * \param h is hour
 		 * \param m is minutes
 		 * \param s is seconds
-		 * \param ms is milliseconds
 		 */
-		void set(unsigned char h, unsigned char m, unsigned char s = 0, unsigned short ms = 0);
+		void set(unsigned char h, unsigned char m, unsigned char s = 0);
 
 		/**
 		 * Read system time and fill internal values
+		 *
+		 * \todo This should be probably a static function
 		 */
 		void set_now(void);
 
@@ -375,6 +384,8 @@ class EDELIB_API Time {
 		 * Tries to set system time with current values. This function requires
 		 * priviledged user. It behaves the same as Date::system_set() (see it's documentation
 		 * for detail description).
+		 *
+		 * \todo This should be probably a static function
 		 */
 		bool system_set(void);
 
@@ -386,17 +397,35 @@ class EDELIB_API Time {
 		/**
 		 * Returns minutes
 		 */
-		unsigned char min(void) const  { return minval; }
+		unsigned char minute(void) const  { return minval; }
 
 		/**
 		 * Returns seconds
 		 */
-		unsigned char sec(void) const  { return secval; }
+		unsigned char second(void) const  { return secval; }
 
 		/**
-		 * Returns milliseconds
+		 * Increase current time by one. First seconds are increased; when
+		 * they reach 59, minutes are increased and seconds are set to 0.
+		 * The same applies for minutes/hour case. When hour reach for 23, it
+		 * is set to 0 (the same behaviour as you see from your digital clock).
 		 */
-		unsigned short msec(void) const { return msecval; }
+		Time& operator++();
+
+		/**
+		 * Suffix increment
+		 */
+		Time operator++(int);
+
+		/**
+		 * Reverse from operator++()
+		 */
+		Time& operator--();
+
+		/**
+		 * Suffix decrement
+		 */
+		Time operator--(int);
 
 		/**
 		 * Check if given parameters can be valid time
@@ -405,21 +434,29 @@ class EDELIB_API Time {
 		 * \param h is hour
 		 * \param m is minutes
 		 * \param s is seconds
-		 * \param ms is milliseconds
 		 */
-		static bool is_valid(unsigned char h, unsigned char m, unsigned char s, unsigned short ms);
+		static bool is_valid(unsigned char h, unsigned char m, unsigned char s);
 };
 
 #ifndef SKIP_DOCS
-inline bool operator==(const Time& t1, const Time& t2)
-{ return (t1.hour() == t2.hour() && t1.min() == t2.min() && t1.sec() == t2.sec() && t2.msec() == t2.msec()); }
+inline bool operator==(const Time& t1, const Time& t2) { 
+	return (t1.hour() == t2.hour() && t1.minute() == t2.minute() && t1.second() == t2.second());
+}
 
-inline bool operator>(const Time& t1, const Time& t2)
-{ return (t1.hour()+t1.min()+t1.sec()+t1.msec() > t2.hour()+t2.min()+t2.sec()+t2.msec()); }
+inline bool operator>(const Time& t1, const Time& t2) {
+	return (t1.hour() > t2.hour() ||
+			t1.hour() == t2.hour() && t1.second() > t2.second() ||
+			t1.second() == t2.second());
+}
+
+inline bool operator<(const Time& t1, const Time& t2) {
+	return (t1.hour() < t2.hour() ||
+			t1.hour() == t2.hour() && t1.second() < t2.second() ||
+			t1.second() == t2.second());
+}
 
 inline bool operator!=(const Time& t1, const Time& t2) { return !(t1 == t2); }
 inline bool operator>=(const Time& t1, const Time& t2) { return (t1 > t2 || t1 == t2); }
-inline bool operator<(const Time& t1, const Time& t2)  { return (!(t1 > t2) && (t1 != t2)); }
 inline bool operator<=(const Time& t1, const Time& t2) { return (t1 == t2 || t1 < t2); }
 #endif
 

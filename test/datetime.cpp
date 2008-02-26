@@ -173,27 +173,26 @@ UT_FUNC(DateCaveat, "Test date caveat")
 UT_FUNC(TimeTest, "Test time")
 {
 	Time t;
-	t.set(20, 10, 10, 233);
+	t.set(20, 10, 10);
 	UT_VERIFY( t.hour() == 20 );
-	UT_VERIFY( t.min() == 10 );
-	UT_VERIFY( t.sec() == 10 );
-	UT_VERIFY( t.msec() == 233 );
+	UT_VERIFY( t.minute() == 10 );
+	UT_VERIFY( t.second() == 10 );
 
-	UT_VERIFY( Time::is_valid(25, 0, 0, 0) == false );
-	UT_VERIFY( Time::is_valid(0, 0, 0, 0) == true );
+	UT_VERIFY( Time::is_valid(25, 0, 0) == false );
+	UT_VERIFY( Time::is_valid(0, 0, 0) == true );
 }
 
 UT_FUNC(TimeOperatorsTest, "Test time operators")
 {
 	Time t1, t2;
 	UT_VERIFY( t1 == t2 );
-	t1.set(0, 0, 0, 1);
+	t1.set(0, 0, 1);
 	UT_VERIFY( t1 > t2);
 
-	t1.set(0, 59, 59, 59);
-	t2.set(1, 0, 0, 0);
-	UT_VERIFY( t1 > t2 );
-	UT_VERIFY( t1 >= t2 );
+	t1.set(0, 59, 59);
+	t2.set(1, 0, 0);
+	UT_VERIFY( t1 < t2 );
+	UT_VERIFY( t1 <= t2 );
 	UT_VERIFY( t1 != t2 );
 
 	t2 = t1;
@@ -205,4 +204,65 @@ UT_FUNC(TimeOperatorsTest, "Test time operators")
 	UT_VERIFY( t1 == t3 );
 	UT_VERIFY( t1 >= t3 );
 	UT_VERIFY( t1 <= t3 );
+
+	t1.set(23, 0, 0);
+	t2.set(12, 0, 0);
+
+	UT_VERIFY( t1 > t2 );
+	UT_VERIFY( t2 < t1 );
+
+	t1.set(0, 0, 0);
+	t2.set(0, 0, 1);
+
+	UT_VERIFY( t1 < t2 );
+	UT_VERIFY( t2 > t1 );
+}
+
+UT_FUNC(TimeOperatorsTest2, "Test time operators (2)")
+{
+	Time t1;
+	t1.set(0, 59, 59);
+
+	++t1;
+	UT_VERIFY( t1.hour() == 1 );
+	UT_VERIFY( t1.minute() == 0 );
+	UT_VERIFY( t1.second() == 0 );
+
+	++t1;
+	UT_VERIFY( t1.hour() == 1 );
+	UT_VERIFY( t1.minute() == 0 );
+	UT_VERIFY( t1.second() == 1 );
+
+	t1++;
+	UT_VERIFY( t1.hour() == 1 );
+	UT_VERIFY( t1.minute() == 0 );
+	UT_VERIFY( t1.second() == 2 );
+
+	--t1;
+	UT_VERIFY( t1.hour() == 1 );
+	UT_VERIFY( t1.minute() == 0 );
+	UT_VERIFY( t1.second() == 1 );
+	
+	--t1; --t1;
+	UT_VERIFY( t1.hour() == 0 );
+	UT_VERIFY( t1.minute() == 59 );
+	UT_VERIFY( t1.second() == 59 );
+
+	t1.set(0, 0, 0);
+	--t1;
+	UT_VERIFY( t1.hour() == 23 );
+	UT_VERIFY( t1.minute() == 59 );
+	UT_VERIFY( t1.second() == 59 );
+
+	t1.set(0, 59, 0);
+	--t1;
+	UT_VERIFY( t1.hour() == 0 );
+	UT_VERIFY( t1.minute() == 58 );
+	UT_VERIFY( t1.second() == 59 );
+
+	t1.set(10, 0, 0);
+	++t1;
+	UT_VERIFY( t1.hour() == 10 );
+	UT_VERIFY( t1.minute() == 0 );
+	UT_VERIFY( t1.second() == 1 );
 }

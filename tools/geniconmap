@@ -1,0 +1,34 @@
+#!/bin/sh
+# Generate file to with mapping between mimetypes
+# and icon names
+
+xdg_mime_dir="/usr/share/mime:/usr/local/share/mime"
+
+list_and_print() {
+	# list all .xml files, their name contains mime name
+	content=`find $1 -name '*.xml' -print | sed -e 's/\.xml//g' | sort -u`
+
+	echo "<?xml version=\"1.0\"?>"
+	echo "<!-- Generated with edelib-geniconmap -->"
+	echo "<!-- This file contains mapping between mimetypes and names from icon theme -->"
+	echo "<mime-info>"
+
+	for mime in $content; do
+		# bash specific; remove mime directory keeping
+		# only subdirectory and mime name. subdirectory keeps
+		# mime type (they are formed in mime-type/mime-name.xml)
+		mtype=${mime/$1\//}
+		echo "  <mime-type type=\"$mtype\" icon=\"\" />"
+	done
+
+	echo "</mime-info>"
+}
+
+# replace ':' delimiter with ' ' so loop can work
+xdg_mime_dir_list=`echo $xdg_mime_dir | sed -e 's/:/ /g'`
+
+for dir in $xdg_mime_dir_list; do
+	if [ -d $dir ]; then
+		list_and_print $dir
+	fi
+done

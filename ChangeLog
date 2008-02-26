@@ -1,3 +1,11 @@
+2008-02-26  Sanel <karijes@users.sourceforge.net>
+
+	* Completed Time class with removal of millisecond member
+	* In tests/util.cpp, before environmet vars are changed, they are saved
+	first and later restored. That also caused removal of warning message
+	* Revised TODO file
+	* Revised DesktopFile.h documentation
+
 2008-02-25  Sanel <karijes@users.sourceforge.net>
 
 	* Documented Time class

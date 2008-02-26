@@ -48,10 +48,8 @@ enum FileIOMode {
  * \class File
  * \brief A system file io stream.
  *
- * File is portable wrapper for various
- * functions for reading and writing files.
- * Also brings automatic descriptor closing
- * or possible another file openning during
+ * File is portable wrapper for various functions for reading and writing files.
+ * Also brings automatic descriptor closing or possible another file openning during
  * object lifetime.
  *
  * Here is a sample of common usage:

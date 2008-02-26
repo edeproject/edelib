@@ -51,7 +51,6 @@ enum DesktopFileType {
  *
  * Current implementation conforms to http://www.freedesktop.org specification version
  * 1.0 with few exceptions (read, some sections are ignored). Those are:
- *   - OnlyShowIn, NotShowIn
  *   - StartupWMClass
  *   - Categories
  */

@@ -364,46 +364,44 @@ Date Date::operator--(int) {
 	return tmp;
 }
 
-Time::Time() : hourval(0), minval(0), secval(0), msecval(0) {}
+Time::Time() : hourval(0), minval(0), secval(0) { }
 
 Time::~Time() {}
 
 // static
-bool Time::is_valid(unsigned char h, unsigned char m, unsigned char s, unsigned short ms) {
-	if (h <= 23 && m <= 59 && s <= 59 && ms <= 999)
+bool Time::is_valid(unsigned char h, unsigned char m, unsigned char s) {
+	if(h <= 23 && m <= 59 && s <= 59)
 		return true;
 	return false;
 }
 
-Time::Time(const Time& t) {
-	if (!Time::is_valid(t.hour(), t.min(), t.sec(), t.msec()))
+Time::Time(const Time& t) : hourval(0), minval(0), secval(0) {
+	if(Time::is_valid(t.hour(), t.minute(), t.second()) == false)
 		return;
+
 	hourval = t.hour();
-	minval = t.min();
-	secval = t.sec();
-	msecval = t.msec();
+	minval = t.minute();
+	secval = t.second();
 }
 
 Time& Time::operator=(const Time& t) {
-	if (&t == this)
-		return *this;
-	if (!Time::is_valid(t.hour(), t.min(), t.sec(), t.msec()))
+	if(&t == this)
 		return *this;
 
+	E_ASSERT(Time::is_valid(t.hour(), t.minute(), t.second()) == true);
+
 	hourval = t.hour();
-	minval = t.min();
-	secval = t.sec();
-	msecval = t.msec();
+	minval = t.minute();
+	secval = t.second();
 	return *this;
 }
 
-void Time::set(unsigned char h, unsigned char m, unsigned char s, unsigned short ms) {
-	E_ASSERT(Time::is_valid(h, m, s, ms));
+void Time::set(unsigned char h, unsigned char m, unsigned char s) {
+	E_ASSERT(Time::is_valid(h, m, s));
 
 	hourval = h;
 	minval = m;
 	secval = s;
-	msecval = ms;
 }
 
 void Time::set_now(void) {
@@ -414,11 +412,8 @@ void Time::set_now(void) {
 	minval  = tmp.tm_min;
 	// for leap seconds we can have 61; ignore this and set it to 59
 	secval  = (tmp.tm_sec > 59 ? 59 : tmp.tm_sec);
-	// FIXME: retrieve clock
-	msecval = 0;
 }
 
-#include <errno.h>
 bool Time::system_set(void) {
 	struct tm tmp;
 
@@ -458,6 +453,52 @@ bool Time::system_set(void) {
 #else
 	return false;
 #endif
+}
+
+Time& Time::operator++() {
+	if(++secval > 59) {
+		secval = 0;
+
+		if(++minval > 59) {
+			minval = 0;
+
+			if(++hourval > 23)
+				hourval = 0;
+		}
+	}
+
+	E_ASSERT(Time::is_valid(hour(), minute(), second()) == true);
+	return *this;
+}
+
+Time Time::operator++(int) {
+	Time tmp(*this);
+	++(*this);
+	return tmp;
+}
+
+Time& Time::operator--() {
+	// hourval, minval and secval are unsigned
+	if(secval == 0) {
+		secval = 59;
+		if(minval == 0) {
+			minval = 59;
+			if(hourval == 0)
+				hourval = 23;
+			else
+				hourval--;
+		} else
+			minval--;
+	} else
+		secval--;
+
+	return *this;
+}
+
+Time Time::operator--(int) {
+	Time tmp(*this);
+	--(*this);
+	return tmp;
 }
 
 EDELIB_NS_END

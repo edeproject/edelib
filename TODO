@@ -5,14 +5,9 @@ TODO list:
  * in Config, don't allow [] sections
  * what should set_textdomain_dir() and set_textdomain() return when NLS is disabled ?
  * documentation install strangely depends on xxx/doc/edelib-xxx/html directory; how ?
- * more checks on GenDocumentation since /usr/bin/env gawk -f does not work
  * add local snprintf/vsnprintf/scandir/dirent(???)
  * Date can accept set(0,1,0); leave this or... (possible bugs ?)
- * Finish DateTime
  * xdgmime calls too much xdg_mime_init()/xdg_mime_shutdown(); move these in MimeType class
  * MimeType; add locale during read of comments
- * Finish dir_remove_rec
  * What Config as localized keys should read: LC_MESSAGES or LANG ??? I'm using for now LANG,
    but fd.o people said it should be LC_MESSAGES. Inspect this.
- * Add inotify for DirWatch.
- * DirWatch on *BSDs, solaris and etc.

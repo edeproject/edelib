@@ -1,17 +1,46 @@
 #include <edelib/Util.h>
 #include <edelib/Missing.h>
+#include <edelib/String.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>  // getenv
 #include "UnitTest.h"
 
 using namespace edelib;
 
 #define STR_EQUAL(str1, str2) (str1 == str2)
 
+#define STORE_ENV(name, to, ptr) \
+do {                             \
+	ptr = getenv(name);          \
+	if(ptr)                      \
+		to = ptr;                \
+} while(0)
+
+/*
+ * Ironically, we will use edelib_setenv() for actual setting.
+ * Hoping before this call, everything was passed fine ;-).
+ *
+ * Hey, these are test; I'm not expecting they save the world if
+ * they crashes :-P
+ */
+#define RESTORE_ENV(name, from)               \
+do {                                          \
+	if(!from.empty())                         \
+		edelib_setenv(name, from.c_str(), 1); \
+} while(0)
+
 UT_FUNC(XDGPathTest, "Test XDG paths")
 {
-	puts(" *** XDGPathTest mess with some environment variables that are probably");
-	puts(" *** used by the current environment. Maybe strange things can be occured later");
+	// save previous values
+	char* p;
+	String config_home, data_home, cache_home, data_dirs, config_dirs;
+
+	STORE_ENV("XDG_CONFIG_HOME", config_home, p);
+	STORE_ENV("XDG_DATA_HOME", data_home, p);
+	STORE_ENV("XDG_CACHE_HOME", cache_home, p);
+	STORE_ENV("XDG_DATA_DIRS", data_dirs, p);
+	STORE_ENV("XDG_CONFIG_DIRS", config_dirs, p);
 
 	edelib_setenv("XDG_CONFIG_HOME", "/dummy/place", 1);
 	UT_VERIFY( STR_EQUAL(user_config_dir(), "/dummy/place") );
@@ -105,8 +134,13 @@ UT_FUNC(XDGPathTest, "Test XDG paths")
 
 	UT_VERIFY( ret == 1 );
 	UT_VERIFY( (*it) == "/etc/xdg" );
-}
 
+	RESTORE_ENV("XDG_CONFIG_HOME", config_home);
+	RESTORE_ENV("XDG_DATA_HOME", data_home);
+	RESTORE_ENV("XDG_CACHE_HOME", cache_home);
+	RESTORE_ENV("XDG_DATA_DIRS", data_dirs);
+	RESTORE_ENV("XDG_CONFIG_DIRS", config_dirs);
+}
 
 UT_FUNC(PathBuildTest, "Test path builders")
 {
