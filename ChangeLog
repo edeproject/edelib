@@ -1,3 +1,10 @@
+2008-03-04  Sanel <karijes@users.sourceforge.net>
+
+	* Added findfile.m4, pkg.m4 and dbus.m4 macros. Mostly for D-BUS
+	detection. D-BUS will be first detected via pkg-config; if pkg-config does
+	not exits, configure will manually scan known places for headers and
+	libraries
+
 2008-02-26  Sanel <karijes@users.sourceforge.net>
 
 	* Completed Time class with removal of millisecond member
