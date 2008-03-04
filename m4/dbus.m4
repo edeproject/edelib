@@ -9,7 +9,7 @@ dnl GNU General Public Licence version 2 or newer.
 dnl See COPYING for details.
 
 AC_DEFUN([EDELIB_CHECK_DBUS], [
-	EDELIB_PKG_CHECK_MODULES(DBUS, [dbus-2 >= 1.0], [have_dbus=yes], [have_dbus=no])
+	EDELIB_PKG_CHECK_MODULES(DBUS, [dbus-1 >= 1.0], [have_dbus=yes], [have_dbus=no])
 
 	if eval "test $pkg_config_found = yes"; then
 		if eval "test $have_dbus = yes"; then
