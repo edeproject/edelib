@@ -44,7 +44,7 @@ bool Resource::load(const char* domain) {
 		const char* p = NULL;
 
 		for(; it != it_end; ++it) {
-			*it += DIR_SEPARATOR;
+			*it += E_DIR_SEPARATOR;
 			*it += file;
 
 			if(file_exists((*it).c_str())) {
@@ -68,7 +68,7 @@ bool Resource::load(const char* domain) {
 
 	// now go to user directory
 	String ufile = user_config_dir();
-	ufile += DIR_SEPARATOR;
+	ufile += E_DIR_SEPARATOR;
 	ufile += file;
 
 	if(file_exists(ufile.c_str())) {
@@ -90,7 +90,7 @@ bool Resource::save(const char* domain) {
 		return false;
 
 	String ufile = user_config_dir();
-	ufile += DIR_SEPARATOR;
+	ufile += E_DIR_SEPARATOR;
 	ufile += domain;
 	ufile += ".conf";
 

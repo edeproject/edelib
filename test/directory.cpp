@@ -57,3 +57,34 @@ UT_FUNC(DirectoryOperations, "Test Directory operations")
 	UT_VERIFY( dir_empty("FooDir") == true );
 	UT_VERIFY( dir_remove("FooDir") == true );
 }
+
+UT_FUNC(DirectoryParents, "Test dir_create_with_parents")
+{
+	UT_VERIFY( dir_create_with_parents("demo/foo/baz") == true );
+	// again
+	UT_VERIFY( dir_create_with_parents("demo/foo/baz") == true );
+
+	UT_VERIFY( dir_remove("demo/foo/baz") == true );
+	UT_VERIFY( dir_remove("demo/foo") == true );
+	UT_VERIFY( dir_remove("demo") == true );
+
+	UT_VERIFY( dir_create_with_parents("demo") == true );
+	UT_VERIFY( dir_create_with_parents("demo/foo") == true );
+	UT_VERIFY( dir_create_with_parents("demo/foo/baz") == true );
+
+	UT_VERIFY( dir_remove("demo/foo/baz") == true );
+	UT_VERIFY( dir_remove("demo/foo") == true );
+	UT_VERIFY( dir_remove("demo") == true );
+
+	// fail to create demo/foo.txt/baz if demo/foo.txt (foo.txt is file) exists
+	UT_VERIFY( dir_create_with_parents("demo") == true );
+
+	File f;
+	UT_VERIFY( f.open("demo/foo.txt", FIO_WRITE) == true );
+	f.write("dummy");
+	f.close();
+
+	UT_VERIFY( dir_create_with_parents("demo/foo.txt/baz") == false );
+	UT_VERIFY( file_remove("demo/foo.txt") == true );
+	UT_VERIFY( dir_remove("demo") == true );
+}

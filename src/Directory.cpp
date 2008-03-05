@@ -36,74 +36,6 @@
 
 EDELIB_NS_BEGIN
 
-#if 0
-bool dirwalk(const char* dir, 
-		void (*on_dir_enter)(const char*, const char*), void (*on_dir_leave)(const char*, const char*), 
-		void (*on_file)(const char*, const char*), 
-		const char* data, void (*progress)(const char*)) {
-
-	char name[PATH_MAX];
-	struct dirent* dp;
-	DIR* dfd;
-	int dirlen = 0;
-
-	if((dfd = opendir(dir)) == NULL) {
-		EDEBUG(ESTRLOC ": Can't open %s\n", dir);
-		return false;
-	}
-
-	dirlen = strlen(dir);
-
-	while((dp = readdir(dfd)) != NULL) {
-		if(DOT_OR_DOTDOT(dp->d_name))
-			continue;
-
-		if(dirlen + strlen(dp->d_name) + 2 > sizeof(name))
-			EDEBUG(ESTRLOC ": %s too long\n", dp->d_name);
-		else {
-			if(dirlen > 0 && dir[dirlen-1] == '/')
-				snprintf(name, sizeof(name), "%s%s", dir, dp->d_name);
-			else
-				snprintf(name, sizeof(name), "%s/%s", dir, dp->d_name);
-
-			if(progress)
-				progress(name);
-
-			if(dir_exists(name)) {
-				//printf("entering in %s\n", name);
-
-				if(on_dir_enter)
-					on_dir_enter(name, data);
-
-				dirwalk(name, on_dir_enter, on_dir_leave, on_file, data, progress);
-
-				//printf("leaving %s\n", name);
-				if(on_dir_leave)
-					on_dir_leave(name, data);
-			} else {
-				// FIXME: for now everything else is seen as file
-				on_file(name, data);
-			}
-		}
-	}
-
-	closedir(dfd);
-	return true;
-}
-#endif
-
-void d_on_enter(const char* name, const char*) {
-	EDEBUG(ESTRLOC ": on_enter_dir : %s\n", name);
-}
-
-void d_on_leave(const char* name, const char*) {
-	EDEBUG(ESTRLOC ": on_leave_dir : %s\n", name);
-}
-
-void d_on_file(const char* name, const char* d) {
-	EDEBUG(ESTRLOC ": on_file : %s -> %s%s\n", name, d, name);
-}
-
 bool dir_exists(const char* name) {
 	EASSERT(name != NULL);
 	struct stat s;
@@ -143,6 +75,61 @@ bool dir_create(const char* name, int perm) {
 	return false;
 }
 
+/*
+ * Largely stolen from GLib (kudos to the GLib team).
+ *
+ * This function can be simplified via strtok_r() or stringtok() where
+ * tokenizers will normalize cases like "/foo///baz///foo". On other
+ * hand, above path is valid to every mkdir() so this is not an issue
+ * too much.
+ */
+bool dir_create_with_parents(const char* name, int perm) {
+	EASSERT(name != NULL);
+
+	char* fn = strdup(name);
+	char* p = fn;
+
+	// skip root if needed
+	if(fn[0] == E_DIR_SEPARATOR) {
+		p = fn;
+		while(*p == E_DIR_SEPARATOR)
+			p++;
+	} else
+		p = fn;
+
+	do {
+		while(*p && *p != E_DIR_SEPARATOR)
+			p++;
+		if(!*p)
+			p = NULL;
+		else
+			*p = '\0';
+
+		/*
+		 * If directory does not exists, it will be created.
+		 * If any other object with the name of directory exists,
+		 * dir_create() will fail
+		 */
+		if(!dir_exists(fn)) {
+			if(!dir_create(fn, perm)) {
+				free(fn);
+				return false;
+			}
+		}
+
+		if(p) {
+			*p = E_DIR_SEPARATOR;
+			p++;
+
+			while(*p && *p == E_DIR_SEPARATOR)
+				p++;
+		}
+	} while(p);
+
+	free(fn);
+	return true;
+}
+
 bool dir_remove(const char* name) {
 	EASSERT(name != NULL);
 
@@ -155,65 +142,6 @@ bool dir_remove(const char* name) {
 	}
 
 	return false;
-}
-
-bool dir_remove_rec(const char* dir, bool all, void (*progress)(const char* name), void (*on_fail)(const char* name)) {
-	EASSERT(dir != NULL);
-
-	char name[PATH_MAX];
-	struct dirent* dp;
-	DIR* dfd;
-	int dirlen = 0;
-
-	if((dfd = opendir(dir)) == NULL) {
-		if(on_fail)
-			on_fail(dir);
-		return false;
-	}
-
-	dirlen = strlen(dir);
-
-	while((dp = readdir(dfd)) != NULL) {
-		if(DOT_OR_DOTDOT(dp->d_name))
-			continue;
-
-		if(dirlen + strlen(dp->d_name) + 2 > sizeof(name)) {
-			EDEBUG(ESTRLOC ": %s/%s too long\n", dir, dp->d_name);
-
-			if(on_fail)
-				on_fail(name);
-
-		} else {
-			if(dirlen > 0 && dir[dirlen-1] == '/')
-				snprintf(name, sizeof(name), "%s%s", dir, dp->d_name);
-			else
-				snprintf(name, sizeof(name), "%s/%s", dir, dp->d_name);
-
-			if(progress)
-				progress(name);
-
-			if(dir_exists(name)) {
-				//printf("entering in %s\n", name);
-				dir_remove_rec(name, all, progress, on_fail);
-				//printf("leaving %s\n", name);
-
-				if(all) {
-					EDEBUG("-> rmdir %s\n", name);
-					if(!dir_remove(name))
-						EDEBUG("Can't delete %s directory\n", name);
-				}
-			} else {
-				// FIXME: for now everything else is seen as file
-				EDEBUG("-> rm    %s\n", name);
-
-				if(!file_remove(name))
-					EDEBUG("Can't delete %s\n", name);
-			}
-		}
-	}
-
-	closedir(dfd);
-	return true;
 }
 
 bool dir_rename(const char* from, const char* to) {
@@ -343,8 +271,8 @@ bool dir_list(const char* dir, list<String>& lst, bool full_path, bool show_hidd
 		dirstr = dir;
 
 	// make full path from items
-	if(!str_ends(dirstr.c_str(), DIR_SEPARATOR_STR))
-		dirstr += DIR_SEPARATOR_STR;
+	if(!str_ends(dirstr.c_str(), E_DIR_SEPARATOR_STR))
+		dirstr += E_DIR_SEPARATOR_STR;
 
 	String tmp;
 	list<String>::iterator it = lst.begin(), it_end = lst.end();

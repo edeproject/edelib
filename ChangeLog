@@ -4,6 +4,10 @@
 	detection. D-BUS will be first detected via pkg-config; if pkg-config does
 	not exists, configure will manually scan known places for headers and
 	libraries
+	* Removed dir_remove_rec(). Hoping some day I will add better code.
+	* Replaced DIR_SEPARATOR and DIR_SEPARATOR_STR with E_DIR_SEPARATOR and
+	E_DIR_SEPARATOR_STR all over the code 
+	* Added dir_create_with_parents() with the tests
 
 2008-02-26  Sanel <karijes@users.sourceforge.net>
 
