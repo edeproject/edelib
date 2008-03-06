@@ -1,3 +1,8 @@
+2008-03-06  Sanel <karijes@users.sourceforge.net>
+
+	* Updated test/perf/stringtok.cpp to the latest changes
+	* Added strsplit.{h,cpp} as comparison with stringtok()
+
 2008-03-04  Sanel <karijes@users.sourceforge.net>
 
 	* Added findfile.m4, pkg.m4 and dbus.m4 macros. Mostly for D-BUS

@@ -1,12 +1,16 @@
 #include <edelib/StrUtil.h>
 #include <edelib/String.h>
 #include <edelib/List.h>
-#include <edelib/Vector.h>
+#include <stdio.h>
+#include <string.h>
+#include <list>
+#include <vector>
+#include <iostream>
+
 #include "LinkedList.h"
 #include "timer.hpp"
-#include <stdio.h>
-#include <list>
-#include <iostream>
+#include "strsplit.h"
+
 
 #define WHAT "</"
 
@@ -16,17 +20,17 @@ void test_vector(const char* txt) {
 	boost::timer tim;
 	tim.restart();
 
-	vector<String> vs;
+	std::vector<String> vs;
 	stringtok(vs, txt, WHAT);
 	int sz = vs.size();
 
-	vector<String>::iterator it = vs.begin();
+	std::vector<String>::iterator it = vs.begin();
 	while(it != vs.end()) {
 		(*it) += 'a';
 		++it;
 	}
 
-	std::cout << "test_vector: " << tim.elapsed() << " sz: " << sz << std::endl;
+	std::cout << "test_std_vector: " << tim.elapsed() << " sz: " << sz << std::endl;
 }
 
 void test_std_list(const char* txt) {
@@ -50,11 +54,11 @@ void test_edelib_list(const char* txt) {
 	boost::timer tim;
 	tim.restart();
 
-	List<String> vs;
+	list<String> vs;
 	stringtok(vs, txt, WHAT);
 	int sz = vs.size();
 
-	List<String>::iterator it = vs.begin();
+	list<String>::iterator it = vs.begin();
 	while(it != vs.end()) {
 		(*it) += 'a';
 		++it;
@@ -82,6 +86,40 @@ void test_linked_list(const char* txt) {
 	std::cout << "test_linked_list: " << tim.elapsed() << " sz: " << sz << std::endl;
 }
 
+void test_strsplit(const char* txt) {
+	boost::timer tim;
+	tim.restart();
+
+	unsigned int sz = 0;
+	char** toks = strsplit(txt, WHAT, -1);
+	for(int i = 0; toks[i]; i++)
+		sz++;
+
+	strsplit_free(toks);
+
+	std::cout << "test_strsplit: " << tim.elapsed() << " sz: " << sz << std::endl;
+}
+
+void test_strtok(const char* txt) {
+	boost::timer tim;
+	tim.restart();
+
+	unsigned int sz = 0;
+	char* copy = strdup(txt);
+	char* saveptr;
+
+	char* tok = strtok_r(copy, WHAT, &saveptr);
+	while(tok != NULL) {
+		sz++;
+		tok = strtok_r(NULL, WHAT, &saveptr);
+	}
+
+	free(copy);
+	std::cout << "test_strtok_r: " << tim.elapsed() << " sz: " << sz << std::endl;
+}
+
+
+
 int main() {
 	FILE* f = fopen("asciidoc.html", "r");
 	if(!f)
@@ -97,11 +135,13 @@ int main() {
 	fclose(f);
 
 	for(int i = 0; i < 20; i++) {
-	test_vector(buff);
-	test_std_list(buff);
-	test_edelib_list(buff);
-	test_linked_list(buff);
-	puts("--------------------------------");
+		test_vector(buff);
+		test_std_list(buff);
+		test_edelib_list(buff);
+		test_linked_list(buff);
+		test_strsplit(buff);
+		test_strtok(buff);
+		puts("--------------------------------");
 	}
 
 	delete [] buff;
