@@ -346,7 +346,7 @@ void DesktopFile::set_only_show_in(const list<String>& lst) {
 
 	String all;
 	all.reserve(256);
-	list<String>::iterator it = lst.begin(), it_end = lst.end();
+	list<String>::const_iterator it = lst.begin(), it_end = lst.end();
 
 	for(; it != it_end; ++it) {
 		all += (*it);
@@ -372,7 +372,7 @@ void DesktopFile::set_not_show_in(const list<String>& lst) {
 
 	String all;
 	all.reserve(256);
-	list<String>::iterator it = lst.begin(), it_end = lst.end();
+	list<String>::const_iterator it = lst.begin(), it_end = lst.end();
 
 	for(; it != it_end; ++it) {
 		all += (*it);
