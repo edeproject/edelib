@@ -149,6 +149,45 @@ UT_FUNC(ListTestErase, "Test list erase")
 	UT_VERIFY( (*it) == 3 );
 }
 
+UT_FUNC(ListTestEqual, "Test list equality operators")
+{
+	list<int> l1, l2;
+	l1.push_back(2); l2.push_back(2);
+	l1.push_back(2); l2.push_back(2);
+	l1.push_back(3); l2.push_back(3);
+	l1.push_back(3); l2.push_back(3);
+	l1.push_back(10); l2.push_back(10);
+
+	UT_VERIFY( l1 == l2 );
+
+	l1.clear(); l2.clear();
+	l1.push_back(1); l2.push_back(2);
+	l1.push_back(2); l2.push_back(2);
+	l1.push_back(3); l2.push_back(3);
+	l1.push_back(3); l2.push_back(3);
+	l1.push_back(10); l2.push_back(10);
+
+	UT_VERIFY( l1 != l2 );
+
+	l1.clear(); l2.clear();
+	l1.push_back(2); l2.push_back(2);
+	l1.push_back(2); l2.push_back(2);
+	l1.push_back(3); l2.push_back(3);
+	l1.push_back(3); l2.push_back(3);
+	l1.push_back(1); l2.push_back(10);
+
+	UT_VERIFY( l1 != l2 );
+
+	l1.clear(); l2.clear();
+	l1.push_back(2);
+	l1.push_back(2); l2.push_back(2);
+	l1.push_back(3); l2.push_back(3);
+	l1.push_back(3); l2.push_back(3);
+	l1.push_back(1); l2.push_back(10);
+
+	UT_VERIFY( l1 != l2 );
+}
+
 static bool reverse_cmp(const int& v1, const int& v2) { return v1 > v2; }
 
 UT_FUNC(ListTestSort, "Test list sort")

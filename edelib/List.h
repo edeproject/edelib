@@ -59,6 +59,30 @@ struct ListIterator {
 	ListIterator& operator++(void) { node = node->next; return *this; }
 	ListIterator& operator--(void) { node = node->prev; return *this; }
 };
+
+#ifndef USE_SMALL_LIST
+template <typename T>
+struct ListConstIterator {
+	typedef ListNode<T> NodeType;
+
+	NodeType* node;
+
+	ListConstIterator(NodeType* n) : node(n) { }
+	ListConstIterator() : node(0) { }
+
+	const T& operator*(void) const { 
+		EASSERT(node != 0 && "Bad code! Access to zero node!!!"); 
+		EASSERT(node->value != 0 && "Bad code! Dereferencing NULL value!!!"); 
+		return *(node->value); 
+	}
+
+	bool operator!=(const ListConstIterator& other) const { return node != other.node; }
+	bool operator==(const ListConstIterator& other) const { return node == other.node; }
+	ListConstIterator& operator++(void) { node = node->next; return *this; }
+	ListConstIterator& operator--(void) { node = node->prev; return *this; }
+};
+#endif
+
 #endif
 
 /**
@@ -207,6 +231,11 @@ class list {
 		 */
 #ifndef SKIP_DOCS
 		typedef ListIterator<T> iterator;
+	#ifndef USE_SMALL_LIST
+		typedef ListConstIterator<T> const_iterator;
+	#else
+		typedef ListIterator<T> const_iterator;
+	#endif
 #endif
 
 		/**
@@ -311,14 +340,26 @@ class list {
 		/**
 		 * Return iterator pointing to the start of the list.
 		 */
-		iterator begin(void) const { return (tail ? tail->next : 0); }
+		iterator begin(void) { return (tail ? tail->next : 0); }
+
+		/**
+		 * Return const iterator pointing to the start of the list.
+		 */
+		const_iterator begin(void) const { return (tail ? tail->next : 0); }
 
 		/**
 		 * Return iterator pointing <b>after</b> the end of the list.
 		 * <b>Do not</b> dereference that iterator requesting value
 		 * of latest element. 
 		 */
-		iterator end(void) const { return tail; }
+		iterator end(void) { return tail; }
+
+		/**
+		 * Return const iterator pointing <b>after</b> the end of the list.
+		 * <b>Do not</b> dereference that iterator requesting value
+		 * of latest element. 
+		 */
+		const_iterator end(void) const { return tail; }
 
 		/**
 		 * Return reference to first element in the list.
@@ -349,6 +390,27 @@ class list {
 		 * Return true if list is empty; otherwise false.
 		 */
 		bool empty(void) const { return sz == 0; }
+
+		/**
+		 * Check if two list are equal
+		 */
+		bool operator==(list<T>& other) {
+			if(size() != other.size())
+				return false;
+
+			iterator it = begin(), it_end = end(), it2 = other.begin();
+			for(; it != it_end; ++it, ++it2) {
+				if((*it) != (*it2))
+					return false;
+			}
+
+			return true;
+		}
+
+		/**
+		 * Check if two list are not equal
+		 */
+		bool operator!=(list<T>& other) { return !operator==(other); }
 
 		/**
 		 * Sorts list. If cmp function is given (in form <em>bool cmp(const T& v1, const T& v2)</em>,

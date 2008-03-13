@@ -1,3 +1,9 @@
+2008-03-13  Sanel <karijes@users.sourceforge.net>
+
+	* Added == and != opeators in list with tests
+	* Added const_iterator in list. Changed DesktopFile.cpp to reflect that
+	too
+
 2008-03-06  Sanel <karijes@users.sourceforge.net>
 
 	* Updated test/perf/stringtok.cpp to the latest changes
