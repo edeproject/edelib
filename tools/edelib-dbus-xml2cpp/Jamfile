@@ -1,0 +1,13 @@
+#
+# $Id$
+#
+# Part of edelib.
+# Copyright (c) 2008 Authors.
+#
+# This program is licenced under terms of the 
+# GNU General Public Licence version 2 or newer.
+# See COPYING for details.
+
+SubDir TOP tools edelib-dbus-xml2cpp ;
+
+MakeTest edelib-dbus-xml2cpp : edelib-dbus-xml2cpp.cpp ;
