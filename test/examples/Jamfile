@@ -20,7 +20,7 @@ if $(SHARED) {
 if $(FLTKLIBS) {
 	MakeTest egroup : egroup.cpp : $(FLTKLIBS) $(ADDONLIB) ;
 	MakeTest egroup2 : egroup2.cpp : $(FLTKLIBS) $(ADDONLIB) ;
-	MakeTest icon_chooser : icon_chooser.cpp : $(FLTKLIBS) $(ADDONLIB) ;
+	MakeTest icon_chooser : icon_chooser.cpp : $(FLTKLIBS_FULL) $(ADDONLIB) ;
 	MakeTest font_chooser : font_chooser.cpp : $(FLTKLIBS) $(ADDONLIB) ;
 	MakeTest sevenseg : sevenseg.cpp : $(FLTKLIBS) $(ADDONLIB) ;
 	MakeTest dirwatch : dirwatch.cpp : $(FLTKLIBS) $(ADDONLIB) ;
