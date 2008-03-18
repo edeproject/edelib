@@ -15,6 +15,8 @@
 
 #include "econfig.h"
 
+struct DBusError;
+
 EDELIB_NS_BEGIN
 
 /**
@@ -49,7 +51,6 @@ enum EdbusErrorType {
 };
 
 struct EdbusErrorImpl;
-struct ::DBusError;
 
 /**
  * \ingroup dbus

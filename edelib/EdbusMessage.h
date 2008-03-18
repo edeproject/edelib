@@ -16,11 +16,12 @@
 #include "List.h"
 #include "EdbusData.h"
 
+struct DBusMessage;
+
 EDELIB_NS_BEGIN
 
 class  EdbusConnection;
 struct EdbusMessageImpl;
-struct ::DBusMessage;
 
 /**
  * \ingroup dbus
