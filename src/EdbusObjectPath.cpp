@@ -1,8 +1,22 @@
-#include <stdio.h>
-#include <string.h>
-#include <assert.h>
+/*
+ * $Id$
+ *
+ * D-Bus stuff
+ * Part of edelib.
+ * Copyright (c) 2008 EDE Authors.
+ *
+ * This program is licenced under terms of the 
+ * GNU General Public Licence version 2 or newer.
+ * See COPYING for details.
+ */
 
-#include "EdbusObjectPath.h"
+#include <stdlib.h>
+#include <string.h>
+
+#include <edelib/EdbusObjectPath.h>
+#include <edelib/Debug.h>
+
+EDELIB_NS_BEGIN
 
 EdbusObjectPath::EdbusObjectPath() {
 	val = "/";
@@ -18,7 +32,7 @@ EdbusObjectPath::EdbusObjectPath(const char* str) {
 }
 
 EdbusObjectPath::EdbusObjectPath(const EdbusObjectPath& other) {
-	assert(EdbusObjectPath::valid_path(other.path()) == true);
+	E_ASSERT(EdbusObjectPath::valid_path(other.path()) == true);
 	val = other.val;
 }
 
@@ -26,14 +40,14 @@ void EdbusObjectPath::append(const char* str) {
 	if(!EdbusObjectPath::valid_element(str))
 		return;
 
-	unsigned int sz = val.size();
+	unsigned int sz = val.length();
 	if(sz != 1)
 		val += "/";
 	val += str;
 }
 
 void EdbusObjectPath::clear(void) {
-	unsigned int len = val.size();
+	unsigned int len = val.length();
 	/* do nothing if we are 'empty' one */
 	if(len == 1 && val[0] == '/')
 		return;
@@ -89,15 +103,4 @@ bool EdbusObjectPath::valid_path(const char* str) {
 	return ret;
 }
 
-#if 0
-int main() {
-	EdbusObjectPath p;
-
-	printf("%i %i %i %i\n", EdbusObjectPath::valid_path("/dasda/dasd/4324/fsdfsd/bvbv"),
-			EdbusObjectPath::valid_path("///dasdas/dasds"),
-			EdbusObjectPath::valid_path("dasdas/dasds/"),
-			EdbusObjectPath::valid_path("/dasd /dasdasd --/"));
-
-	return 0;
-}
-#endif
+EDELIB_NS_END

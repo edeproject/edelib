@@ -45,7 +45,7 @@ if $(FLTKLIBS) {
 }
 
 MakeTest run_tests : $(TEST_FILES) : $(ADDONLIB) ;
-#MakeTest perf/stringtok : perf/stringtok.cpp ;
+#MakeTest perf/stringtok : perf/stringtok.cpp perf/strsplit.cpp ;
 
 Clean clean : [ FFileName $(TOP) test .foo.txt ] ;
 Clean clean : [ FFileName $(TOP) test .ede.conf ] ;

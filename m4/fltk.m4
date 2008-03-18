@@ -15,9 +15,9 @@ AC_DEFUN([EDELIB_CHECK_FLTK], [
 		dnl test version first
 		FLTKVERSION=`$FLTK_CONFIG --version`
 
-		AC_MSG_CHECKING(for FLTK version >= 1.1.7)
+		AC_MSG_CHECKING([for FLTK version >= 1.1.7])
 		case "$FLTKVERSION" in ["1.1."[789]])
-			dnl Display 'yes' for efltk version check
+			dnl Display 'yes' for fltk version check
 			AC_MSG_RESULT(yes)
 			;;
 			*)
@@ -27,7 +27,8 @@ AC_DEFUN([EDELIB_CHECK_FLTK], [
 		dnl remove -Wno-non-virtual-dtor from flags
 		FLTKFLAGS=`$FLTK_CONFIG --cxxflags | sed -e 's/-Wno-non-virtual-dtor//'`
 		dnl remove -lsupc++ so we can chose what to use
-		FLTKLIBS=`$FLTK_CONFIG --use-images --ldflags | sed -e 's/-lsupc++//g'`
+		FLTKLIBS=`$FLTK_CONFIG --ldflags | sed -e 's/-lsupc++//g'`
+		FLTKLIBS_FULL=`$FLTK_CONFIG --use-images --ldflags | sed -e 's/-lsupc++//g'`
 	else
 		AC_MSG_ERROR([You don't have fltk installed. To compile edelib, you will need it.])
 	fi

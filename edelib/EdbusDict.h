@@ -1,10 +1,25 @@
+/*
+ * $Id$
+ *
+ * D-Bus stuff
+ * Part of edelib.
+ * Copyright (c) 2008 EDE Authors.
+ *
+ * This program is licenced under terms of the 
+ * GNU General Public Licence version 2 or newer.
+ * See COPYING for details.
+ */
+
 #ifndef __EDBUSDICT_H__
 #define __EDBUSDICT_H__
 
 #include "EdbusData.h"
 #include "EdbusContainer.h"
 
+EDELIB_NS_BEGIN
+
 /**
+ * \ingroup dbus
  * \class EdbusDictEntry
  * \brief An entry in EdbusDict
  */
@@ -30,6 +45,7 @@ struct EdbusDictEntry {
 };
 
 /**
+ * \ingroup dbus
  * \class EdbusDict
  * \brief Dictionary container for D-Bus types
  *
@@ -173,5 +189,7 @@ struct EdbusDict : public EdbusContainer<EdbusDictEntry> {
 	 */
 	unsigned int size(void) const;
 };	
+
+EDELIB_NS_END
 
 #endif

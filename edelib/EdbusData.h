@@ -1,12 +1,29 @@
+/*
+ * $Id$
+ *
+ * D-Bus stuff
+ * Part of edelib.
+ * Copyright (c) 2008 EDE Authors.
+ *
+ * This program is licenced under terms of the 
+ * GNU General Public Licence version 2 or newer.
+ * See COPYING for details.
+ */
+
 #ifndef __EDBUSDATA_H__
 #define __EDBUSDATA_H__
+
+#include "econfig.h"
 
 #include <inttypes.h>
 #include "EdbusObjectPath.h"
 
 typedef char byte_t;
 
+EDELIB_NS_BEGIN
+
 /**
+ * \ingroup dbus
  * \enum EdbusDataType
  * \brief Type of data current EdbusData object holds
  */
@@ -38,6 +55,7 @@ class  EdbusList;
 struct EdbusVariant;
 
 /**
+ * \ingroup dbus
  * \class EdbusData
  * \brief Class for representing D-Bus data types
  *
@@ -454,6 +472,7 @@ class EdbusData {
 };
 
 /**
+ * \ingroup dbus
  * \class EdbusVariant
  * \brief Represents D-Bus variant
  */
@@ -461,5 +480,7 @@ struct EdbusVariant {
 	/** variant value */
 	EdbusData value;
 };
+
+EDELIB_NS_END
 
 #endif

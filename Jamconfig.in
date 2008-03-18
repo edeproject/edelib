@@ -35,14 +35,19 @@ SYMLINKCMD      ?= "@LN_S@" ;
 SED             ?= "@SED@" ;
 
 # for fltk and X11
-FLTKFLAGS ?= "@FLTKFLAGS@" ;
-FLTKLIBS  ?= "@FLTKLIBS@" ;
+FLTKFLAGS      ?= "@FLTKFLAGS@" ;
+FLTKLIBS       ?= "@FLTKLIBS@" ;
+FLTKLIBS_FULL  ?= "@FLTKLIBS_FULL@" ;
 
 # build options
 ALLFLAGS  ?= "@ALLFLAGS@ @FLTKFLAGS@" ;
 
 # sound
 SOUNDLIBS ?= "@SOUNDLIBS@" ;
+
+# dbus
+DBUSFLAGS ?= "@DBUS_CFLAGS@" ;
+DBUSLIBS  ?= "@DBUS_LIBS@" ;
 
 # for shared library
 SHARED     ?= "@SHARED@" ;

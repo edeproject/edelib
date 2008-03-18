@@ -1,9 +1,24 @@
+/*
+ * $Id$
+ *
+ * D-Bus stuff
+ * Part of edelib.
+ * Copyright (c) 2008 EDE Authors.
+ *
+ * This program is licenced under terms of the 
+ * GNU General Public Licence version 2 or newer.
+ * See COPYING for details.
+ */
+
 #ifndef __EDBUSOBJECTPATH_H__
 #define __EDBUSOBJECTPATH_H__
 
-#include <string>
+#include "String.h"
+
+EDELIB_NS_BEGIN
 
 /**
+ * \ingroup dbus
  * \class EdbusObjectPath
  * \brief Represents D-Bus object path
  *
@@ -32,7 +47,7 @@
  */
 class EdbusObjectPath {
 	private:
-		std::string val;
+		String val;
 		EdbusObjectPath& operator=(const EdbusObjectPath&);
 
 	public:
@@ -120,11 +135,14 @@ class EdbusObjectPath {
 };
 
 /**
+ * \ingroup dbus
  * A simple shorcut for EdbusObjectPath append() memeber
  */
 inline EdbusObjectPath& operator<<(EdbusObjectPath& p, const char* el) {
 	p.append(el);
 	return p;
 }
+
+EDELIB_NS_END
 
 #endif

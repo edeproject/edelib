@@ -1,13 +1,26 @@
+/*
+ * $Id$
+ *
+ * D-Bus stuff
+ * Part of edelib.
+ * Copyright (c) 2008 EDE Authors.
+ *
+ * This program is licenced under terms of the 
+ * GNU General Public Licence version 2 or newer.
+ * See COPYING for details.
+ */
+
 #include <stdlib.h>
 #include <stdio.h>
-#include <assert.h>
 #include <dbus/dbus.h>
 
-#include <string>
+#include <edelib/EdbusMessage.h>
+#include <edelib/EdbusDict.h>
+#include <edelib/EdbusList.h>
+#include <edelib/Debug.h>
+#include <edelib/String.h>
 
-#include "EdbusMessage.h"
-#include "EdbusDict.h"
-#include "EdbusList.h"
+EDELIB_NS_BEGIN
 
 struct EdbusMessageImpl {
 	DBusMessage* msg;
@@ -60,7 +73,7 @@ static const char* from_edbusdata_type_to_dbus_type_string(EdbusDataType t) {
  * Builds a signature for subtypes, e.g. array, struct or dict elements.
  * This function will be called on container subtypes, not container itself
  */
-static void build_signature(const EdbusData& data, std::string& sig) {
+static void build_signature(const EdbusData& data, String& sig) {
 	if(data.is_dict()) {
 		EdbusDict dd = data.to_dict();
 
@@ -184,11 +197,11 @@ static void to_dbus_iter_from_basic_type(DBusMessageIter* msg_it, const EdbusDat
 		return;
 	} 
 
-	assert(0 && "Got type as basic but it isn't");
+	E_ASSERT(0 && "Got type as basic but it isn't");
 }
 
 static void to_dbus_iter_from_dict(DBusMessageIter* parent_it, const EdbusData& data) {
-	assert(data.is_dict());
+	E_ASSERT(data.is_dict());
 
 	EdbusDict dict = data.to_dict();
 
@@ -214,7 +227,7 @@ static void to_dbus_iter_from_dict(DBusMessageIter* parent_it, const EdbusData& 
 		value_sig = from_edbusdata_type_to_dbus_type_string(dict.value_type());
 #endif
 	const char* value_sig;
-	std::string ss;
+	String ss;
 
 	if(dict.value_type_is_container()) {
 		/*
@@ -270,7 +283,7 @@ static void to_dbus_iter_from_dict(DBusMessageIter* parent_it, const EdbusData& 
 }
 
 static void to_dbus_iter_from_array(DBusMessageIter* parent_it, const EdbusData& data) {
-	assert(data.is_array());
+	E_ASSERT(data.is_array());
 
 	/*
 	 * Marshalling arrays is much simpler than e.g. dict; we already know all elements
@@ -286,7 +299,7 @@ static void to_dbus_iter_from_array(DBusMessageIter* parent_it, const EdbusData&
 	EdbusList::const_iterator it = arr.begin(), it_end = arr.end();
 
 	const char* value_sig;
-	std::string ss;
+	String ss;
 
 	if(arr.value_type_is_container()) {
 		build_signature(*it, ss);
@@ -313,7 +326,7 @@ static void to_dbus_iter_from_array(DBusMessageIter* parent_it, const EdbusData&
 }
 
 static void to_dbus_iter_from_struct(DBusMessageIter* parent_it, const EdbusData& data) {
-	assert(data.is_struct());
+	E_ASSERT(data.is_struct());
 
 	EdbusList s = data.to_struct();
 	EdbusList::const_iterator it = s.begin(), it_end = s.end();
@@ -331,7 +344,7 @@ static void to_dbus_iter_from_struct(DBusMessageIter* parent_it, const EdbusData
 }
 
 static void to_dbus_iter_from_variant(DBusMessageIter* parent_it, const EdbusData& data) {
-	assert(data.is_variant());
+	E_ASSERT(data.is_variant());
 
 	EdbusVariant var = data.to_variant();
 	/* hm... really needed ? */
@@ -339,7 +352,7 @@ static void to_dbus_iter_from_variant(DBusMessageIter* parent_it, const EdbusDat
 		return;
 
 	const char* value_sig;
-	std::string ss;
+	String ss;
 
 	if(!EdbusData::basic_type(var.value)) {
 		build_signature(var.value, ss);
@@ -384,7 +397,7 @@ static void to_dbus_iter_from_edbusdata_type(DBusMessageIter* parent_it, const E
 		return;
 	}
 
-	assert(0 && "This should not be ever reached!");
+	E_ASSERT(0 && "This should not be ever reached!");
 }
 
 /* unmarshall from DBus type to EdbusData type */
@@ -563,7 +576,7 @@ static void from_dbus_iter_to_edbusdata_type(DBusMessageIter* iter, EdbusData& d
 		return;
 	}
 
-	assert(0 && "Got some unknown type from D-Bus ???");
+	E_ASSERT(0 && "Got some unknown type from D-Bus ???");
 }
 
 
@@ -619,8 +632,8 @@ void EdbusMessage::from_dbus_message(DBusMessage* m) {
 }
 
 DBusMessage* EdbusMessage::to_dbus_message(void) const {
-	assert(dm != NULL);
-	assert(dm->msg != NULL);
+	E_ASSERT(dm != NULL);
+	E_ASSERT(dm->msg != NULL);
 
 	DBusMessageIter iter;
 	dbus_message_iter_init_append(dm->msg, &iter);
@@ -760,3 +773,5 @@ const char* EdbusMessage::signature(void) const {
 
 	return dbus_message_get_signature(dm->msg);
 }
+
+EDELIB_NS_END

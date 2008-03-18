@@ -1,10 +1,25 @@
+/*
+ * $Id$
+ *
+ * D-Bus stuff
+ * Part of edelib.
+ * Copyright (c) 2008 EDE Authors.
+ *
+ * This program is licenced under terms of the 
+ * GNU General Public Licence version 2 or newer.
+ * See COPYING for details.
+ */
+
 #ifndef __EDBUSLIST_H__
 #define __EDBUSLIST_H__
 
 #include "EdbusData.h"
 #include "EdbusContainer.h"
 
+EDELIB_NS_BEGIN
+
 /**
+ * \ingroup dbus
  * \class EdbusList
  * \brief A class representing D-Bus struct and array
  *
@@ -185,6 +200,8 @@ class EdbusList : public EdbusContainer<EdbusData> {
 };
 
 /**
+ * \ingroup dbus
+ *
  * A convinient shortcut for EdbusList::append(). You can use it as:
  * \code
  *   EdbusList m = EdbusData::from_struct();
@@ -195,5 +212,7 @@ inline EdbusList& operator<<(EdbusList& lst, const EdbusData& val) {
 	lst.append(val);
 	return lst;
 }
+
+EDELIB_NS_END
 
 #endif

@@ -21,6 +21,11 @@
 EDELIB_NS_BEGIN
 
 /**
+ * \defgroup widgets FLTK widgets and functions
+ */
+
+/**
+ * \ingroup widgets
  * \class ExpandableGroup
  * \brief A group with applied layout on childs.
  *

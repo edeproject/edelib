@@ -72,6 +72,8 @@ EDELIB_LIBDIR     = lib ;
 # library names
 EDELIB      = edelib ;
 EDELIB_NAME = libedelib ;
+EDELIB_DBUS = edelib_dbus ;
+EDELIB_DBUS_NAME = libedelib_dbus ;
 
 # directory name for installed documentation
 EDELIB_DOCDIR      = "$(EDELIB)-$(EDELIB_VERSION)" ;

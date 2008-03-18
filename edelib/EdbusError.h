@@ -1,7 +1,24 @@
+/*
+ * $Id$
+ *
+ * D-Bus stuff
+ * Part of edelib.
+ * Copyright (c) 2008 EDE Authors.
+ *
+ * This program is licenced under terms of the 
+ * GNU General Public Licence version 2 or newer.
+ * See COPYING for details.
+ */
+
 #ifndef __EDBUSERROR_H__
 #define __EDBUSERROR_H__
 
+#include "econfig.h"
+
+EDELIB_NS_BEGIN
+
 /**
+ * \ingroup dbus
  * \enum EdbusErrorType
  * \brief EdbusError error type
  */
@@ -32,9 +49,10 @@ enum EdbusErrorType {
 };
 
 struct EdbusErrorImpl;
-struct DBusError;
+struct ::DBusError;
 
 /**
+ * \ingroup dbus
  * \class EdbusError
  * \brief A class representing D-Bus error
  */
@@ -93,5 +111,7 @@ class EdbusError {
 		 */
 		bool valid(void) const { return type() != EDBUS_ERROR_INVALID; }
 };
+
+EDELIB_NS_END
 
 #endif

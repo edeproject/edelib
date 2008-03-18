@@ -1,5 +1,20 @@
-#include "EdbusList.h"
+/*
+ * $Id$
+ *
+ * D-Bus stuff
+ * Part of edelib.
+ * Copyright (c) 2008 EDE Authors.
+ *
+ * This program is licenced under terms of the 
+ * GNU General Public Licence version 2 or newer.
+ * See COPYING for details.
+ */
+
 #include <stdio.h>
+#include <edelib/EdbusList.h>
+#include <edelib/Debug.h>
+
+EDELIB_NS_BEGIN
 
 EdbusList::EdbusList(bool a) : array_mode(a) { }
 
@@ -58,7 +73,7 @@ bool EdbusList::operator==(const EdbusList& other) const {
 }
 
 EdbusDataType EdbusList::value_type(void) {
-	assert(size() > 0 && "Can't get key type on empty container");
+	E_ASSERT(size() > 0 && "Can't get key type on empty container");
 
 	if(array_mode) {
 		EdbusList::const_iterator it = begin();
@@ -69,7 +84,7 @@ EdbusDataType EdbusList::value_type(void) {
 }
 
 bool EdbusList::value_type_is_container(void) {
-	assert(size() > 0 && "Can't get value type on empty container");
+	E_ASSERT(size() > 0 && "Can't get value type on empty container");
 
 	if(array_mode) {
 		EdbusList::const_iterator it = begin();
@@ -96,3 +111,4 @@ unsigned int EdbusList::size(void) const {
 	return impl->lst.size();
 }
 
+EDELIB_NS_END

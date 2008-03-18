@@ -1,9 +1,24 @@
+/*
+ * $Id$
+ *
+ * D-Bus stuff
+ * Part of edelib.
+ * Copyright (c) 2008 EDE Authors.
+ *
+ * This program is licenced under terms of the 
+ * GNU General Public Licence version 2 or newer.
+ * See COPYING for details.
+ */
+
 #ifndef __EDBUSCONNECTION_H__
 #define __EDBUSCONNECTION_H__
 
 #include "EdbusMessage.h"
 
+EDELIB_NS_BEGIN
+
 /**
+ * \ingroup dbus
  * \enum EdbusConnectionType
  * \brief Represents connection either to system or session bus
  */
@@ -13,6 +28,7 @@ enum EdbusConnectionType {
 };
 
 /**
+ * \ingroup dbus
  * \enum EdbusNameMode
  * \brief What to do when known name is acquired
  */
@@ -23,11 +39,13 @@ enum EdbusNameMode {
 };
 
 /**
+ * \ingroup dbus
  * A callback type for method and signal callbacks
  */
 typedef int (*EdbusCallback)(const EdbusMessage*, void*);
 
 /**
+ * \ingroup dbus
  * \class EdbusCallbackItem
  * \brief An item for callback table
  */
@@ -80,6 +98,11 @@ struct EdbusConnImpl;
  */
 
 /**
+ * \defgroup dbus D-Bus classes and functions
+ */
+
+/**
+ * \ingroup dbus
  * \class EdbusConnection
  * \brief D-Bus connection and data sender
  */
@@ -276,5 +299,7 @@ class EdbusConnection {
 		 */
 		int wait(int timeout_ms);
 };
+
+EDELIB_NS_END
 
 #endif

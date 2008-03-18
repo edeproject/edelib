@@ -15,6 +15,8 @@
 EDELIB_NS_BEGIN
 
 /**
+ * \ingroup widgets
+ *
  * font_chooser() is a dialog for choosing fonts. After this function
  * was called, it will display a dialog with available fonts and their
  * sizes and will wait untill user choose an action.

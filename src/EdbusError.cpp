@@ -1,9 +1,23 @@
+/*
+ * $Id$
+ *
+ * D-Bus stuff
+ * Part of edelib.
+ * Copyright (c) 2008 EDE Authors.
+ *
+ * This program is licenced under terms of the 
+ * GNU General Public Licence version 2 or newer.
+ * See COPYING for details.
+ */
+
 #include <string.h>
 #include <stdlib.h>
-#include <assert.h>
 #include <dbus/dbus.h>
 
-#include "EdbusError.h"
+#include <edelib/EdbusError.h>
+#include <edelib/Debug.h>
+
+EDELIB_NS_BEGIN
 
 #define COPY_DBUS_ERROR(e) strdup(e)
 #define STR_CMP(s1, s2) (strcmp(s1, s2) == 0)
@@ -19,7 +33,7 @@ static char* from_edbus_errortype(EdbusErrorType t) {
 	switch(t) {
 		case EDBUS_ERROR_INVALID:
 		case EDBUS_ERROR_USER_DEFINED:
-			assert(0 && "Should not get here");
+			E_ASSERT(0 && "Should not get here");
 			return NULL;
 		case EDBUS_ERROR_FAILED:
 			return COPY_DBUS_ERROR(DBUS_ERROR_FAILED);
@@ -66,7 +80,7 @@ static char* from_edbus_errortype(EdbusErrorType t) {
 	}
 
 	/* should not ever be reached */
-	assert(0 && "Got wrong error type ?!?");
+	E_ASSERT(0 && "Got wrong error type ?!?");
 	return NULL;
 }
 
@@ -192,16 +206,18 @@ EdbusError& EdbusError::operator=(const EdbusError& other) {
 }
 
 EdbusErrorType EdbusError::type(void) const {
-	assert(impl != NULL);
+	E_ASSERT(impl != NULL);
 	return impl->type;
 }
 
 const char* EdbusError::name() const {
-	assert(impl != NULL);
+	E_ASSERT(impl != NULL);
 	return impl->name;
 }
 
 const char* EdbusError::message() const {
-	assert(impl != NULL);
+	E_ASSERT(impl != NULL);
 	return impl->msg;
 }
+
+EDELIB_NS_END

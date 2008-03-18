@@ -1,11 +1,24 @@
-#include <stdio.h>
+/*
+ * $Id$
+ *
+ * D-Bus stuff
+ * Part of edelib.
+ * Copyright (c) 2008 EDE Authors.
+ *
+ * This program is licenced under terms of the 
+ * GNU General Public Licence version 2 or newer.
+ * See COPYING for details.
+ */
+
 #include <string.h>
 #include <stdlib.h>
-#include <assert.h>
 
-#include "EdbusData.h"
-#include "EdbusDict.h"
-#include "EdbusList.h"
+#include <edelib/Debug.h>
+#include <edelib/EdbusData.h>
+#include <edelib/EdbusDict.h>
+#include <edelib/EdbusList.h>
+
+EDELIB_NS_BEGIN
 
 struct EdbusDataPrivate {
 	uint32_t      refs;
@@ -193,80 +206,80 @@ EdbusDataType EdbusData::type() const {
 }
 
 byte_t EdbusData::to_byte(void) const {
-	assert(is_byte() == true);
+	E_ASSERT(is_byte() == true);
 	return impl->value.v_byte;
 }
 
 bool EdbusData::to_bool(void) const {
-	assert(is_bool() == true);
+	E_ASSERT(is_bool() == true);
 	return impl->value.v_bool;
 }
 
 int16_t EdbusData::to_int16(void) const {
-	assert(is_int16() == true);
+	E_ASSERT(is_int16() == true);
 	return impl->value.v_int16;
 }
 
 uint16_t EdbusData::to_uint16(void) const {
-	assert(is_uint16() == true);
+	E_ASSERT(is_uint16() == true);
 	return impl->value.v_uint16;
 }
 
 int32_t EdbusData::to_int32(void) const {
-	assert(is_int32() == true);
+	E_ASSERT(is_int32() == true);
 	return impl->value.v_int32;
 }
 
 uint32_t EdbusData::to_uint32(void) const {
-	assert(is_uint32() == true);
+	E_ASSERT(is_uint32() == true);
 	return impl->value.v_uint32;
 }
 
 int64_t EdbusData::to_int64(void) const {
-	assert(is_int64() == true);
+	E_ASSERT(is_int64() == true);
 	return impl->value.v_int64;
 }
 
 uint64_t EdbusData::to_uint64(void) const {
-	assert(is_uint64() == true);
+	E_ASSERT(is_uint64() == true);
 	return impl->value.v_uint64;
 }
 
 double EdbusData::to_double(void) const {
-	assert(is_uint64() == true);
+	E_ASSERT(is_uint64() == true);
 	return impl->value.v_double;
 }
 
 const char* EdbusData::to_string(void) const {
-	assert(is_string() == true);
+	E_ASSERT(is_string() == true);
 	return (const char*)impl->value.v_pointer;
 }
 
 EdbusObjectPath EdbusData::to_object_path(void) const {
-	assert(is_object_path() == true);
+	E_ASSERT(is_object_path() == true);
 	return EdbusObjectPath((const char*)impl->value.v_pointer);
 }
 
 EdbusVariant EdbusData::to_variant(void) const {
-	assert(is_variant() == true);
+	E_ASSERT(is_variant() == true);
 	/* copy variant (a shallow copy) */
 	return EdbusVariant((*(EdbusVariant*)impl->value.v_pointer));
 }
 
 EdbusDict EdbusData::to_dict(void) const {
-	assert(is_dict() == true);
+	E_ASSERT(is_dict() == true);
 	/* copy dict (a shallow copy) */
 	return EdbusDict((*(EdbusDict*)impl->value.v_pointer));
 }
 
 EdbusList EdbusData::to_array(void) const {
-	assert(is_array() == true);
+	E_ASSERT(is_array() == true);
 	/* copy dict (a shallow copy) */
 	return EdbusList((*(EdbusList*)impl->value.v_pointer));
 }
 
 EdbusList EdbusData::to_struct(void) const {
-	assert(is_struct() == true);
+	E_ASSERT(is_struct() == true);
 	/* copy dict (a shallow copy) */
 	return EdbusList((*(EdbusList*)impl->value.v_pointer));
 }
@@ -336,3 +349,5 @@ bool EdbusData::operator==(const EdbusData& other) const {
 
 	return false;
 }
+
+EDELIB_NS_END

@@ -20,6 +20,7 @@
 EDELIB_NS_BEGIN
 
 /**
+ * \ingroup widgets
  * \enum WindowComponents
  * \brief Components used to be loaded with the window
  */
@@ -38,6 +39,7 @@ typedef void (WindowSettingsCallback)(void* data);
 #endif
 
 /**
+ * \ingroup widgets
  * \class Window
  * \brief Window class
  *
@@ -242,6 +244,8 @@ class EDELIB_API Window : public Fl_Double_Window {
 };
 
 /**
+ * \ingroup widgets
+ *
  * This function is intended to be used inside inherited show() member (from Fl_Window familly)
  * and do the same job as Fl_X::make_xid(). The main difference is that it will call before_map_func()
  * (if given) before window is actually mapped. 

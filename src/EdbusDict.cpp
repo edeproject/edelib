@@ -1,5 +1,19 @@
-#include "EdbusDict.h"
-#include <stdio.h>
+/*
+ * $Id$
+ *
+ * D-Bus stuff
+ * Part of edelib.
+ * Copyright (c) 2008 EDE Authors.
+ *
+ * This program is licenced under terms of the 
+ * GNU General Public Licence version 2 or newer.
+ * See COPYING for details.
+ */
+
+#include <edelib/Debug.h>
+#include <edelib/EdbusDict.h>
+
+EDELIB_NS_BEGIN
 
 void EdbusDict::append(const EdbusData& key, const EdbusData& value) {
 	if(!EdbusData::basic_type(key))
@@ -13,7 +27,7 @@ void EdbusDict::append(const EdbusData& key, const EdbusData& value) {
 	 */
 	if(size() > 0) {
 		if(key.type() != key_type() || value.type() != value_type()) {
-			puts("Key or value is different type than I already have. Ignoring...");
+			E_WARNING("Key or value is different type than I already have. Ignoring...");
 			return;
 		}
 	}
@@ -95,21 +109,21 @@ bool EdbusDict::operator==(const EdbusDict& other) {
 }
 
 EdbusDataType EdbusDict::key_type(void) {
-	assert(size() > 0 && "Can't get key type on empty container");
+	E_ASSERT(size() > 0 && "Can't get key type on empty container");
 
 	EdbusDict::const_iterator it = begin();
 	return (*it).key.type();
 }
 
 EdbusDataType EdbusDict::value_type(void) {
-	assert(size() > 0 && "Can't get value type on empty container");
+	E_ASSERT(size() > 0 && "Can't get value type on empty container");
 
 	EdbusDict::const_iterator it = begin();
 	return (*it).value.type();
 }
 
 bool EdbusDict::value_type_is_container(void) {
-	assert(size() > 0 && "Can't get value type on empty container");
+	E_ASSERT(size() > 0 && "Can't get value type on empty container");
 
 	EdbusDict::const_iterator it = begin();
 	if(EdbusData::basic_type((*it).value))
@@ -130,3 +144,5 @@ EdbusDict::const_iterator EdbusDict::end(void) const {
 unsigned int EdbusDict::size(void) const {
 	return impl->lst.size();
 }
+
+EDELIB_NS_END

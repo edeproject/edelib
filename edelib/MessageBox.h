@@ -32,6 +32,7 @@
 EDELIB_NS_BEGIN
 
 /**
+ * \ingroup widgets
  * \enum MessageBoxType
  * \brief Type of MessageBox dialog
  */
@@ -42,6 +43,7 @@ enum MessageBoxType {
 };
 
 /**
+ * \ingroup widgets
  * \enum MessageBoxButtonType
  * \brief Type of added button to MessageBox class
  */
@@ -51,6 +53,7 @@ enum MessageBoxButtonType {
 };
 
 /**
+ * \ingroup widgets
  * \class MessageBox
  * \brief Standard dialog
  *
@@ -297,6 +300,7 @@ void themed_dialog_icons(const char* msg, const char* alert = 0,
 	const char* ask = 0, const char* input = 0, const char* password = 0);
 
 /**
+ * \ingroup widgets
  * Clear icon names used by IconTheme.
  */
 void clear_dialog_icons(void);

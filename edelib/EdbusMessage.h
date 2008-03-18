@@ -1,14 +1,30 @@
+/*
+ * $Id$
+ *
+ * D-Bus stuff
+ * Part of edelib.
+ * Copyright (c) 2008 EDE Authors.
+ *
+ * This program is licenced under terms of the 
+ * GNU General Public Licence version 2 or newer.
+ * See COPYING for details.
+ */
+
 #ifndef __EDBUSMESSAGE_H__
 #define __DEBUSMESSAGE_H__
 
+#include "List.h"
 #include "EdbusData.h"
-#include <list>
+
+EDELIB_NS_BEGIN
 
 class  EdbusConnection;
 struct EdbusMessageImpl;
-struct DBusMessage;
+struct ::DBusMessage;
 
 /**
+ * \ingroup dbus
+ *
  * \class EdbusMessage
  * \brief Data transporter for D-Bus
  *
@@ -81,7 +97,7 @@ class EdbusMessage {
 		friend class EdbusConnection;
 
 		EdbusMessageImpl* dm;
-		std::list<EdbusData> msg_content;
+		list<EdbusData> msg_content;
 
 		void from_dbus_message(DBusMessage* m);
 		DBusMessage* to_dbus_message(void) const;
@@ -93,12 +109,12 @@ class EdbusMessage {
 		/**
 		 * Declare EdbusMessage iterator
 		 */
-		typedef std::list<EdbusData>::iterator iterator;
+		typedef list<EdbusData>::iterator iterator;
 
 		/**
 		 * Declare EdbusMessage const iterator
 		 */
-		typedef std::list<EdbusData>::const_iterator const_iterator;
+		typedef list<EdbusData>::const_iterator const_iterator;
 
 		/**
 		 * Create an empty EdbusMessage object. Nothing will be allocated
@@ -297,6 +313,8 @@ class EdbusMessage {
 };
 
 /**
+ * \ingroup dbus
+ *
  * A convinient shortcut for EdbusMessage::append(). You can use it as:
  * \code
  *   EdbusMessage m;
@@ -308,5 +326,6 @@ inline EdbusMessage& operator<<(EdbusMessage& m, const EdbusData& val) {
 	return m;
 }
 
-#endif
+EDELIB_NS_END
 
+#endif

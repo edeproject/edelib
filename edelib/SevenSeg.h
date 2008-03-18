@@ -19,6 +19,7 @@
 EDELIB_NS_BEGIN
 
 /**
+ * \ingroup widgets
  * \class SevenSeg
  * \brief Digital number widget
  *

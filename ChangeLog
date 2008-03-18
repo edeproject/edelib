@@ -1,3 +1,12 @@
+2008-03-17  Sanel <karijes@users.sourceforge.net>
+
+	* Removed tests for STL
+	* Improved edelib-config
+	* Added FLTKLIBS and FLTKLIBS_FULL expansions
+	* Added dbus flags and libs expansions
+	* Merged dbus code into edelib
+	* Doing some grouping with documentation; things are becommimng messy
+
 2008-03-13  Sanel <karijes@users.sourceforge.net>
 
 	* Added == and != opeators in list with tests

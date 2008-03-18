@@ -69,6 +69,8 @@ struct ListConstIterator {
 
 	ListConstIterator(NodeType* n) : node(n) { }
 	ListConstIterator() : node(0) { }
+	// stupid language constructs !!!
+	ListConstIterator(const ListIterator<T>& i) : node(i.node) { }
 
 	const T& operator*(void) const { 
 		EASSERT(node != 0 && "Bad code! Access to zero node!!!"); 
@@ -340,26 +342,26 @@ class list {
 		/**
 		 * Return iterator pointing to the start of the list.
 		 */
-		iterator begin(void) { return (tail ? tail->next : 0); }
+		iterator begin(void) { return iterator(tail ? tail->next : 0); }
 
 		/**
 		 * Return const iterator pointing to the start of the list.
 		 */
-		const_iterator begin(void) const { return (tail ? tail->next : 0); }
+		const_iterator begin(void) const { return const_iterator(tail ? tail->next : 0); }
 
 		/**
 		 * Return iterator pointing <b>after</b> the end of the list.
 		 * <b>Do not</b> dereference that iterator requesting value
 		 * of latest element. 
 		 */
-		iterator end(void) { return tail; }
+		iterator end(void) { return iterator(tail); }
 
 		/**
 		 * Return const iterator pointing <b>after</b> the end of the list.
 		 * <b>Do not</b> dereference that iterator requesting value
 		 * of latest element. 
 		 */
-		const_iterator end(void) const { return tail; }
+		const_iterator end(void) const { return const_iterator(tail); }
 
 		/**
 		 * Return reference to first element in the list.

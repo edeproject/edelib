@@ -1,18 +1,33 @@
+/*
+ * $Id$
+ *
+ * D-Bus stuff
+ * Part of edelib.
+ * Copyright (c) 2008 EDE Authors.
+ *
+ * This program is licenced under terms of the 
+ * GNU General Public Licence version 2 or newer.
+ * See COPYING for details.
+ */
+
 #ifndef __EDBUSCONTAINER_H__
 #define __EDBUSCONTAINER_H__
 
-#include <assert.h>
-#include <list>
+#include "Debug.h"
+#include "List.h"
+
+EDELIB_NS_BEGIN
 
 #ifndef SKIP_DOCS
 template <typename T>
 struct EdbusContainerImpl {
-	std::list<T> lst;
+	list<T> lst;
 	unsigned int ref;
 };
 #endif
 
 /**
+ * \ingroup dbus
  * \class EdbusContainer
  * \brief Abstract container for D-Bus containers
  *
@@ -32,12 +47,12 @@ class EdbusContainer {
 		/**
 		 * Iterator type for container
 		 */
-		typedef typename std::list<T>::iterator iterator;
+		typedef typename list<T>::iterator iterator;
 
 		/**
 		 * Const iterator type for container
 		 */
-		typedef typename std::list<T>::const_iterator const_iterator;
+		typedef typename list<T>::const_iterator const_iterator;
 
 #ifndef SKIP_DOCS
 		typedef EdbusContainerImpl<T> EdbusContainerPrivate;
@@ -66,7 +81,7 @@ class EdbusContainer {
 		 * do write or change internal data
 		 */
 		void unhook(void) {
-			assert(impl != NULL);
+			E_ASSERT(impl != NULL);
 
 			if(impl->ref == 1)
 				return;
@@ -137,5 +152,7 @@ class EdbusContainer {
 			return *this;
 		}
 };
+
+EDELIB_NS_END
 
 #endif

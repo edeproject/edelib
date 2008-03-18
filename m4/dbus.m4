@@ -16,7 +16,7 @@ AC_DEFUN([EDELIB_CHECK_DBUS], [
 			AC_DEFINE(HAVE_DBUS, 1, [Define to 1 if you have libdbus])
 		else
 			AC_MSG_RESULT(no)
-			AC_MSG_NOTICE(D-BUS disabled)
+			AC_MSG_ERROR([D-Bus libraries not found! Please install them first])
 		fi
 	fi
 
@@ -33,7 +33,7 @@ AC_DEFUN([EDELIB_CHECK_DBUS], [
 		dbus_include_arch_deps="/usr/lib/dbus-1.0/include /usr/local/lib/dbus-1.0/include"
 		dbus_lib_dirs="/lib /usr/lib /usr/local/lib"
 
-		AC_MSG_CHECKING(for dbus/dbus.h)
+		AC_MSG_CHECKING([for dbus/dbus.h])
 		EDELIB_FIND_FILE(dbus/dbus.h, $dbus_include_dirs, dbus_incdir)
 
 		if eval "test $dbus_incdir = no"; then
@@ -44,7 +44,7 @@ AC_DEFUN([EDELIB_CHECK_DBUS], [
 		fi
 
 		if eval "test $dbus_search_failed = no"; then
-			AC_MSG_CHECKING(for dbus/dbus-arch-deps.h)
+			AC_MSG_CHECKING([for dbus/dbus-arch-deps.h])
 			EDELIB_FIND_FILE(dbus/dbus-arch-deps.h, $dbus_include_arch_deps, dbus_incdir_arch_deps)
 			
 			if eval "test $dbus_incdir_arch_deps = no"; then
@@ -56,7 +56,7 @@ AC_DEFUN([EDELIB_CHECK_DBUS], [
 		fi
 
 		if eval "test $dbus_search_failed = no"; then
-			AC_MSG_CHECKING(for libdbus-1.so)
+			AC_MSG_CHECKING([for libdbus-1.so])
 			EDELIB_FIND_FILE(libdbus-1.so, $dbus_lib_dirs, dbus_libdir)
 
 			if eval "test $dbus_libdir = no"; then
@@ -73,7 +73,7 @@ AC_DEFUN([EDELIB_CHECK_DBUS], [
 			DBUS_CFLAGS="-I$dbus_incdir -I$dbus_incdir_arch_deps"
 			DBUS_LIBS="-L$dbus_libdir -ldbus-1"
 		else
-			AC_MSG_NOTICE(D-BUS disabled)
+			AC_MSG_ERROR([D-Bus libraries not found! Please install them first])
 		fi
 	fi
 ])

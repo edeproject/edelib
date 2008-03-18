@@ -19,6 +19,8 @@
 EDELIB_NS_BEGIN
 
 /**
+ * \ingroup widgets
+ *
  * icon_chooser() is a dialog containing a list of visible
  * icons so user can choose desired one. Given directory
  * will be scanned for known image/icon types and those will
