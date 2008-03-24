@@ -15,5 +15,5 @@ SubInclude TOP test ;
 SubInclude TOP doc ;
 SubInclude TOP tools ;
 
-InstallDirectory  [ FDirName $(includedir) ] : edelib ;
-InstallProgram    [ FDirName $(bindir) ] : edelib-config ;
+InstallDirectory  [ FDirName $(includedir) ] : [ FDirName $(TOP) edelib ] ;
+InstallProgram    [ FDirName $(bindir) ]     : [ FFileName $(TOP) edelib-config ] ;

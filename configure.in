@@ -32,6 +32,10 @@ dnl require full path to it, so we pwd-it
 AC_CONFIG_AUX_DIRS(`pwd`/tools)
 
 dnl startup variables
+EDELIB_FLAGS="-Wall -pedantic"
+EDELIB_DEBUG_FLAGS="-D_DEBUG"
+EDELIB_OPTIM_FLAGS="-O2"
+
 ALLFLAGS="-Wall -pedantic"
 DEBUGFLAGS="-D_DEBUG"
 OPTIMFLAGS="-O2"
@@ -50,6 +54,7 @@ AC_PATH_PROG(SED, sed)
 AC_PATH_PROG(MSGFMT, msgfmt)
 AC_PATH_PROG(XGETTEXT, xgettext)
 AC_PATH_PROG(DOXYGEN, doxygen)
+
 EDELIB_PROG_JAM
 
 dnl call this quickly as possible so underlying scripts 
@@ -58,11 +63,11 @@ EDELIB_INIT_JAM
 
 dnl basic headers
 AC_HEADER_STDC
-EDELIB_DATETIME
 AC_CHECK_HEADER(string.h, AC_DEFINE(HAVE_STRING_H, 1, [Define to 1 if you have string.h file]))
 AC_CHECK_FUNC(snprintf, AC_DEFINE(HAVE_SNPRINTF, 1, [Define to 1 if you have snprintf()]))
 AC_CHECK_FUNC(vsnprintf, AC_DEFINE(HAVE_VSNPRINTF, 1, [Define to 1 if you have vsnprintf()]))
 
+EDELIB_DATETIME
 EDELIB_DEVELOPMENT
 
 EDELIB_CHECK_X11
@@ -103,10 +108,7 @@ AC_SUBST(SOUNDLIBS)
 AC_SUBST(DBUS_CFLAGS)
 AC_SUBST(DBUS_LIBS)
 AC_SUBST(SHARED)
-AC_SUBST(DSOFLAGS)
-AC_SUBST(DSOLDFLAGS)
-AC_SUBST(DSOSYMLINK)
-AC_SUBST(DSOSUFFIX)
+AC_SUBST(LIBTOOL)
 AC_SUBST(ALLFLAGS)
 AC_SUBST(CFLAGS)
 AC_SUBST(CXXFLAGS)

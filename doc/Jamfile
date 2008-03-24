@@ -10,16 +10,38 @@
 
 SubDir TOP doc ;
 
-# These two are targets doxygen creates/use anyway
-# but are needed for jam so it can track if Doxyfile
-# was changed
-html_      = [ FDirName $(TOP) doc html ] ;
-doxyfile_  = [ FDirName $(TOP) doc Doxyfile ] ;
-readme_    = [ FDirName $(TOP) README ] ;
-install_   = [ FDirName $(TOP) INSTALL ] ;
+rule MakeApiDocumentation 
+{
+	if $(DOXYGEN) {
+		LocalDepends docs : $(<) ;
+		LocalDepends $(<) : $(>) ;
+		LocalDepends all : docs ;
 
-MakeApiDocumentation $(html_) : $(doxyfile_) ;
+		NotFile docs ;
+		Always  docs ;
 
-InstallDocumentation [ FDirName $(docdir) $(EDELIB_DOCDIR) ] : $(readme_) ;
-InstallDocumentation [ FDirName $(docdir) $(EDELIB_DOCDIR) ] : $(install_) ;
-InstallDirectory     [ FDirName $(docdir) $(EDELIB_DOCDIR) ] : html ;
+		MakeApiDocumentation1 $(<) : $(>) ;
+		Cleandir clean : $(<) ;
+	}
+
+	# just return if doxygen is not found
+	# so we can build the rest
+	if ! $(DOXYGEN) {
+		Echo "doxygen is missing; skiping..." ;
+		return ;
+	}
+}
+
+# Strip directory path from (example: 'doc/Doxyfile') and
+# go into it so DOXYGEN command can work
+actions piecemeal MakeApiDocumentation1
+{
+	cd $(>:D)
+	$(DOXYGEN) $(>:B) ;
+}
+
+MakeApiDocumentation [ FDirName $(SUBDIR) html ] : [ FFileName $(SUBDIR) Doxyfile ] ;
+
+InstallDocumentation [ FDirName $(docdir) $(EDELIB_DOCDIR) ] : [ FFileName $(TOP) README ] ;
+InstallDocumentation [ FDirName $(docdir) $(EDELIB_DOCDIR) ] : [ FFileName $(TOP) INSTALL ] ;
+InstallDirectory     [ FDirName $(docdir) $(EDELIB_DOCDIR) ] : [ FDirName $(SUBDIR) html ] ;

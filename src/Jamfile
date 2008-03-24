@@ -10,58 +10,62 @@
 
 SubDir TOP src ;
 
-XDGMIME_SRC = xdgmime.c 
-			  xdgmimeglob.c 
-			  xdgmimeint.c 
-			  xdgmimemagic.c 
-			  xdgmimealias.c 
-			  xdgmimeparent.c 
-			  xdgmimecache.c ;
+XDGMIME_SRC = 
+	xdgmime.c 
+	xdgmimeglob.c 
+	xdgmimeint.c 
+	xdgmimemagic.c 
+	xdgmimealias.c 
+	xdgmimeparent.c 
+	xdgmimecache.c ;
 
 XDGMIME = xdgmime/$(XDGMIME_SRC) ;
 
-SOURCE = Missing.c
-		 Config.cpp 
-		 Resource.cpp
-		 DesktopFile.cpp
-		 StrUtil.cpp
-		 Util.cpp
-		 Nls.cpp
-		 String.cpp
-		 File.cpp
-		 DateTime.cpp
-		 Directory.cpp
-		 Debug.cpp 
-		 Sound.cpp 
-		 IconTheme.cpp 
-		 Color.cpp 
-		 Run.cpp 
-		 TiXml.cpp
-		 TiXmlParser.cpp 
-		 MimeType.cpp
-		 rx/regex.c
-		 Regex.cpp
-		 $(XDGMIME) ;
+SOURCE = 
+	Missing.c
+	Config.cpp 
+	Resource.cpp
+	DesktopFile.cpp
+	StrUtil.cpp
+	Util.cpp
+	Nls.cpp
+	String.cpp
+	File.cpp
+	DateTime.cpp
+	Directory.cpp
+	Debug.cpp 
+	Sound.cpp 
+	IconTheme.cpp 
+	Color.cpp 
+	Run.cpp 
+	TiXml.cpp
+	TiXmlParser.cpp 
+	MimeType.cpp
+	rx/regex.c
+	Regex.cpp
+	$(XDGMIME) ;
 
-SOURCE_GUI = DirWatch.cpp
-			 XSet.cpp
-			 XSettingsCommon.cpp
-			 XSettingsClient.cpp
-			 XSettingsManager.cpp
-			 Window.cpp
-			 ExpandableGroup.cpp
-			 IconChooser.cpp 
-			 FontChooser.cpp
-			 MessageBox.cpp
-			 SevenSeg.cpp ;
+SOURCE_GUI = 
+	DirWatch.cpp
+	XSet.cpp
+	XSettingsCommon.cpp
+	XSettingsClient.cpp
+	XSettingsManager.cpp
+	Window.cpp
+	ExpandableGroup.cpp
+	IconChooser.cpp 
+	FontChooser.cpp
+	MessageBox.cpp
+	SevenSeg.cpp ;
 
-SOURCE_DBUS = EdbusConnection.cpp 
-			  EdbusData.cpp
-			  EdbusDict.cpp
-			  EdbusError.cpp
-			  EdbusList.cpp
-			  EdbusMessage.cpp
-			  EdbusObjectPath.cpp ;
+SOURCE_DBUS = 
+	EdbusConnection.cpp 
+	EdbusData.cpp
+	EdbusDict.cpp
+	EdbusError.cpp
+	EdbusList.cpp
+	EdbusMessage.cpp
+	EdbusObjectPath.cpp ;
 
 if $(FLTKLIBS) {
 	SOURCE += $(SOURCE_GUI) ;
@@ -69,23 +73,9 @@ if $(FLTKLIBS) {
 	Echo "...building without FLTK support..." ;
 }
 
-EDELIB_LPATH = [ FFileName $(TOP) $(EDELIB_LIBDIR) $(EDELIB_NAME) ] ;
-EDELIB_DBUS_LPATH = [ FFileName $(TOP) $(EDELIB_LIBDIR) $(EDELIB_DBUS_NAME) ] ;
+# libedelib
+MakeLibrary $(EDELIB_NAME) : $(SOURCE) ;
 
-if $(SHARED) {
-	MakeSharedLibrary $(EDELIB_LPATH) : $(SOURCE) : $(FLTKLIBS) $(SOUNDLIBS) ;
-	InstallSharedLibrary $(libdir) : $(EDELIB_LPATH) ;
-} else {
-	MakeStaticLibrary $(EDELIB_LPATH) : $(SOURCE) ;
-	InstallStaticLibrary $(libdir) : $(EDELIB_LPATH) ;
-}
-
-if $(SHARED) {
-	ObjectC++Flags $(SOURCE_DBUS) : $(DBUSFLAGS) ;
-	MakeSharedLibrary $(EDELIB_DBUS_LPATH) : $(SOURCE_DBUS) : $(DBUSLIBS) $(FLTKLIBS) $(SOUNDLIBS) ;
-	InstallSharedLibrary $(libdir) : $(EDELIB_DBUS_LPATH) ;
-} else {
-	ObjectC++Flags $(SOURCE_DBUS) : $(DBUSFLAGS) ;
-	MakeStaticLibrary $(EDELIB_DBUS_LPATH) : $(SOURCE_DBUS) ;
-	InstallStaticLibrary $(libdir) : $(EDELIB_DBUS_LPATH) ;
-}
+# libedelib_dbus
+LibraryObjectC++Flags $(SOURCE_DBUS) : $(DBUSFLAGS) ;
+MakeLibrary $(EDELIB_DBUS_NAME) : $(SOURCE_DBUS) ;

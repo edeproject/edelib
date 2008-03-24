@@ -1,3 +1,8 @@
+2008-03-24  Sanel <karijes@users.sourceforge.net>
+
+	* Rewamped build stuff. Now shared library is build via libtool
+	* EdbusConnection.h and EdbusObjecPath.h docs todo
+
 2008-03-17  Sanel <karijes@users.sourceforge.net>
 
 	* Removed tests for STL

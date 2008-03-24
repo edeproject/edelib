@@ -13,42 +13,43 @@ SubDir TOP test ;
 
 # shared library requires linkage with FLTK and sound libraries
 if $(SHARED) {
-	ADDONLIB = $(FLTKLIBS) $(SOUNDLIBS) ;
+	ADDONLIB = $(FLTKLIBS_FULL) $(SOUNDLIBS) ;
 }
 
-TEST_FILES = UnitTest.cpp 
-			utest.cpp 
-			util.cpp
-			missing.cpp
-			strutil.cpp 
-			file.cpp
-			directory.cpp
-			datetime.cpp
-			conf.cpp
-			resource.cpp
-			desktopfile.cpp
-			string.cpp
-			list.cpp
-			regex.cpp
-			color.cpp
-			xml.cpp
-			mime.cpp
-			run_tests.cpp ;
+TEST_FILES = 
+	UnitTest.cpp 
+	utest.cpp 
+	util.cpp
+	missing.cpp
+	strutil.cpp 
+	file.cpp
+	directory.cpp
+	datetime.cpp
+	conf.cpp
+	resource.cpp
+	desktopfile.cpp
+	string.cpp
+	list.cpp
+	regex.cpp
+	color.cpp
+	xml.cpp
+	mime.cpp
+	run_tests.cpp ;
 
 # xsettings.cpp depends on X11 and FLTKLIBS provides needed libraries
-if $(FLTKLIBS) {
+if $(FLTKLIBS_FULL) {
 	TEST_FILES += xsettings.cpp ;
 
 	if ! $(SHARED) {
-		ADDONLIB = $(FLTKLIBS) ;
+		ADDONLIB = $(FLTKLIBS_FULL) ;
 	}
 }
 
 MakeTest run_tests : $(TEST_FILES) : $(ADDONLIB) ;
 #MakeTest perf/stringtok : perf/stringtok.cpp perf/strsplit.cpp ;
 
-Clean clean : [ FFileName $(TOP) test .foo.txt ] ;
-Clean clean : [ FFileName $(TOP) test .ede.conf ] ;
+LocalClean clean : [ FFileName $(TOP) test .foo.txt ] ;
+LocalClean clean : [ FFileName $(TOP) test .ede.conf ] ;
 
 # include examples directory
 SubInclude TOP test examples ;

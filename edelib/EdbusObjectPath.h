@@ -44,6 +44,8 @@ EDELIB_NS_BEGIN
  * 
  * This class will always construct valid path, so if parameter with invalid
  * character range is given, it will ignore it.
+ *
+ * \todo Make this class implicitly shared
  */
 class EdbusObjectPath {
 	private:

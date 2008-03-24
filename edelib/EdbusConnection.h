@@ -105,6 +105,8 @@ struct EdbusConnImpl;
  * \ingroup dbus
  * \class EdbusConnection
  * \brief D-Bus connection and data sender
+ *
+ * \todo Finish docs for EdbusConnection
  */
 class EdbusConnection {
 	private:

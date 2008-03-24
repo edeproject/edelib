@@ -13,24 +13,19 @@ dnl Also the bone of this code is based from FLTK's configure.in script
 AC_DEFUN([EDELIB_SHARED], [
 	AC_ARG_ENABLE(shared, [  --enable-shared         enable shared library],,enable_shared=no)
 	if eval "test $enable_shared = no"; then
-		SHAREDCXXFLAGS=""
-		SHAREDLDFLAGS=""
-	else
 		dnl for jam
-		SHARED=1
-		ver_suffix="$EDELIB_MAJOR_VERSION.$EDELIB_MINOR_VERSION.$EDELIB_PATCH_VERSION"
-		uname=`uname`
-		case $uname in
-			Linux* | *BSD*)
-				DSOFLAGS="-shared -fPIC"
-				DSOLDFLAGS="-Wl,-rpath,$libdir"
-				DSOSUFFIX=".so.$ver_suffix"
-				DSOSYMLINK=".so"
-			;;
-			*)
-				AC_MSG_WARN(Shared libraries my not be supported. Disabling for now.)
-				SHARED=0
-			;;
-		esac
+		SHARED=0
+	else
+		AC_MSG_CHECKING([for libtool])
+
+		AC_PATH_PROG(LIBTOOL, libtool)
+		if test -n "$LIBTOOL"; then
+			AC_MSG_RESULT(yes)
+			dnl only for jam
+			SHARED=1
+		else
+			AC_MSG_RESULT(no)
+			SHARED=0
+		fi
 	fi
 ])

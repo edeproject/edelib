@@ -22,17 +22,13 @@ srcdir      ?= "@abs_srcdir@" ;
 sysconfdir  ?= "@sysconfdir@" ;
 
 # programs
-CC              ?= "@CC@" ;
-CXX             ?= "@CXX@" ;
-DOXYGEN         ?= "@DOXYGEN@" ;
-XGETTEXT        ?= "@XGETTEXT@" ;
-MSGFMT          ?= "@MSGFMT@" ;
-INSTALL         ?= "@INSTALL@" ;
-INSTALL_DATA    ?= "@INSTALL_DATA@" ;
-INSTALL_PROGRAM ?= "@INSTALL_PROGRAM@" ;
-INSTALL_SCRIPT  ?= "@INSTALL_SCRIPT@" ;
-SYMLINKCMD      ?= "@LN_S@" ;
-SED             ?= "@SED@" ;
+CC          ?= "@CC@" ;
+CXX         ?= "@CXX@" ;
+DOXYGEN     ?= "@DOXYGEN@" ;
+XGETTEXT    ?= "@XGETTEXT@" ;
+MSGFMT      ?= "@MSGFMT@" ;
+SED         ?= "@SED@" ;
+LIBTOOL     ?= "@LIBTOOL@" ;
 
 # for fltk and X11
 FLTKFLAGS      ?= "@FLTKFLAGS@" ;
@@ -50,13 +46,9 @@ DBUSFLAGS ?= "@DBUS_CFLAGS@" ;
 DBUSLIBS  ?= "@DBUS_LIBS@" ;
 
 # for shared library
-SHARED     ?= "@SHARED@" ;
-DSOFLAGS   ?= "@DSOFLAGS@" ;
-DSOSYMLINK ?= "@DSOSYMLINK@" ;
-DSOSUFFIX  ?= "@DSOSUFFIX@" ;
-# not used for now
-DSOLDFLAGS ?= "@DSOLDFLAGS@" ;
+SHARED    ?= "@SHARED@" ;
 
+# version string
 EDELIB_VERSION ?= "@EDELIB_API_VERSION@" ;
 
 # do not touch this

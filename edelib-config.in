@@ -10,8 +10,8 @@
 VERSION="@EDELIB_API_VERSION@"
 
 # Calculate the prefix from the location of *this* file
-prefix=`echo "$0" | sed 's/\/bin\/edelib-config2//
-s/\/edelib-config2//'`
+prefix=`echo "$0" | sed 's/\/bin\/edelib-config//
+s/\/edelib-config//'`
 
 exec_prefix=${prefix}
 exec_prefix_set=no
@@ -33,7 +33,7 @@ sound_lib="@SOUNDLIBS@"
 fltk_lib="@FLTKLIBS@"
 fltk_lib_full="@FLTKLIBS_FULL@"
 
-dbus_include="@DBUS_CFLAGS@"
+dbus_cflags="@DBUS_CFLAGS@"
 dbus_lib="@DBUS_LIBS@"
 
 usage() {
@@ -172,6 +172,8 @@ if test "$use_sound" = "yes"; then
 fi
 
 if test "$use_dbus" = "yes"; then
+	CFLAGS="$CFLAGS $dbus_cflags"
+	CXXFLAGS="$CXXFLAGS $dbus_cflags"
 	LDLIBS="$edelib_dbus_lib $dbus_lib $LDLIBS"
 	LDSTATIC="$libdir/$edelib_dbus_static $dbus_lib $LDSTATIC"
 fi
