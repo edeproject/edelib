@@ -1,3 +1,7 @@
+2008-03-25  Sanel <karijes@users.sourceforge.net>
+
+	* Let 'jam distclean' clean Doxyfile too
+
 2008-03-24  Sanel <karijes@users.sourceforge.net>
 
 	* Rewamped build stuff. Now shared library is build via libtool
