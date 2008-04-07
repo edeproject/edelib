@@ -23,7 +23,7 @@ void EdbusList::append(const EdbusData& val) {
 		const_iterator it = begin();
 
 		if((*it).type() != val.type()) {
-			puts("Array contains different types. Ignoring...\n");
+			E_WARNING("Array contains different types. Ignoring...\n");
 			return;
 		}
 	}
@@ -55,9 +55,11 @@ void EdbusList::remove_all(const EdbusData& val) {
 
 	EdbusList::iterator it = impl->lst.begin(), it_end = impl->lst.end();
 
-	for(; it != it_end; ++it) {
+	while(it != it_end) {
 		if((*it) == val)
 			it = impl->lst.erase(it);
+		else
+			++it;
 	}
 }
 

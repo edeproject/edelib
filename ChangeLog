@@ -1,3 +1,9 @@
+2008-04-5  Sanel <karijes@users.sourceforge.net>
+
+	* Fixed assertion check in is_double() in EdbusData
+	* Fixed remove_all() in EdbusList
+	* Test for dbus code. Not completed....
+
 2008-03-25  Sanel <karijes@users.sourceforge.net>
 
 	* Let 'jam distclean' clean Doxyfile too

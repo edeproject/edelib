@@ -246,7 +246,7 @@ uint64_t EdbusData::to_uint64(void) const {
 }
 
 double EdbusData::to_double(void) const {
-	E_ASSERT(is_uint64() == true);
+	E_ASSERT(is_double() == true);
 	return impl->value.v_double;
 }
 

@@ -34,6 +34,7 @@ TEST_FILES =
 	color.cpp
 	xml.cpp
 	mime.cpp
+	dbus.cpp
 	run_tests.cpp ;
 
 # xsettings.cpp depends on X11 and FLTKLIBS provides needed libraries
@@ -45,7 +46,7 @@ if $(FLTKLIBS_FULL) {
 	}
 }
 
-MakeTest run_tests : $(TEST_FILES) : $(ADDONLIB) ;
+MakeTest run_tests : $(TEST_FILES) : $(ADDONLIB) : "use-dbus" ;
 #MakeTest perf/stringtok : perf/stringtok.cpp perf/strsplit.cpp ;
 
 LocalClean clean : [ FFileName $(TOP) test .foo.txt ] ;
