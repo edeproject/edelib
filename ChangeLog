@@ -1,3 +1,8 @@
+2008-05-10  Sanel <karijes@users.sourceforge.net>
+	
+	* Forgot to update Jamrule and it's MakeTest for dbus usage via 
+	"use-dbus" flag
+
 2008-04-5  Sanel <karijes@users.sourceforge.net>
 
 	* Fixed assertion check in is_double() in EdbusData

@@ -207,7 +207,7 @@ rule SharedObjects
 	Objects $(<) ;
 }
 
-# MakeTest <bin> : <source> : <optional-addon-libs>
+# MakeTest <bin> : <source> : <optional-addon-libs> : <option>
 rule MakeTest
 {
 	local lpath ;
@@ -223,6 +223,10 @@ rule MakeTest
 
 	if $(3) {
 		LinkAgainst $(1) : $(3) ;
+	}
+
+	if $(4) = "use-dbus" {
+		LinkAgainst $(1) : -l$(EDELIB_DBUS) ;
 	}
 
 	LinkAgainst $(1) : -l$(STDLIB) ;
