@@ -120,6 +120,8 @@ void ExpandableGroup::reposition_childs(void) {
 		wdg = child(1);
 
 	// update area
+	area_x = x() + BORDER_OFFSET;
+	area_y = y() + BORDER_OFFSET;
 	area_w = w() - BORDER_OFFSET;
 	area_h = BORDER_OFFSET + wdg->h();
 
@@ -134,7 +136,7 @@ void ExpandableGroup::reposition_childs(void) {
 			continue;
 		if(child(i) == vscrollbar)
 			continue;
-		if((px + child(i)->w()) <= area_w) {
+		if((px + child(i)->w()) <= area_x+area_w) {
 			// ok, widget is not greater than total width
 			child(i)->position(px, py);
 		} else {
@@ -240,5 +242,6 @@ void ExpandableGroup::add(Fl_Widget* o) {
 	Fl_Group::add(o);
 	reposition_childs();
 }
+
 
 EDELIB_NS_END
