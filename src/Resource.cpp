@@ -185,6 +185,10 @@ do {                                                                \
 	return false;                                                   \
 } while(0)
 
+bool Resource::get(const char* section, const char* key, bool& ret, bool dfl, ResourceType rt) {
+	FETCH_RESOURCE(section, key, ret, dfl, rt);
+}
+
 bool Resource::get(const char* section, const char* key, int& ret, int dfl, ResourceType rt) {
 	FETCH_RESOURCE(section, key, ret, dfl, rt);
 }
