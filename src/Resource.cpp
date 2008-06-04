@@ -94,6 +94,12 @@ bool Resource::save(const char* domain) {
 	ufile += domain;
 	ufile += ".conf";
 
+	// Create directory if necessary
+	String::size_type loc=0, loc2=0;
+	while ((loc2=ufile.find('/',loc+1)) != String::npos) loc=loc2; // find last slash
+	if (!dir_exists(ufile.substr(0,loc).c_str()))
+		dir_create_with_parents(ufile.substr(0,loc).c_str(), 0700); // default perms
+
 	return user_conf->save(ufile.c_str());
 }
 
