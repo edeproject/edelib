@@ -43,6 +43,8 @@ UT_FUNC(ConfigTest, "Test Config class")
 		UT_VERIFY( dummy3 == true );
 		UT_VERIFY(c.get("Panel", "RunBrowser5", dummy3, true) == true);
 		UT_VERIFY( dummy3 == false );
+		UT_VERIFY(c.get("Screen", "RadioPattern", dummy3, true) == true);
+		UT_VERIFY( dummy3 == false );
 
 		// section/key exist
 		UT_VERIFY( c.exist("Panel") == true );

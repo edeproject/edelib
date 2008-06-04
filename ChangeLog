@@ -1,3 +1,8 @@
+2008-06-04  Sanel <karijes@users.sourceforge.net>
+
+	* Fixed bool value checks in Config class (thanks to Vedran note)
+	* Added that to tests too
+
 2008-05-10  Sanel <karijes@users.sourceforge.net>
 	
 	* Forgot to update Jamrule and it's MakeTest for dbus usage via 

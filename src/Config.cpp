@@ -621,7 +621,7 @@ bool Config::get(const char* section, const char* key, bool& ret, bool deflt) {
 		ret = false;
 	else if (len == 1 && (strncmp(value, "1", 1) == 0))
 		ret = true;
-	else if (len == 0 && (strncmp(value, "0", 1) == 0))
+	else if (len == 1 && (strncmp(value, "0", 1) == 0))
 		ret = false;
 	else
 		ret = deflt;
