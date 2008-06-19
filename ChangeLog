@@ -1,3 +1,7 @@
+2008-06-16  Sanel <karijes@users.sourceforge.net>
+
+	* Fixed a typo with __EDBUSMESSAGE_H__ in EdbusMessage.h
+
 2008-06-04  Sanel <karijes@users.sourceforge.net>
 
 	* Fixed bool value checks in Config class (thanks to Vedran note)

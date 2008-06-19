@@ -11,7 +11,7 @@
  */
 
 #ifndef __EDBUSMESSAGE_H__
-#define __DEBUSMESSAGE_H__
+#define __EDBUSMESSAGE_H__
 
 #include "List.h"
 #include "EdbusData.h"
