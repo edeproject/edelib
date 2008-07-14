@@ -1,3 +1,8 @@
+2008-07-14  Sanel <karijes@users.sourceforge.net>
+
+	* Removed edelib-dbus-xml2cpp
+	* Made edelib-dbus-introspect compileable
+
 2008-06-16  Sanel <karijes@users.sourceforge.net>
 
 	* Fixed a typo with __EDBUSMESSAGE_H__ in EdbusMessage.h
