@@ -1,3 +1,8 @@
+2008-07-29  Sanel <karijes@users.sourceforge.net>
+
+	* Added test/perf/stringtok.ss as comparison against chicken scheme
+	compiler
+
 2008-07-14  Sanel <karijes@users.sourceforge.net>
 
 	* Removed edelib-dbus-xml2cpp
