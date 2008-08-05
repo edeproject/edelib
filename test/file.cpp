@@ -46,6 +46,11 @@ UT_FUNC(FileFunctions, "Test File functions")
 	UT_VERIFY( file_path("this-should-not-exists") == "" );
 	UT_VERIFY( file_path("") == "" );
 	UT_VERIFY( file_path("x") == "" );
+
+	UT_VERIFY( file_executable("run_tests") == true );
+	UT_VERIFY( file_executable("file.cpp") == false );
+	UT_VERIFY( file_executable("/bin/ls") == true );
+	UT_VERIFY( file_executable("/") == false );
 }
 
 UT_FUNC(FileOperations, "Test File operations")

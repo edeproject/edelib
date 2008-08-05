@@ -1,3 +1,14 @@
+2008-08-2  Sanel <karijes@users.sourceforge.net>
+
+	* Added file_executable with tests
+	* EdbusConnection.cpp some debug output got newlines
+	* Changed way register_object() in EdbusConnection behaves; now if none
+	object was registered, all data can be listened; otherwise only for that
+	object
+	* TODO entry
+	* Better matching interface for signals and method in EdbusConnection,
+	hopefully
+
 2008-07-29  Sanel <karijes@users.sourceforge.net>
 
 	* Added test/perf/stringtok.ss as comparison against chicken scheme

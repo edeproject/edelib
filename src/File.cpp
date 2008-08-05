@@ -56,6 +56,15 @@ bool file_writeable(const char* name) {
 	return (access(name, W_OK) == 0) && S_ISREG(s.st_mode);
 }
 
+bool file_executable(const char* name) {
+	EASSERT(name != NULL);
+	struct stat s;
+	// FIXME: stat or lstat
+	if(stat(name, &s) != 0)
+		return false;
+	return (access(name, R_OK) == 0) && S_ISREG(s.st_mode) && (s.st_mode & S_IXUSR);
+}
+
 bool file_remove(const char* name) {
 	EASSERT(name != NULL);
 

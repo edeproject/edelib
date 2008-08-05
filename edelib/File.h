@@ -212,6 +212,13 @@ EDELIB_API bool file_readable(const char* name);
  */
 EDELIB_API bool file_writeable(const char* name);
 
+
+/**
+ * Check if file is executable
+ * \related File
+ */
+EDELIB_API bool file_executable(const char* name);
+
 /**
  * Remove file at given path. It will call system's unlink()
  * instead remove() since remove() is not compatible between

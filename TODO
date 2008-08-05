@@ -11,3 +11,4 @@ TODO list:
  * MimeType; add locale during read of comments
  * What Config as localized keys should read: LC_MESSAGES or LANG ??? I'm using for now LANG,
    but fd.o people said it should be LC_MESSAGES. Inspect this.
+ * Remove register_object()/unregister_object() from EdbusConnection ?

@@ -30,7 +30,6 @@ typedef list<const char*>::iterator ObjectPathListIter;
 
 struct EdbusConnImpl {
 	DBusConnection* conn;
-	bool            is_shared;
 
 	EdbusCallback   signal_cb;
 	void*           signal_cb_data;
@@ -53,6 +52,13 @@ struct EdbusConnImpl {
 
 	EdbusCallbackItem* method_table;
 	unsigned int       method_table_sz;
+
+	/*
+	 * so we can know how many times 
+	 * add_signal_match()/add_method_match() was called 
+	 */
+	unsigned int       signal_matches;
+	unsigned int       method_matches;
 };
 
 static EdbusCallbackItem* scan_callback_table(EdbusCallbackItem* table, unsigned int sz, const EdbusMessage& msg) {
@@ -75,7 +81,7 @@ static EdbusCallbackItem* scan_callback_table(EdbusCallbackItem* table, unsigned
 
 static bool have_registered_object(EdbusConnImpl* dc, const char* path) {
 	if(dc->object_list.empty())
-		return false;
+		return true;
 
 	ObjectPathListIter it = dc->object_list.begin(), it_end = dc->object_list.end();
 	for(; it != it_end; ++it) {
@@ -94,7 +100,13 @@ static DBusHandlerResult edbus_signal_filter(DBusConnection* connection, DBusMes
 	int mtype = dbus_message_get_type(msg);
 	int ret = 0;
 
-	/* check first if service set some objects before we do further */
+	/* 
+	 * Check first if service set some objects before we do further.
+	 *
+	 * Notice that if we do not have any registered object, this will 
+	 * be seen as true. Allowing this will allow us to track some services
+	 * that emits a lot of signals, like HAL
+	 */
 	if(!have_registered_object(dc, dbus_message_get_path(msg)))
 		goto out;
 
@@ -144,7 +156,7 @@ static void dispatch_cb(void* d) {
 	EdbusConnImpl* dc = (EdbusConnImpl*)d;
 	E_ASSERT(dc != NULL);
 
-	E_DEBUG("dispatch_cb");
+	E_DEBUG(E_STRLOC ": dispatch_cb()\n");
 
 	while(dbus_connection_dispatch(dc->conn) == DBUS_DISPATCH_DATA_REMAINS)
 		;
@@ -153,7 +165,7 @@ static void dispatch_cb(void* d) {
 }
 
 static void read_watch_cb(int fd, void* d) { 
-	E_DEBUG("read_watch_cb");
+	E_DEBUG(E_STRLOC ": read_watch_cb()\n");
 
 	EdbusConnImpl* dc = (EdbusConnImpl*)d;
 	E_ASSERT(dc != NULL);
@@ -163,7 +175,7 @@ static void read_watch_cb(int fd, void* d) {
 	while(it != it_end) {
 		if(dbus_watch_get_fd(*it) == fd && dbus_watch_get_enabled(*it)) {
 			if(!dbus_watch_handle(*it, DBUS_WATCH_READABLE))
-				E_WARNING("Out of memory");
+				E_WARNING(E_STRLOC ": Out of memory\n");
 			break;
 		}
 		++it;
@@ -185,7 +197,7 @@ static void read_watch_cb(int fd, void* d) {
 }
 
 static void write_watch_cb(int fd, void* d) { 
-	E_DEBUG("write_watch_cb");
+	E_DEBUG(E_STRLOC ": write_watch_cb()\n");
 
 	EdbusConnImpl* dc = (EdbusConnImpl*)d;
 	E_ASSERT(dc != NULL);
@@ -195,7 +207,7 @@ static void write_watch_cb(int fd, void* d) {
 	while(it != it_end) { 
 		if(dbus_watch_get_fd(*it) == fd && dbus_watch_get_enabled(*it)) {
 			if(!dbus_watch_handle(*it, DBUS_WATCH_WRITABLE))
-				E_WARNING("Out of memory");
+				E_WARNING(E_STRLOC ": Out of memory\n");
 			break;
 		}
 		++it;
@@ -203,7 +215,7 @@ static void write_watch_cb(int fd, void* d) {
 }
 
 static void timeout_cb(void* d) {
-	E_DEBUG("timeout_cb");
+	E_DEBUG(E_STRLOC ": timeout_cb()\n");
 
 	EdbusConnImpl* dc = (EdbusConnImpl*)d;
 	E_ASSERT(dc != NULL);
@@ -247,7 +259,7 @@ static void edbus_remove_watch(DBusWatch* watch, void* d) {
 	E_ASSERT(dc != NULL);
 	E_ASSERT(dc->watch_list != NULL);
 
-	E_DEBUG("removing watch");
+	E_DEBUG(E_STRLOC ": removing watch\n");
 
 	int fd = dbus_watch_get_fd(watch);
 	int flags = dbus_watch_get_flags(watch);
@@ -283,7 +295,7 @@ static dbus_bool_t edbus_add_timeout(DBusTimeout* timeout, void* data) {
 	/* D-Bus interval sees in miliseconds, but FLTK see it in seconds */
 	int interval = dbus_timeout_get_interval(timeout);
 
-	E_DEBUG("added timeout to %i ms\n", interval);
+	E_DEBUG(E_STRLOC ": added timeout to %i ms\n", interval);
 	Fl::add_timeout(interval / 1000, timeout_cb, data);
 	return 1;
 }
@@ -322,28 +334,34 @@ void EdbusConnection::setup_filter(void) {
 	DBusError err;
 	dbus_error_init(&err);
 
-	dbus_bus_add_match(dc->conn, "type='signal'", &err);
-
-	if(dbus_error_is_set(&err)) {
-		E_WARNING("Signal match failed: %s, %s\n", err.name, err.message);
-		dbus_error_free(&err);
-		return;
-	}
-
-	const char* name = unique_name();
-	if(name) {
-		char buff[DBUS_MAXIMUM_MATCH_RULE_LENGTH];
-		snprintf(buff, sizeof(buff), "destination='%s'", name);
-
-		dbus_bus_add_match(dc->conn, buff, &err);
+	/* if we didn't registered any signal match, match everything */
+	if(dc->signal_matches == 0) {
+		dbus_bus_add_match(dc->conn, "type='signal'", &err);
 
 		if(dbus_error_is_set(&err)) {
-			E_WARNING("Destination match failed: %s, %s\n", err.name, err.message);
+			E_WARNING(E_STRLOC ": Signal match failed: %s, %s\n", err.name, err.message);
 			dbus_error_free(&err);
 			return;
 		}
-	} else
-		E_WARNING("Unable to get unique name");
+	}
+
+	/* if we didn't registered any method match, match everything */
+	if(dc->method_matches == 0) {
+		const char* name = unique_name();
+		if(name) {
+			char buff[DBUS_MAXIMUM_MATCH_RULE_LENGTH];
+			snprintf(buff, sizeof(buff), "destination='%s'", name);
+
+			dbus_bus_add_match(dc->conn, buff, &err);
+
+			if(dbus_error_is_set(&err)) {
+				E_WARNING(E_STRLOC ": Destination match failed: %s, %s\n", err.name, err.message);
+				dbus_error_free(&err);
+				return;
+			}
+		} else
+			E_WARNING(E_STRLOC ": Unable to get unique name\n");
+	}
 
 	dbus_connection_add_filter(dc->conn, edbus_signal_filter, dc, 0);
 }
@@ -352,7 +370,6 @@ bool EdbusConnection::connect(EdbusConnectionType ctype) {
 	if(dc == NULL) {
 		dc = new EdbusConnImpl;
 		dc->conn = NULL;
-		dc->is_shared = false;
 
 		dc->signal_cb = NULL;
 		dc->signal_cb_data = NULL;
@@ -368,6 +385,8 @@ bool EdbusConnection::connect(EdbusConnectionType ctype) {
 
 		dc->method_table = NULL;
 		dc->method_table_sz = 0;
+
+		dc->signal_matches = dc->method_matches = 0;
 	}
 
 	DBusBusType type;
@@ -385,10 +404,9 @@ bool EdbusConnection::connect(EdbusConnectionType ctype) {
 	}
 
 	dc->conn = dbus_bus_get(type, &err);
-	dc->is_shared = true;
 
 	if(dbus_error_is_set(&err)) {
-		E_WARNING("Connection error: %s\n", err.message);
+		E_WARNING(E_STRLOC ": Connection error: %s\n", err.message);
 		dbus_error_free(&err);
 	}
 
@@ -404,7 +422,6 @@ bool EdbusConnection::disconnect(void) {
 		dbus_connection_unref(dc->conn);
 
 	dc->conn = NULL;
-	dc->is_shared = false;
 
 	/* TODO: does this needs to be nulled ? */
 	dc->signal_cb = NULL;
@@ -420,6 +437,8 @@ bool EdbusConnection::disconnect(void) {
 
 	dc->method_table = NULL;
 	dc->method_table_sz = 0;
+
+	dc->signal_matches = dc->method_matches = 0;
 
 	/* remove all FLTK notifiers so we can reuse EdbusConnection object again */
 	if(dc->watch_list) {
@@ -454,12 +473,12 @@ bool EdbusConnection::send(const EdbusMessage& content) {
 
 	DBusMessage* msg = content.to_dbus_message();
 	if(!msg) {
-		E_WARNING("Can't convert to DBusMessage\n");
+		E_WARNING(E_STRLOC ": Can't convert to DBusMessage\n");
 		return false;
 	}
 
 	if(!dbus_connection_send(dc->conn, msg, &serial)) {
-		E_WARNING("Message sending failed\n");
+		E_WARNING(E_STRLOC ": Message sending failed\n");
 		ret = false;
 	} else
 		ret = true;
@@ -479,14 +498,14 @@ bool EdbusConnection::send_with_reply_and_block(const EdbusMessage& content, int
 
 	msg = content.to_dbus_message();
 	if(!msg) {
-		E_WARNING("Can't convert to DBusMessage\n");
+		E_WARNING(E_STRLOC ": Can't convert to DBusMessage\n");
 		return false;
 	}
 
 	reply = dbus_connection_send_with_reply_and_block(dc->conn, msg, timeout_ms, &err);
 
 	if(dbus_error_is_set(&err)) {
-		E_WARNING("Sending error: %s, %s\n", err.name, err.message);
+		E_WARNING(E_STRLOC ": Sending error: %s, %s\n", err.name, err.message);
 		dbus_error_free(&err);
 		return false;
 	}
@@ -515,7 +534,7 @@ bool EdbusConnection::request_name(const char* name, int mode) {
 	dbus_bus_request_name(dc->conn, name, flags, &err);
 
 	if(dbus_error_is_set(&err)) {
-		E_WARNING("Name request error: %s, %s\n", err.name, err.message);
+		E_WARNING(E_STRLOC ": Name request error: %s, %s\n", err.name, err.message);
 		dbus_error_free(&err);
 		return false;
 	}
@@ -592,12 +611,13 @@ void EdbusConnection::add_signal_match(const char* path, const char* interface, 
 	snprintf(buff, sizeof(buff), "type='signal',path='%s',interface='%s',member='%s'", path, interface, name);
 
 	dbus_bus_add_match(dc->conn, buff, &err);
-
 	if(dbus_error_is_set(&err)) {
-		E_WARNING("Adding signal match failed: %s, %s\n", err.name, err.message);
+		E_WARNING(E_STRLOC ": Adding signal match failed: %s, %s\n", err.name, err.message);
 		dbus_error_free(&err);
 		return;
 	}
+
+	dc->signal_matches++;
 }
 
 void EdbusConnection::add_method_match(const char* path, const char* interface, const char* name) {
@@ -617,10 +637,12 @@ void EdbusConnection::add_method_match(const char* path, const char* interface, 
 	dbus_bus_add_match(dc->conn, buff, &err);
 
 	if(dbus_error_is_set(&err)) {
-		E_WARNING("Adding method match failed: %s, %s\n", err.name, err.message);
+		E_WARNING(E_STRLOC ": Adding method match failed: %s, %s\n", err.name, err.message);
 		dbus_error_free(&err);
 		return;
 	}
+
+	dc->method_matches++;
 }
 
 void EdbusConnection::register_object(const char* path) {

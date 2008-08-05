@@ -259,7 +259,8 @@ class EdbusConnection {
 		 *
 		 * You can register more that one object.
 		 *
-		 * In order to receive data, you must register at least one object
+		 * If you registered at least one object, data not send to it will be ignored. On other hand,
+		 * if none object was added, other objects receiving data will be reported here too.
 		 *
 		 * \note This function only stores pointer to the string, so <em>make sure</em> it is in static memory
 		 */
