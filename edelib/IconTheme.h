@@ -141,16 +141,14 @@ class EDELIB_API IconTheme
 	public:
 #ifndef SKIP_DOCS
 		String lookup(const char* icon, IconSizes sz, IconContext ctx);
+		void copy_known_icons(list<String>& lst, IconSizes sz, IconContext ctx);
 		void load_theme(const char* theme);
 		void clear_data(void);
 
+		const String& current_theme_name(void) const { return curr_theme; }
+
 		static IconTheme* instance(void);
 #endif
-		/**
-		 * Initializes internal data, but will not load anything
-		 */
-		//static void init(void);
-
 		/**
 		 * Loads given theme from predefined directories
 		 */
@@ -168,11 +166,9 @@ class EDELIB_API IconTheme
 		static bool inited(void);
 
 		/**
-		 * Appends directory to the list of directories where to
-		 * look named theme. Usually after this you should
-		 * call IconTheme::load();
+		 * Return the name of current used theme
 		 */
-		//static void add_dir(const char* dir);
+		static const String& theme_name(void);
 
 		/**
 		 * Load another theme, clearing all previous internal
@@ -188,6 +184,16 @@ class EDELIB_API IconTheme
 		 * \param ctx is desired icon context
 		 */
 		static String get(const char* icon, IconSizes sz, IconContext ctx = ICON_CONTEXT_ANY);
+
+		/**
+		 * Retrieve all icons with given size and context found in loaded theme.
+		 * Icons will be with full path
+		 *
+		 * \param lst is list of icons
+		 * \param sz is icon size
+		 * \param ctx is icon context
+		 */
+		static void get_all(list<String>& lst, IconSizes sz, IconContext ctx = ICON_CONTEXT_ANY);
 };
 
 EDELIB_NS_END

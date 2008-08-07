@@ -16,6 +16,7 @@
 #include <edelib/Nls.h>
 #include <edelib/Debug.h>
 #include <edelib/StrUtil.h>
+#include <edelib/IconTheme.h>
 
 #include <FL/Fl_Window.h>
 #include <FL/Fl.h>
@@ -107,6 +108,7 @@ class IconChooser : public Fl_Window {
 		IconChooser();
 		~IconChooser();
 		void load(const char* dir);
+		void load_from_list(list<String>& lst);
 		bool find_focused(void);
 
 		String get_ret(void)    { return ret; }
@@ -187,6 +189,10 @@ void IconChooser::load(const char* dir) {
 	if(!dir_list(dir, lst, true))
 		return;
 
+	load_from_list(lst);
+}
+
+void IconChooser::load_from_list(list<String>& lst) {
 	if(lst.empty())
 		return;
 
@@ -297,6 +303,23 @@ bool IconChooser::find_focused(void) {
 String icon_chooser(const char* dir) {
 	IconChooser ic;
 	ic.load(dir);
+
+	ic.show();
+	while(ic.visible())
+		Fl::wait();
+
+	return ic.get_ret();
+}
+
+
+String icon_chooser(IconSizes sz, IconContext ctx) {
+	IconChooser ic;
+
+	if(IconTheme::inited()) {
+		list<String> all_icons;
+		IconTheme::get_all(all_icons, sz, ctx);
+		ic.load_from_list(all_icons);
+	}
 
 	ic.show();
 	while(ic.visible())

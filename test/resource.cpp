@@ -197,3 +197,75 @@ user_altered_value = 5\n\
 	dir_remove(SAMPLE_USER_DIR);
 	dir_remove(SAMPLE_RES_DIR);
 }
+
+UT_FUNC(ResourceTestBuggy, "Test resource buggy read/save")
+{
+	dir_create(SAMPLE_RES_DIR);
+	dir_create(SAMPLE_SYS_DIR);
+	dir_create(SAMPLE_USER_DIR);
+
+	const char* sys_conf = "\
+[global]          \n\
+int_value = 3     \n\
+buggy_value = 3   \n\
+";
+
+	const char* user_conf = "\
+[global]              \n\
+int_value = 4         \n\
+user_altered_value = 5\n\
+buggy buggy value = 3 \n\
+";
+
+	File f;
+	f.open(SAMPLE_SYS_DIR"/foo-not-found.conf", FIO_WRITE);
+	f.write(sys_conf);
+	f.close();
+
+	f.open(SAMPLE_USER_DIR"/foo.conf", FIO_WRITE);
+	f.write(user_conf);
+	f.close();
+
+	// save previous values
+	char* p;
+	String config_home_saved;
+	String config_dirs_saved;
+
+	p = getenv(CONFIG_HOME_ENV);
+	if(p)
+		config_home_saved = p;
+	p = getenv(CONFIG_DIRS_ENV);
+	if(p)
+		config_dirs_saved = p;
+
+	edelib_setenv(CONFIG_HOME_ENV, SAMPLE_USER_DIR, 1);
+	edelib_setenv(CONFIG_DIRS_ENV, SAMPLE_SYS_DIR, 1);
+
+	// now read from them
+	Resource r;
+	r.load("foo");
+	UT_VERIFY( r == true );
+
+	r.set("global", "int_value", 6);
+	UT_VERIFY( r.save("foo") == true );
+
+	r.load("foo");
+	UT_VERIFY( r == true );
+
+	// user altered value must not be truncated
+	int ret;
+	UT_VERIFY( r.get("global", "user_altered_value", ret, 0) == true );
+	UT_VERIFY( ret == 5 );
+
+	// should be 'buggy_value'
+	UT_VERIFY( r.get("global", "buggy value", ret, 3, RES_SYS_FIRST) == false );
+
+	// shoud be 'buggy buggy value'
+	UT_VERIFY( r.get("global", "buggy_buggy_value", ret, 3) == false );
+
+	file_remove(SAMPLE_USER_DIR"/foo.conf");
+	file_remove(SAMPLE_SYS_DIR"/foo.conf");
+	dir_remove(SAMPLE_SYS_DIR);
+	dir_remove(SAMPLE_USER_DIR);
+	dir_remove(SAMPLE_RES_DIR);
+}

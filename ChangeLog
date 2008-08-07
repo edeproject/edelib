@@ -1,3 +1,15 @@
+2008-08-7  Sanel <karijes@users.sourceforge.net>
+
+	* Added icon_chooser() that can use loaded icon theme
+
+2008-08-6  Sanel <karijes@users.sourceforge.net>
+
+	* Fixed a bug in Resource when malformed data is tried to be read
+	* Added test for that bug too
+	* Added get_all() in IconTheme so one can get all icon filenames with
+	given size and context in current theme
+	* Also added theme_name() to get the name of currently used theme
+
 2008-08-2  Sanel <karijes@users.sourceforge.net>
 
 	* Added file_executable with tests

@@ -15,6 +15,7 @@
 
 #include "econfig.h"
 #include "String.h"
+#include "IconTheme.h"
 
 EDELIB_NS_BEGIN
 
@@ -37,8 +38,21 @@ EDELIB_NS_BEGIN
  * \return full path to choosed icon, or empty string if directory is inaccessible, or pressed Cancel
  * \param dir a path to directory that contains icons
  */
-
 EDELIB_API String icon_chooser(const char* dir);
+
+/**
+ * \ingroup widgets
+ * 
+ * The same as icon_chooser() with parameters, except it will use currently loaded theme.
+ * \note This function will assuem <em>IconTheme::init(...)</em> was previously called and
+ *       if not, it will show empty dialog. The best way to use it is either to use Window class
+ *       or to call it by self.
+ *
+ * \return full path to choosed icon or empty string if theme was not loaded or pressed Cancel
+ * \param sz is icon size
+ * \param ctx is icon context
+ */
+EDELIB_API String icon_chooser(IconSizes sz, IconContext ctx = ICON_CONTEXT_ANY);
 
 EDELIB_NS_END
 #endif // __ICONCHOOSER_H__

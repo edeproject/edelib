@@ -113,28 +113,27 @@ void Resource::clear(void) {
 
 #define FETCH_STR_RESOURCE(section, key, ret, size, rt, get_func)         \
 do {                                                                      \
-	if(!sys_conf && !user_conf) {                                         \
-		return false;                                                     \
-	}                                                                     \
 	switch(rt) {                                                          \
 		case RES_SYS_ONLY:                                                \
-			if(!sys_conf) {                                               \
-				return false;                                             \
-			}                                                             \
-			return sys_conf->get_func(section, key, ret, size);           \
+			if(sys_conf)                                                  \
+				return sys_conf->get_func(section, key, ret, size);       \
+			return false;                                                 \
 		case RES_USER_ONLY:                                               \
-			if(!user_conf) {                                              \
-				return false;                                             \
-			}                                                             \
-			return user_conf->get_func(section, key, ret, size);          \
+			if(user_conf)                                                 \
+				return user_conf->get_func(section, key, ret, size);      \
+			return false;                                                 \
 		case RES_SYS_FIRST:                                               \
 			if(sys_conf && sys_conf->get_func(section, key, ret, size))   \
 				return true;                                              \
-			return user_conf->get_func(section, key, ret, size);          \
+			if(user_conf && user_conf->get_func(section, key, ret, size)) \
+				return true;                                              \
+			return false;                                                 \
 		case RES_USER_FIRST:                                              \
 			if(user_conf && user_conf->get_func(section, key, ret, size)) \
 				return true;                                              \
-			return sys_conf->get_func(section, key, ret, size);           \
+			if(sys_conf && sys_conf->get_func(section, key, ret, size))   \
+				return true;                                              \
+			return false;                                                 \
 		default:                                                          \
 			EASSERT(0 && "Unknown resource type");                        \
 	}                                                                     \
@@ -158,32 +157,31 @@ bool Resource::get_allocated(const char* section, const char* key, char** ret, u
 
 #define FETCH_RESOURCE(section, key, ret, dfl, rt)                  \
 do {                                                                \
-	if(!sys_conf && !user_conf) {                                   \
-		ret = dfl;                                                  \
-		return false;                                               \
-	}                                                               \
-                                                                    \
 	switch(rt) {                                                    \
 		case RES_SYS_ONLY:                                          \
-			if(!sys_conf) {                                         \
-				ret = dfl;                                          \
-				return false;                                       \
-			}                                                       \
-			return sys_conf->get(section, key, ret, dfl);           \
+			if(sys_conf)                                            \
+				return sys_conf->get(section, key, ret, dfl);       \
+			ret = dfl;                                              \
+			return false;                                           \
 		case RES_USER_ONLY:                                         \
-			if(!user_conf) {                                        \
-				ret = dfl;                                          \
-				return false;                                       \
-			}                                                       \
-			return user_conf->get(section, key, ret, dfl);          \
+			if(user_conf)                                           \
+				return user_conf->get(section, key, ret, dfl);      \
+			ret = dfl;                                              \
+			return false;                                           \
 		case RES_SYS_FIRST:                                         \
 			if(sys_conf && sys_conf->get(section, key, ret, dfl))   \
 				return true;                                        \
-			return user_conf->get(section, key, ret, dfl);          \
+			if(user_conf && user_conf->get(section, key, ret, dfl)) \
+				return true;                                        \
+			ret = dfl;                                              \
+			return false;                                           \
 		case RES_USER_FIRST:                                        \
 			if(user_conf && user_conf->get(section, key, ret, dfl)) \
 				return true;                                        \
-			return sys_conf->get(section, key, ret, dfl);           \
+			if(sys_conf && sys_conf->get(section, key, ret, dfl))   \
+				return true;                                        \
+			ret = dfl;                                              \
+			return false;                                           \
 		default:                                                    \
 			EASSERT(0 && "Unknown resource type");                  \
 	}                                                               \

@@ -25,7 +25,7 @@ EDELIB_NS_BEGIN
 
 IconTheme* IconTheme::pinstance = NULL;
 
-typedef list<String> StringList;
+typedef list<String>                StringList;
 typedef list<String>::iterator      StringListIter;
 typedef list<IconDirInfo>::iterator DirListIter;
 
@@ -40,12 +40,18 @@ typedef list<IconDirInfo>::iterator DirListIter;
  * we do not support them for now
  */
 #define ICON_EXT_SIZE 2
-const char* icon_extensions[] = {
+static const char* icon_extensions[] = {
 	".png",
 	".xpm"
 };
 
-unsigned int it_do_hash(const char* key, int keylen) {
+static void append_to_list(StringList& from, StringList& to) {
+	StringListIter it = from.begin(), it_end = from.end();
+	for(; it != it_end; ++it)
+		to.push_back(*it);
+}
+
+static unsigned int do_hash(const char* key, int keylen) {
 	unsigned hash ;
 	int i;
 	for (i = 0, hash = 0; i < keylen ;i++) {
@@ -59,16 +65,16 @@ unsigned int it_do_hash(const char* key, int keylen) {
 	return hash ;
 }
 
-int check_sz(int sz) {
+static int check_sz(int sz) {
 	if(sz < ICON_SIZE_TINY || sz > ICON_SIZE_ENORMOUS) {
-		EWARNING(ESTRLOC ": Unsupported size '%i', defaulting to the 32x32\n", sz);
+		E_WARNING(E_STRLOC ": Unsupported size '%i', defaulting to the 32x32\n", sz);
 		return ICON_SIZE_MEDIUM;
 	}
 
 	return sz;
 }
 
-IconContext figure_ctx(const String& ctx) {
+static IconContext figure_ctx(const String& ctx) {
 	// mandatory ones
 	if(ctx == "Actions")
 		return ICON_CONTEXT_ACTION;
@@ -90,7 +96,7 @@ IconContext figure_ctx(const String& ctx) {
 	if(ctx == "Misc")
 		return ICON_CONTEXT_MISC;
 
-	EWARNING(ESTRLOC ": Unknown icon context '%s', defaulting to the ICON_CONTEXT_ANY\n", ctx.c_str());
+	E_WARNING(E_STRLOC ": Unknown icon context '%s', defaulting to the ICON_CONTEXT_ANY\n", ctx.c_str());
 	return ICON_CONTEXT_ANY;
 }
 
@@ -107,17 +113,17 @@ IconTheme::~IconTheme() {
 		delete icached[i];
 		icached[i] = NULL;
 	}
-	EDEBUG(ESTRLOC " : IconTheme::~IconTheme() cache dismiss\n");
+	E_DEBUG(E_STRLOC " : IconTheme::~IconTheme() cache dismiss\n");
 }
 
 void IconTheme::cache_append(const char* icon, IconSizes sz, IconContext ctx, const String& path) {
-	unsigned long hash = it_do_hash(icon, strlen(icon));
+	unsigned long hash = do_hash(icon, strlen(icon));
 	hash += sz;
 	hash += ctx;
 
 	if(cache_ptr == CACHED_ICONS_SIZE) {
 		cache_ptr = 0;
-		EDEBUG(ESTRLOC ": IconTheme cache rollower\n");
+		E_DEBUG(E_STRLOC ": IconTheme cache rollower\n");
 	}
 
 	if(icached[cache_ptr]) {
@@ -135,19 +141,19 @@ void IconTheme::cache_append(const char* icon, IconSizes sz, IconContext ctx, co
 }
 
 bool IconTheme::cache_lookup(const char* icon, IconSizes sz, IconContext ctx, String& ret) {
-	unsigned long hash = it_do_hash(icon, strlen(icon));
+	unsigned long hash = do_hash(icon, strlen(icon));
 	hash += sz;
 	hash += ctx;
 
 	for(int i = 0; i < cache_ptr && i < CACHED_ICONS_SIZE; i++) {
 		if(icached[i]->hash == hash && icached[i]->sz == sz && icached[i]->ctx == ctx) {
-			EDEBUG(ESTRLOC ": IconTheme::cache_lookup() : cache hit !\n");
+			E_DEBUG(E_STRLOC ": IconTheme::cache_lookup() : cache hit !\n");
 			ret = icached[i]->path;
 			return true;
 		}
 	}
 
-	EDEBUG(ESTRLOC ": IconTheme::cache_lookup() : cache miss !!!\n");
+	E_DEBUG(E_STRLOC ": IconTheme::cache_lookup() : cache miss !!!\n");
 	return false;
 }
 
@@ -186,7 +192,7 @@ void IconTheme::init(const char* theme) {
 	if(IconTheme::pinstance != NULL)
 		return;
 
-	EASSERT(theme != NULL);
+	E_ASSERT(theme != NULL);
 	IconTheme::pinstance = new IconTheme();
 
 	IconTheme::pinstance->init_base_dirs();
@@ -206,7 +212,7 @@ bool IconTheme::inited(void) {
 }
 
 IconTheme* IconTheme::instance(void) {
-	EASSERT(IconTheme::pinstance != NULL && "Did you run IconTheme::init() ?");
+	E_ASSERT(IconTheme::pinstance != NULL && "Did you run IconTheme::init() ?");
 	return IconTheme::pinstance;
 }
 
@@ -245,7 +251,7 @@ void IconTheme::load_theme(const char* theme) {
 					found = true;
 					break;
 				}
-				EDEBUG(ESTRLOC ": index.theme not found in %s, skipping...\n", ipath.c_str());
+				E_DEBUG(E_STRLOC ": index.theme not found in %s, skipping...\n", ipath.c_str());
 			}
 		}
 	}
@@ -260,7 +266,7 @@ void IconTheme::load_theme(const char* theme) {
 	 */
 	Config c;
 	if(!c.load(ipath.c_str())) {
-		EWARNING(ESTRLOC ": %s not accessible\n", ipath.c_str());
+		E_WARNING(E_STRLOC ": %s not accessible\n", ipath.c_str());
 		return;
 	}
 
@@ -268,11 +274,11 @@ void IconTheme::load_theme(const char* theme) {
 	unsigned int bufflen;
 
 	if(!c.get_allocated("Icon Theme", "Directories", &buffer, bufflen)) {
-		EWARNING(ESTRLOC ": bad: %s\n", c.strerror());
+		E_WARNING(E_STRLOC ": bad: %s\n", c.strerror());
 		return;
 	}
 
-	EASSERT(buffer != NULL);
+	E_ASSERT(buffer != NULL);
 
 	// used for Context/Inherits
 	char static_buffer[1024];
@@ -297,12 +303,12 @@ void IconTheme::load_theme(const char* theme) {
 	IconDirInfo dinfo;
 	for(StringListIter it = dl.begin(); it != dl.end(); ++it) {
 		if(!c.get((*it).c_str(), "Size", sz, 0))
-			EWARNING(ESTRLOC ": Bad entry '%s' in %s, skipping...\n", (*it).c_str(), ipath.c_str());
+			E_WARNING(E_STRLOC ": Bad entry '%s' in %s, skipping...\n", (*it).c_str(), ipath.c_str());
 
 		dinfo.size = check_sz(sz);
 
 		if(!c.get((*it).c_str(), "Context", static_buffer, sizeof(static_buffer)))
-			EWARNING(ESTRLOC ": Bad entry '%s' in %s, skipping...\n", (*it).c_str(), ipath.c_str());
+			E_WARNING(E_STRLOC ": Bad entry '%s' in %s, skipping...\n", (*it).c_str(), ipath.c_str());
 
 		dinfo.context = figure_ctx(static_buffer);
 
@@ -325,7 +331,7 @@ void IconTheme::load_theme(const char* theme) {
 	if(!c.get("Icon Theme", "Inherits", static_buffer, sizeof(static_buffer))) {
 		// prevent infinite recursion
 		if(!fvisited) {
-			EDEBUG(ESTRLOC ": No parents, going for '%s'\n", FALLBACK_THEME);
+			E_DEBUG(E_STRLOC ": No parents, going for '%s'\n", FALLBACK_THEME);
 			fvisited = true;
 			load_theme(FALLBACK_THEME);
 		}
@@ -336,7 +342,7 @@ void IconTheme::load_theme(const char* theme) {
 }
 
 void IconTheme::read_inherits(const char* buff) {
-	EASSERT(buff != NULL);
+	E_ASSERT(buff != NULL);
 	StringList parents;
 	stringtok(parents, buff, ",");
 
@@ -387,16 +393,42 @@ String IconTheme::lookup(const char* icon, IconSizes sz, IconContext ctx) {
 	return "";
 }
 
-String IconTheme::get(const char* icon, IconSizes sz, IconContext ctx) {
-	EASSERT(icon != NULL);
-	return IconTheme::instance()->lookup(icon, sz, ctx);
+void IconTheme::copy_known_icons(list<String>& lst, IconSizes sz, IconContext ctx) {
+	if(dirlist.size() == 0)
+		return;
+
+	String icon;
+	icon.reserve(50);
+
+	StringList content;
+
+	DirListIter it = dirlist.begin(), it_end = dirlist.end();
+	for(; it != it_end; ++it) {
+		if((*it).size == sz && ((*it).context == ctx || ctx == ICON_CONTEXT_ANY)) {
+			if(dir_list((*it).path.c_str(), content, true))
+				append_to_list(content, lst);
+		}
+	}
+}
+
+const String& IconTheme::theme_name(void) {
+	return IconTheme::instance()->current_theme_name();
 }
 
 void IconTheme::load(const char* theme) {
-	EASSERT(theme != NULL);
+	E_ASSERT(theme != NULL);
 
 	IconTheme::instance()->clear_data();
 	IconTheme::instance()->load_theme(theme);
+}
+
+String IconTheme::get(const char* icon, IconSizes sz, IconContext ctx) {
+	E_ASSERT(icon != NULL);
+	return IconTheme::instance()->lookup(icon, sz, ctx);
+}
+
+void IconTheme::get_all(list<String>& lst, IconSizes sz, IconContext ctx) {
+	return IconTheme::instance()->copy_known_icons(lst, sz, ctx);
 }
 
 EDELIB_NS_END
