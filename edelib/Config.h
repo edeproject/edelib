@@ -15,7 +15,6 @@
 
 #include "econfig.h"
 #include "List.h"
-
 #include <stdio.h>
 
 EDELIB_NS_BEGIN
@@ -34,18 +33,9 @@ enum ConfigErrors {
 	CONF_ERR_NOVALUE    ///< key found, but invalid value associated with it
 };
 
-#ifndef SKIP_DOCS
-struct ConfigEntry {
-	char* key;
-	char* value;
-	unsigned int keylen;
-	unsigned int valuelen;
-	unsigned int hash;
-};
-#endif
-
 class Config;
 class ConfigSection;
+class ConfigEntry;
 
 #ifndef SKIP_DOCS
 typedef list<ConfigEntry*> EntryList;
@@ -54,38 +44,6 @@ typedef list<ConfigEntry*>::iterator EntryListIter;
 typedef list<ConfigSection*> SectionList;
 typedef list<ConfigSection*>::iterator SectionListIter;
 #endif
-
-#ifndef SKIP_DOCS
-/**
- * \class ConfigSection
- * Section in config file.
- *
- * Section is a field in config file, containing
- * grouped data. 
- */
-class EDELIB_API ConfigSection {
-	private:
-		friend class Config;
-
-		char*  sname;
-		size_t snamelen;
-		unsigned shash;
-
-		EntryList entry_list;
-
-		ConfigSection(const ConfigSection&);
-		ConfigSection& operator=(ConfigSection&);
-
-		void add_entry(const char* key, const char* value);
-		void remove_entry(const char* key);
-		ConfigEntry* find_entry(const char* key);
-
-	public:
-		ConfigSection(const char* n);
-		~ConfigSection();
-};
-#endif
-
 
 /**
  * \class Config

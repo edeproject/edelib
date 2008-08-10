@@ -41,8 +41,37 @@
 
 #define EAT_SPACES(ptr) while(isspace(*ptr) && *ptr) ptr++
 
-
 EDELIB_NS_BEGIN
+
+struct ConfigEntry {
+	char* key;
+	char* value;
+	unsigned int keylen;
+	unsigned int valuelen;
+	unsigned int hash;
+};
+
+class ConfigSection {
+	private:
+		friend class Config;
+
+		char*  sname;
+		size_t snamelen;
+		unsigned shash;
+
+		EntryList entry_list;
+
+		ConfigSection(const ConfigSection&);
+		ConfigSection& operator=(ConfigSection&);
+
+		void add_entry(const char* key, const char* value);
+		void remove_entry(const char* key);
+		ConfigEntry* find_entry(const char* key);
+
+	public:
+		ConfigSection(const char* n);
+		~ConfigSection();
+};
 
 /*
  * Similar to fgets, but will expand buffer as needed. Actually

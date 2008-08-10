@@ -328,6 +328,12 @@ rule InstallDocumentation
 	MakeInstallPrivate $(<) : $(>) : $(FILEMODE) ;
 }
 
+# InstallFile <location-dir> : <file> ;
+rule InstallFile
+{
+	MakeInstallPrivate $(<) : $(>) : $(FILEMODE) ;
+}
+
 # InstallDirectory <location-dir> : <directory> ;
 rule InstallDirectory
 {
@@ -364,6 +370,8 @@ LocalClean distclean :
 	$(TOP)/aclocal.m4 
 	$(TOP)/Jamconfig 
 	$(TOP)/edelib-config
+	$(TOP)/edelib.pc
+	$(TOP)/edelib-dbus.pc
 	$(TOP)/config.log 
 	$(TOP)/config.status 
 	$(TOP)/edelib/_conf.h.in 

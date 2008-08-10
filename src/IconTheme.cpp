@@ -302,6 +302,9 @@ void IconTheme::load_theme(const char* theme) {
 	int sz = 0;
 	IconDirInfo dinfo;
 	for(StringListIter it = dl.begin(); it != dl.end(); ++it) {
+		// remove spaces
+		str_trim((char*)(*it).c_str());
+
 		if(!c.get((*it).c_str(), "Size", sz, 0))
 			E_WARNING(E_STRLOC ": Bad entry '%s' in %s, skipping...\n", (*it).c_str(), ipath.c_str());
 
@@ -343,11 +346,14 @@ void IconTheme::load_theme(const char* theme) {
 
 void IconTheme::read_inherits(const char* buff) {
 	E_ASSERT(buff != NULL);
+
 	StringList parents;
 	stringtok(parents, buff, ",");
 
 	for(StringListIter it = parents.begin(); it != parents.end(); ++it) { 
+		// remove spaces
 		str_trim((char*)(*it).c_str());
+
 		load_theme((*it).c_str());
 	}
 }

@@ -119,10 +119,9 @@ AC_OUTPUT([
 edelib/Version.h
 doc/Doxyfile
 Jamconfig
-edelib-config
+edelib.pc
+edelib-dbus.pc
 ])
-
-chmod +x edelib-config
 
 echo ""
 echo "Now run 'jam' or 'jam help' to see further options."

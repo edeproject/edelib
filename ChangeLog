@@ -1,8 +1,25 @@
-2008-08-7  Sanel <karijes@users.sourceforge.net>
+2008-08-10  Sanel <karijes@users.sourceforge.net>
+
+	* src/Resource.cpp: Some E_RETURN_VAL_IF_FAILED addition
+
+2008-08-09  Sanel <karijes@users.sourceforge.net>
+
+	* ConfigEntry and ConfigSection classes are moved to Config.cpp
+
+2008-08-08  Sanel <karijes@users.sourceforge.net>
+
+	* Added edelib.pc.in and edelib-dbus.pc.in for pkg-config, replacing
+	edelib-config which is pretty broken
+	* Modified Jamfile so above files gets installed and removed edelib-config
+	installing
+	* Trim blank characters from tokenized values in Directories key
+	(IconTheme)
+
+2008-08-07  Sanel <karijes@users.sourceforge.net>
 
 	* Added icon_chooser() that can use loaded icon theme
 
-2008-08-6  Sanel <karijes@users.sourceforge.net>
+2008-08-06  Sanel <karijes@users.sourceforge.net>
 
 	* Fixed a bug in Resource when malformed data is tried to be read
 	* Added test for that bug too
@@ -10,7 +27,7 @@
 	given size and context in current theme
 	* Also added theme_name() to get the name of currently used theme
 
-2008-08-2  Sanel <karijes@users.sourceforge.net>
+2008-08-02  Sanel <karijes@users.sourceforge.net>
 
 	* Added file_executable with tests
 	* EdbusConnection.cpp some debug output got newlines

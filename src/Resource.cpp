@@ -30,7 +30,7 @@ Resource::~Resource() {
 }
 
 bool Resource::load(const char* domain) {
-	EASSERT(domain != NULL);
+	E_ASSERT(domain != NULL);
 
 	clear();
 
@@ -84,10 +84,8 @@ bool Resource::load(const char* domain) {
 }
 
 bool Resource::save(const char* domain) {
-	EASSERT(domain != NULL);
-
-	if(!user_conf)
-		return false;
+	E_ASSERT(domain != NULL);
+	E_RETURN_VAL_IF_FAIL(user_conf != NULL, false);
 
 	String ufile = user_config_dir();
 	ufile += E_DIR_SEPARATOR;
@@ -95,10 +93,14 @@ bool Resource::save(const char* domain) {
 	ufile += ".conf";
 
 	// Create directory if necessary
-	String::size_type loc=0, loc2=0;
-	while ((loc2=ufile.find('/',loc+1)) != String::npos) loc=loc2; // find last slash
-	if (!dir_exists(ufile.substr(0,loc).c_str()))
-		dir_create_with_parents(ufile.substr(0,loc).c_str(), 0700); // default perms
+	String::size_type loc = 0, loc2 = 0;
+
+	// find last slash
+	while((loc2 = ufile.find('/', loc + 1)) != String::npos) 
+		loc = loc2;
+
+	if(!dir_exists(ufile.substr(0, loc).c_str()))
+		dir_create_with_parents(ufile.substr(0, loc).c_str(), 0700); // default perms
 
 	return user_conf->save(ufile.c_str());
 }
@@ -135,7 +137,7 @@ do {                                                                      \
 				return true;                                              \
 			return false;                                                 \
 		default:                                                          \
-			EASSERT(0 && "Unknown resource type");                        \
+			E_ASSERT(0 && "Unknown resource type");                        \
 	}                                                                     \
     /* never reached */                                                   \
 	return false;                                                         \
@@ -183,7 +185,7 @@ do {                                                                \
 			ret = dfl;                                              \
 			return false;                                           \
 		default:                                                    \
-			EASSERT(0 && "Unknown resource type");                  \
+			E_ASSERT(0 && "Unknown resource type");                  \
 	}                                                               \
     /* never reached */                                             \
 	return false;                                                   \

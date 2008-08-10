@@ -2,7 +2,7 @@
 # $Id$
 #
 # Part of edelib.
-# Copyright (c) 2005-2007 EDE Authors.
+# Copyright (c) 2005-2008 EDE Authors.
 #
 # This program is licenced under terms of the 
 # GNU General Public Licence version 2 or newer.
@@ -15,5 +15,6 @@ SubInclude TOP test ;
 SubInclude TOP doc ;
 SubInclude TOP tools ;
 
-InstallDirectory  [ FDirName $(includedir) ] : [ FDirName $(TOP) edelib ] ;
-InstallProgram    [ FDirName $(bindir) ]     : [ FFileName $(TOP) edelib-config ] ;
+InstallDirectory [ FDirName $(includedir) ] : [ FDirName $(TOP) edelib ] ;
+InstallFile      [ FDirName $(libdir) pkgconfig ] : [ FFileName $(TOP) edelib.pc ] ;
+InstallFile      [ FDirName $(libdir) pkgconfig ] : [ FFileName $(TOP) edelib-dbus.pc ] ;
