@@ -264,7 +264,7 @@ buggy buggy value = 3 \n\
 	UT_VERIFY( r.get("global", "buggy_buggy_value", ret, 3) == false );
 
 	file_remove(SAMPLE_USER_DIR"/foo.conf");
-	file_remove(SAMPLE_SYS_DIR"/foo.conf");
+	file_remove(SAMPLE_SYS_DIR"/foo-not-found.conf");
 	dir_remove(SAMPLE_SYS_DIR);
 	dir_remove(SAMPLE_USER_DIR);
 	dir_remove(SAMPLE_RES_DIR);

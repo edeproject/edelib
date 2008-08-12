@@ -1,6 +1,16 @@
+2008-08-11  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Nls.h, src/Nls.cpp: added set_locale_to_c() and set_locale_from_c()
+	* src/Config.cpp: replaced TODOs with above functions so locale specific
+	functions can query values expected for C locale
+	* src/Util.cpp: static-fied some internal functions
+	* test/resource.cpp: corrected file name to be removed
+
 2008-08-10  Sanel <karijes@users.sourceforge.net>
 
 	* src/Resource.cpp: Some E_RETURN_VAL_IF_FAILED addition
+	* configure.in: added AC_ARG_VAR() to display info for PKG_CONFIG and
+	PKG_CONFIG_PATH
 
 2008-08-09  Sanel <karijes@users.sourceforge.net>
 
@@ -10,8 +20,8 @@
 
 	* Added edelib.pc.in and edelib-dbus.pc.in for pkg-config, replacing
 	edelib-config which is pretty broken
-	* Modified Jamfile so above files gets installed and removed edelib-config
-	installing
+	* Modified Jamfile so above files gets installed and disabled installing
+	of edelib-config
 	* Trim blank characters from tokenized values in Directories key
 	(IconTheme)
 

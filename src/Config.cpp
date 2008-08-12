@@ -876,19 +876,23 @@ void Config::set(const char* section, const char* key, long value) {
 
 void Config::set(const char* section, const char* key, float value) {
 	ConfigSection* sc = add_section(section);
-	// TODO: set locale to C
+	char* locale = set_locale_to_c();
+
 	char tmp[32];
 	snprintf(tmp, sizeof(tmp)-1, "%g", value);
-	// TODO: restore locale from C
+
+	set_locale_from_c(locale);
 	sc->add_entry(key, tmp);
 }
 
 void Config::set(const char* section, const char* key, double value) {
 	ConfigSection* sc = add_section(section);
-	// TODO: set locale to C
+	char* locale = set_locale_to_c();
+
 	char tmp[32];
 	snprintf(tmp, sizeof(tmp)-1, "%g", value);
-	// TODO: restore locale from C
+
+	set_locale_from_c(locale);
 	sc->add_entry(key, tmp);
 }
 

@@ -27,6 +27,32 @@
 EDELIB_NS_BEGIN
 
 /**
+ * Forces current locale to be set to "C".
+ *
+ * The main intent for this function is to provide uniform data representation for some 
+ * functions across locales. For example, <i>strtod</i> or <i>printf</i> family depends on current locale and 
+ * if you want predictable behaviour or reading/writing across locales, the best way is to set "C" locale, call 
+ * this functions and restore previous locale.
+ *
+ * set_locale_to_c() will return information of current locale, which is allocated c-string. You should not
+ * free it, use set_locale_from_c(ret_value) instead, like:
+ * \code
+ *   char* loc = set_locale_to_c();
+ *   strtod(...)
+ *   set_locale_from_c(loc);
+ * \endcode
+ *
+ * \return old locale. It can return NULL if NLS is disabled; set_locale_from_c() will handle that too.
+ */
+EDELIB_API char* set_locale_to_c(void);
+
+/**
+ * Restore locale set with set_locale_to_c().
+ * \param old is previous locale retrieved with set_locale_to_c()
+ */
+EDELIB_API void set_locale_from_c(char* old);
+
+/**
  * Sets or retrieves the current message domain.
  *
  * A message domain is a set of translatable messages. Usually, every software package has its own

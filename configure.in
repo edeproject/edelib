@@ -85,6 +85,10 @@ EDELIB_SOUND
 EDELIB_MIME
 EDELIB_CHECK_DBUS
 
+AC_ARG_VAR([PKG_CONFIG], [pkg-config command])
+AC_ARG_VAR([PKG_CONFIG_PATH], [A directory with .pc files for pkg-config])
+
+
 if test -n "$OPTIMFLAGS"; then
 	ALLFLAGS="$ALLFLAGS $OPTIMFLAGS"
 else

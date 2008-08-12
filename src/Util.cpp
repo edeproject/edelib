@@ -25,7 +25,7 @@ EDELIB_NS_BEGIN
 typedef list<String> StringList;
 typedef list<String>::iterator StringListIter;
 
-String _config_get(const char* env, const char* fallback) {
+static String _config_get(const char* env, const char* fallback) {
 	int len = 0;
 	char* path = getenv(env);
 	if(!path)
@@ -66,7 +66,7 @@ bail:
 	return ret;
 }
 
-int _dirs_get(const char* env, const char* fallback, StringList& lst) {
+static int _dirs_get(const char* env, const char* fallback, StringList& lst) {
 	EASSERT(fallback != NULL);
 
 	char* path = getenv(env);
@@ -77,7 +77,7 @@ int _dirs_get(const char* env, const char* fallback, StringList& lst) {
 	return lst.size();
 }
 
-String _path_builder(const char* separator, bool ending, const char* p1, const char* p2 = NULL, const char* p3 = NULL) {
+static String _path_builder(const char* separator, bool ending, const char* p1, const char* p2 = NULL, const char* p3 = NULL) {
 	bool trailing = false;
 	int slen = strlen(separator);
 

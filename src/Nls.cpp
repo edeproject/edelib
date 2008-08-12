@@ -13,10 +13,29 @@
 #include <edelib/Nls.h>
 
 #ifdef USE_NLS
-	#include <locale.h>
+# include <locale.h>
+# include <string.h>
+# include <stdlib.h>
 #endif
 
 EDELIB_NS_BEGIN
+
+char* set_locale_to_c(void) {
+	char* old = NULL;
+#ifdef USE_NLS
+	char* loc = setlocale(LC_ALL, "");
+	old = loc ? strdup(loc) : strdup("C");
+	setlocale(LC_ALL, "C");
+#endif
+	return old;
+}
+
+void set_locale_from_c(char* old) {
+#ifdef USE_NLS
+	setlocale(LC_ALL, old);
+	free(old);
+#endif
+}
 
 const char* set_textdomain(const char* domain) {
 #ifdef USE_NLS
