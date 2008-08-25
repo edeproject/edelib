@@ -1,10 +1,43 @@
+2008-08-25  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Sound.h, src/Sound.cpp: removed
+	* src/Jamfile: dumped Sound.cpp
+	* Jamconfig.in, configure.in, test/xdg/Jamfile, test/Jamfile,
+	test/edelib-dbus-introspect/Jamfile: removed SOUND variable and substitute
+	variable
+	* configure.in: remove EDE_SOUND macro
+
+2008-08-24  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/DesktopFile.h, src/DesktopFile.cpp: added create_new()
+	for creating .desktop files from scratch or clearing currently hold data,
+	which was issue before. Also, some code clarifications with E_RETURN_XXX
+	functions.
+
+2008-08-23  Sanel <karijes@users.sourceforge.net>
+
+	* Jamrule: cleaned SymLink rule and SymLink1 action
+
+2008-08-22  Sanel <karijes@users.sourceforge.net>
+
+	* test/examples: moved in source root directory
+	* INSTALL: refreshing
+	* test/old: removed
+	* test/xdg: added; a directory where some XDG specifications are compared
+	with pyxdg for correctnes
+	* m4/libxpm.m4: added missing 'FLTKLIBS_FULL="$FLTKLIBS_FULL -lXpm"'
+	* Jamrule, Jamconfig.in: replaced libtool backed for shared library creating with handcoded
+	* Jamrule: InstallSharedLibrary will install library with .so.X.X.X
+	extension, not .so as before
+	* tools/edelib-dbus-introspect/Jamfile, test/xdg/Jamfile: let missing libraries 
+	be linked if shared library is requested
+
 2008-08-11  Sanel <karijes@users.sourceforge.net>
 
 	* edelib/Nls.h, src/Nls.cpp: added set_locale_to_c() and set_locale_from_c()
 	* src/Config.cpp: replaced TODOs with above functions so locale specific
 	functions can query values expected for C locale
 	* src/Util.cpp: static-fied some internal functions
-	* test/resource.cpp: corrected file name to be removed
 
 2008-08-10  Sanel <karijes@users.sourceforge.net>
 

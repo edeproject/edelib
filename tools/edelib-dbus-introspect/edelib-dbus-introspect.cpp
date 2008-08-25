@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <string.h>
-#include "EdbusConnection.h"
+#include <edelib/EdbusConnection.h>
 
 #define INTROSPECTABLE_INTERFACE "org.freedesktop.DBus.Introspectable"
 #define INTROSPECTABLE_METHOD    "Introspect"
+
+using namespace edelib;
 
 void help(void) {
 	puts("Usage: edelib-dbus-introspect [--system] <object-path> <destination>");

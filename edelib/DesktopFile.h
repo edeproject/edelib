@@ -53,6 +53,17 @@ enum DesktopFileType {
  * 1.0 with few exceptions (read, some sections are ignored). Those are:
  *   - StartupWMClass
  *   - Categories
+ *
+ * In case you want to create .desktop file from scratch, <em>make sure</em> you
+ * call create_new() before you fill the data, so DesktopFile can setup mandatory data prior file saving, like:
+ * \code
+ *   DesktopFile f;
+ *   f.create_new(DESK_FILE_TYPE_APPLICATION);
+ *   f.set_name("MyApp");
+ *   f.save("myapp.desktop");
+ * \endcode
+ *
+ * create_new() will also clear all current hold conten
  */
 
 class DesktopFile : public Config {
@@ -85,6 +96,11 @@ class DesktopFile : public Config {
 		 */
 		bool save(const char* fname);	
 
+		/**
+		 * Create new .desktop context. To create new .desktop file,
+		 * you must call this function first and then fill it
+		 */
+		void create_new(DesktopFileType t);
 
 		/**
 		 * Used to check if current loaded file is .desktop file. Can be used like:

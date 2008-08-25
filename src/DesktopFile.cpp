@@ -10,14 +10,14 @@
  * See COPYING for details.
  */
 
+#include <string.h> // strncmp, strncpy
+
 #include <edelib/DesktopFile.h>
 #include <edelib/File.h>
 #include <edelib/Debug.h>
 #include <edelib/StrUtil.h>
 
-#include <string.h> // strncmp, strncpy
-
-#define BUFF_SIZE 256
+#define BUFF_SIZE   256
 #define DENTRY_KEY  "Desktop Entry"
 
 EDELIB_NS_BEGIN
@@ -29,7 +29,7 @@ DesktopFile::~DesktopFile() {
 }
 
 bool DesktopFile::load(const char* fname) {
-	EASSERT(fname != NULL);
+	E_ASSERT(fname != NULL);
 
 	if(!Config::load(fname)) {
 		errcode = DESK_FILE_ERR_BAD;
@@ -61,22 +61,42 @@ bool DesktopFile::load(const char* fname) {
 }
 
 bool DesktopFile::save(const char* fname) {
-	EASSERT(fname != NULL);
-
-	if(errcode != DESK_FILE_SUCCESS && errcode != DESK_FILE_EMPTY)
-		return false;
+	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS /* || errcode == DESK_FILE_EMPTY */, false);
 	return Config::save(fname);
 }
 
+void DesktopFile::create_new(DesktopFileType t) {
+	clear();
+	dtype = t;
+	const char* val;
+
+	switch(dtype) {
+		case DESK_FILE_TYPE_APPLICATION:
+			val = "Application";
+			break;
+		case DESK_FILE_TYPE_LINK:
+			val = "Link";
+			break;
+		case DESK_FILE_TYPE_DIRECTORY:
+			val = "Directory";
+		default:
+			E_ASSERT(0 && "Feeding me with invalid type value! Make sure type is application, link or directory");
+	}
+
+	Config::set(DENTRY_KEY, "Type", val);
+
+	// now mark it as valid
+	errcode = DESK_FILE_SUCCESS;
+}
+
 DesktopFileType DesktopFile::type(void) {
-	if(errcode != DESK_FILE_SUCCESS)
-		return DESK_FILE_TYPE_UNKNOWN;
+	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, DESK_FILE_TYPE_UNKNOWN);
 	return dtype;
 }
 
 bool DesktopFile::name(char* val, int len) {
-	if(errcode != DESK_FILE_SUCCESS)
-		return false;
+	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, false);
+
 	// TODO: Name key is required too; place it next to Type
 	if(!Config::get_localized(DENTRY_KEY, "Name", val, len))
 		return false;
@@ -84,40 +104,39 @@ bool DesktopFile::name(char* val, int len) {
 }
 
 bool DesktopFile::generic_name(char* val, int len) {
-	if(errcode != DESK_FILE_SUCCESS)
-		return false;
+	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, false);
+
 	if(!Config::get_localized(DENTRY_KEY, "GenericName", val, len))
 		return false;
 	return true;
 }
 
 bool DesktopFile::comment(char* val, int len) {
-	if(errcode != DESK_FILE_SUCCESS)
-		return false;
+	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, false);
+
 	if(!Config::get_localized(DENTRY_KEY, "Comment", val, len))
 		return false;
 	return true;
 }
 
 bool DesktopFile::icon(char* val, int len) {
-	if(errcode != DESK_FILE_SUCCESS)
-		return false;
+	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, false);
+
 	if(!Config::get_localized(DENTRY_KEY, "Icon", val, len))
 		return false;
 	return true;
 }
 
 bool DesktopFile::exec(char* val, int len) {
-	if(errcode != DESK_FILE_SUCCESS)
-		return false;
+	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, false);
+
 	if(!Config::get(DENTRY_KEY, "Exec", val, len))
 		return false;
 	return true;
 }
 
 bool DesktopFile::try_exec(char* val, int len) {
-	if(errcode != DESK_FILE_SUCCESS)
-		return false;
+	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, false);
 
 	char* buff = new char[256];
 
@@ -139,10 +158,8 @@ bool DesktopFile::try_exec(char* val, int len) {
 }
 
 bool DesktopFile::path(char* val, int len) {
-	if(errcode != DESK_FILE_SUCCESS)
-		return false;
-	if(dtype != DESK_FILE_TYPE_APPLICATION)
-		return false;
+	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, false);
+	E_RETURN_VAL_IF_FAIL(dtype == DESK_FILE_TYPE_APPLICATION, false);
 
 	if(!Config::get(DENTRY_KEY, "Path", val, len))
 		return false;
@@ -150,10 +167,8 @@ bool DesktopFile::path(char* val, int len) {
 }
 
 bool DesktopFile::url(char* val, int len) {
-	if(errcode != DESK_FILE_SUCCESS)
-		return false;
-	if(dtype != DESK_FILE_TYPE_LINK)
-		return false;
+	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, false);
+	E_RETURN_VAL_IF_FAIL(dtype == DESK_FILE_TYPE_LINK, false);
 
 	if(!Config::get(DENTRY_KEY, "URL", val, len))
 		return false;
@@ -161,16 +176,15 @@ bool DesktopFile::url(char* val, int len) {
 }
 
 bool DesktopFile::mime_type(char* val, int len) {
-	if(errcode != DESK_FILE_SUCCESS)
-		return false;
+	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, false);
+
 	if(!Config::get(DENTRY_KEY, "MimeType", val, len))
 		return false;
 	return true;
 }
 
 bool DesktopFile::no_display(void) {
-	if(errcode != DESK_FILE_SUCCESS)
-		return false;
+	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, false);
 
 	bool ret;
 	Config::get(DENTRY_KEY, "NoDisplay", ret, false);
@@ -178,8 +192,7 @@ bool DesktopFile::no_display(void) {
 }
 
 bool DesktopFile::hidden(void) {
-	if(errcode != DESK_FILE_SUCCESS)
-		return false;
+	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, false);
 
 	bool ret;
 	Config::get(DENTRY_KEY, "Hidden", ret, false);
@@ -187,8 +200,7 @@ bool DesktopFile::hidden(void) {
 }
 
 bool DesktopFile::terminal(void) {
-	if(errcode != DESK_FILE_SUCCESS)
-		return false;
+	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, false);
 
 	bool ret;
 	Config::get(DENTRY_KEY, "Terminal", ret, false);
@@ -196,8 +208,7 @@ bool DesktopFile::terminal(void) {
 }
 
 bool DesktopFile::startup_notify(void) {
-	if(errcode != DESK_FILE_SUCCESS)
-		return false;
+	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, false);
 
 	bool ret;
 	Config::get(DENTRY_KEY, "StartupNotify", ret, false);
@@ -205,16 +216,15 @@ bool DesktopFile::startup_notify(void) {
 }
 
 bool DesktopFile::only_show_in(char* val, int len) {
-	if(errcode != DESK_FILE_SUCCESS)
-		return false;
+	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, false);
+
 	if(!Config::get(DENTRY_KEY, "OnlyShowIn", val, len))
 		return false;
 	return true;
 }
 
 bool DesktopFile::only_show_in(list<String>& lst) {
-	if(errcode != DESK_FILE_SUCCESS)
-		return false;
+	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, false);
 
 	char buff[256];
 	if(!Config::get(DENTRY_KEY, "OnlyShowIn", buff, sizeof(buff)-1))
@@ -225,16 +235,15 @@ bool DesktopFile::only_show_in(list<String>& lst) {
 }
 
 bool DesktopFile::not_show_in(char* val, int len) {
-	if(errcode != DESK_FILE_SUCCESS)
-		return false;
+	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, false);
+
 	if(!Config::get(DENTRY_KEY, "NotShowIn", val, len))
 		return false;
 	return true;
 }
 
 bool DesktopFile::not_show_in(list<String>& lst) {
-	if(errcode != DESK_FILE_SUCCESS)
-		return false;
+	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, false);
 
 	char buff[256];
 	if(!Config::get(DENTRY_KEY, "NotShowIn", buff, sizeof(buff)-1))
@@ -245,8 +254,7 @@ bool DesktopFile::not_show_in(list<String>& lst) {
 }
 
 void DesktopFile::set_type(DesktopFileType t) {
-	if(errcode != DESK_FILE_SUCCESS && errcode != DESK_FILE_EMPTY)
-		return;
+	E_RETURN_IF_FAIL(errcode == DESK_FILE_SUCCESS || errcode == DESK_FILE_EMPTY);
 
 	const char* val = 0;
 	switch(t) {
@@ -260,8 +268,7 @@ void DesktopFile::set_type(DesktopFileType t) {
 			val = "Directory";
 			break;
 		default:
-			// what to do ???
-			EASSERT(0 && "Feeding me with bad DesktopFileType value! Now you got it >:D");
+			E_ASSERT(0 && "Feeding me with invalid type value! Make sure type is application, link or directory");
 			break;
 	}
 
@@ -269,8 +276,7 @@ void DesktopFile::set_type(DesktopFileType t) {
 }
 
 #define SET_LOCALIZED(key, val) \
-	if(errcode != DESK_FILE_SUCCESS && errcode != DESK_FILE_EMPTY) \
-		return; \
+	E_RETURN_IF_FAIL(errcode == DESK_FILE_SUCCESS || errcode == DESK_FILE_EMPTY); \
 	Config::set_localized(DENTRY_KEY, key, val)
 
 void DesktopFile::set_name(const char* val) {
@@ -290,8 +296,7 @@ void DesktopFile::set_icon(const char* val) {
 }
 
 #define SET_KEY(key, val) \
-	if(errcode != DESK_FILE_SUCCESS && errcode != DESK_FILE_EMPTY) \
-		return; \
+	E_RETURN_IF_FAIL(errcode == DESK_FILE_SUCCESS || errcode == DESK_FILE_EMPTY); \
 	Config::set(DENTRY_KEY, key, val)
 
 void DesktopFile::set_exec(const char* val) {

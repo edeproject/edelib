@@ -1,0 +1,19 @@
+#
+# $Id$
+#
+# Part of edelib.
+# Copyright (c) 2005-2007 EDE Authors.
+#
+# This program is licenced under terms of the 
+# GNU General Public Licence version 2 or newer.
+# See COPYING for details.
+#
+
+SubDir TOP test xdg ;
+
+# shared library requires linkage with FLTK and sound libraries
+if $(SHARED) {
+	ADDONLIB = $(FLTKLIBS_FULL) ;
+}
+
+MakeTest icon-theme : icon-theme.cpp : $(ADDONLIB) ;

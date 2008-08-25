@@ -27,6 +27,7 @@ AC_DEFUN([EDELIB_CHECK_LIBXPM], [
 		AC_DEFINE(HAVE_LIBXPM, 1, [Define to 1 if you have libXpm])
 		AC_MSG_RESULT(yes)
 		FLTKLIBS="$FLTKLIBS -lXpm"
+		FLTKLIBS_FULL="$FLTKLIBS_FULL -lXpm"
 	else
 		AC_MSG_RESULT(no)
 	fi

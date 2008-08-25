@@ -28,7 +28,7 @@ DOXYGEN     ?= "@DOXYGEN@" ;
 XGETTEXT    ?= "@XGETTEXT@" ;
 MSGFMT      ?= "@MSGFMT@" ;
 SED         ?= "@SED@" ;
-LIBTOOL     ?= "@LIBTOOL@" ;
+#LIBTOOL     ?= "@LIBTOOL@" ;
 
 # for fltk and X11
 FLTKFLAGS      ?= "@FLTKFLAGS@" ;
@@ -37,9 +37,6 @@ FLTKLIBS_FULL  ?= "@FLTKLIBS_FULL@" ;
 
 # build options
 ALLFLAGS  ?= "@ALLFLAGS@ @FLTKFLAGS@" ;
-
-# sound
-SOUNDLIBS ?= "@SOUNDLIBS@" ;
 
 # dbus
 DBUSFLAGS ?= "@DBUS_CFLAGS@" ;

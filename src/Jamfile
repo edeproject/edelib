@@ -34,7 +34,6 @@ SOURCE =
 	DateTime.cpp
 	Directory.cpp
 	Debug.cpp 
-	Sound.cpp 
 	IconTheme.cpp 
 	Color.cpp 
 	Run.cpp 

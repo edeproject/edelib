@@ -11,9 +11,9 @@
 
 SubDir TOP test ;
 
-# shared library requires linkage with FLTK and sound libraries
+# shared library requires linkage with FLTK
 if $(SHARED) {
-	ADDONLIB = $(FLTKLIBS_FULL) $(SOUNDLIBS) ;
+	ADDONLIB = $(FLTKLIBS_FULL) ;
 }
 
 TEST_FILES = 
@@ -47,10 +47,9 @@ if $(FLTKLIBS_FULL) {
 }
 
 MakeTest run_tests : $(TEST_FILES) : $(ADDONLIB) : "use-dbus" ;
-#MakeTest perf/stringtok : perf/stringtok.cpp perf/strsplit.cpp ;
-
 LocalClean clean : [ FFileName $(TOP) test .foo.txt ] ;
 LocalClean clean : [ FFileName $(TOP) test .ede.conf ] ;
 
-# include examples directory
-SubInclude TOP test examples ;
+#MakeTest perf/stringtok : perf/stringtok.cpp perf/strsplit.cpp ;
+
+SubInclude TOP test xdg ;
