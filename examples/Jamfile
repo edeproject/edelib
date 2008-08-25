@@ -9,7 +9,7 @@
 # See COPYING for details.
 #
 
-SubDir TOP test examples ;
+SubDir TOP examples ;
 
 ADDONLIB = ;
 
