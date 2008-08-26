@@ -2,6 +2,7 @@
 
 	* src/Config.cpp: s/EASSERT/E_ASSERT; save() will not leave blank line at 
 	the end of file; refactored some pieces
+	* examples/combobox.cpp: removed; very old code
 
 2008-08-25  Sanel <karijes@users.sourceforge.net>
 
