@@ -1,3 +1,8 @@
+2008-08-26  Sanel <karijes@users.sourceforge.net>
+
+	* src/Config.cpp: s/EASSERT/E_ASSERT; save() will not leave blank line at 
+	the end of file; refactored some pieces
+
 2008-08-25  Sanel <karijes@users.sourceforge.net>
 
 	* edelib/Sound.h, src/Sound.cpp: removed
@@ -6,6 +11,13 @@
 	test/edelib-dbus-introspect/Jamfile: removed SOUND variable and substitute
 	variable
 	* configure.in: remove EDE_SOUND macro
+	* m4/initjamfile.m4: replaced with modified version from ede2 module
+	* configure.in: EDELIB_INIT_JAM moved at the end (before substitutions)
+	so in case values are changed in configure.in, it can catch them
+	* tools/install-sh: removed
+	* configure.in: removed needs for install-sh and AC_PROG_INSTALL, edelib
+	is installed via jam facility; also removed clearing multiple ending
+	slashes in $prefix since m4/initjamfile.m4 already have code doing that
 
 2008-08-24  Sanel <karijes@users.sourceforge.net>
 

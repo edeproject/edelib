@@ -25,11 +25,7 @@ EDELIB_MINOR_VERSION=edelib_minor_version
 EDELIB_PATCH_VERSION=edelib_patch_version
 EDELIB_API_VERSION=$PACKAGE_VERSION
 
-dnl some systems (guess, OpenBSD) ships ginstall as separate
-dnl package, and if AC_PROG_INSTALL can't find it, it will fallback to
-dnl install-sh which is placed in tools directory; also, jam will 
-dnl require full path to it, so we pwd-it
-AC_CONFIG_AUX_DIRS(`pwd`/tools)
+dnl AC_CONFIG_AUX_DIRS(`pwd`/tools)
 
 dnl startup variables
 EDELIB_FLAGS="-Wall -pedantic"
@@ -44,11 +40,7 @@ dnl clear these since configure set it '-g -O2' by default
 CFLAGS=
 CXXFLAGS=
 
-dnl clear 'prefix' from possible ending slashes
-prefix=`echo $prefix | sed -e 's/\/\+$//g'`
-
 AC_PROG_CXX
-AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PATH_PROG(SED, sed)
 AC_PATH_PROG(MSGFMT, msgfmt)
@@ -56,10 +48,6 @@ AC_PATH_PROG(XGETTEXT, xgettext)
 AC_PATH_PROG(DOXYGEN, doxygen)
 
 EDELIB_PROG_JAM
-
-dnl call this quickly as possible so underlying scripts 
-dnl can change make-like variables to jam-like
-EDELIB_INIT_JAM
 
 dnl basic headers
 AC_HEADER_STDC
@@ -99,6 +87,8 @@ CFLAGS="$CFLAGS $ALLFLAGS $FLTKFLAGS $DSOFLAGS"
 CXXFLAGS="$CXXFLAGS $ALLFLAGS $FLTKFLAGS $DSOFLAGS"
 LDFLAGS="$LDFLAGS"
 LDLIBS="$LDLIBS"
+
+EDELIB_INIT_JAM
 
 AC_SUBST(EDELIB_MAJOR_VERSION)
 AC_SUBST(EDELIB_MINOR_VERSION)

@@ -248,7 +248,7 @@ static bool scan_keyvalues(char* line, char* key, char* val, int linesz, int key
  * ConfigSection methods
  */
 ConfigSection::ConfigSection(const char* n) {
-	EASSERT(n != NULL);
+	E_ASSERT(n != NULL);
 
 	snamelen = strlen(n);
 	sname = strdup(n);
@@ -277,8 +277,8 @@ ConfigSection::~ConfigSection() {
  * we do, just update value
  */
 void ConfigSection::add_entry(const char* key, const char* value) {
-	EASSERT(key != NULL);
-	EASSERT(value != NULL);
+	E_ASSERT(key != NULL);
+	E_ASSERT(value != NULL);
 
 	ConfigEntry* e = find_entry(key);
 	if (!e) {
@@ -290,8 +290,8 @@ void ConfigSection::add_entry(const char* key, const char* value) {
 		// hash the key
 		e->hash = do_hash(e->key, e->keylen);
 
-		EASSERT(e->key != NULL);
-		EASSERT(e->value != NULL);
+		E_ASSERT(e->key != NULL);
+		E_ASSERT(e->value != NULL);
 #ifdef CONFIG_INTERNAL
 		printf("Adding: |%s| = |%s| hash = %i section = %s\n", e->key, e->value, e->hash, sname);
 #endif
@@ -303,12 +303,12 @@ void ConfigSection::add_entry(const char* key, const char* value) {
 		free(e->value);
 		e->valuelen = strlen(value);
 		e->value = strdup(value);
-		EASSERT(e->value != NULL);
+		E_ASSERT(e->value != NULL);
 	}
 }
 
 void ConfigSection::remove_entry(const char* key) {
-	EASSERT(key != NULL);
+	E_ASSERT(key != NULL);
 
 	int klen = strlen(key);
 	unsigned int hh = do_hash(key, klen);
@@ -322,13 +322,13 @@ void ConfigSection::remove_entry(const char* key) {
 }
 
 ConfigEntry* ConfigSection::find_entry(const char* key) {
-	EASSERT(key != NULL);
+	E_ASSERT(key != NULL);
 
 	int klen = strlen(key);
 	unsigned int hh = do_hash(key, klen);
-	EntryListIter it = entry_list.begin();
+	EntryListIter it = entry_list.begin(), it_end = entry_list.end();
 
-	for (; it != entry_list.end(); ++it) {
+	for (; it != it_end; ++it) {
 		ConfigEntry* e = *it;
 		if (hh == e->hash && strncmp(e->key, key, e->keylen) == 0)
 			return e;
@@ -346,7 +346,7 @@ Config::~Config() {
 }
 
 bool Config::load(const char* fname) {
-	EASSERT(fname != NULL);
+	E_ASSERT(fname != NULL);
 
 	clear();
 
@@ -451,7 +451,7 @@ bool Config::load(const char* fname) {
 				break;
 			}
 
-			EASSERT(tsect != NULL && "Entry without a section ?!");
+			E_ASSERT(tsect != NULL && "Entry without a section ?!");
 			tsect->add_entry(keybuff, valbuff);
 		}
 	}
@@ -466,7 +466,8 @@ bool Config::load(const char* fname) {
 }
 
 bool Config::save(const char* fname) {
-	EASSERT(fname != NULL);
+	E_ASSERT(fname != NULL);
+
 #ifdef CONFIG_USE_STDIO
 	FILE* f = fopen(fname, "w");
 	if (!f) {
@@ -481,27 +482,32 @@ bool Config::save(const char* fname) {
 	}
 #endif
 
-	SectionListIter sit = section_list.begin();
+	SectionListIter sit = section_list.begin(), sit_end = section_list.end();
+	unsigned int sz = section_list.size();
 	EntryListIter eit;
 
 #ifdef CONFIG_USE_STDIO
-	for (; sit != section_list.end(); ++sit) {
+	for (; sit != sit_end; ++sit, --sz) {
 		fprintf(f, "[%s]\n", (*sit)->sname);
 
 		for (eit = (*sit)->entry_list.begin(); eit != (*sit)->entry_list.end(); ++eit)
 			fprintf(f, "%s=%s\n", (*eit)->key, (*eit)->value);
 
-		fprintf(f, "\n");
+		// prevent unneeded newline at the end of file
+		if(sz != 1)
+			fprintf(f, "\n");
 	}
 	fclose(f);
 #else
-	for (; sit != section_list.end(); ++sit) {
+	for (; sit != sit_end; ++sit, --sz) {
 		f.printf("[%s]\n", (*sit)->sname);
 
 		for (eit = (*sit)->entry_list.begin(); eit != (*sit)->entry_list.end(); ++eit)
 			f.printf("%s=%s\n", (*eit)->key, (*eit)->value);
 
-		f.printf("\n");
+		// prevent unneeded newline at the end of file
+		if(sz != 1)
+			f.printf("\n");
 	}
 #endif
 	return true;
@@ -512,7 +518,7 @@ bool Config::save(const char* fname) {
  * return that one.
  */
 ConfigSection* Config::add_section(const char* section) {
-	EASSERT(section != NULL);
+	E_ASSERT(section != NULL);
 
 	ConfigSection* sc = find_section(section);
 	if (!sc) {
@@ -531,7 +537,7 @@ ConfigSection* Config::add_section(const char* section) {
  * return it. Otherwise, return NULL.
  */
 ConfigSection* Config::find_section(const char* section) {
-	EASSERT(section != NULL);
+	E_ASSERT(section != NULL);
 	int slen = strlen(section);
 	unsigned int hh = do_hash(section, slen);
 
@@ -543,8 +549,8 @@ ConfigSection* Config::find_section(const char* section) {
 		return cached;
 	}
 
-	SectionListIter it = section_list.begin();
-	for (; it != section_list.end(); ++it) {
+	SectionListIter it = section_list.begin(), it_end = section_list.end();
+	for (; it != it_end; ++it) {
 		ConfigSection *cs = *it;
 		if (cs->shash == hh && (strncmp(cs->sname, section, cs->snamelen) == 0)) {
 #ifdef CONFIG_INTERNAL
@@ -558,8 +564,8 @@ ConfigSection* Config::find_section(const char* section) {
 }
 
 void Config::clear(void) {
-	SectionListIter it = section_list.begin();
-	for (; it != section_list.end(); ++it)
+	SectionListIter it = section_list.begin(), it_end = section_list.end();
+	for (; it != it_end; ++it)
 		delete *it;
 	section_list.clear();
 
