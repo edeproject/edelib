@@ -1,3 +1,36 @@
+2008-08-31  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/econfig.h: s/EDELIB_NAMESPACE_USE/EDELIB_NS_USE; removed unused
+	EDELIB_NAMESPACE macro
+	* test/strutil.cpp: removed unneeded stdio.h inclusion
+	* examples/xsettings_setter.cpp, 
+	examples/xsettings_client.cpp, 
+	examples/font_chooser.cpp, 
+	examples/efile.cpp, 
+	examples/elinks.cpp, 
+	test/xdg/icon-theme.cpp, 
+	test/perf/stringtok.cpp, 
+	test/color.cpp, 
+	test/list.cpp, 
+	test/xml.cpp, 
+	test/resource.cpp, 
+	test/directory.cpp, 
+	test/desktopfile.cpp, 
+	test/dbus.cpp, 
+	test/file.cpp, 
+	test/string.cpp, 
+	test/conf.cpp, 
+	test/mime.cpp, 
+	test/strutil.cpp, 
+	test/xsettings.cpp, 
+	test/regex.cpp, 
+	test/datetime.cpp, 
+	test/util.cpp, 
+	tools/edelib-dbus-introspect/edelib-dbus-introspect.cpp: 
+	s/using namespace edelib/EDELIB_NS_USE
+	* src/IconChooser.cpp: icons will have label and tooltip
+	* src/ExpandableGroup.cpp: let vscroll_cb() be static
+
 2008-08-26  Sanel <karijes@users.sourceforge.net>
 
 	* src/Config.cpp: s/EASSERT/E_ASSERT; save() will not leave blank line at 

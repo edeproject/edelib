@@ -3,13 +3,10 @@
 #include <string.h>
 #include "UnitTest.h"
 
-using namespace edelib;
+EDELIB_NS_USE;
 
 #define CCHARP(str)           ((const char*)str)
-
 #define STR_EQUAL(str1, str2) (strcmp(CCHARP(str1), CCHARP(str2)) == 0)
-
-#include <stdio.h>
 
 UT_FUNC(strtest, "Test strutil")
 {

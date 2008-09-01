@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <string.h>
 
-using namespace edelib;
+EDELIB_NS_USE;
 
 int main(int argc, char** argv) {
 	if(argc < 2) {

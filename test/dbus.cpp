@@ -10,7 +10,7 @@
 #define CCHARP(str)           ((const char*)str)
 #define STR_EQUAL(str1, str2) (strcmp(CCHARP(str1), CCHARP(str2)) == 0)
 
-using namespace edelib;
+EDELIB_NS_USE;
 
 UT_FUNC(TestEdbusData, "Test EdbusData")
 {

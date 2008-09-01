@@ -5,7 +5,7 @@
 #define INTROSPECTABLE_INTERFACE "org.freedesktop.DBus.Introspectable"
 #define INTROSPECTABLE_METHOD    "Introspect"
 
-using namespace edelib;
+EDELIB_NS_USE;
 
 void help(void) {
 	puts("Usage: edelib-dbus-introspect [--system] <object-path> <destination>");

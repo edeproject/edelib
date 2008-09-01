@@ -2,7 +2,7 @@
 #include "UnitTest.h"
 #include <stdio.h>
 
-using namespace edelib;
+EDELIB_NS_USE;
 
 UT_FUNC(RegexMatchTest, "Test regex match")
 {

@@ -2,7 +2,7 @@
 #include <edelib/File.h>
 #include "UnitTest.h"
 
-using namespace edelib;
+EDELIB_NS_USE;
 
 UT_FUNC(DirectoryFunctions, "Test Directory functions")
 {

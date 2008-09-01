@@ -3,7 +3,7 @@
  *
  * Icon choose dialog
  * Part of edelib.
- * Copyright (c) 2000-2007 EDE Authors.
+ * Copyright (c) 2000-2008 EDE Authors.
  *
  * This program is licenced under terms of the
  * GNU General Public Licence version 2 or newer.
@@ -27,11 +27,13 @@
 #include <FL/Fl_Group.h>
 #include <FL/Fl_File_Chooser.h>
 #include <FL/Fl_Progress.h>
+#include <FL/fl_draw.h>
 
-// maximums for icon sizes
+// max icon sizes
 #define MAX_ICON_W  128
 #define MAX_ICON_H  128
 
+#undef MAX
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
 EDELIB_NS_BEGIN
@@ -41,13 +43,16 @@ class IconBox : public Fl_Button {
 		bool sel;
 		Fl_Color corig;
 		String iconpth;
+		char* iconname;
 	public:
 		IconBox(int x, int y, int w, int h, const char* l=0);
 		~IconBox();
-		int handle(int event);
-		void set_icon_path(const String& s) { iconpth.assign(s); }
+
+		void set_icon_path(const String& s);
 		const String& icon_path(void) const { return iconpth; }
 		bool selected(void) { return sel; }
+
+		int handle(int event);
 };
 
 IconBox::IconBox(int x, int y, int w, int h, const char* l) : Fl_Button(x, y, w, h, l) {
@@ -55,9 +60,52 @@ IconBox::IconBox(int x, int y, int w, int h, const char* l) : Fl_Button(x, y, w,
 	corig = color();
 	iconpth = "";
 	sel = false;
+	iconname = NULL;
 }
 
-IconBox::~IconBox() { }
+IconBox::~IconBox() { 
+	free(iconname);
+}
+
+void IconBox::set_icon_path(const String& s) {
+	char* ptr;
+	int W = 0, H = 0, len;
+
+	iconpth.assign(s);
+
+	// get basename without extension
+	ptr = strrchr(s.c_str(), E_DIR_SEPARATOR);
+	if(ptr) {
+		ptr += 1;
+		char* ptr2 = strrchr(ptr, '.');
+		if(ptr2)
+			*ptr2 = '\0';
+	} else {
+		ptr = _("(unknown)");
+	}
+
+	iconname = strdup(ptr);
+	len = strlen(iconname);
+
+	fl_measure(iconname, W, H);
+
+	if(W > w() && len > 10) {
+		// copy as label so we can modify it
+		copy_label(iconname);
+		ptr = (char*)(label() + 10);
+
+		// end label string with '...'
+		*ptr = '\0';
+		*(ptr - 1) = '.';
+		*(ptr - 2) = '.';
+		*(ptr - 3) = '.';
+	} else {
+		label(iconname);
+	}
+
+	align(FL_ALIGN_INSIDE);
+	tooltip(iconname);
+}
 
 /*
  * FIXME: icon will loose focus if is selected
@@ -174,7 +222,7 @@ IconChooser::IconChooser() : Fl_Window(355, 305, _("Choose icon...")), ret("") {
 IconChooser::~IconChooser() { }
 
 void IconChooser::load(const char* dir) {
-	EASSERT(dir != NULL);
+	E_ASSERT(dir != NULL);
 	/*
 	 * copy directory name to input box and internal String 
 	 * so it can be reused later
@@ -248,6 +296,16 @@ void IconChooser::load_from_list(list<String>& lst) {
 		progress->show();
 	}
 
+	if(imax_w < 64) 
+		imax_w = 64;
+	else
+		imax_w += 10;
+
+	if(imax_h < 64) 
+		imax_h = 64;
+	else
+		imax_h += 10;
+
 	imax_w += 5;
 	imax_h += 5;
 
@@ -283,7 +341,6 @@ void IconChooser::load_from_list(list<String>& lst) {
 	}
 
 	progress->hide();
-
 	delete [] lst_info;
 }
 

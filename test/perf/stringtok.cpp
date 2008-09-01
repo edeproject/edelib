@@ -11,10 +11,9 @@
 #include "timer.hpp"
 #include "strsplit.h"
 
-
 #define WHAT "</"
 
-using namespace edelib;
+EDELIB_NS_USE;
 
 void test_vector(const char* txt) {
 	boost::timer tim;

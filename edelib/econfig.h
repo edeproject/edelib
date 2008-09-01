@@ -26,9 +26,7 @@
 #endif
 
 #define EDELIB_NS edelib
-#define EDELIB_NAMESPACE     namespace EDELIB_NS
-#define EDELIB_NAMESPACE_USE using namespace EDELIB_NS
-
+#define EDELIB_NS_USE using namespace EDELIB_NS
 #define EDELIB_NS_BEGIN namespace EDELIB_NS {
 #define EDELIB_NS_END   }
 

@@ -7,7 +7,7 @@
 #include <edelib/Regex.h>
 #include <stdio.h>
 
-using namespace edelib;
+EDELIB_NS_USE;
 
 void help(void) {
 	puts("elinks [FILES...]");

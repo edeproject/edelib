@@ -2,7 +2,7 @@
 #include <string.h>
 #include "UnitTest.h"
 
-using namespace edelib;
+EDELIB_NS_USE;
 
 UT_FUNC(File, "Test File")
 {

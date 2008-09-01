@@ -24,7 +24,7 @@
 
 EDELIB_NS_BEGIN
 
-void vscroll_cb(Fl_Widget*, void* w) {
+static void vscroll_cb(Fl_Widget*, void* w) {
 	ExpandableGroup* eg = (ExpandableGroup*)w;
 	eg->scrolly(eg->get_scroll()->value());
 }
@@ -237,11 +237,9 @@ int ExpandableGroup::children(void) {
 	return Fl_Group::children() - 1;
 }
 
-
 void ExpandableGroup::add(Fl_Widget* o) {
 	Fl_Group::add(o);
 	reposition_childs();
 }
-
 
 EDELIB_NS_END

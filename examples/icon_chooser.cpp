@@ -17,6 +17,7 @@ void close_cb(Fl_Widget*, void* w) {
 
 void run_cb(Fl_Widget*, void*) {
 	const char* dd = "/opt/kde/share/icons/default.kde/48x48/apps/";
+	//const char* dd = "/home/sanel/.icons/edeneu/16x16/apps/";
 	//const char* dd = "/";
 	if(!edelib::dir_exists(dd))
 		printf("Directory %s does not exists, continuing...\n", dd);
