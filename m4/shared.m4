@@ -16,16 +16,6 @@ AC_DEFUN([EDELIB_SHARED], [
 		dnl for jam
 		SHARED=0
 	else
-		AC_MSG_CHECKING([for libtool])
-
-		AC_PATH_PROG(LIBTOOL, libtool)
-		if test -n "$LIBTOOL"; then
-			AC_MSG_RESULT(yes)
-			dnl only for jam
-			SHARED=1
-		else
-			AC_MSG_RESULT(no)
-			SHARED=0
-		fi
+		SHARED=1
 	fi
 ])

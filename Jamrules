@@ -16,10 +16,9 @@ if ! $(JAMCONFIG_READ) {
 }
 
 if $(SHARED) = 1 {
-	#LIBTOOL += "$(LIBTOOL) --silent" ;
-
 	SUFOBJ_SHARED = ".lo" ;
 	SUFLIB_SHARED = ".so" ;
+	SUFLA_SHARED  = ".la" ;
 }
 
 # only for haiku jam
@@ -99,13 +98,6 @@ rule SymLink
 	Clean clean : $(<) ;
 }
 
-
-# Clean for libtool
-#actions piecemeal together existing LibtoolClean
-#{
-#	$(LIBTOOL) --mode=clean $(RM) $(>)
-#}
-
 # LinkAgainst <target> : <libraries> ;
 # The sam as jam's LinkLibraries, but will not mark those libraries 
 # for building. <libraries> should be in form '-lfoo'
@@ -168,7 +160,7 @@ rule SharedLibrary
 
 rule SharedLibraryFromObjects
 {
-	local _i _l _l_so _s ;
+	local _i _l _l_so _l_la _s ;
 
 	# Add grist to file names
 	_s = [ FGristFiles $(>) ] ;
@@ -177,6 +169,9 @@ rule SharedLibraryFromObjects
 	# for '-soname' flag; it accept only libname.so
 	_l_so = $(<:S=$(SUFLIB_SHARED)) ;
 	_l_so = $(_l_so:BSR=) ;
+
+	# libname.la file
+	_l_la = $(_l_so:S=$(SUFLA_SHARED)) ;
 
     # library depends on its member objects
 	if $(KEEPOBJS) {
@@ -203,15 +198,25 @@ rule SharedLibraryFromObjects
 	# let linker knows we are making shared library by adding -shared and -Wl,-soname libname.so flags
 	LINKFLAGS on $(_l) = -Wl,-soname,$(_l_so) -shared [ on $(_l) return $(LINKFLAGS) ] ;
 
-	# made it
+	# make it
 	Link $(_l) : $(_s) ;
 
-	# made a link
+	# make a link
 	SymLink $(_l_so) : $(_l) ;
 
 	# let link be created in directory where libname.so.X.X.X exists
 	MakeLocate $(_l_so) : $(_l:D) ;
 	LocalDepends lib : $(_l_so) ;
+
+	# generate libname.la file
+	DLNAME1 on $(_l_la) = $(_l_so) ;
+	DLNAME2 on $(_l_la) = $(_l:BSR=) ;
+	GenLa $(_l_la) ;
+	Clean clean : $(_l_la) ;
+
+	# let libname.la be created in directory where libname.so.X.X.X exists
+	MakeLocate $(_l_la) : $(_l:D) ;
+	LocalDepends lib : $(_l_la) ;
 }
 
 rule SharedObjects
@@ -226,92 +231,10 @@ rule SharedObjects
 	Objects $(<) ;
 }
 
-# SharedLibrary <library> : <source> ;
-# Creates shared library with libtool
-#rule SharedLibrary
-#{
-#	if ! $(UNIX)  {
-#		Exit "Don't know how to build shared libraries on this platform" ;
-#	}
-#
-#	if ! $(LIBTOOL) {
-#		Echo "Unable to find libtool!" ;
-#		Exit "If you already have it, please set LIBTOOL environment variable so it points to libtool executable" ;
-#	}
-#
-#	SharedLibraryFromObjects $(<) : $(>:S=$(SUFOBJ_SHARED)) ;
-#	SharedObjects $(>) ;
-#}
-#
-#rule SharedLibraryFromObjects
-#{
-#	local _i _l _s ;
-#
-#	# Add grist to file names
-#	_s = [ FGristFiles $(>) ] ;
-#	_l = $(<:S=$(SUFLIB_SHARED)) ;
-#
-#    # library depends on its member objects
-#	if $(KEEPOBJS) {
-#		LocalDepends obj : $(_s) ;
-#	} else {
-#		LocalDepends lib : $(_l) ;
-#	}
-#
-#	# Set LOCATE for the library and its contents.  The bound
-#	# value shows up as $(NEEDLIBS) on the Link actions.
-#	# For compatibility, we only do this if the library doesn't
-#	# already have a path.
-#
-#	if ! $(_l:D) {
-#		MakeLocate $(_l) : $(LOCATE_TARGET) ;
-#	}
-#
-#	# we never scan shared libraries for member objects
-#	LocalDepends $(_l) : $(_s) ;
-#
-#	# clean library via libtool
-#	LibtoolClean clean : $(_l) ;
-#
-#	# Split X.X.X to X:X:X so we can feed libtool with it.
-#	# I'm not sure is it intented, but seems there is a bug inside
-#	# jam regex: matched grouped items will start from 1 and item at 1 position
-#	# will also be at 0 position
-#	local v = [ MATCH "^([0-9])\.([0-9])\.([0-9])$" : $(EDELIB_VERSION) ] ;
-#	local version_part = "" ;
-#
-#	# If we matched numbers, just add this flag to the libtool
-#	if $(v) {
-#		version_part = "-version-info $(v[1]):$(v[2]):$(v[3])" ;
-#	}
-#
-#	LINK on $(_l) = "$(LIBTOOL) --tag=CXX --mode=link $(LINK) -rpath $(libdir) $(version_part)" ;
-#	Link $(_l) : $(_s) ;
-#}
-#
-#rule SharedObjects
-#{
-#	# temporary replace SUFOBJ since Objects rule use it
-#	local SUFOBJ = $(SUFOBJ_SHARED) ;
-#
-#	CC on [ FGristFiles $(<:S=$(SUFOBJ_SHARED)) ] = "$(LIBTOOL) --tag=CC --mode=compile gcc -prefer-pic" ;
-#	C++ on [ FGristFiles $(<:S=$(SUFOBJ_SHARED)) ] = "$(LIBTOOL) --tag=CXX --mode=compile g++ -prefer-pic" ;
-#
-#	# call the normal Objects rule
-#	Objects $(<) ;
-#}
-
 # MakeTest <bin> : <source> : <optional-addon-libs> : <option>
 rule MakeTest
 {
 	local lpath ;
-
-# 	This was libtool version
-#	if $(SHARED) = 1 {
-#		lpath = [ FDirName $(TOP)/$(EDELIB_LIBDIR)/.libs ] ;
-#	} else {
-#		lpath = [ FDirName $(TOP)/$(EDELIB_LIBDIR) ] ;
-#	}
 
 	lpath = [ FDirName $(TOP)/$(EDELIB_LIBDIR) ] ;
 
@@ -405,16 +328,19 @@ rule InstallSharedLibrary
 
 		InstallSharedLibrary1 $(t) : $(i) ;
 	}
+
+	# install .la file
+	MakeInstallPrivate $(dir) : $(2:S=$(SUFLA_SHARED)) ;
 }
 
 actions InstallSharedLibrary1
 {
-	$(LIBTOOL) --mode=install $(CP) "$(>)" "$(<)" ;
+	$(CP) "$(>)" "$(<)" ;
 }
 
 actions piecemeal together existing UninstallSharedLibrary1
 {
-	$(LIBTOOL) --mode=uninstall $(RM) "$(>)" ;
+	$(RM) "$(>)" ;
 }
 
 # InstallProgram <location-dir> : <program> ;
@@ -467,6 +393,38 @@ actions Install1
 actions SymLink1 
 {
 	$(RM) "$(<)" && $(LINKCMD) "$(>:D=)" "$(<)"
+}
+
+actions GenLa
+{
+	today=`date`
+
+	cat > "$(<)" <<EOF
+# $(<:D=) - a libtool library file
+# Generated by 'edelib jam build' on: $today
+
+# The name that we can dlopen(3).
+dlname='$(DLNAME1)'
+
+# Names of this library.
+library_names='$(DLNAME2) $(DLNAME1)'
+
+# The name of the static archive.
+old_library=''
+
+# Libraries that this one depends upon.
+dependency_libs=''
+
+# Is this already installed library.
+installed=yes
+
+# Files to dlopen/dlpreopen.
+dlopen=''
+dlpreopen=''
+
+# Directory that this library needs to be installed in:
+libdir='$(libdir)'
+EOF
 }
 
 NotFile install ;
