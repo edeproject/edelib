@@ -1,10 +1,13 @@
+2008-09-03  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/econfig.h: added EDELIB_NS_USING() macro
+
 2008-09-02  Sanel <karijes@users.sourceforge.net>
 
 	* Jamrules: cleaned commented code left from libtool version;
 	InstallSharedLibrary and UninstalSharedLibrary does not use libtool any
 	more; jam build will also create .la file for libtool when shared library
 	creation was told
-	* configure.in, shared.m4: removed parts needed for libtool
 
 2008-08-31  Sanel <karijes@users.sourceforge.net>
 
