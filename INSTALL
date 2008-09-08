@@ -1,5 +1,5 @@
 edelib installation
--------------------
+===================
 
 To build library, you will need the following tools and libraries:
  * C++ compiler (of course)
@@ -8,7 +8,7 @@ To build library, you will need the following tools and libraries:
  * pkg-config
  * FLTK 1.1.x (including FLTK prerequisites)
  * Doxygen (for building API documentation)
- * D-BUS library
+ * D-BUS
 
 FLTK library can be obtained from http://www.fltk.org.
 

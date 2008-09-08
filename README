@@ -1,3 +1,27 @@
-edelib is small and portable library for Equinox Desktop Environment.
+General Info
+============
+
+edelib is small and portable library for EDE (Equinox Desktop Environment).
+
 Aims are to provide enough background for easier Equinox components construction
 and development.
+
+Installation
+============
+
+See the file 'INSTALL'.
+
+How to report bugs
+==================
+
+Bugs should be reported to the EDE bug tracking system 
+(http://equinox-project/cgi-bin/trac.cgi/newticket). You will need to create
+an account before you submit the report.
+
+Patches
+=======
+
+Patches should be also submitted at the EDE tracking system or, if you don't
+want to create an account, you can send them to the author mail.
+
+Please use unified diff form (the -u option).
