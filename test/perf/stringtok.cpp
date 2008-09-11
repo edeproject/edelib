@@ -13,7 +13,7 @@
 
 #define WHAT "</"
 
-EDELIB_NS_USE;
+EDELIB_NS_USE
 
 void test_vector(const char* txt) {
 	boost::timer tim;
