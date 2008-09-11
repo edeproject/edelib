@@ -6,7 +6,7 @@
 #include <stdlib.h>  // getenv
 #include "UnitTest.h"
 
-EDELIB_NS_USE;
+EDELIB_NS_USE
 
 #define STR_EQUAL(str1, str2) (str1 == str2)
 

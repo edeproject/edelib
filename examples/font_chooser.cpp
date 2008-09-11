@@ -1,6 +1,6 @@
 #include <edelib/FontChooser.h>
 
-EDELIB_NS_USE;
+EDELIB_NS_USE
 
 int main() {
 	int r;

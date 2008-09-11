@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "UnitTest.h"
 
-EDELIB_NS_USE;
+EDELIB_NS_USE
 
 UT_FUNC(DateTest, "Test date")
 {

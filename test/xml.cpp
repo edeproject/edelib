@@ -3,7 +3,7 @@
 #include "UnitTest.h"
 #include <stdio.h>
 
-EDELIB_NS_USE;
+EDELIB_NS_USE
 
 UT_FUNC(XmlTest, "Test XML")
 {

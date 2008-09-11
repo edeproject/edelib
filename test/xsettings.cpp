@@ -3,7 +3,7 @@
 #include <string.h>
 #include "UnitTest.h"
 
-EDELIB_NS_USE;
+EDELIB_NS_USE
 
 UT_FUNC(XSettingsFuncsTest1, "Test XSETTINGS v_int")
 {

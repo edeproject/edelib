@@ -166,7 +166,7 @@ rule SharedLibraryFromObjects
 	_s = [ FGristFiles $(>) ] ;
 	_l = $(<:S=$(SUFLIB_SHARED).$(EDELIB_VERSION)) ;
 
-	# for '-soname' flag; it accept only libname.so
+	# for sonames; it accept only libname.so
 	_l_so = $(<:S=$(SUFLIB_SHARED)) ;
 	_l_so = $(_l_so:BSR=) ;
 
@@ -195,8 +195,13 @@ rule SharedLibraryFromObjects
 	# clean library
 	Clean clean : $(_l) ;
 
-	# let linker knows we are making shared library by adding -shared and -Wl,-soname libname.so flags
-	LINKFLAGS on $(_l) = -Wl,-soname,$(_l_so) -shared [ on $(_l) return $(LINKFLAGS) ] ;
+	if $(OS) = "SOLARIS" {
+		# solaris have other options for soname creation
+		LINKFLAGS on $(_l) = -h $(_l_so) -G [ on $(_l) return $(LINKFLAGS) ] ;
+	} else {
+		# let linker knows we are making shared library by adding -shared and -Wl,-soname libname.so flags
+		LINKFLAGS on $(_l) = -Wl,-soname,$(_l_so) -shared [ on $(_l) return $(LINKFLAGS) ] ;
+	}
 
 	# make it
 	Link $(_l) : $(_s) ;
@@ -239,6 +244,13 @@ rule MakeTest
 	lpath = [ FDirName $(TOP)/$(EDELIB_LIBDIR) ] ;
 
 	Main $(1) : $(2) ;
+
+	if $(SHARED) = 1 {
+		if $(OS) = "SOLARIS" {
+			# network libraries are in libxnet
+			LinkAgainst $(1) : -lxnet ;
+		}
+	}
 
 	if $(4) = "use-dbus" {
 		if $(SHARED) = 1 { 

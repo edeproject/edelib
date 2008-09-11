@@ -1,3 +1,22 @@
+2008-09-11  Sanel <karijes@users.sourceforge.net>
+
+	* Jamrules: Solaris (at least SunOS 2.7 with gcc 3.2) uses different
+	options for creating shared libraries
+	* Jamrules: modified MakeTest rule too to link against libxnet on Solaris 
+	when binaries are linked with shared edelib
+	* examples/: added sipc_server.cpp and sipc_client.cpp examples
+
+2008-09-10  Sanel <karijes@users.sourceforge.net>
+
+	* Added Listener.{h,cpp} with listener_xxx functions; they should be
+	FLTK loop without FLTK, a bunch of functions that monitors descriptors and
+	via loop report callbacks
+	* Added Sipc.{h,cpp}, implementation of very simple IPC scheme
+	* edelib/econfig.h: added ';' to be a part of EDELIB_NS_USE macro so, when
+	is disable, compiler does not reports how ';' exists without statement
+	* examples/*, test/xdg/*, test/*, tools/edelib-dbus-introspect/*: updates
+	changes in EDELIB_NS_USE macro
+
 2008-09-07  Sanel <karijes@users.sourceforge.net>
 
 	* edelib/Nls.h, src/Nls.cpp: refactoring

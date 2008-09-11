@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <edelib/IconTheme.h>
 
-EDELIB_NS_USE;
+EDELIB_NS_USE
 
 static bool validate_icon_size(int sz) {
 	if(sz == ICON_SIZE_TINY    ||

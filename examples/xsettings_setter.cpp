@@ -11,7 +11,7 @@
 
 #include <stdio.h>
 
-EDELIB_NS_USE;
+EDELIB_NS_USE
 
 Fl_Button* button1;
 Fl_Button* button2;

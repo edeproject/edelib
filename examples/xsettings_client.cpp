@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <string.h>
 
-EDELIB_NS_USE;
+EDELIB_NS_USE
 
 XSettingsClient* xs_client;
 Fl_Box* test_box = NULL;

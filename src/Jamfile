@@ -37,6 +37,8 @@ SOURCE =
 	IconTheme.cpp 
 	Color.cpp 
 	Run.cpp 
+	Listener.cpp
+	Sipc.cpp
 	TiXml.cpp
 	TiXmlParser.cpp 
 	MimeType.cpp
