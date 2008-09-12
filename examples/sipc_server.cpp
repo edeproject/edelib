@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
 
 	SipcServer s;
 	if(!s.request_name(argv[1])) {
-		printf("Can't listen on %s name\n", argv[1]);
+		printf("Can't listen on '%s'\n", argv[1]);
 		return 1;
 	}
 

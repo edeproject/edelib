@@ -294,7 +294,7 @@ typedef struct
     re_context_type ctx_type;	/* for ANCHOR */
   } opr;
 #if __GNUC__ >= 2
-  re_token_type_t type : 8;
+  __extension__ re_token_type_t type : 8;
 #else
   re_token_type_t type;
 #endif

@@ -10,11 +10,27 @@
  * See COPYING for details.
  */
 
-#include <edelib/Missing.h>
+#ifndef HAVE_SCANDIR
+# include <sys/types.h>
+#endif
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include <errno.h>
+
+#include <edelib/Missing.h>
+
+/* FreeBSD defines MAXNAMELEN, not sure about others */
+#ifndef MAXNAMELEN
+# define MAXNAMELEN 255
+#endif
+
+/* 
+ * some implementations sets d_name[1] in dirent, instead MAXNAMELEN
+ * so must be careful about those 
+ */
+#define _D_ALLOC_NAMELEN(d) (sizeof((d)->d_name) > 1 ? sizeof((d)->d_name) : (strlen((d)->d_name) + 1))
 
 #if 0
 /* left for the future */
@@ -189,5 +205,86 @@ unsigned long edelib_strlcat(char* dst, const char* src, unsigned long sz) {
 		memcpy(p, src, len1 + 1);
 
 	return ret;
+#endif
+}
+
+int edelib_scandir(const char* dir, struct dirent*** namelist, 
+		int (*filter)(const struct dirent* name),
+		int (*compar)(struct dirent** n1, struct dirent** n2)) 
+{
+#ifdef HAVE_SCANDIR
+	return scandir(dir, &namelist, filter, compar);
+#else
+	DIR *dfd;
+	struct dirent **lst, *entry, *nentry;
+	int i = 0, sz = 5;
+	int esaved = errno;
+	size_t dsize;
+
+	errno = 0;
+
+	dfd = opendir(dir);
+	if(dfd == NULL)
+		return -1;
+
+	lst = malloc(sizeof(struct dirent*) * sz);
+	if(lst == NULL) {
+		errno = ENOMEM;
+		return -1;
+	}
+
+	while(1) {
+		entry = readdir(dfd);
+		if(!entry)
+			break;
+
+		if(filter && filter(entry) <= 0)
+			continue;
+
+		if(i >= sz) {
+			sz *= 2;
+			/* could fail */
+			lst = realloc(lst, sizeof(struct dirent*) * sz);
+		}
+
+		dsize = &entry->d_name[_D_ALLOC_NAMELEN(entry)] - (char*)entry;
+		nentry = malloc(dsize);
+		if(!nentry) {
+			errno = ENOMEM;
+			break;
+		}
+
+		memcpy(nentry, entry, dsize);
+		lst[i] = nentry;
+		i++;
+	}
+
+	if(errno != 0) {
+		esaved = errno;
+
+		closedir(dfd);
+		for(i = i - 1; i >= 0; i--)
+			free(lst[i]);
+		free(lst);
+
+		errno = esaved;
+		return -1;
+	}
+
+	closedir(dfd);
+	if(compar)
+		qsort(lst, i, sizeof(struct dirent*), (int(*)(const void*, const void*))compar);
+
+	*namelist = lst;
+	errno = esaved;
+	return i;
+#endif
+}
+
+int edelib_alphasort(struct dirent **n1, struct dirent **n2) {
+#ifdef HAVE_ALPHASORT
+	return alphasort(n1, n2);
+#else
+	return strcmp((*n1)->d_name, (*n2)->d_name);
 #endif
 }

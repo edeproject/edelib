@@ -1,7 +1,7 @@
 /*
  * $Id$
  *
- * Provide missing functions
+ * Provides the missing functions
  * Part of edelib.
  * Copyright (c) 2005-2007 EDE Authors.
  *
@@ -23,6 +23,9 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/* include dirent intentionally so we can emulate it if missing */
+#include <dirent.h>
 
 /**
  * Implementation of setenv() function. Older libc implementations on various
@@ -58,6 +61,18 @@ EDELIB_API unsigned long edelib_strlcpy(char* dst, const char* src, unsigned lon
  * unless sz == 0. At most sz-1 characters will be copied. Returns strlen(dst) + strlen(src).
  */
 EDELIB_API unsigned long edelib_strlcat(char* dst, const char* src, unsigned long sz);
+
+/**
+ * scandir() implementation
+ */
+EDELIB_API int edelib_scandir(const char* dir, struct dirent*** namelist, 
+		int (*filter)(const struct dirent* name),
+		int (*compar)(struct dirent** n1, struct dirent** n2));
+
+/**
+ * alphasort() implementation; a function that comes with scandir()
+ */
+EDELIB_API int edelib_alphasort(struct dirent **n1, struct dirent **n2);
 
 #ifdef __cplusplus
 }

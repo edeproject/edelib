@@ -68,7 +68,7 @@ bool DesktopFile::save(const char* fname) {
 void DesktopFile::create_new(DesktopFileType t) {
 	clear();
 	dtype = t;
-	const char* val;
+	const char* val = NULL;
 
 	switch(dtype) {
 		case DESK_FILE_TYPE_APPLICATION:

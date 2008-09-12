@@ -1,3 +1,17 @@
+2008-09-12  Sanel <karijes@users.sourceforge.net>
+
+	* examples/Jamfile: added missing sipc_client.cpp and sipc_server.cpp
+	* examples/sipc_*.cpp: small output beautification
+	* edelib/Missing.h, src/Missing.c: implemented edelib_scandir() and edelib_alphasort()
+	* test/missing.c: edelib_scandir() and edelib_alphasort() test
+	* src/DesktopFile.cpp, src/FontChooser.cpp: NULL-ef few variables so when
+	compiled with optimizations, compiled does not report 'uninitialized'
+	stuff
+	* src/FontChooser.cpp: update for new debug macros
+	* src/rx/{regex_internal.h, regex.h}: added __extension__ to shut up warnings
+	* m4/mime.m4: dumped using '-z' for empty string testing; csh does not
+	understainds it
+
 2008-09-11  Sanel <karijes@users.sourceforge.net>
 
 	* Jamrules: Solaris (at least SunOS 2.7 with gcc 3.2) uses different

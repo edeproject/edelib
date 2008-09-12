@@ -10,9 +10,9 @@
  * See COPYING for details.
  */
 
-#include <edelib/FontChooser.h>
-#include <edelib/Nls.h>
-#include <edelib/Debug.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include <FL/Fl.h>
 #include <FL/Fl_Window.h>
@@ -22,9 +22,9 @@
 #include <FL/Fl_Button.h>
 #include <FL/Fl_Box.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <edelib/FontChooser.h>
+#include <edelib/Nls.h>
+#include <edelib/Debug.h>
 
 #define DEFAULT_SIZE     12
 #define DEFAULT_SIZE_STR "12"
@@ -162,25 +162,25 @@ static void style_cb(Fl_Widget*, long) {
 	int sel_font = font_browser->value();
 	sel_font--;
 
-	EASSERT(sel_font <= font_family_size && "List item out of bounds");
+	E_ASSERT(sel_font <= font_family_size && "List item out of bounds");
 
-	FontDetails* fd;
+	FontDetails* fd = NULL;
 
 	if(strcmp(style_name, "Regular") == 0) {
-		EASSERT(font_family[sel_font].regular != 0 && "Font marked as regular but not allocated");
+		E_ASSERT(font_family[sel_font].regular != 0 && "Font marked as regular but not allocated");
 		fd = font_family[sel_font].regular;
 	} else if(strcmp(style_name, "Bold") == 0) {
-		EASSERT(font_family[sel_font].bold != 0 && "Font marked as bold but not allocated");
+		E_ASSERT(font_family[sel_font].bold != 0 && "Font marked as bold but not allocated");
 		fd = font_family[sel_font].bold;
 	} else if(strcmp(style_name, "Italic") == 0) {
-		EASSERT(font_family[sel_font].italic != 0 && "Font marked as bold but not allocated");
+		E_ASSERT(font_family[sel_font].italic != 0 && "Font marked as bold but not allocated");
 		fd = font_family[sel_font].italic;
 	} else if(strcmp(style_name, "Bold Italic") == 0) {
-		EASSERT(font_family[sel_font].bold_italic != 0 && "Font marked as bold-italic but not allocated");
+		E_ASSERT(font_family[sel_font].bold_italic != 0 && "Font marked as bold-italic but not allocated");
 		fd = font_family[sel_font].bold_italic;
 	} else {
 		// never reached
-		EASSERT(0 && "Unknown font name");
+		E_ASSERT(0 && "Unknown font name");
 	}
 
 	curr_font_details = fd;
@@ -212,7 +212,7 @@ static void font_cb(Fl_Widget*, long) {
 	// Fl_Browser starts from 1
 	fn--;
 
-	EASSERT(fn <= font_family_size && "List item out of bounds");
+	E_ASSERT(fn <= font_family_size && "List item out of bounds");
 
 	style_browser->clear();
 
@@ -316,7 +316,7 @@ static void load_fonts(const char* family) {
 			font_family[font_family_size].regular = fd;
 		} else if(ftype == FL_BOLD) {
 			if(font_family[font_family_size].bold) {
-				EDEBUG(ESTRLOC ": duplicate for: '%s' (previous was: '%s')\n",
+				E_DEBUG(E_STRLOC ": duplicate for: '%s' (previous was: '%s')\n",
 						fd->name, font_family[font_family_size].bold->name);
 
 				clean_font_details(fd);
@@ -325,7 +325,7 @@ static void load_fonts(const char* family) {
 
 		} else if(ftype == FL_ITALIC) {
 			if(font_family[font_family_size].italic) {
-				EDEBUG(ESTRLOC ": duplicate for: '%s' (previous was: '%s')\n",
+				E_DEBUG(E_STRLOC ": duplicate for: '%s' (previous was: '%s')\n",
 						fd->name, font_family[font_family_size].italic->name);
 
 				clean_font_details(fd);
@@ -334,7 +334,7 @@ static void load_fonts(const char* family) {
 
 		} else if(ftype == (FL_BOLD | FL_ITALIC)) {
 			if(font_family[font_family_size].bold_italic) {
-				EDEBUG(ESTRLOC ": duplicate for: '%s' (previous was: '%s')\n",
+				E_DEBUG(E_STRLOC ": duplicate for: '%s' (previous was: '%s')\n",
 						fd->name, font_family[font_family_size].bold_italic->name);
 
 				clean_font_details(fd);
@@ -343,7 +343,7 @@ static void load_fonts(const char* family) {
 		}
 
 		// sanity checks; should never happen
-		EASSERT(font_family_size < nfonts && "font_family_size bigger than the sum of all fonts!!!");
+		E_ASSERT(font_family_size < nfonts && "font_family_size bigger than the sum of all fonts!!!");
 
 		/*
 		 * Now add it to main font list (special case is when we starts

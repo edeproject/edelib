@@ -16,11 +16,11 @@ AC_DEFUN([EDELIB_MIME], [
 	xdg_data_dirs=$XDG_DATA_DIRS
 
 	dnl if failed, use XDG default
-	if test -z $xdg_data_home; then
+	if test "x$xdg_data_home" = "x"; then
 		xdg_data_home="$HOME/local/.share"
 	fi
 
-	if test -z $xdg_data_dirs; then
+	if test "x$xdg_data_dirs" = "x"; then
 		xdg_data_dirs="/usr/local/share:/usr/share"
 	fi
 
@@ -39,7 +39,7 @@ AC_DEFUN([EDELIB_MIME], [
 		done
 	done
 
-	if test -z $found_mime_path; then
+	if test "x$found_mime_path" = "x"; then
 		AC_MSG_RESULT(no)
 		dnl watch to quote ',' character inside AC_MSG_NOTICE or message will not be displayed
 		AC_MSG_NOTICE(********************************************************************************************)

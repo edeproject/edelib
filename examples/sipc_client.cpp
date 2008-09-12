@@ -11,7 +11,7 @@ int main(int argc, char **argv) {
 
 	SipcClient c;
 	if(!c.connect(argv[1])) {
-		printf("Can't connect to %s name\n", argv[1]);
+		printf("Can't connect to '%s'\n", argv[1]);
 		return 1;
 	}
 

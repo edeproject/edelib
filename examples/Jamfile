@@ -36,4 +36,5 @@ if $(FLTKLIBS) && $(SHARED) {
 
 MakeTest elinks : elinks.cpp : $(LIBS_FOR_CMD_SAMPLES) ;
 MakeTest efile : efile.cpp  : $(LIBS_FOR_CMD_SAMPLES) ;
-
+MakeTest sipc_client : sipc_client.cpp  : $(LIBS_FOR_CMD_SAMPLES) ;
+MakeTest sipc_server : sipc_server.cpp  : $(LIBS_FOR_CMD_SAMPLES) ;
