@@ -42,6 +42,7 @@ includedir=AC_FIX_VARIABLEREF([$includedir])
 oldincludedir=AC_FIX_VARIABLEREF([$oldincludedir])
 infodir=AC_FIX_VARIABLEREF([$infodir])
 mandir=AC_FIX_VARIABLEREF([$mandir])
+localedir=AC_FIX_VARIABLEREF([$localedir])
 
 #hack to get the order right :-/ (autoconf --trace reports wrong order...)
 AC_SUBST(prefix)

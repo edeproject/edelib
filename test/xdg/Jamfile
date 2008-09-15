@@ -13,7 +13,7 @@ SubDir TOP test xdg ;
 
 # shared library requires linkage with FLTK and sound libraries
 if $(SHARED) {
-	ADDONLIB = $(FLTKLIBS_FULL) ;
+	ADDONLIB = $(FLTK_LIBS_FULL) ;
 }
 
 MakeTest icon-theme : icon-theme.cpp : $(ADDONLIB) ;

@@ -37,18 +37,16 @@ RMDIR   = "rm -R" ;
 COPYDIR = "cp -R" ;
 LINKCMD = "ln -s" ;
 
-# general flags we pull from Jamconfig, with addition of include
-# directory search, so compiler can find edelib include directory
-FLAGS  = $(ALLFLAGS) -I$(TOP) ;
-
 # standard C++ library we link with; for now is gcc's default
 STDLIB ?= stdc++ ;
 
 # variables used by jam directly
 # OPTIM is cleared so it don't collide with FLAGS
-OPTIM    = ;
-CCFLAGS  = $(FLAGS) ;
-C++FLAGS = $(FLAGS) ;
+OPTIM     = ;
+CCFLAGS   = $(CFLAGS) -I$(TOP) ;
+C++FLAGS  = $(CXXFLAGS) -I$(TOP) ;
+LINKFLAGS = $(LDFLAGS) ;
+LINKLIBS  = $(LDLIBS) ;
 
 # directories used to place final library and 
 # by tests to construct correct paths
@@ -62,7 +60,7 @@ EDELIB_DBUS      = edelib_dbus ;
 EDELIB_DBUS_NAME = libedelib_dbus ;
 
 # directory name for installed documentation
-EDELIB_DOCDIR      = "$(EDELIB)-$(EDELIB_VERSION)" ;
+EDELIB_DOCDIR = "$(EDELIB)-$(EDELIB_VERSION)" ;
 
 # Haiku jam have builtin LocalClean and LocalDepends
 if ! $(INVOCATION_SUBDIR_SET) {
@@ -254,7 +252,7 @@ rule MakeTest
 
 	if $(4) = "use-dbus" {
 		if $(SHARED) = 1 { 
-			LinkAgainst $(1) : -L$(lpath) -l$(EDELIB_DBUS) -l$(EDELIB) $(DBUSLIBS) ;
+			LinkAgainst $(1) : -L$(lpath) -l$(EDELIB_DBUS) -l$(EDELIB) $(DBUS_LIBS) ;
 		} else {
 			LinkAgainst $(1) : -L$(lpath) -l$(EDELIB_DBUS) -l$(EDELIB) ;
 		}

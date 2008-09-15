@@ -26,8 +26,7 @@ AC_DEFUN([EDELIB_CHECK_LIBXPM], [
 	if eval "test $have_libxpm = yes"; then
 		AC_DEFINE(HAVE_LIBXPM, 1, [Define to 1 if you have libXpm])
 		AC_MSG_RESULT(yes)
-		FLTKLIBS="$FLTKLIBS -lXpm"
-		FLTKLIBS_FULL="$FLTKLIBS_FULL -lXpm"
+		LIBXPM_LIBS="-lXpm"
 	else
 		AC_MSG_RESULT(no)
 	fi

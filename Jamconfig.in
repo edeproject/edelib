@@ -2,7 +2,7 @@
 # $Id$
 #
 # Part of edelib.
-# Copyright (c) 2005-2007 EDE Authors.
+# Copyright (c) 2005-2008 EDE Authors.
 #
 # This program is licenced under terms of the 
 # GNU General Public Licence version 2 or newer.
@@ -18,6 +18,7 @@ docdir      ?= "@datadir@/doc" ;
 includedir  ?= "@includedir@" ;
 libdir      ?= "@libdir@" ;
 mandir      ?= "@mandir@" ;
+localedir   ?= "@localedir@" ;
 srcdir      ?= "@abs_srcdir@" ;
 sysconfdir  ?= "@sysconfdir@" ;
 
@@ -28,19 +29,22 @@ DOXYGEN     ?= "@DOXYGEN@" ;
 XGETTEXT    ?= "@XGETTEXT@" ;
 MSGFMT      ?= "@MSGFMT@" ;
 SED         ?= "@SED@" ;
-#LIBTOOL     ?= "@LIBTOOL@" ;
+
+# general flags and libraries
+CFLAGS   ?= "@CFLAGS@" ;
+CXXFLAGS ?= "@CXXFLAGS@" ;
+LDFLAGS  ?= "@LDFLAGS@" ;
+LDLIBS   ?= "@LDLIBS@" ;
 
 # for fltk and X11
-FLTKFLAGS      ?= "@FLTKFLAGS@" ;
-FLTKLIBS       ?= "@FLTKLIBS@" ;
-FLTKLIBS_FULL  ?= "@FLTKLIBS_FULL@" ;
-
-# build options
-ALLFLAGS  ?= "@ALLFLAGS@ @FLTKFLAGS@" ;
+FLTK_CFLAGS    ?= "@FLTK_CFLAGS@" ;
+FLTK_CXXFLAGS  ?= "$(FLTK_CFLAGS)" ;
+FLTK_LIBS      ?= "@FLTK_LIBS@" ;
+FLTK_LIBS_FULL ?= "@FLTK_LIBS_FULL@" ;
 
 # dbus
-DBUSFLAGS ?= "@DBUS_CFLAGS@" ;
-DBUSLIBS  ?= "@DBUS_LIBS@" ;
+DBUS_CFLAGS ?= "@DBUS_CFLAGS@" ;
+DBUS_LIBS   ?= "@DBUS_LIBS@" ;
 
 # for shared library
 SHARED    ?= "@SHARED@" ;

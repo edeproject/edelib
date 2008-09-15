@@ -25,10 +25,10 @@ AC_DEFUN([EDELIB_CHECK_FLTK], [
 		esac
 
 		dnl remove -Wno-non-virtual-dtor from flags
-		FLTKFLAGS=`$FLTK_CONFIG --cxxflags | sed -e 's/-Wno-non-virtual-dtor//'`
+		FLTK_CFLAGS=`$FLTK_CONFIG --cxxflags | sed -e 's/-Wno-non-virtual-dtor//'`
 		dnl remove -lsupc++ so we can chose what to use
-		FLTKLIBS=`$FLTK_CONFIG --ldflags | sed -e 's/-lsupc++//g'`
-		FLTKLIBS_FULL=`$FLTK_CONFIG --use-images --ldflags | sed -e 's/-lsupc++//g'`
+		FLTK_LIBS=`$FLTK_CONFIG --ldflags | sed -e 's/-lsupc++//g'`
+		FLTK_LIBS_FULL=`$FLTK_CONFIG --use-images --ldflags | sed -e 's/-lsupc++//g'`
 	else
 		AC_MSG_ERROR([You don't have fltk installed. To compile edelib, you will need it.])
 	fi

@@ -10,4 +10,6 @@
 
 SubDir TOP tools edelib-dbus-introspect ;
 
-MakeTest edelib-dbus-introspect : edelib-dbus-introspect.cpp : -ledelib_dbus $(FLTKLIBS) -ledelib -ldbus-1 ;
+if $(DBUS_LIBS) {
+	MakeTest edelib-dbus-introspect : edelib-dbus-introspect.cpp : -ledelib_dbus $(FLTK_LIBS) -ledelib $(DBUS_LIBS) ;
+}

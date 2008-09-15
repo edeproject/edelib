@@ -14,24 +14,24 @@ SubDir TOP examples ;
 ADDONLIB = ;
 
 if $(SHARED) {
-	ADDONLIB = $(SOUNDLIBS) ;
 	# required by shared libraries
-	FLTKLIBS = $(FLTKLIBS_FULL) ;
+	FLTK_LIBS = $(FLTK_LIBS_FULL) ;
 }
 
-if $(FLTKLIBS) {
-	MakeTest egroup : egroup.cpp : $(FLTKLIBS) $(ADDONLIB) ;
-	MakeTest egroup2 : egroup2.cpp : $(FLTKLIBS) $(ADDONLIB) ;
-	MakeTest icon_chooser : icon_chooser.cpp : $(FLTKLIBS_FULL) $(ADDONLIB) ;
-	MakeTest font_chooser : font_chooser.cpp : $(FLTKLIBS) $(ADDONLIB) ;
-	MakeTest sevenseg : sevenseg.cpp : $(FLTKLIBS) $(ADDONLIB) ;
-	MakeTest dirwatch : dirwatch.cpp : $(FLTKLIBS) $(ADDONLIB) ;
-	MakeTest xsettings_setter : xsettings_setter.cpp : $(FLTKLIBS) $(ADDONLIB) ;
-	MakeTest xsettings_client : xsettings_client.cpp : $(FLTKLIBS) $(ADDONLIB) ;
+if $(FLTK_LIBS) {
+	MakeTest egroup : egroup.cpp : $(FLTK_LIBS) $(ADDONLIB) ;
+	MakeTest egroup2 : egroup2.cpp : $(FLTK_LIBS) $(ADDONLIB) ;
+	MakeTest icon_chooser : icon_chooser.cpp : $(FLTK_LIBS_FULL) $(ADDONLIB) ;
+	MakeTest font_chooser : font_chooser.cpp : $(FLTK_LIBS) $(ADDONLIB) ;
+	MakeTest sevenseg : sevenseg.cpp : $(FLTK_LIBS) $(ADDONLIB) ;
+	MakeTest dirwatch : dirwatch.cpp : $(FLTK_LIBS) $(ADDONLIB) ;
+	MakeTest list_view : list_view.cpp : $(FLTK_LIBS) $(ADDONLIB) ;
+	MakeTest xsettings_setter : xsettings_setter.cpp : $(FLTK_LIBS) $(ADDONLIB) ;
+	MakeTest xsettings_client : xsettings_client.cpp : $(FLTK_LIBS) $(ADDONLIB) ;
 }
 
-if $(FLTKLIBS) && $(SHARED) {
-	LIBS_FOR_CMD_SAMPLES = $(FLTKLIBS) $(ADDONLIB) ;
+if $(FLTK_LIBS) && $(SHARED) {
+	LIBS_FOR_CMD_SAMPLES = $(FLTK_LIBS) $(ADDONLIB) ;
 }
 
 MakeTest elinks : elinks.cpp : $(LIBS_FOR_CMD_SAMPLES) ;

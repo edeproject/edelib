@@ -1,3 +1,26 @@
+2008-09-15  Sanel <karijes@users.sourceforge.net>
+
+	* TableBase.{h,cpp}: added TableBase based on Erco's Fl_Table widget
+	* examples/list_view.cpp: TableBase sample
+
+2008-09-14  Sanel <karijes@users.sourceforge.net>
+
+	* Jamconfig.in, m4/initjamfile.m4: added localedir var
+
+2008-09-13  Sanel <karijes@users.sourceforge.net>
+
+	* Jamconfig.in, Jamrules, src/Jamrules: s/DBUSFLAGS/DBUS_CFLAGS,
+	s/DBUSLIBS/DBUS_LIBS
+	* m4/libxpm.m4: use LIBXPM_LIBS variable
+	* m4/notify.m4: use LIBFAM_LIBS variable
+	* all over: s/FLTKFLAGS/FLTK_CFLAGS, s/FLTKLIBS/FLTK_LIBS,
+	s/FLTKLIBS_FULL/FLTK_LIBS_FULL, s/DEBUGFLAGS/DEBUG_FLAGS,
+	s/OPTIMFLAGS/OPTIM_FLAGS, removing ALLFLAGS
+	* m4/notify.m4: remove unneeded newline in ./configure --help output
+	* m4/dbus.m4, src/Jamfile: added --disable-dbus and implement behaviour
+	through the code
+
+
 2008-09-12  Sanel <karijes@users.sourceforge.net>
 
 	* examples/Jamfile: added missing sipc_client.cpp and sipc_server.cpp

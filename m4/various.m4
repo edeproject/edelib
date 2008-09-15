@@ -12,15 +12,15 @@ dnl --enable-debug and --enable-profile options
 AC_DEFUN([EDELIB_DEVELOPMENT], [
 	AC_ARG_ENABLE(debug, [  --enable-debug          enable debug],,enable_debug=no)
 	if eval "test $enable_debug = yes"; then
-		DEBUGFLAGS="$DEBUGFLAGS -g3"
+		DEBUG_FLAGS="$DEBUG_FLAGS -g3"
 		dnl clear all optimization flags
-		OPTIMFLAGS=""
+		OPTIM_FLAGS=""
 	fi
 
 	AC_ARG_ENABLE(profile, [  --enable-profile        enable profile],,enable_profile=no)
 	if eval "test $enable_profile = yes"; then
-		DEBUGFLAGS="$DEBUGFLAGS -pg"
+		DEBUG_FLAGS="$DEBUG_FLAGS -pg"
 		dnl clear all optimization flags
-		OPTIMFLAGS=""
+		OPTIM_FLAGS=""
 	fi
 ])

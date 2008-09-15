@@ -13,7 +13,7 @@ SubDir TOP test ;
 
 # shared library requires linkage with FLTK
 if $(SHARED) {
-	ADDONLIB = $(FLTKLIBS_FULL) ;
+	ADDONLIB = $(FLTK_LIBS_FULL) ;
 }
 
 TEST_FILES = 
@@ -34,15 +34,18 @@ TEST_FILES =
 	color.cpp
 	xml.cpp
 	mime.cpp
-	dbus.cpp
 	run_tests.cpp ;
 
-# xsettings.cpp depends on X11 and FLTKLIBS provides needed libraries
-if $(FLTKLIBS_FULL) {
+if $(DBUS_LIBS) {
+	TEST_FILES += dbus.cpp ;
+}
+
+# xsettings.cpp depends on X11 and FLTK_LIBS provides needed libraries
+if $(FLTK_LIBS_FULL) {
 	TEST_FILES += xsettings.cpp ;
 
 	if ! $(SHARED) {
-		ADDONLIB = $(FLTKLIBS_FULL) ;
+		ADDONLIB = $(FLTK_LIBS_FULL) ;
 	}
 }
 

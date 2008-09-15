@@ -124,8 +124,8 @@ dnl Checks for the file system notification support.
 dnl First will be checked for inotify, then as fallback for FAM/Gamin
 dnl if was given --enable-fam-only, only FAM/Gamin will be used
 AC_DEFUN([EDELIB_NOTIFY], [
-	AC_ARG_ENABLE(fam_only, [  --enable-fam-only       use FAM regardless of what kernel-level systems are available]
-		,[enable_fam_only=yes], [enable_fam_only=no])
+	AC_ARG_ENABLE(fam_only, [  --enable-fam-only       use FAM regardless of what kernel-level systems are available],
+		[enable_fam_only=yes], [enable_fam_only=no])
 
 	dnl this must be global since 'have_fam' is visible only inside if/fi block
 	notify_have_fam=no
@@ -147,6 +147,6 @@ AC_DEFUN([EDELIB_NOTIFY], [
 	dnl FIXME: make this part of LIBS variable
 	dnl FAMLIB will be set only when tests for FAM are passed
 	if eval "test $notify_have_fam = yes"; then
-		FLTKLIBS="$FLTKLIBS $FAMLIB"
+		LIBFAM_LIBS="$FAMLIB"
 	fi
 ])
