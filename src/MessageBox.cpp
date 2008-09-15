@@ -14,11 +14,11 @@
 #include <edelib/IconTheme.h>
 #include <edelib/Nls.h>
 
-#include <FL/Fl.h>
-#include <FL/fl_draw.h>
-#include <FL/Fl_Return_Button.h>
-#include <FL/Fl_Shared_Image.h>
-#include <FL/Fl_Pixmap.h>
+#include <FL/Fl.H>
+#include <FL/fl_draw.H>
+#include <FL/Fl_Return_Button.H>
+#include <FL/Fl_Shared_Image.H>
+#include <FL/Fl_Pixmap.H>
 
 #include <stdlib.h>
 #include <stdarg.h>           //

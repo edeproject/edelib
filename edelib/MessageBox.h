@@ -15,11 +15,11 @@
 
 #include "econfig.h"
 
-#include <FL/Fl_Window.h>
-#include <FL/Fl_Button.h>
-#include <FL/Fl_Box.h>
-#include <FL/Fl_Input.h>
-#include <FL/Fl_Pixmap.h>
+#include <FL/Fl_Window.H>
+#include <FL/Fl_Button.H>
+#include <FL/Fl_Box.H>
+#include <FL/Fl_Input.H>
+#include <FL/Fl_Pixmap.H>
 
 #define MSGBOX_MAX_BUTTONS 4 // Max buttons in dialog
 

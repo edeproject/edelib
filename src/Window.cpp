@@ -19,10 +19,10 @@
 #include <string.h>
 #include <stdio.h>
 #include <ctype.h>
-#include <FL/Fl.h>
-#include <FL/x.h>
-#include <FL/Fl_Tooltip.h>
-#include <FL/Fl_Shared_Image.h>
+#include <FL/Fl.H>
+#include <FL/x.H>
+#include <FL/Fl_Tooltip.H>
+#include <FL/Fl_Shared_Image.H>
 
 #ifdef HAVE_LIBXPM
 	#include <X11/xpm.h>

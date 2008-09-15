@@ -1,14 +1,14 @@
 
 #include <edelib/SevenSeg.h>
 
-#include <FL/Fl.h>
-#include <FL/Fl_Double_Window.h>
-#include <FL/Fl_Box.h>
-#include <FL/Fl_Counter.h>
-#include <FL/Fl_Check_Button.h>
-#include <FL/Fl_Value_Slider.h>
-#include <FL/Fl_Button.h>
-#include <FL/fl_show_colormap.h>
+#include <FL/Fl.H>
+#include <FL/Fl_Double_Window.H>
+#include <FL/Fl_Box.H>
+#include <FL/Fl_Counter.H>
+#include <FL/Fl_Check_Button.H>
+#include <FL/Fl_Value_Slider.H>
+#include <FL/Fl_Button.H>
+#include <FL/fl_show_colormap.H>
 
 
 Fl_Counter*      counter = 0;

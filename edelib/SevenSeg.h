@@ -14,7 +14,7 @@
 #define __SEVENSEG_H__
 
 #include "econfig.h"
-#include <FL/Fl_Widget.h>
+#include <FL/Fl_Widget.H>
 
 EDELIB_NS_BEGIN
 

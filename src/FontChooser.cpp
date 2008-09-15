@@ -14,13 +14,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <FL/Fl.h>
-#include <FL/Fl_Window.h>
-#include <FL/Fl_Hold_Browser.h>
-#include <FL/Fl_Input.h>
-#include <FL/Fl_Int_Input.h>
-#include <FL/Fl_Button.h>
-#include <FL/Fl_Box.h>
+#include <FL/Fl.H>
+#include <FL/Fl_Window.H>
+#include <FL/Fl_Hold_Browser.H>
+#include <FL/Fl_Input.H>
+#include <FL/Fl_Int_Input.H>
+#include <FL/Fl_Button.H>
+#include <FL/Fl_Box.H>
 
 #include <edelib/FontChooser.h>
 #include <edelib/Nls.h>

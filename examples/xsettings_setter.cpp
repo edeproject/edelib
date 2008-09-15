@@ -1,13 +1,13 @@
 #include <edelib/XSettingsClient.h>
 #include <edelib/Color.h>
 
-#include <FL/Fl.h>
-#include <FL/x.h>
-#include <FL/Fl_Window.h>
-#include <FL/Fl_Button.h>
-#include <FL/Fl_Check_Button.h>
-#include <FL/Fl_Input.h>
-#include <FL/Fl_Color_Chooser.h>
+#include <FL/Fl.H>
+#include <FL/x.H>
+#include <FL/Fl_Window.H>
+#include <FL/Fl_Button.H>
+#include <FL/Fl_Check_Button.H>
+#include <FL/Fl_Input.H>
+#include <FL/Fl_Color_Chooser.H>
 
 #include <stdio.h>
 

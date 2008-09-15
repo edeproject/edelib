@@ -2,6 +2,9 @@
 
 	* TableBase.{h,cpp}: added TableBase based on Erco's Fl_Table widget
 	* examples/list_view.cpp: TableBase sample
+	* all: a massive fix of FLTK headers inclusion; recent reports shows that
+	some distros does not install FLTK correctly so only .H files are 
+	present, although .h symlinks should be created too
 
 2008-09-14  Sanel <karijes@users.sourceforge.net>
 

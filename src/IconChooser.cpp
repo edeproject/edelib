@@ -18,16 +18,16 @@
 #include <edelib/StrUtil.h>
 #include <edelib/IconTheme.h>
 
-#include <FL/Fl_Window.h>
-#include <FL/Fl.h>
-#include <FL/Fl_Button.h>
-#include <FL/Fl_Input.h>
-#include <FL/Fl_Box.h>
-#include <FL/Fl_Shared_Image.h>
-#include <FL/Fl_Group.h>
-#include <FL/Fl_File_Chooser.h>
-#include <FL/Fl_Progress.h>
-#include <FL/fl_draw.h>
+#include <FL/Fl_Window.H>
+#include <FL/Fl.H>
+#include <FL/Fl_Button.H>
+#include <FL/Fl_Input.H>
+#include <FL/Fl_Box.H>
+#include <FL/Fl_Shared_Image.H>
+#include <FL/Fl_Group.H>
+#include <FL/Fl_File_Chooser.H>
+#include <FL/Fl_Progress.H>
+#include <FL/fl_draw.H>
 
 // max icon sizes
 #define MAX_ICON_W  128

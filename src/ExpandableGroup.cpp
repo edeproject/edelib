@@ -14,8 +14,8 @@
 #include <edelib/ExpandableGroup.h>
 #include <edelib/Debug.h>
 
-#include <FL/fl_draw.h>
-#include <FL/Fl.h>
+#include <FL/fl_draw.H>
+#include <FL/Fl.H>
 
 #define SLIDER_WIDTH  16
 

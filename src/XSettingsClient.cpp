@@ -17,7 +17,7 @@
 #include <stdio.h>  // snprintf
 #include <string.h> // strcmp
 #include <limits.h> // LONG_MAX
-#include <FL/x.h>
+#include <FL/x.H>
 
 EDELIB_NS_BEGIN
 

@@ -11,7 +11,7 @@
  */
 
 #include <fam.h>
-#include <FL/Fl.h>
+#include <FL/Fl.H>
 
 EDELIB_NS_BEGIN
 

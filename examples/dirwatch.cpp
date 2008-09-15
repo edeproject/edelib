@@ -1,10 +1,10 @@
-#include <FL/Fl.h>
-#include <FL/Fl_Double_Window.h>
-#include <FL/Fl_Multi_Browser.h>
-#include <FL/Fl_Text_Display.h>
-#include <FL/Fl_Text_Buffer.h>
-#include <FL/Fl_Button.h>
-#include <FL/Fl_File_Chooser.h>
+#include <FL/Fl.H>
+#include <FL/Fl_Double_Window.H>
+#include <FL/Fl_Multi_Browser.H>
+#include <FL/Fl_Text_Display.H>
+#include <FL/Fl_Text_Buffer.H>
+#include <FL/Fl_Button.H>
+#include <FL/Fl_File_Chooser.H>
 
 #include <edelib/DirWatch.h>
 

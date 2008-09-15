@@ -13,7 +13,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <FL/Fl.h>
+#include <FL/Fl.H>
 #include <dbus/dbus.h>
 
 #include <edelib/List.h>

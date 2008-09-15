@@ -12,8 +12,8 @@
  */
 
 #include <edelib/SevenSeg.h>
-#include <FL/fl_draw.h>
-#include <FL/Fl.h>
+#include <FL/fl_draw.H>
+#include <FL/Fl.H>
 
 #define EDGE_GAP 2
 

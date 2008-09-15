@@ -15,7 +15,7 @@
 
 #include "XSettingsClient.h"
 #include "IconTheme.h"
-#include <FL/Fl_Double_Window.h>
+#include <FL/Fl_Double_Window.H>
 
 EDELIB_NS_BEGIN
 

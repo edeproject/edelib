@@ -1,11 +1,11 @@
-#include <FL/Fl_Window.h>
-#include <FL/Fl_Box.h>
-#include <FL/Fl_Button.h>
-#include <FL/Fl_Shared_Image.h>
+#include <FL/Fl_Window.H>
+#include <FL/Fl_Box.H>
+#include <FL/Fl_Button.H>
+#include <FL/Fl_Shared_Image.H>
 #include <edelib/IconChooser.h>
 #include <edelib/String.h>
 #include <edelib/Directory.h>
-#include <FL/Fl.h>
+#include <FL/Fl.H>
 #include <stdio.h>
 
 Fl_Box* image_box;

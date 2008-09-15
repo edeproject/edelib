@@ -13,7 +13,7 @@
 #include <sys/inotify.h>
 #include <unistd.h>
 #include <errno.h>
-#include <FL/Fl.h>
+#include <FL/Fl.H>
 
 #define EVENT_SIZE (sizeof (struct inotify_event))
 #define BUFF_LEN (1024 * (EVENT_SIZE + 16))
