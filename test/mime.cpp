@@ -23,7 +23,7 @@ UT_FUNC(MimeTypeTest, "Test MimeType")
 	UT_VERIFY( mt.comment() == "object code" );
 	UT_VERIFY( mt.icon_name() == "application-x-object" );
 
-	mt.set("../doc/footer.html");
+	mt.set("perf/asciidoc.html");
 	UT_VERIFY( mt.type() == "text/html" );
 	UT_VERIFY( mt.icon_name() == "text-html" );
 

@@ -1,3 +1,19 @@
+2008-09-21  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Sipc.h: updated documentation
+	* test/mime.cpp: test for text/html mime now points to
+	test/perf/asciidoc.html instead to removed doc/footer.html
+	* TODO: added/removed entry
+	* Jamrules: let 'jam distclean' remove Doxyfile too
+	* doc/Doxyfile.in: now documentation should show correct include path
+
+2008-09-20  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/TableBase.h: updated documentation
+	* src/xdgmime/xdgmime.c: changed order of guessing so directories with
+	"extensions" or extension-like names in the name doesn't be recognized 
+	as files or unknown types e.g. '.kde', '.e' or '.emacs.d'
+
 2008-09-15  Sanel <karijes@users.sourceforge.net>
 
 	* TableBase.{h,cpp}: added TableBase based on Erco's Fl_Table widget

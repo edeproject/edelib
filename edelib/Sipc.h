@@ -50,8 +50,7 @@ typedef void (*SipcCallback)(const char*, void*);
  * If name is already taken, request_name() will fail and you will have to
  * try with another one.
  *
- * To listen for incomming connections, make sure you call listener_wait()
- * which will enter
+ * To listen for incomming connections, make sure you call listener_wait().
  *
  * Here is the short sample:
  * \code
@@ -65,8 +64,9 @@ typedef void (*SipcCallback)(const char*, void*);
  *     // fail
  *   s.callback(message_cb);
  *
- *   // now listen for connections
- *   listener_wait();
+ *   // now listen infinitely for connections
+ *   while(1)
+ *     listener_wait();
  * \endcode
  *
  * Bidirectional communication is not possible (a case when server wants to reply);
@@ -112,7 +112,7 @@ class SipcServer {
  * \brief Simple IPC client
  *
  * A client side of this simple IPC implementation. Clients will connects
- * on names server are using and send textual messages to them.
+ * on the names servers are using and send textual messages to them.
  *
  * Here is the sample:
  * \code

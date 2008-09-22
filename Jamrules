@@ -449,6 +449,7 @@ LocalClean distclean :
 	$(TOP)/edelib-dbus.pc
 	$(TOP)/config.log 
 	$(TOP)/config.status 
+	$(TOP)/doc/Doxyfile
 	$(TOP)/edelib/_conf.h.in 
 	$(TOP)/edelib/_conf.h 
 	$(TOP)/edelib/Version.h 

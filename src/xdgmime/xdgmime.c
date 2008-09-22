@@ -528,12 +528,6 @@ xdg_mime_get_mime_type_for_file (const char  *file_name,
   if (_caches)
     return _xdg_mime_cache_get_mime_type_for_file (file_name, statbuf);
 
-  base_name = _xdg_get_base_name (file_name);
-  n = _xdg_glob_hash_lookup_file_name (global_hash, base_name, mime_types, 5);
-
-  if (n == 1)
-    return mime_types[0];
-
   if (!statbuf)
     {
       if (stat (file_name, &buf) != 0)
@@ -561,11 +555,16 @@ xdg_mime_get_mime_type_for_file (const char  *file_name,
   if (S_ISLNK (statbuf->st_mode))
     return xdg_mime_type_symlink;
 
-/* By now we are sure this is file
- *
- * if (!S_ISREG (statbuf->st_mode))
- *   return XDG_MIME_TYPE_UNKNOWN;
- */
+  /* Sanel: changed the order
+   * Now files will be first stat-ed and if it is proven it is a file then xdgmime will do the rest.
+   *
+   * This will prevent from wrong guessing, like to see '.emacs.d' or '.e' folders as unknown file or 
+   * files with some extension.
+   */
+  base_name = _xdg_get_base_name (file_name);
+  n = _xdg_glob_hash_lookup_file_name (global_hash, base_name, mime_types, 5);
+  if (n == 1)
+    return mime_types[0];
 
   /* FIXME: Need to make sure that max_extent isn't totally broken.  This could
    * be large and need getting from a stream instead of just reading it all

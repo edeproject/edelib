@@ -56,6 +56,111 @@ EDELIB_NS_BEGIN
  *
  * This widget does not handle the data in the table. draw_cell() must be overridden by
  * a subclass to manage drawing the content of the cells.
+ *
+ * Drawing (and callbacks, later explained) are done via <i>contexts</i>. Contexts
+ * shows what parts should be redrawn or are changed by user when callbacks are used.
+ * \see TableContext
+ *
+ * Here is the simple table implementation:
+ * \code
+ *   // table callback
+ *   void table_cb(Fl_Widget*, void* data) {
+ *     MyTable* t = (MyTable*)data;
+ *     t->table_callback();
+ *   }
+ *
+ *   class MyTable : public TableBase {
+ *   protected:
+ *      void draw_cell(TableContext context, int R, int C, int X, int Y, int W, int H) {
+ *        switch(context):
+ *          case CONTEXT_STARTPAGE:
+ *           // When table or parts of the table are about to be redraw. Use it to initialize
+ *           // static data such a font selections or to lock a database before accessing. 
+ *           // Here R and C will be zero and X, Y, W and H will have table dimensions.
+ *           break;
+ *          case CONTEXT_ENDPAGE:
+ *           // When table has completed being redrawn. Useful for unlocking a database after accessing.
+ *           // Here R and C will be zero and X, Y, W and H will have table dimensions.
+ *           break;
+ *          case CONTEXT_ROW_HEADER: 
+ *           // When row header cell needs to be redrawn
+ *          case CONTEXT_COL_HEADER: 
+ *           // When columnt header cell needs to be redrawn
+ *           // Our table has both row and column headers so draw it
+ *           fl_push_clip(X, Y, W, H);
+ *           fl_draw_box(FL_UP_BOX, X, Y, W, H, color());
+ *           fl_color(FL_BLACK);
+ *
+ *           // draw "demo" label in each header cell
+ *           fl_draw("demo", X, Y, W, H, FL_ALIGN_LEFT);
+ *           fl_pop_clip();
+ *           break;
+ *          case CONTEXT_CELL:
+ *           // When data in cells needs to be redrawn
+ *           // Here, each cells will have borders and contains "foo" label
+ *           fl_push_clip(X, Y, W, H);
+ *
+ *           // background color
+ *           fl_color(FL_WHITE);
+ *           fl_rectf(X, Y, W, H);
+ *
+ *           // text
+ *           fl_color(FL_BLACK);
+ *           fl_draw("foo", X, Y, W, H, FL_ALIGN_CENTER);
+ *
+ *           // border
+ *           fl_color(FL_GRAY);
+ *           fl_rect(X, Y, W, H);
+ *
+ *           fl_pop_clip();
+ *           break;
+ *          default:
+ *           break;
+ *      }
+ *
+ *   public:
+ *      MyTable() {
+ *        // table used frames, not boxes
+ *        box(FL_DOWN_FRAME);
+ *        // let we get all events
+ *        when(FL_WHEN_CHANGED | FL_WHEN_RELEASED);
+ *        // register our callback
+ *        callback(table_cb, this);
+ *      }
+ *
+ *      void table_callback() {
+ *        // changed row
+ *        int R = callback_row();
+ *        // changed column
+ *        int C = callback_col();
+ *        // context
+ *        TableContext context = callback_context();
+ *
+ *        if(context == CONTEXT_ROW_HEADER) {
+ *         // clicked on a row header
+ *         // excludes resizing
+ *        } else if(context == CONTEXT_COL_HEADER) {
+ *         // clicked on a column header
+ *         // excludes resizing
+ *        } else if(context == CONTEXT_CELL) {
+ *         // clicked on a cell
+ *         // to receive callback for FL_RELEASE events, you must set when(FL_WHEN_RELEASE)
+ *        } else if(context == CONTEXT_RC_RESIZE) {
+ *         // resized columns or rows interactively or via col_width() and row_height()
+ *         // is_interactive_resize() should be used to determine interactive resize
+ *         //
+ *         // if row is resized, R will have row number and C will be 0
+ *         // if column is resized, C will have column number and R will be 0
+ *         // 
+ *         // to receive resize evenys, you must set when(FL_WHEN_CHANGED)
+ *        }
+ *      }
+ *   };
+ * \endcode
+ *
+ * Since TableBase is inherited from Fl_Group, it can be container for FLTK widgets too. In that
+ * case there is no need to use CONTEXT_CELL in draw_cell() and draw widgets: they will be drawn by itself.
+ * The only thing you should use is to <i>add()</i> them, as any other widget is addet to Fl_Group.
  */
 class TableBase : public Fl_Group {
 	public:

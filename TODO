@@ -1,10 +1,9 @@
-TODO list:
-----------
+TODO
+====
  * seems File::readline() does not return 1 when line contains only '\n' char. Should return ?
  * error checks during stream read/write in File (ferror)
  * in Config, don't allow [] sections
  * what should set_textdomain_dir() and set_textdomain() return when NLS is disabled ?
- * documentation install strangely depends on xxx/doc/edelib-xxx/html directory; how ?
  * add local snprintf/vsnprintf/scandir/dirent(???)
  * Date can accept set(0,1,0); leave this or... (possible bugs ?)
  * xdgmime calls too much xdg_mime_init()/xdg_mime_shutdown(); move these in MimeType class
@@ -12,3 +11,6 @@ TODO list:
  * What Config as localized keys should read: LC_MESSAGES or LANG ??? I'm using for now LANG,
    but fd.o people said it should be LC_MESSAGES. Inspect this.
  * Remove register_object()/unregister_object() from EdbusConnection ?
+ * Last change in xdgmime.c moved stat-ed code to be executed first so ambiguous directory names
+   (like ".kde" or ".emacs.d" or ".e") doesn't be recognized as files or unknown types; can stat's
+   be delayed
