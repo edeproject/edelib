@@ -19,6 +19,17 @@ if $(SHARED) {
 }
 
 if $(FLTK_LIBS) {
+	ObjectC++Flags  egroup.cpp
+					egroup2.cpp
+					icon_chooser.cpp
+					font_chooser.cpp
+					sevenseg.cpp
+					dirwatch.cpp
+					list_view.cpp
+					xsettings_setter.cpp
+					xsettings_client.cpp
+					: $(FLTK_CFLAGS) ;
+
 	MakeTest egroup : egroup.cpp : $(FLTK_LIBS) $(ADDONLIB) ;
 	MakeTest egroup2 : egroup2.cpp : $(FLTK_LIBS) $(ADDONLIB) ;
 	MakeTest icon_chooser : icon_chooser.cpp : $(FLTK_LIBS_FULL) $(ADDONLIB) ;

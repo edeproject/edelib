@@ -190,7 +190,7 @@ unsigned long edelib_strlcat(char* dst, const char* src, unsigned long sz) {
 	char* p;
 	
 	len1 = strlen(src);
-	p = memchr(dst, '\0', sz);
+	p = (char*)memchr(dst, '\0', sz);
 	if(!p)
 		return sz + len1;
 
@@ -227,7 +227,7 @@ int edelib_scandir(const char* dir, struct dirent*** namelist,
 	if(dfd == NULL)
 		return -1;
 
-	lst = malloc(sizeof(struct dirent*) * sz);
+	lst = (struct dirent**)malloc(sizeof(struct dirent*) * sz);
 	if(lst == NULL) {
 		errno = ENOMEM;
 		return -1;
@@ -244,11 +244,11 @@ int edelib_scandir(const char* dir, struct dirent*** namelist,
 		if(i >= sz) {
 			sz *= 2;
 			/* could fail */
-			lst = realloc(lst, sizeof(struct dirent*) * sz);
+			lst = (struct dirent**)realloc(lst, sizeof(struct dirent*) * sz);
 		}
 
 		dsize = &entry->d_name[_D_ALLOC_NAMELEN(entry)] - (char*)entry;
-		nentry = malloc(dsize);
+		nentry = (struct dirent*)malloc(dsize);
 		if(!nentry) {
 			errno = ENOMEM;
 			break;

@@ -82,7 +82,7 @@ static char* get_username(void) {
 	if(!name) {
 		struct passwd* pw = getpwuid(getuid());
 		if(!pw)
-			name = "__unknown__";
+			name = (char*)"__unknown__";
 		else { 
 			// should this be copied ?
 			name = pw->pw_name;

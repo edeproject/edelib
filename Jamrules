@@ -38,7 +38,9 @@ COPYDIR = "cp -R" ;
 LINKCMD = "ln -s" ;
 
 # standard C++ library we link with; for now is gcc's default
-STDLIB ?= stdc++ ;
+STDLIB ?= -lstdc++ ;
+#STDLIB ?= -L/opt/sun/lib/rtlibs -lCstd -lCrun -lsupc++ -lgcc_s ;
+#STDLIB ?= -L/opt/sun/lib/rtlibs -lCstd -lCrun ;
 
 # variables used by jam directly
 # OPTIM is cleared so it don't collide with FLAGS
@@ -250,7 +252,7 @@ rule MakeTest
 		}
 	}
 
-	if $(4) = "use-dbus" {
+	if $(4) = "use-dbus" && $(DBUS_CFLAGS) {
 		if $(SHARED) = 1 { 
 			LinkAgainst $(1) : -L$(lpath) -l$(EDELIB_DBUS) -l$(EDELIB) $(DBUS_LIBS) ;
 		} else {
@@ -264,7 +266,7 @@ rule MakeTest
 		LinkAgainst $(1) : $(3) ;
 	}
 
-	LinkAgainst $(1) : -l$(STDLIB) ;
+	LinkAgainst $(1) : $(STDLIB) ;
 }
 
 # MakeInstallPrivate <location-dir> : <targets> : <opt-file-mode> : <opt-chown> : <opt-chgrp> ;

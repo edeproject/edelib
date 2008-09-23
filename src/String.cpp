@@ -22,12 +22,12 @@
 EDELIB_NS_BEGIN
 
 // copy character num times into dest
-inline void chcpy(char* dest, const char& ch, String::size_type num) {
+static void chcpy(char* dest, const char& ch, String::size_type num) {
 	for(char* ptr = dest; num > 0; ptr++, num--)
 		*ptr = ch;
 }
 
-String::StringData String::null_data = {0, 0, ""};
+String::StringData String::null_data = {0, 0, (char*)""};
 const String::size_type  String::npos = ~(String::size_type)0;
 
 String::String() : sdata(&null_data)

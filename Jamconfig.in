@@ -23,18 +23,19 @@ srcdir      ?= "@abs_srcdir@" ;
 sysconfdir  ?= "@sysconfdir@" ;
 
 # programs
-CC          ?= "@CC@" ;
-CXX         ?= "@CXX@" ;
-DOXYGEN     ?= "@DOXYGEN@" ;
-XGETTEXT    ?= "@XGETTEXT@" ;
-MSGFMT      ?= "@MSGFMT@" ;
-SED         ?= "@SED@" ;
+CC       = "@CC@" ;
+C++      = "@CXX@" ;
+LINK     = $(CC) ;
+DOXYGEN  = "@DOXYGEN@" ;
+XGETTEXT = "@XGETTEXT@" ;
+MSGFMT   = "@MSGFMT@" ;
+SED      = "@SED@" ;
 
 # general flags and libraries
-CFLAGS   ?= "@CFLAGS@" ;
-CXXFLAGS ?= "@CXXFLAGS@" ;
-LDFLAGS  ?= "@LDFLAGS@" ;
-LDLIBS   ?= "@LDLIBS@" ;
+CFLAGS      ?= "@CFLAGS@" ;
+CXXFLAGS    ?= "@CXXFLAGS@" ;
+LDFLAGS     ?= "@LDFLAGS@" ;
+LDLIBS      ?= "@LDLIBS@" ;
 
 # for fltk and X11
 FLTK_CFLAGS    ?= "@FLTK_CFLAGS@" ;
@@ -47,7 +48,7 @@ DBUS_CFLAGS ?= "@DBUS_CFLAGS@" ;
 DBUS_LIBS   ?= "@DBUS_LIBS@" ;
 
 # for shared library
-SHARED    ?= "@SHARED@" ;
+SHARED ?= "@SHARED@" ;
 
 # version string
 EDELIB_VERSION ?= "@EDELIB_API_VERSION@" ;

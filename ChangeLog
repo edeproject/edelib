@@ -1,3 +1,17 @@
+2008-09-23  Sanel <karijes@users.sourceforge.net>
+
+	* src/String.cpp: chcpy() made static
+	* src/String.cpp, src/Run.cpp, src/Sipc.cpp, src/Resource.cpp: fix warnings from Sun's
+	compiler
+
+2008-09-22  Sanel <karijes@users.sourceforge.net>
+
+	* src/Jamfile, examples/Jamfile: let files depending on FLTK 
+	uses FLTK_CFLAGS
+	* Jamrules: STDLIB variable will contain '-l' flag in case it is placed in
+	non-standard path so search directories can be added (e.g. in case of
+	different compiler)
+
 2008-09-21  Sanel <karijes@users.sourceforge.net>
 
 	* edelib/Sipc.h: updated documentation

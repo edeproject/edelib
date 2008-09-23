@@ -45,8 +45,8 @@ int run_fork(const char* cmd, bool wait) {
 	// run the child
 	if(pid == 0) {
 		char* argv[4];
-		argv[0] = "/bin/sh";
-		argv[1] = "-c";
+		argv[0] = (char*)"/bin/sh";
+		argv[1] = (char*)"-c";
 		argv[2] = (char*)cmd;
 		argv[3] = NULL;
 
