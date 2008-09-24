@@ -84,5 +84,8 @@ AC_DEFUN([EDELIB_CHECK_DBUS], [
 				AC_MSG_ERROR([D-Bus libraries not found! Please install them first])
 			fi
 		fi
+	else
+		DBUS_CFLAGS=""
+		DBUS_LIBS=""
 	fi
 ])

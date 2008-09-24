@@ -25,24 +25,34 @@ EDELIB_MINOR_VERSION=edelib_minor_version
 EDELIB_PATCH_VERSION=edelib_patch_version
 EDELIB_API_VERSION=$PACKAGE_VERSION
 
-dnl AC_CONFIG_AUX_DIRS(`pwd`/tools)
+dnl configure fuck up CFLAGS/CXXFLAG by adding '-O2' and '-g' after AC_PROG_CC and AC_PROG_CXX
+dnl and there is no way to remove them without knowing if user added them
+user_cflags="$CFLAGS"
+user_cxxflags="$CXXFLAGS"
 
-dnl startup variables
-SANITY_FLAGS="-Wall -pedantic"
-DEBUG_FLAGS="-D_DEBUG"
-OPTIM_FLAGS="-O2"
-
-CFLAGS="$SANITY_FLAGS $CFLAGS"
-CXXFLAGS="$SANITY_FLAGS $CXXFLAGS"
-
+dnl check for compiler and programs first before any variable was set
+dnl this is for case if compiler is not a gcc, so we can set a different variables
+AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_LN_S
 AC_PATH_PROG(SED, sed)
 AC_PATH_PROG(MSGFMT, msgfmt)
 AC_PATH_PROG(XGETTEXT, xgettext)
 AC_PATH_PROG(DOXYGEN, doxygen)
-
 EDELIB_PROG_JAM
+
+if test "$ac_compiler_gnu" = "yes"; then
+	SANITY_FLAGS="-Wall -pedantic"
+	DEBUG_FLAGS="-D_DEBUG"
+	OPTIM_FLAGS="-O2"
+else
+	SANITY_FLAGS=""
+	DEBUG_FLAGS="-D_DEBUG"
+	OPTIM_FLAGS=""
+fi
+
+CFLAGS="$SANITY_FLAGS $user_cflags"
+CXXFLAGS="$SANITY_FLAGS $user_cxxflags"
 
 dnl basic headers
 AC_HEADER_STDC
@@ -54,8 +64,9 @@ EDELIB_DATETIME
 EDELIB_DEVELOPMENT
 
 EDELIB_CHECK_X11
+
 dnl user fired --without-x, we disable FLTK checks
-if eval "test $have_x = yes"; then
+if test "$have_x" = "yes"; then
 	EDELIB_CHECK_FLTK
 	EDELIB_CHECK_LIBXPM
 fi
@@ -69,9 +80,14 @@ EDELIB_CHECK_DBUS
 AC_ARG_VAR([PKG_CONFIG], [pkg-config command])
 AC_ARG_VAR([PKG_CONFIG_PATH], [A directory with .pc files for pkg-config])
 
-dnl concat all libraries that depends on FLTK
-FLTK_LIBS="$FLTK_LIBS $LIBXPM_LIBS $LIBFAM_LIBS"
-FLTK_LIBS_FULL="$FLTK_LIBS_FULL $LIBXPM_LIBS $LIBFAM_LIBS"
+dnl jam don't like spaces in empty string so clear vars if --without-x is given
+if test "$have_x" = "yes"; then
+	FLTK_LIBS="$FLTK_LIBS $LIBXPM_LIBS $LIBFAM_LIBS"
+	FLTK_LIBS_FULL="$FLTK_LIBS_FULL $LIBXPM_LIBS $LIBFAM_LIBS"
+else
+	FLTK_LIBS=""
+	FLTK_LIBS_FULL=""
+fi
 
 if test -n "$OPTIM_FLAGS"; then
 	CFLAGS="$CFLAGS $OPTIM_FLAGS"

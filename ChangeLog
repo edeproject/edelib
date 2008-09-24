@@ -1,3 +1,14 @@
+2008-09-24  Sanel <karijes@users.sourceforge.net>
+
+	* m4/dbus.m4: if disabled, don't leave spaces, jam doesn't like it
+	* configure.in: the same applies for FLTK; also fixed issue with CFLAGS
+	and CXXFLAGS where AC_PROG_CC and AC_PROG_CXX would secretly add 
+	'-O2' and '-g' flags
+	* m4/fltk.m4: added --with-fltk-path configure option to specify
+	alternative FLTK installation
+	* src/Resource.cpp: use temporary when substring is used or we will get a
+	junk as name
+
 2008-09-23  Sanel <karijes@users.sourceforge.net>
 
 	* src/String.cpp: chcpy() made static

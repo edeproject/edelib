@@ -99,7 +99,8 @@ bool Resource::save(const char* domain) {
 	while((loc2 = ufile.find('/', loc + 1)) != String::npos) 
 		loc = loc2;
 
-	const char* dname = ufile.substr(0, loc).c_str();
+	String tmp = ufile.substr(0, loc);
+	const char* dname = tmp.c_str();
 
 	if(!dir_exists(dname))
 		dir_create_with_parents(dname, 0700); // default perms
