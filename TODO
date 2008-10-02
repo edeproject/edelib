@@ -14,3 +14,7 @@ TODO
  * Last change in xdgmime.c moved stat-ed code to be executed first so ambiguous directory names
    (like ".kde" or ".emacs.d" or ".e") doesn't be recognized as files or unknown types; can stat's
    be delayed
+ * Check IconTheme/XSettings code in edelib::Window: IconTheme will be initialized twice when
+   XSETTINGS manager is running in the background. The first time will be with "edeneu" theme and
+   after window is shown, theme would be changed to whatever XSETTINGS manager is keeping.
+   edelib::Window::init() should probably use icon theme name frome XSETTINGS manager firstly.

@@ -10,15 +10,13 @@
  * See COPYING for details.
  */
 
+#include <stdlib.h> // getenv
+#include <string.h> // strlen
+
 #include <edelib/Debug.h>
 #include <edelib/Util.h>
 #include <edelib/StrUtil.h>
 #include <edelib/Directory.h>
-
-#include <stdlib.h> // getenv
-#include <string.h> // strlen
-
-//#define MAX_PATH 1024
 
 EDELIB_NS_BEGIN
 
@@ -67,7 +65,7 @@ bail:
 }
 
 static int _dirs_get(const char* env, const char* fallback, StringList& lst) {
-	EASSERT(fallback != NULL);
+	E_ASSERT(fallback != NULL);
 
 	char* path = getenv(env);
 	if(!path)
@@ -106,7 +104,7 @@ static String _path_builder(const char* separator, bool ending, const char* p1, 
 	StringList ls;
 	stringtok(ls, str, separator);
 
-	EASSERT(ls.size() > 0 && "This should not be happened !!!");
+	E_ASSERT(ls.size() > 0 && "This should not be happened !!!");
 
 	str.clear();
 	if(trailing)
@@ -163,18 +161,14 @@ int system_data_dirs(StringList& lst) {
 	return _dirs_get("XDG_DATA_DIRS", "/usr/local/share:/usr/share", lst);
 }
 
-String build_filename(const char* separator, const char* p1, const char* p2, const char* p3) {
-	EASSERT(separator != NULL);
-	EASSERT(p1 != NULL);
-
-	return _path_builder(separator, false, p1, p2, p3);
+String build_filename(const char* p1, const char* p2, const char* p3) {
+	E_ASSERT(p1 != NULL);
+	return _path_builder(E_DIR_SEPARATOR_STR, false, p1, p2, p3);
 }
 
-String build_dirname(const char* separator, const char* p1, const char* p2, const char* p3) {
-	EASSERT(separator != NULL);
-	EASSERT(p1 != NULL);
-
-	return _path_builder(separator, true, p1, p2, p3);
+String build_dirname(const char* p1, const char* p2, const char* p3) {
+	E_ASSERT(p1 != NULL);
+	return _path_builder(E_DIR_SEPARATOR_STR, true, p1, p2, p3);
 }
 
 EDELIB_NS_END

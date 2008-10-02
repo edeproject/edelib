@@ -10,12 +10,6 @@
  * See COPYING for details.
  */
 
-#include <edelib/Window.h>
-#include <edelib/Color.h>
-#include <edelib/MessageBox.h>
-#include <edelib/IconTheme.h>
-#include <edelib/Debug.h>
-
 #include <string.h>
 #include <stdio.h>
 #include <ctype.h>
@@ -23,6 +17,13 @@
 #include <FL/x.H>
 #include <FL/Fl_Tooltip.H>
 #include <FL/Fl_Shared_Image.H>
+
+#include <edelib/Window.h>
+#include <edelib/Color.h>
+#include <edelib/MessageBox.h>
+#include <edelib/IconTheme.h>
+#include <edelib/Debug.h>
+#include <edelib/XSettingsClient.h>
 
 #ifdef HAVE_LIBXPM
 	#include <X11/xpm.h>
@@ -170,14 +171,15 @@ static void xsettings_cb(const char* name, XSettingsAction action, XSettingsSett
 		FL_NORMAL_SIZE = normal_size;
 		changed = true;
 	} else if(strcmp(name, "Net/IconThemeName") == 0) {
-		if(IconTheme::inited())
-			IconTheme::shutdown();
+		const char* icon_theme = NULL;
 
-		const char* icon_theme;
 		if(action == XSETTINGS_ACTION_DELETED || setting->type != XSETTINGS_TYPE_STRING)
 			icon_theme = DEFAULT_ICON_THEME;
 		else
 			icon_theme = setting->data.v_string;
+
+		if(IconTheme::inited())
+			IconTheme::shutdown();
 
 		IconTheme::init(icon_theme);
 		changed = true;
@@ -220,14 +222,19 @@ void Window::init(int component) {
 	if(component & WIN_INIT_IMAGES)
 		fl_register_images();
 
-	if(component & WIN_INIT_ICON_THEME)
+	fl_open_display();
+
+	if(component & WIN_INIT_ICON_THEME) {
+		// try to figure out icon theme name if xsettings manager is running
+		if(XSettingsClient::manager_running(fl_display, fl_screen))
+		{ }
+
 		IconTheme::init(DEFAULT_ICON_THEME);
+	}
 
 	// setup icons for dialogs
 	themed_dialog_icons(MSGBOX_ICON_INFO, MSGBOX_ICON_ERROR, MSGBOX_ICON_QUESTION, 
 			MSGBOX_ICON_QUESTION, MSGBOX_ICON_PASSWORD);
-
-	fl_open_display();
 
 	// FIXME: uh, uh ???
 	local_window = this;

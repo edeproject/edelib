@@ -113,6 +113,7 @@ IconTheme::~IconTheme() {
 		delete icached[i];
 		icached[i] = NULL;
 	}
+
 	E_DEBUG(E_STRLOC " : IconTheme::~IconTheme() cache dismiss\n");
 }
 

@@ -181,6 +181,7 @@ void ExpandableGroup::resize(int X, int Y, int W, int H) {
 	//fix_scrollbar_order();
 	Fl_Widget::resize(X,Y,W,H);
 	reposition_childs();
+	Fl_Group::init_sizes();
 }
 
 void ExpandableGroup::scrolly(int ypos) {
@@ -239,7 +240,8 @@ int ExpandableGroup::children(void) {
 
 void ExpandableGroup::add(Fl_Widget* o) {
 	Fl_Group::add(o);
-	reposition_childs();
+	if(visible())
+		reposition_childs();
 }
 
 EDELIB_NS_END

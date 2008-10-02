@@ -64,7 +64,7 @@ XSettingsClient::~XSettingsClient() {
 }
 
 void XSettingsClient::check_manager_window(void) {
-	EASSERT(client_data != NULL);
+	E_ASSERT(client_data != NULL);
 
 	XGrabServer(client_data->display); // required by spec
 
@@ -79,7 +79,7 @@ void XSettingsClient::check_manager_window(void) {
 }
 
 void XSettingsClient::read_settings(void) {
-	EASSERT(client_data != NULL);
+	E_ASSERT(client_data != NULL);
 
 	Atom type;
 	int format;
@@ -103,9 +103,9 @@ void XSettingsClient::read_settings(void) {
 
 		if(result == Success && type != None) {
 			if(type != client_data->xsettings_atom)
-				EWARNING(ESTRLOC ": Invalid type for XSETTINGS property\n");
+				E_WARNING(E_STRLOC ": Invalid type for XSETTINGS property\n");
 			else if(format != 8)
-				EWARNING(ESTRLOC ": Invalid format for XSETTINGS property %d\n", format);
+				E_WARNING(E_STRLOC ": Invalid format for XSETTINGS property %d\n", format);
 			else {
 				// parse settings
 				client_data->settings = xsettings_decode(data, n_items, &client_data->serial);
@@ -189,7 +189,7 @@ int XSettingsClient::process_xevent(const XEvent* xev) {
 	} else if(xev->xany.window == client_data->manager_win) {
 		if(xev->xany.type == DestroyNotify) {
 			check_manager_window();
-			EDEBUG(ESTRLOC ": Manager quit\n");
+			E_DEBUG(E_STRLOC ": Manager quit\n");
 			return True;
 		} else if(xev->xany.type == PropertyNotify) {
 			read_settings();
@@ -201,7 +201,7 @@ int XSettingsClient::process_xevent(const XEvent* xev) {
 }
 
 void XSettingsClient::set(const char* name, int val) {
-	EASSERT(client_data != NULL && "init() must be called before this function");
+	E_ASSERT(client_data != NULL && "init() must be called before this function");
 
 	if(!client_data->manager_win)
 		return;
@@ -215,7 +215,7 @@ void XSettingsClient::set(const char* name, int val) {
 }
 
 void XSettingsClient::set(const char* name, const char* val) {
-	EASSERT(client_data != NULL && "init() must be called before this function");
+	E_ASSERT(client_data != NULL && "init() must be called before this function");
 
 	if(!client_data->manager_win)
 		return;
@@ -230,7 +230,7 @@ void XSettingsClient::set(const char* name, const char* val) {
 
 void XSettingsClient::set(const char* name, unsigned short red, unsigned short green, 
 		unsigned short blue, unsigned short alpha) {
-	EASSERT(client_data != NULL && "init() must be called before this function");
+	E_ASSERT(client_data != NULL && "init() must be called before this function");
 
 	if(!client_data->manager_win)
 		return;
@@ -247,7 +247,7 @@ void XSettingsClient::set(const char* name, unsigned short red, unsigned short g
 }
 
 void XSettingsClient::manager_notify(void) {
-	EASSERT(client_data != NULL && "init() must be called before this function");
+	E_ASSERT(client_data != NULL && "init() must be called before this function");
 
 	if(!client_data->manager_win)
 		return;
