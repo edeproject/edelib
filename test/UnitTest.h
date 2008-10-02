@@ -60,7 +60,7 @@ class UnitTestSuite {
 		~UnitTestSuite();
 		static UnitTestSuite& global(void);
 		void add(UnitTest* t, bool alloc = true);
-		void run(bool verbose);
+		void run(bool verbose, bool cdash_output);
 		int tests(void) { return ntests; }
 };
 

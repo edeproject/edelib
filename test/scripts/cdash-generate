@@ -1,0 +1,188 @@
+#!/bin/sh
+
+# this variable represents submit track and can have one of
+# 'Experimental/Nightly/Continuous' values
+TRACK="Experimental"
+
+# filenames
+CDASH_CONFIGURE_LOG="Configure.xml"
+CDASH_BUILD_LOG="Build.xml"
+CDASH_TEST_LOG="Test.xml"
+
+CDASH_SERVER="http://www.cdash.org/CDashPublic/submit.php?project=edelib"
+
+GENERATOR=$0
+DATE_STAMP=`date +%Y%m%d-%H-%M`
+HOSTNAME=`hostname`
+
+UNAME=`uname -sp`
+BUILD_NAME="`echo $UNAME | sed 's/ /_/g'`"
+BUILD_STAMP="$DATE_STAMP-$TRACK"
+
+# command run to compile files
+BUILD_COMMAND="jam"
+
+# Calculate full path of edelib directory based on location
+# of this script.
+# Note that this should be correctly computed or script will
+# not be able to find needed files and tests will fail
+BASE_DIR=`pwd | sed -e 's/[^/]*$//' -e 's/\/$//' -e 's/[^/]*$//' -e 's/\$//'`
+TEST_DIR="$BASE_DIR/test"
+SCRIPTS_DIR="$TEST_DIR/scripts"
+
+submit_file() {
+	if [ -e $1 ]; then
+		#python put.py $1 $CDASH_SERVER
+		curl -T $1 $CDASH_SERVER
+	else
+		echo "File $1 does not exists! It will not be submitted"
+	fi
+}
+
+do_configure() {
+	# go to base directory, run autogen.sh and configure
+	cd $BASE_DIR
+
+	./autogen.sh
+	./configure --enable-debug
+
+	# return back
+	cd $SCRIPTS_DIR
+
+cat > $1 <<EOF
+<?xml version="1.0" encoding="utf-8"?>
+<Site BuildName="$BUILD_NAME"
+      BuildStamp="$BUILD_STAMP"
+      Name="$HOSTNAME"
+      Generator="$GENERATOR">
+ <Configure>
+  <StartDateTime>`date`</StartDateTime>
+EOF
+	# location of 'config.log'
+	configure_log="$BASE_DIR/config.log"
+
+	time_sec_start=`date +%s`
+
+	# get a line where is configure command stored
+	configure_command=`sed -ne '/^\s*\\$ \.\/configure/p' $configure_log | sed 's/^\s*\\$\s*//g'`
+
+	echo "  <ConfigureCommand>$configure_command</ConfigureCommand>" >> $1
+	echo "  <Log>"      >> $1
+
+	# cat file and unescape xml sensitive characters
+	cat  $configure_log | sed -e 's/\&/\&amp;/g' -e 's/</\&lt;/g' -e 's/>/\&gt;/g' >> $1
+	echo "  </Log>"     >> $1
+
+	time_sec_end=`date +%s`
+	time_min_elapsed=`python min-elapsed.py $time_sec_end $time_sec_start`
+
+cat >> $1 <<EOF
+  <ConfigureStatus> </ConfigureStatus>
+  <EndDateTime>`date`</EndDateTime>
+  <ElapsedMinutes>$time_min_elapsed</ElapsedMinutes>
+ </Configure>
+</Site>
+EOF
+}
+
+do_build() {
+cat > $1 <<EOF
+<?xml version="1.0" encoding="utf-8"?>
+<Site BuildName="$BUILD_NAME"
+      BuildStamp="$BUILD_STAMP"
+      Name="$HOSTNAME"
+      Generator="$GENERATOR">
+ <Build>
+  <StartDateTime>`date`</StartDateTime>
+  <BuildCommand>$BUILD_COMMAND</BuildCommand>
+EOF
+	# a log where jam output is stored so we can find
+	# warnings and errors
+	compile_log="$SCRIPTS_DIR/compile.log"
+
+	time_sec_start=`date +%s`
+
+	cd $BASE_DIR
+	$BUILD_COMMAND 2>&1 | tee $compile_log
+	cd $SCRIPTS_DIR
+
+	time_sec_end=`date +%s`
+	time_min_elapsed=`python min-elapsed.py $time_sec_end $time_sec_start`
+
+	# find errors
+	if grep -qi error $compile_log; then
+		grep -n -i error $compile_log | while read error_line; do
+			error_line_num=`echo $error_line | sed -e 's/\([^:]*\):\(.*\)/\1/'`
+			error_line_txt=`echo $error_line | sed -e 's/\([^:]*\):\(.*\)/\2/'`
+
+			echo "  <Error>"  >> $1
+			echo "   <BuildLogLine>$error_line_num</BuildLogLine>" >> $1
+			echo "   <Text>$error_line_txt</Text>"                 >> $1
+			echo "  </Error>" >> $1
+		done
+	fi
+
+	# find warnings
+	if grep -qi warning $compile_log; then
+		grep -n -i warning $compile_log | while read warning_line; do
+			warning_line_num=`echo $warning_line | sed -e 's/\([^:]*\):\(.*\)/\1/'`
+			warning_line_txt=`echo $warning_line | sed -e 's/\([^:]*\):\(.*\)/\2/'`
+
+			echo "  <Warning>"  >> $1
+			echo "   <BuildLogLine>$warning_line_num</BuildLogLine>" >> $1
+			echo "   <Text>$warning_line_txt</Text>"                 >> $1
+			echo "  </Warning>" >> $1
+		done
+	fi
+
+	# whole compile log
+	echo "  <Log encoding=\"utf-8\">" >> $1
+	cat $compile_log >> $1
+	rm  $compile_log
+	echo "  </Log>" >> $1
+
+cat >> $1 <<EOF
+  <EndDateTime>`date`</EndDateTime>
+  <ElapsedMinutes>$time_min_elapsed</ElapsedMinutes>
+ </Build>
+</Site>
+EOF
+}
+
+do_test() {
+cat > $1 <<EOF
+<?xml version="1.0" encoding="utf-8"?>
+<Site BuildName="$BUILD_NAME"
+      BuildStamp="$BUILD_STAMP"
+      Name="$HOSTNAME"
+      Generator="$GENERATOR">
+ <Testing>
+  <StartDateTime>`date`</StartDateTime>
+EOF
+
+	time_sec_start=`date +%s`
+
+	# make sure we go in directory where 'run_tests' exists because
+	# it requires some local files
+	cd $TEST_DIR
+	./run_tests --cdash >> scripts/$1
+	cd $SCRIPTS_DIR
+
+	time_sec_end=`date +%s`
+	time_min_elapsed=`python min-elapsed.py $time_sec_end $time_sec_start`
+
+cat >> $1 <<EOF
+  <EndDateTime>`date`</EndDateTime>
+  <ElapsedMinutes>$time_min_elapsed</ElapsedMinutes>
+ </Testing>
+</Site>
+EOF
+}
+
+do_configure $CDASH_CONFIGURE_LOG
+do_build     $CDASH_BUILD_LOG
+do_test      $CDASH_TEST_LOG
+
+#submit_file $CDASH_CONFIGURE_LOG
+#submit_file $CDASH_BUILD_LOG
+#submit_file $CDASH_TEST_LOG
