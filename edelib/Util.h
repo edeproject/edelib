@@ -68,37 +68,42 @@ EDELIB_API int system_config_dirs(list<String>& lst);
 EDELIB_API int system_data_dirs(list<String>& lst);
 
 /**
- * This function will create correct filename path, separating each item
- * with exact one E_DIR_SEPARATOR. It will also correct possible given incorrect parameters.
- * Function will not touch trailing E_DIR_SEPARATOR, if given.
+ * This function will construct a path, separating each item with E_DIR_SEPARATOR separator.
+ * Each parameter will be separated with the one separator, except the case when one of the 
+ * parameters contains multiple path elements separated with multiple separators.
  *
- * Sample:
+ * Also, the number of leading separators in the first parameter and the number of trailing
+ * separators in the last parameter will be preserved.
+ *
+ * For example:
  * \code
- *   build_filename("/home/foo", "foofile", "baz") == "/home/foo/foofile/baz";
+ *   build_filename("home", "foo", "baz") == "home/foo/baz";
  *   build_filename("myplace/dir", "myfile") == "myplace/dir/myfile";
- *   // corrections
- *   build_filename("/home////foo", "//foofile///", "/baz//") == "/home/foo/foofile/baz";
+ *
+ *   // keep heading separators
+ *   build_filename("/home", "foo", "baz") == "/home/foo/baz";
+ *   build_filename("///home", "foo", "baz") == "///home/foo/baz";
+ *
+ *   // keep trailing separators
+ *   build_filename("/home/foo", "foofile", "baz/") == "/home/foo/foofile/baz/";
+ *   build_filename("/home/foo", "foofile", "baz///") == "/home/foo/foofile/baz///";
+ *
+ *   // first parameter have multiple elements, it will be preserved as is
+ *   build_filename("/home///foo", "//foofile///", "/baz") == "/home///foo/foofile/baz";
+ *
  *   // correct trailing data, since does not match to separator
  *   build_filename("///home////foo", "//foofile///", "/baz//") == "/home/foo/foofile/baz";
- *   // also correct first parameter
- *   build_filename("/home/foo/////") == "/home/foo";
+ *
+ *   // if given only one parameter, heading and trailing number of separator will be preserved
+ *   build_filename("///home///") == "///home///";
  * \endcode
  *
- * \return string with given parameters
+ * \return constructed filename path
  * \param p1 first parameter
  * \param p2 optional second; if is NULL (default), it is ignored
  * \param p3 optional third; if is NULL (default), it is ignored
  */
 EDELIB_API String build_filename(const char* p1, const char* p2 = NULL, const char* p3 = NULL);
-
-/**
- * This function behaves the same as build_filename(), except will always add ending separator, like:
- * \code
- *   build_dirname("/home/foo") == "/home/foo/";
- *   build_dirname("home","mydir") == "home/mydir/";
- * \endcode
- */
-EDELIB_API String build_dirname(const char* p1, const char* p2 = NULL, const char* p3 = NULL);
 
 EDELIB_NS_END
 #endif // __UTIL_H__

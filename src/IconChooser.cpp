@@ -3,20 +3,12 @@
  *
  * Icon choose dialog
  * Part of edelib.
- * Copyright (c) 2000-2008 EDE Authors.
+ * Copyright (c) 2006-2008 EDE Authors.
  *
  * This program is licenced under terms of the
  * GNU General Public Licence version 2 or newer.
  * See COPYING for details.
  */
-
-#include <edelib/IconChooser.h>
-#include <edelib/Directory.h>
-#include <edelib/ExpandableGroup.h>
-#include <edelib/Nls.h>
-#include <edelib/Debug.h>
-#include <edelib/StrUtil.h>
-#include <edelib/IconTheme.h>
 
 #include <FL/Fl_Window.H>
 #include <FL/Fl.H>
@@ -28,6 +20,14 @@
 #include <FL/Fl_File_Chooser.H>
 #include <FL/Fl_Progress.H>
 #include <FL/fl_draw.H>
+
+#include <edelib/IconChooser.h>
+#include <edelib/Directory.h>
+#include <edelib/ExpandableGroup.h>
+#include <edelib/Nls.h>
+#include <edelib/Debug.h>
+#include <edelib/StrUtil.h>
+#include <edelib/IconTheme.h>
 
 // max icon sizes
 #define MAX_ICON_W  128
@@ -199,6 +199,10 @@ IconChooser::IconChooser() : Fl_Window(355, 305, _("Choose icon...")), ret("") {
 	bbrowse = new Fl_Button(255, 10, 90, 25, _("&Browse..."));
 	bbrowse->callback(browse_cb, this);
 
+	// invisible resizable box
+	Fl_Box* ibox = new Fl_Box(15, 160, 115, 95);
+	resizable(ibox);
+
 	icongrp = new ExpandableGroup(10, 40, 335, 220);
 	icongrp->box(FL_DOWN_BOX);
 	icongrp->color(FL_WHITE);
@@ -213,9 +217,6 @@ IconChooser::IconChooser() : Fl_Window(355, 305, _("Choose icon...")), ret("") {
 	bcancel = new Fl_Button(255, 270, 90, 25, _("&Cancel"));
 	bcancel->callback(cancel_cb, this);
 
-	// invisible resizable box
-	Fl_Box* ibox = new Fl_Box(15, 160, 115, 95);
-	resizable(ibox);
 	end();
 }
 

@@ -142,26 +142,32 @@ UT_FUNC(XDGPathTest, "Test XDG paths")
 	RESTORE_ENV("XDG_CONFIG_DIRS", config_dirs);
 }
 
-UT_FUNC(PathBuildTest, "Test path builders")
+UT_FUNC(PathBuildTest, "Test build_filename")
 {
 	String s = build_filename("foo", "baz", "taz");
 	UT_VERIFY( s == "foo/baz/taz" );
 
+	s = build_filename("/foo", "baz", "taz/");
+	UT_VERIFY( s == "/foo/baz/taz/" );
+
+	s = build_filename("///foo///", "///baz///", "///taz///");
+	UT_VERIFY( s == "///foo/baz/taz///" );
+
 	s = build_filename("/foo/baz////", "baz", "myfile.txt/");
-	UT_VERIFY( s == "/foo/baz/baz/myfile.txt" );
+	UT_VERIFY( s == "/foo/baz/baz/myfile.txt/" );
 
 	s = build_filename("home", "myfile.txt");
 	UT_VERIFY( s == "home/myfile.txt" );
 
-	s = build_filename("///home/", "/myfile.txt//");
-	UT_VERIFY( s == "/home/myfile.txt" );
+	s = build_filename("////home////");
+	UT_VERIFY( s == "////home////" );
 
-	s = build_dirname("/", "home", "mydir");
-	UT_VERIFY( s == "/home/mydir/" );
+	s = build_filename("/home////", "demo");
+	UT_VERIFY( s == "/home/demo" );
 
-	s = build_dirname("/", "/", "/demodir");
-	UT_VERIFY( s == "/demodir/" );
+	s = build_filename("foo", NULL, "baz");
+	UT_VERIFY( s == "foo/baz" );
 
-	s = build_dirname("/", "///", "/demodir");
-	UT_VERIFY( s == "/demodir/" );
+	s = build_filename("//////foo/////baz/////", "taz", "///gaz//////");
+	UT_VERIFY( s == "//////foo/////baz/taz/gaz//////" );
 }

@@ -1,3 +1,14 @@
+2008-10-03  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Util.h:
+	* src/Util.cpp: removed build_dirname() and reimplemented build_filename()
+	to not use tokenizer
+	* test/util.cpp: tests update
+
+2008-10-02  Sanel <karijes@users.sourceforge.net>
+
+	* src/IconChooser.cpp: same issue as with ExpandableGroup.cpp was
+
 2008-10-01  Sanel <karijes@users.sourceforge.net>
 
 	* src/ExpanadableGroup.cpp: do not reorder childs if group is not shown

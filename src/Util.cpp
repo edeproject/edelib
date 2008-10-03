@@ -75,66 +75,29 @@ static int _dirs_get(const char* env, const char* fallback, StringList& lst) {
 	return lst.size();
 }
 
-static String _path_builder(const char* separator, bool ending, const char* p1, const char* p2 = NULL, const char* p3 = NULL) {
-	bool trailing = false;
-	int slen = strlen(separator);
+static void _build_path_segment(const char* separator, int separator_len, 
+		const char* path, 
+		int keep_leading, int keep_trailing, 
+		String& ret) 
+{
+	const char* p = path;
+	const char* end;
 
-	if(strncmp(p1, separator, slen) == 0)
-		trailing = true;
-
-	String str;
-	str.reserve(100);
-	str = p1;
-
-	if(p2) {
-		str += separator;
-		str += p2;
+	if(separator_len && !keep_leading) {
+		while(p && strncmp(p, separator, separator_len) == 0)
+			p += separator_len;
 	}
 
-	if(p3) {
-		str += separator;
-		str += p3;
+	end = p + strlen(p);
+
+	if(separator_len && !keep_trailing) {
+		const char* t = p + separator_len;
+
+		while(end >= t && strncmp(end - separator_len, separator, separator_len) == 0)
+			end -= separator_len;
 	}
 
-	// separator == ""
-	if(!slen)
-		return str;
-
-	// now tokenize it
-	StringList ls;
-	stringtok(ls, str, separator);
-
-	E_ASSERT(ls.size() > 0 && "This should not be happened !!!");
-
-	str.clear();
-	if(trailing)
-		str += separator;
-
-	unsigned int sz = ls.size();
-	StringListIter it = ls.begin();
-
-	/*
-	 * This is intentionaly so cases like
-	 * build_filename("/", "/", "/", "foo") can be accepted
-	 */
-	if(sz > 1) {
-		sz -= 1;
-		for(; sz; sz--) {
-			str += (*it);
-			str += separator;
-			++it;
-		}
-		// take last one
-		str += (*it);
-	} else {
-		// then just take first one
-		str += (*it);
-	}
-
-	if(ending)
-		str += separator;
-
-	return str;
+	ret.append(p, end - p);
 }
 
 String user_config_dir(void) { 
@@ -163,12 +126,36 @@ int system_data_dirs(StringList& lst) {
 
 String build_filename(const char* p1, const char* p2, const char* p3) {
 	E_ASSERT(p1 != NULL);
-	return _path_builder(E_DIR_SEPARATOR_STR, false, p1, p2, p3);
-}
+	
+	String ret;
+	int separator_len = strlen(E_DIR_SEPARATOR_STR);
+	int keep_trailing = 1;
 
-String build_dirname(const char* p1, const char* p2, const char* p3) {
-	E_ASSERT(p1 != NULL);
-	return _path_builder(E_DIR_SEPARATOR_STR, true, p1, p2, p3);
+	// see if we have other params so can keep trailing separator
+	if(!p2 && !p3)
+		keep_trailing = 1;
+	else
+		keep_trailing = 0;
+
+	_build_path_segment(E_DIR_SEPARATOR_STR, separator_len, p1, 1, keep_trailing, ret);
+
+	if(p2) {
+		ret += E_DIR_SEPARATOR_STR;
+
+		if(p3)
+			keep_trailing = 0;
+		else
+			keep_trailing = 1;
+
+		_build_path_segment(E_DIR_SEPARATOR_STR, separator_len, p2, 0, keep_trailing, ret);
+	}
+
+	if(p3) {
+		ret += E_DIR_SEPARATOR_STR;
+		_build_path_segment(E_DIR_SEPARATOR_STR, separator_len, p3, 0, 1, ret);
+	}
+
+	return ret;
 }
 
 EDELIB_NS_END
