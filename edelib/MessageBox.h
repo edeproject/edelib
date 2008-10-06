@@ -172,7 +172,7 @@ enum MessageBoxButtonType {
  * from most right and 0); in case dialog was closed without pressing on any button
  * (like calling hide() or closing it via window manager) it will return -1.
  */
-class MessageBox : public Fl_Window {
+class EDELIB_API MessageBox : public Fl_Window {
 	private:
 		Fl_Box* img;
 		Fl_Box* txt;
@@ -296,33 +296,33 @@ class MessageBox : public Fl_Window {
  * \param input is icon for input()
  * \param password is icon for password()
  */
-void themed_dialog_icons(const char* msg, const char* alert = 0, 
+EDELIB_API void themed_dialog_icons(const char* msg, const char* alert = 0, 
 	const char* ask = 0, const char* input = 0, const char* password = 0);
 
 /**
  * \ingroup widgets
  * Clear icon names used by IconTheme.
  */
-void clear_dialog_icons(void);
+EDELIB_API void clear_dialog_icons(void);
 
 /**
  * Display message dialog in printf form.
  * \related MessageBox
  */
-void message(const char* fmt, ...);
+EDELIB_API void message(const char* fmt, ...);
 
 /**
  * Display dialog with alert message; in printf form.
  * \related MessageBox
  */
-void alert(const char* fmt, ...);
+EDELIB_API void alert(const char* fmt, ...);
 
 /**
  * Display question dialog. Return 1 if user clicked 'Yes' or 0 if
  * user clicked 'No' or closed dialog.
  * \related MessageBox
  */
-int ask(const char* fmt, ...);
+EDELIB_API int ask(const char* fmt, ...);
 
 /**
  * Display dialog with input field with 'OK' and 'Cancel' buttons.
@@ -334,13 +334,13 @@ int ask(const char* fmt, ...);
  * it will return NULL.
  * \related MessageBox
  */
-const char* input(const char* fmt, const char* deflt = 0, ...);
+EDELIB_API const char* input(const char* fmt, const char* deflt = 0, ...);
 
 /**
  * Same as input(), but typed characters are hidden with asterisks.
  * \related MessageBox
  */
-const char* password(const char* fmt, const char* deflt = 0, ...);
+EDELIB_API const char* password(const char* fmt, const char* deflt = 0, ...);
 
 #ifndef SKIP_DOCS
 /*

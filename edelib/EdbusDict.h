@@ -23,7 +23,7 @@ EDELIB_NS_BEGIN
  * \class EdbusDictEntry
  * \brief An entry in EdbusDict
  */
-struct EdbusDictEntry {
+struct EDELIB_API EdbusDictEntry {
 	/** key */
 	EdbusData key;
 	/** value */
@@ -110,7 +110,7 @@ struct EdbusDictEntry {
  *   }
  * \endcode
  */
-struct EdbusDict : public EdbusContainer<EdbusDictEntry> {
+struct EDELIB_API EdbusDict : public EdbusContainer<EdbusDictEntry> {
 	/**
 	 * Declares EdbusDict iterator
 	 */

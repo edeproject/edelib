@@ -38,6 +38,6 @@ EDELIB_NS_BEGIN
  * \param default_name if not NULL will select given font name
  * \param default_size if greater than 0 will select font size
  */
-int font_chooser(const char* name, const char* family, int& retsize, const char* default_name = 0, int default_size = 0);
+EDELIB_API int font_chooser(const char* name, const char* family, int& retsize, const char* default_name = 0, int default_size = 0);
 
 EDELIB_NS_END

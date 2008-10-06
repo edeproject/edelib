@@ -446,7 +446,7 @@ private:
  * in a document, or stand on its own. The type of a TiXmlNode
  * can be queried, and it can be cast to its more defined type.
  */
-class TiXmlNode : public TiXmlBase
+class EDELIB_API TiXmlNode : public TiXmlBase
 {
 	friend class TiXmlDocument;
 	friend class TiXmlElement;
@@ -899,7 +899,7 @@ private:
  *  part of the tinyXML document object model. There are other
  *  suggested ways to look at this problem.
  */
-class TiXmlAttribute : public TiXmlBase
+class EDELIB_API TiXmlAttribute : public TiXmlBase
 {
 	friend class TiXmlAttributeSet;
 
@@ -1088,7 +1088,7 @@ private:
  * and can contain other elements, text, comments, and unknowns.
  * Elements also contain an arbitrary number of attributes.
  */
-class TiXmlElement : public TiXmlNode
+class EDELIB_API TiXmlElement : public TiXmlNode
 {
 public:
 	/** Construct an element */
@@ -1308,7 +1308,7 @@ private:
  * \class TiXmlComment
  * \brief A XML Comment
  */
-class TiXmlComment : public TiXmlNode
+class EDELIB_API TiXmlComment : public TiXmlNode
 {
 public:
 	/** Constructs an empty comment */
@@ -1367,7 +1367,7 @@ protected:
  * you generally want to leave it alone, but you can change the output mode with
  * SetCDATA() and query it with CDATA().
  */
-class TiXmlText : public TiXmlNode
+class EDELIB_API TiXmlText : public TiXmlNode
 {
 	friend class TiXmlElement;
 public:
@@ -1451,7 +1451,7 @@ private:
  * handled as special cases, not generic attributes, simply
  * because there can only be at most 3 and they are always the same.
  */
-class TiXmlDeclaration : public TiXmlNode
+class EDELIB_API TiXmlDeclaration : public TiXmlNode
 {
 public:
 	/** Construct an empty declaration */
@@ -1586,7 +1586,7 @@ private:
  * XML pieces. It can be saved, loaded, and printed to the screen.
  * The 'value' of a document node is the xml file name.
  */
-class TiXmlDocument : public TiXmlNode
+class EDELIB_API TiXmlDocument : public TiXmlNode
 {
 public:
 	/** Create an empty document, that has no name. */
@@ -1862,7 +1862,7 @@ private:
  * 
  * 
  */
-class TiXmlHandle
+class EDELIB_API TiXmlHandle
 {
 public:
 	/** Create a handle from any node (at any depth of the tree.) This can be a null pointer. */

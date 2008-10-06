@@ -347,9 +347,9 @@ class EDELIB_API String {
  * When I figure this out, SKIP_DOCS will be removed
  */
 #ifndef SKIP_DOCS
-String operator+(const String& s1, const String& s2);
-String operator+(const char* s1, const String& s2);
-String operator+(const String& s1, const char* s2);
+EDELIB_API String operator+(const String& s1, const String& s2);
+EDELIB_API String operator+(const char* s1, const String& s2);
+EDELIB_API String operator+(const String& s1, const char* s2);
 
 inline bool operator==(const String& str1, const char* str2) { return (strcmp(str1.c_str(), str2) == 0); }
 inline bool operator!=(const String& str1, const char* str2) { return (strcmp(str1.c_str(), str2) != 0); }

@@ -182,7 +182,7 @@ typedef void (DirWatchCallback)(const char* dir, const char* w, int flags, void*
  *     // you got the point :)
  * \endcode
  */
-class DirWatch {
+class EDELIB_API DirWatch {
 	private:
 		static DirWatch* pinstance;
 

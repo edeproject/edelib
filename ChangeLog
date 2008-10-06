@@ -1,3 +1,34 @@
+2008-10-05  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/List.h: de-templatized ListNode; this yields a smaller binary
+	files that uses list
+
+2008-10-04  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/econfig.h: E_EXPORT, E_NO_EXPORT and EDELIB_NO_API added
+	* edelib/econfig.h: EDELIB_API now on gcc is E_EXPORT
+	* edelib/EdbusData.h:
+	* edelib/EdbusObjectPath.h:
+	* edelib/EdbusDict.h:
+	* edelib/EdbusList.h:
+	* edelib/EdbusConnection.h:
+	* edelib/EdbusMessage.h:
+	* edelib/Regex.h:
+	* edelib/DesktopFile.h:
+	* edelib/Config.h:
+	* edelib/String.h:
+	* edelib/TiXml.h:
+	* edelib/FontChooser.h:
+	* edelib/DirWatch.h:
+	* edelib/SevenSeg.h:
+	* edelib/TableBase.h:
+	* edelib/XSettingsClient.h:
+	* edelib/XSettingsManager.h:
+	* edelib/XSettingsCommon.h:
+	* edelib/Sipc.h:
+	* edelib/MessageBox.h:
+	let public classes and functions use EDELIB_API
+
 2008-10-03  Sanel <karijes@users.sourceforge.net>
 
 	* edelib/Util.h:

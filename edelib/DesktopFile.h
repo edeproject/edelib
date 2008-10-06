@@ -66,7 +66,7 @@ enum DesktopFileType {
  * create_new() will also clear all current hold conten
  */
 
-class DesktopFile : public Config {
+class EDELIB_API DesktopFile : public Config {
 	private:
 		unsigned int errcode;
 		DesktopFileType dtype;

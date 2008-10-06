@@ -72,7 +72,7 @@ typedef void (*SipcCallback)(const char*, void*);
  * Bidirectional communication is not possible (a case when server wants to reply);
  * for that D-BUS exists :P
  */
-class SipcServer {
+class EDELIB_API SipcServer {
 	private:
 		SipcServerPrivate* priv;
 
@@ -124,7 +124,7 @@ class SipcServer {
  *
  * \note Message length is currently is limited to 1024 bytes.
  */
-class SipcClient {
+class EDELIB_API SipcClient {
 	private:
 		SipcClientPrivate* priv;
 

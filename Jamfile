@@ -10,12 +10,12 @@
 
 SubDir TOP ;
 
+InstallDirectory [ FDirName $(includedir) ] : [ FDirName $(TOP) edelib ] ;
+InstallFile      [ FDirName $(libdir) pkgconfig ] : [ FFileName $(TOP) edelib.pc ] ;
+InstallFile      [ FDirName $(libdir) pkgconfig ] : [ FFileName $(TOP) edelib-dbus.pc ] ;
+
 SubInclude TOP src ;
 SubInclude TOP test ;
 SubInclude TOP examples ;
 SubInclude TOP doc ;
 SubInclude TOP tools ;
-
-InstallDirectory [ FDirName $(includedir) ] : [ FDirName $(TOP) edelib ] ;
-InstallFile      [ FDirName $(libdir) pkgconfig ] : [ FFileName $(TOP) edelib.pc ] ;
-InstallFile      [ FDirName $(libdir) pkgconfig ] : [ FFileName $(TOP) edelib-dbus.pc ] ;

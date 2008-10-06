@@ -3,7 +3,7 @@
  *
  * A simple List class.
  * Part of edelib.
- * Copyright (c) 2005-2007 EDE Authors.
+ * Copyright (c) 2005-2008 EDE Authors.
  *
  * This program is licenced under terms of the 
  * GNU General Public Licence version 2 or newer.
@@ -13,45 +13,30 @@
 #ifndef __LIST_H__
 #define __LIST_H__
 
-#include "econfig.h"
 #include "Debug.h"
 
 EDELIB_NS_BEGIN
 
 #ifndef SKIP_DOCS
-template <typename T>
 struct ListNode {
-	T* value;
+	void* value;
 	ListNode* next;
 	ListNode* prev;
-
-	// for dummy node
 	ListNode() : value(0), next(0), prev(0) { }
-
-	// for real node
-	ListNode(const T& v) : value(new T(v)), next(0), prev(0) { }
-
-	~ListNode() { 
-		//EDEBUG("ListNode::~ListNode\n");
-		delete value; 
-		value = 0; 
-		next = prev = 0; 
-	}
 };
 
 template <typename T>
 struct ListIterator {
-	typedef ListNode<T> NodeType;
-
+	typedef ListNode NodeType;
 	NodeType* node;
 
 	ListIterator(NodeType* n) : node(n) { }
 	ListIterator() : node(0) { }
 
 	T& operator*(void) const { 
-		EASSERT(node != 0 && "Bad code! Access to zero node!!!"); 
-		EASSERT(node->value != 0 && "Bad code! Dereferencing NULL value!!!"); 
-		return *(node->value); 
+		E_ASSERT(node != 0 && "Bad code! Access to zero node!!!"); 
+		E_ASSERT(node->value != 0 && "Bad code! Dereferencing NULL value!!!"); 
+		return *(T*)node->value; 
 	}
 
 	bool operator!=(const ListIterator& other) const { return node != other.node; }
@@ -63,19 +48,19 @@ struct ListIterator {
 #ifndef USE_SMALL_LIST
 template <typename T>
 struct ListConstIterator {
-	typedef ListNode<T> NodeType;
-
+	typedef ListNode NodeType;
 	NodeType* node;
 
 	ListConstIterator(NodeType* n) : node(n) { }
 	ListConstIterator() : node(0) { }
+
 	// stupid language constructs !!!
 	ListConstIterator(const ListIterator<T>& i) : node(i.node) { }
 
 	const T& operator*(void) const { 
-		EASSERT(node != 0 && "Bad code! Access to zero node!!!"); 
-		EASSERT(node->value != 0 && "Bad code! Dereferencing NULL value!!!"); 
-		return *(node->value); 
+		E_ASSERT(node != 0 && "Bad code! Access to zero node!!!"); 
+		E_ASSERT(node->value != 0 && "Bad code! Dereferencing NULL value!!!"); 
+		return *(T*)node->value; 
 	}
 
 	bool operator!=(const ListConstIterator& other) const { return node != other.node; }
@@ -153,7 +138,7 @@ struct ListConstIterator {
 template <typename T>
 class list {
 	private:
-		typedef ListNode<T> Node;
+		typedef ListNode Node;
 		typedef unsigned int size_type;
 		typedef bool (*SortCmp)(const T& val1, const T& val2);
 
@@ -171,7 +156,8 @@ class list {
 			Node* cprev = 0;
 
 			while(a != 0 && b != 0) {
-				if(cmp(*a->value, *b->value)) {
+				// compare values
+				if(cmp(*(T*)a->value, *(T*)b->value)) {
 					c->next = a;
 					a = a->next;
 				} else {
@@ -255,7 +241,7 @@ class list {
 		 */
 		void clear(void) { 
 			if(!tail) {
-				EASSERT(sz == 0 && "Internal error! size() != 0, but list is empty !?!!");
+				E_ASSERT(sz == 0 && "Internal error! size() != 0, but list is empty !?!!");
 				return;
 			}
 
@@ -263,6 +249,7 @@ class list {
 			Node* t;
 			while(p != tail) {
 				t = p->next;
+				delete (T*)p->value;
 				delete p;
 				p = t;
 			}
@@ -284,7 +271,9 @@ class list {
 		 */
 		iterator insert(iterator it, const T& val) {
 			// [23.2.2.3] insert() does not affect validity of iterators
-			Node* tmp = new Node(val);
+			Node* tmp = new Node;
+			tmp->value = new T(val); 
+
 			if(!tail) {
 				// dummy node first
 				tail = new Node;
@@ -314,7 +303,7 @@ class list {
 			}
 
 			// do not allow erase(l.end())
-			EASSERT(it.node != tail && "Bad code! erase() on end()!!!");
+			E_ASSERT(it.node != tail && "Bad code! erase() on end()!!!");
 
 			// [23.2.2.3] erase() invalidates only the iterators
 			it.node->prev->next = it.node->next;
@@ -323,7 +312,10 @@ class list {
 			iterator ret(it.node);
 			++ret;
 			sz--;
+
+			delete (T*)it.node->value;
 			delete it.node;
+
 			return ret;
 		}
 
@@ -491,6 +483,86 @@ class list {
 		}
 #endif
 };
+
+#if 0
+// list specialization for pointers
+#ifndef SKIP_DOCS
+#ifndef NO_LIST_SPECIALIZATION
+
+// explicit instantation
+template class list<void*>;
+template class ListIterator<void*>;
+
+template <typename T>
+struct ListIterator<T*> : private ListIterator<void*> {
+	typedef ListIterator<void*> Base;
+	typedef ListNode<T*> NodeType;
+
+	NodeType* node;
+
+	ListIterator(NodeType* n) : Base(n) { }
+	ListIterator(const ListIterator<void*>& b) { 
+		*node->value = (T*)*b.node->value ;
+		node->next = b.node->next;
+	} 
+	ListIterator() : Base() { }
+
+	T* operator*(void) const { 
+		return (T*)Base::operator*();
+	}
+
+	bool operator!=(const ListIterator& other) const { return Base::operator!=(other); }
+	bool operator==(const ListIterator& other) const { return Base::operator==(other); }
+
+	ListIterator& operator++(void) { node = node->next; return *this; }
+	ListIterator& operator--(void) { node = node->prev; return *this; }
+};
+
+template <typename T>
+class list<T*> : private list<void*> {
+	public:
+		typedef list<void*> Base;
+		typedef bool (*SortCmp)(const T* val1, const T* val2);
+		
+		//typedef Base::iterator iterator;
+		//typedef Base::const_iterator const_iterator;
+
+		typedef ListIterator<T*> iterator;
+		typedef ListIterator<T*> const_iterator;
+
+		void clear(void) { Base::clear(); }
+		iterator insert(iterator it, const T*& val) { return Base::insert(it, val); }
+		iterator erase(iterator it) { return iterator(Base::erase(it)); }
+
+		void push_back(T*& val) { Base::push_back(val); }
+		void push_back(const T*& val) { Base::push_back(val); }
+		void push_front(T*& val) { Base::push_front(val); }
+		void push_front(const T*& val) { Base::push_front(val); }
+
+		iterator begin(void) { return iterator(Base::begin()); }
+		const_iterator begin(void) const { return iterator(Base::begin()); }
+
+		iterator end(void) { return iterator(Base::end()); }
+		const_iterator end(void) const { return iterator(Base::end()); }
+
+		T*& front(void) { return Base::front(); }
+		const T*& front(void) const { return Base::front(); }
+
+		T*& back(void) { return Base::back(); }
+		const T*& back(void) const { return Base::back(); }
+
+		size_type size(void) const { return Base::size(); }
+		bool empty(void) const { return Base::empty(); }
+
+		bool operator==(list<T*>& other) { return Base::operator==(other); }
+		bool operator!=(list<T*>& other) { return Base::operator!=(other); }
+		void sort(SortCmp cmp = 0) { Base::sort(cmp); }
+};
+
+
+#endif // NO_LIST_SPECIALIZATION
+#endif // SKIP_DOCS
+#endif
 
 EDELIB_NS_END
 

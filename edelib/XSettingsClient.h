@@ -98,7 +98,7 @@ typedef void (*XSettingsCallback)(const char* name, XSettingsAction action, XSet
  * Note that if callback() is called <em>after</em> init(), settings will not be queried from manager
  * until one of the settings is changed on manager side.
  */
-class XSettingsClient {
+class EDELIB_API XSettingsClient {
 	private:
 		XSettingsData* client_data;
 		XSettingsCallback settings_cb;

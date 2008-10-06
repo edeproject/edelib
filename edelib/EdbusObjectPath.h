@@ -47,7 +47,7 @@ EDELIB_NS_BEGIN
  *
  * \todo Make this class implicitly shared
  */
-class EdbusObjectPath {
+class EDELIB_API EdbusObjectPath {
 	private:
 		String val;
 		EdbusObjectPath& operator=(const EdbusObjectPath&);

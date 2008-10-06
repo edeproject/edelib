@@ -148,61 +148,61 @@ struct XSettingsBuffer {
 /**
  * Adds setting to the current list. Only pointer will be stored in list.
  */
-bool xsettings_list_add(XSettingsList** list, XSettingsSetting* setting);
+EDELIB_API bool xsettings_list_add(XSettingsList** list, XSettingsSetting* setting);
 
 /**
  * Remove setting with given name. If not found, it will do nothing.
  */
-bool xsettings_list_remove(XSettingsList** list, const char* name);
+EDELIB_API bool xsettings_list_remove(XSettingsList** list, const char* name);
 
 /**
  * Find setting with given name. Returns NULL if nothing was found.
  */
-XSettingsSetting* xsettings_list_find(XSettingsList* list, const char* name);
+EDELIB_API XSettingsSetting* xsettings_list_find(XSettingsList* list, const char* name);
 
 /**
  * Clears settings list.
  */
-void xsettings_list_free(XSettingsList* list);
+EDELIB_API void xsettings_list_free(XSettingsList* list);
 
 
 
 /**
  * Copy given setting. Copy will be allocated, and should be freed with xsettings_setting_free().
  */
-XSettingsSetting* xsettings_setting_copy(XSettingsSetting* setting);
+EDELIB_API XSettingsSetting* xsettings_setting_copy(XSettingsSetting* setting);
 
 /**
  * Free data allocated by given setting.
  */
-void xsettings_setting_free(XSettingsSetting* setting);
+EDELIB_API void xsettings_setting_free(XSettingsSetting* setting);
 
 /**
  * Returns true if given two settings are equal or false if not.
  */
-bool xsettings_setting_equal(XSettingsSetting* s1, XSettingsSetting* s2);
+EDELIB_API bool xsettings_setting_equal(XSettingsSetting* s1, XSettingsSetting* s2);
 
 /**
  * Returns setting lenght.
  */
-int  xsettings_setting_len(const XSettingsSetting* setting);
+EDELIB_API int  xsettings_setting_len(const XSettingsSetting* setting);
 
 /**
  * Returns byte order (MSBFirst/LSBFirst) used on client side.
  */
-char xsettings_byte_order(void);
+EDELIB_API char xsettings_byte_order(void);
 
 
 /**
  * Decode settings from given buffer. Returns NULL if failed or buffer was empty; otherwise
  * returns list of recognised ones.
  */
-XSettingsList* xsettings_decode(unsigned char* data, /*size_t*/ int len, unsigned long* serial);
+EDELIB_API XSettingsList* xsettings_decode(unsigned char* data, /*size_t*/ int len, unsigned long* serial);
 
 /**
  * Encode settings from list into buffer.
  */
-void xsettings_encode(const XSettingsSetting* setting, XSettingsBuffer* buffer);
+EDELIB_API void xsettings_encode(const XSettingsSetting* setting, XSettingsBuffer* buffer);
 
 
 #ifndef SKIP_DOCS

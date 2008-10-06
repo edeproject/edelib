@@ -27,7 +27,7 @@ EDELIB_NS_BEGIN
  *
  * Final applications should not use this class except manager is not provided.
  */
-class XSettingsManager {
+class EDELIB_API XSettingsManager {
 	protected:
 		/** Data used by manager class */
 		XSettingsData* manager_data;

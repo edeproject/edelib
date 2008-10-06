@@ -414,8 +414,8 @@ class EDELIB_API Config {
 #ifndef SKIP_DOCS
 class File;
 
-int config_getline(char** buff, int* len, FILE* f);
-int config_getline(char** buff, int* len, File* f);
+EDELIB_API int config_getline(char** buff, int* len, FILE* f);
+EDELIB_API int config_getline(char** buff, int* len, File* f);
 #endif
 
 EDELIB_NS_END

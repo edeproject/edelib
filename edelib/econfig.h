@@ -31,7 +31,16 @@
 #define EDELIB_NS_BEGIN namespace EDELIB_NS {
 #define EDELIB_NS_END   }
 
-#define EDELIB_API 
+#ifdef __GNUC__
+	#define E_EXPORT __attribute__ ((visibility("default")))
+	#define E_NO_EXPORT __attribute__ ((visibility("hidden")))
+#else
+	#define E_EXPORT
+	#define E_NO_EXPORT
+#endif
+
+#define EDELIB_API E_EXPORT
+#define EDELIB_NO_API E_NO_EXPORT
 
 #include "_conf.h"
 

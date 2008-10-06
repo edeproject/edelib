@@ -93,7 +93,7 @@ struct EdbusMessageImpl;
  * can e.g. modify received message and send it again. 
  */
 
-class EdbusMessage {
+class EDELIB_API EdbusMessage {
 	private:
 		friend class EdbusConnection;
 

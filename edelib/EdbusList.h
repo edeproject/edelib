@@ -103,7 +103,7 @@ EDELIB_NS_BEGIN
  *
  * EdbusList uses implicit sharing.
  */
-class EdbusList : public EdbusContainer<EdbusData> {
+class EDELIB_API EdbusList : public EdbusContainer<EdbusData> {
 	private:
 		bool array_mode;
 		EdbusList();

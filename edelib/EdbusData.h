@@ -96,7 +96,7 @@ struct EdbusVariant;
  * \note D-Bus signature for above types is different and sending int32_t to the service
  * that expects uint16_t will probably result rejecting whole message!
  */
-class EdbusData {
+class EDELIB_API EdbusData {
 	private:
 		EdbusDataPrivate* impl;
 		void dispose(void);

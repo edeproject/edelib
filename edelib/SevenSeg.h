@@ -31,7 +31,7 @@ EDELIB_NS_BEGIN
  * methods. It accepts 0-9 range of integers or '0'-'9' range
  * of characters. Any number above or below will be ignored, defaulting to it's bounds.
  */
-class SevenSeg : public Fl_Widget {
+class EDELIB_API SevenSeg : public Fl_Widget {
 	private:
 		int digit;
 		int segwidth;

@@ -108,7 +108,7 @@ struct EdbusConnImpl;
  *
  * \todo Finish docs for EdbusConnection
  */
-class EdbusConnection {
+class EDELIB_API EdbusConnection {
 	private:
 		EdbusConnImpl* dc;
 		void setup_filter(void);

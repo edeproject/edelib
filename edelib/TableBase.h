@@ -162,7 +162,7 @@ EDELIB_NS_BEGIN
  * case there is no need to use CONTEXT_CELL in draw_cell() and draw widgets: they will be drawn by itself.
  * The only thing you should use is to <i>add()</i> them, as any other widget is addet to Fl_Group.
  */
-class TableBase : public Fl_Group {
+class EDELIB_API TableBase : public Fl_Group {
 	public:
 		/**
 		 * \enum TableContext
