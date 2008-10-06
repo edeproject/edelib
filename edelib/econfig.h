@@ -31,7 +31,7 @@
 #define EDELIB_NS_BEGIN namespace EDELIB_NS {
 #define EDELIB_NS_END   }
 
-#ifdef __GNUC__
+#if __GNUC__ >= 4
 	#define E_EXPORT __attribute__ ((visibility("default")))
 	#define E_NO_EXPORT __attribute__ ((visibility("hidden")))
 #else

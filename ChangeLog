@@ -1,3 +1,7 @@
+2008-10-06  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/econfig.h: seems that class visibility is working at gcc >= 4.0
+
 2008-10-05  Sanel <karijes@users.sourceforge.net>
 
 	* edelib/List.h: de-templatized ListNode; this yields a smaller binary
