@@ -310,13 +310,11 @@ unsigned short Date::day_of_year() const {
 }
 
 const char* Date::day_name(void) {
-	E_ASSERT(dayval <= 7);
 	// days are counted from 0
 	return day_names[day_of_week()-1];
 }
 
 const char* Date::month_name(void) {
-	E_ASSERT(monthval <= 12);
 	// months are counted from 1
 	return month_names[monthval-1];
 }

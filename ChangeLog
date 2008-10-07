@@ -1,3 +1,8 @@
+2008-10-07  Sanel <karijes@users.sourceforge.net>
+
+	* src/DateTime.cpp: remove assertions; besides they are unneeded,
+	day_name() would assert if day was larger than 7 (bad, I know)
+
 2008-10-06  Sanel <karijes@users.sourceforge.net>
 
 	* edelib/econfig.h: seems that class visibility is working at gcc >= 4.0
