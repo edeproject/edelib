@@ -1,3 +1,10 @@
+2008-12-29  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/List.h: removing comb_sort(); completed specialization code, but
+	not used yet; somehow it generates bigger code
+	* test/list.cpp: added test for sorting pointers and exposed current bug
+	in list::sort() method
+
 2008-10-07  Sanel <karijes@users.sourceforge.net>
 
 	* src/DateTime.cpp: remove assertions; besides they are unneeded,

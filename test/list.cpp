@@ -244,6 +244,35 @@ UT_FUNC(ListTestSort, "Test list sort")
 		UT_VERIFY( *it == array_rsorted[i] );
 }
 
+struct Foo {
+	int n;
+};
+
+// TODO: list<T*>::sort() bug
+static bool ptr_sort(Foo* const& a, Foo* const& b) {
+	return a->n > b->n;
+}
+
+UT_FUNC(ListTestPtrSort, "Test pointer list sort")
+{
+	list<Foo*> ls;
+	Foo* f;
+
+	for(int i = 0; i < 10; i++) {
+		f = new Foo;
+		f->n = i;
+		ls.push_back(f);
+	}
+
+	ls.sort(ptr_sort);
+
+	list<Foo*>::iterator it = ls.begin(), it_end = ls.end();
+	for(int i = 9; i >= 0; i--, ++it) {
+		UT_VERIFY( i == (*it)->n );
+		delete *it;
+	}
+}
+
 #include <list>
 UT_FUNC(ListComparison, "Test std::list comparison")
 {

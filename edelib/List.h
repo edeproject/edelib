@@ -18,6 +18,7 @@
 EDELIB_NS_BEGIN
 
 #ifndef SKIP_DOCS
+
 struct ListNode {
 	void* value;
 	ListNode* next;
@@ -36,7 +37,7 @@ struct ListIterator {
 	T& operator*(void) const { 
 		E_ASSERT(node != 0 && "Bad code! Access to zero node!!!"); 
 		E_ASSERT(node->value != 0 && "Bad code! Dereferencing NULL value!!!"); 
-		return *(T*)node->value; 
+		return *(T*)node->value;
 	}
 
 	bool operator!=(const ListIterator& other) const { return node != other.node; }
@@ -60,7 +61,7 @@ struct ListConstIterator {
 	const T& operator*(void) const { 
 		E_ASSERT(node != 0 && "Bad code! Access to zero node!!!"); 
 		E_ASSERT(node->value != 0 && "Bad code! Dereferencing NULL value!!!"); 
-		return *(T*)node->value; 
+		return *(T*)node->value;
 	}
 
 	bool operator!=(const ListConstIterator& other) const { return node != other.node; }
@@ -140,7 +141,7 @@ class list {
 	private:
 		typedef ListNode Node;
 		typedef unsigned int size_type;
-		typedef bool (*SortCmp)(const T& val1, const T& val2);
+		typedef bool (SortCmp)(const T& val1, const T& val2);
 
 		size_type sz;
 		Node* tail;
@@ -150,7 +151,7 @@ class list {
 
 		static bool default_sort_cmp(const T& val1, const T& val2) { return val1 < val2; }
 
-		Node* merge_nodes(Node* a, Node* b, SortCmp cmp) {
+		Node* merge_nodes(Node* a, Node* b, SortCmp* cmp) {
 			Node head;
 			Node* c = &head;
 			Node* cprev = 0;
@@ -179,7 +180,7 @@ class list {
 			return head.next;
 		}
 
-		Node* mergesort(Node* c, SortCmp cmp) {
+		Node* mergesort(Node* c, SortCmp* cmp) {
 			Node* a, *b;
 			if(c->next == 0)
 				return c;
@@ -406,16 +407,14 @@ class list {
 		 */
 		bool operator!=(list<T>& other) { return !operator==(other); }
 
+		
 		/**
 		 * Sorts list. If cmp function is given (in form <em>bool cmp(const T& v1, const T& v2)</em>,
 		 * elements will be compared with it.
 		 */
-		void sort(SortCmp cmp = 0) {
+		void sort(SortCmp* cmp = default_sort_cmp) {
 			if(size() <= 1)
 				return;
-
-			if(!cmp)
-				cmp = default_sort_cmp;
 
 			// unlink nodes first making first->prev and last->next zero
 			tail->prev->next = 0;
@@ -440,48 +439,6 @@ class list {
 				}
 			}
 		}
-
-#ifndef SKIP_DOCS
-		// Combsort11 implementation; used for comparison only
-		void comb_sort(SortCmp cmp = 0) {
-			if(size() <= 1)
-				return;
-
-			if(!cmp)
-				cmp = default_sort_cmp;
-
-			T*** elist = new T **[size()];
-			unsigned int cc = 0;
-			for(iterator i = begin(); i != end(); ++i, cc++)
-				elist[cc] = &i.node->value;
-
-			unsigned int gap = size();
-			bool swapped;
-
-			do {
-				swapped = false;
-				/* shrink factor */
-				gap = (unsigned int)(gap / 1.3);
-				if(gap == 9 || gap == 10)
-					gap = 11;
-				else if(gap < 1)
-					gap = 1;
-
-				for(unsigned int i = 0; i < size() - gap; i++) {
-					if(cmp(**elist[i + gap], **elist[i])) {
-						/* exchange values not nodes */
-						T* val = *elist[i];
-						*elist[i] = *elist[i + gap];
-						*elist[i + gap] = val;
-
-						swapped = true;
-					}
-				}
-			} while(gap > 1 || swapped);
-
-			delete [] elist;
-		}
-#endif
 };
 
 #if 0
@@ -494,71 +451,78 @@ template class list<void*>;
 template class ListIterator<void*>;
 
 template <typename T>
-struct ListIterator<T*> : private ListIterator<void*> {
-	typedef ListIterator<void*> Base;
-	typedef ListNode<T*> NodeType;
+struct ListIterator<T*> {
+	private:
+		ListIterator<void*> impl;
 
-	NodeType* node;
+	public:
+		// implicit conversion; some magic. Yuck !
+		operator ListIterator<void*> () { return impl; }
 
-	ListIterator(NodeType* n) : Base(n) { }
-	ListIterator(const ListIterator<void*>& b) { 
-		*node->value = (T*)*b.node->value ;
-		node->next = b.node->next;
-	} 
-	ListIterator() : Base() { }
+		ListIterator(const ListIterator<void*>& b) : impl(b) { } 
+		typedef ListNode NodeType;
 
-	T* operator*(void) const { 
-		return (T*)Base::operator*();
-	}
+		ListIterator() { }
+		ListIterator(NodeType* n) : impl(n) { }
+	
+		T* operator*(void) const { return (T*)*impl; }
 
-	bool operator!=(const ListIterator& other) const { return Base::operator!=(other); }
-	bool operator==(const ListIterator& other) const { return Base::operator==(other); }
+		bool operator!=(const ListIterator& other) const { return impl != other.impl; }
+		bool operator==(const ListIterator& other) const { return impl == other.impl; }
 
-	ListIterator& operator++(void) { node = node->next; return *this; }
-	ListIterator& operator--(void) { node = node->prev; return *this; }
+		ListIterator& operator++(void) { ++impl; return *this; }
+		ListIterator& operator--(void) { --impl; return *this; }
 };
 
 template <typename T>
-class list<T*> : private list<void*> {
-	public:
-		typedef list<void*> Base;
-		typedef bool (*SortCmp)(const T* val1, const T* val2);
-		
-		//typedef Base::iterator iterator;
-		//typedef Base::const_iterator const_iterator;
+class list<T*> {
+	private:
+		list<void*> impl;
+		static bool default_sort_cmp(const T* val1, const T* val2) { return *val1 < *val2; }
 
+	public:
+		typedef unsigned int size_type;
+
+		typedef T* value_type;
+		typedef const value_type& const_reference;
+		typedef value_type&       reference;
+		typedef value_type*       pointer;
+		typedef const value_type* const_pointer;
+
+		typedef bool (SortCmp)(const_reference val1, const_reference val2);
+		
 		typedef ListIterator<T*> iterator;
 		typedef ListIterator<T*> const_iterator;
 
-		void clear(void) { Base::clear(); }
-		iterator insert(iterator it, const T*& val) { return Base::insert(it, val); }
-		iterator erase(iterator it) { return iterator(Base::erase(it)); }
+		void clear(void) { impl.clear(); }
 
-		void push_back(T*& val) { Base::push_back(val); }
-		void push_back(const T*& val) { Base::push_back(val); }
-		void push_front(T*& val) { Base::push_front(val); }
-		void push_front(const T*& val) { Base::push_front(val); }
+		iterator insert(iterator it, const_reference val) { return impl.insert(it, val); }
+		iterator erase(iterator it) { return impl.erase(it); }
 
-		iterator begin(void) { return iterator(Base::begin()); }
-		const_iterator begin(void) const { return iterator(Base::begin()); }
+		void push_back(const_reference val) { impl.push_back((void*)val); }
+		void push_front(const_reference val) { impl.push_front((void*)val); }
 
-		iterator end(void) { return iterator(Base::end()); }
-		const_iterator end(void) const { return iterator(Base::end()); }
+		iterator begin(void) { return impl.begin(); }
+		const_iterator begin(void) const { return impl.begin(); }
 
-		T*& front(void) { return Base::front(); }
-		const T*& front(void) const { return Base::front(); }
+		iterator end(void) { return impl.end(); }
+		const_iterator end(void) const { return impl.end(); }
 
-		T*& back(void) { return Base::back(); }
-		const T*& back(void) const { return Base::back(); }
+		pointer front(void) { return impl.front(); }
+		const_pointer front(void) const { return impl.front(); }
 
-		size_type size(void) const { return Base::size(); }
-		bool empty(void) const { return Base::empty(); }
+		pointer back(void) { return impl.back(); }
+		const_pointer back(void) const { return impl.back(); }
 
-		bool operator==(list<T*>& other) { return Base::operator==(other); }
-		bool operator!=(list<T*>& other) { return Base::operator!=(other); }
-		void sort(SortCmp cmp = 0) { Base::sort(cmp); }
+		size_type size(void) const { return impl.size(); }
+		bool empty(void) const { return impl.empty(); }
+
+		bool operator==(list<T*>& other) { return impl.operator==(other); }
+		bool operator!=(list<T*>& other) { return impl.operator!=(other); }
+
+		//void sort(SortCmp* cmp = default_sort_cmp) { impl.sort( (bool (*)(void* const&, void* const&)) cmp); }
+		void sort(SortCmp* cmp) { impl.sort((bool (*)(void* const&, void* const&)) cmp); }
 };
-
 
 #endif // NO_LIST_SPECIALIZATION
 #endif // SKIP_DOCS
