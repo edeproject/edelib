@@ -1,3 +1,9 @@
+2009-01-20  Sanel <karijes@users.sourceforge.net>
+
+	* First edelib change in 2009 :)
+	* src/Config.cpp: fixed issue due retrieving double and float
+	numbers on different locales
+
 2008-12-29  Sanel <karijes@users.sourceforge.net>
 
 	* edelib/List.h: removing comb_sort(); completed specialization code, but

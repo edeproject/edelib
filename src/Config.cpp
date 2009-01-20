@@ -665,7 +665,9 @@ bool Config::get(const char* section, const char* key, bool& ret, bool deflt) {
 
 bool Config::get(const char* section, const char* key, double& ret, double deflt) {
 	GET_VALUE(section, key, ret, deflt);
+	char* locale = nls_locale_to_c();
 	ret = atof(value);
+	nls_locale_from_c(locale);
 	return true;
 }
 
@@ -677,7 +679,9 @@ bool Config::get(const char* section, const char* key, long& ret, long deflt) {
 
 bool Config::get(const char* section, const char* key, float& ret, float deflt) {
 	GET_VALUE(section, key, ret, deflt);
+	char* locale = nls_locale_to_c();
 	ret = atof(value);
+	nls_locale_from_c(locale);
 	return true;
 }
 
