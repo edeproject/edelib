@@ -42,6 +42,8 @@
 #define EDELIB_API E_EXPORT
 #define EDELIB_NO_API E_NO_EXPORT
 
+#ifdef HAVE_EDELIB_BASE_CONFIG_H
 #include "_conf.h"
+#endif
 
 #endif

@@ -1,3 +1,10 @@
+2009-01-22  Sanel <karijes@users.sourceforge.net>
+
+	* configure.in:
+	* edelib/econfig.h: added HAVE_EDELIB_BASE_CONFIG_H so it can be included
+	only when edelib gets compiled so symbols in edelib/_conf.h don't collide
+	with ones in ede2 config.h or user one
+
 2009-01-20  Sanel <karijes@users.sourceforge.net>
 
 	* First edelib change in 2009 :)

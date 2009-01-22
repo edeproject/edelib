@@ -51,8 +51,8 @@ else
 	OPTIM_FLAGS=""
 fi
 
-CFLAGS="$SANITY_FLAGS $user_cflags"
-CXXFLAGS="$SANITY_FLAGS $user_cxxflags"
+CFLAGS="-DHAVE_EDELIB_BASE_CONFIG_H $SANITY_FLAGS $user_cflags"
+CXXFLAGS="-DHAVE_EDELIB_BASE_CONFIG_H $SANITY_FLAGS $user_cxxflags"
 
 dnl basic headers
 AC_HEADER_STDC
