@@ -32,7 +32,7 @@ MSGFMT   = "@MSGFMT@" ;
 SED      = "@SED@" ;
 
 # general flags and libraries
-CFLAGS      ?= "@CFLAGS@" ;
+CCFLAGS      ?= "@CFLAGS@" ;
 CXXFLAGS    ?= "@CXXFLAGS@" ;
 LDFLAGS     ?= "@LDFLAGS@" ;
 LDLIBS      ?= "@LDLIBS@" ;

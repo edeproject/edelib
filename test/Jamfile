@@ -43,6 +43,7 @@ if $(DBUS_LIBS) {
 # xsettings.cpp depends on X11 and FLTK_LIBS provides needed libraries
 if $(FLTK_LIBS_FULL) {
 	TEST_FILES += xsettings.cpp ;
+	ObjectC++Flags xsettings.cpp : $(FLTK_CFLAGS) ;
 
 	if ! $(SHARED) {
 		ADDONLIB = $(FLTK_LIBS_FULL) ;
