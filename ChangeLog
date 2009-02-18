@@ -1,3 +1,10 @@
+2009-02-18  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Resource.h:
+	* src/Resource.cpp: added find_config() and find_dir() functions; they
+	will search for paths in XDG dirs, according to given search order
+	* test/resource.cpp: tests for find_config() and find_dir()
+
 2009-01-24  Sanel <karijes@users.sourceforge.net>
 
 	* Jamconfig.in: s/CFLAGS/CCFLAGS; jam uses CCFLAGS

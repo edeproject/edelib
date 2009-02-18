@@ -3,7 +3,7 @@
  *
  * Resource reader and writer
  * Part of edelib.
- * Copyright (c) 2008 EDE Authors.
+ * Copyright (c) 2008-2009 EDE Authors.
  *
  * This program is licensed under terms of the 
  * GNU General Public License version 2 or newer.
@@ -13,7 +13,7 @@
 #ifndef __RESOURCE_H__
 #define __RESOURCE_H__
 
-#include "econfig.h"
+#include "String.h"
 
 EDELIB_NS_BEGIN
 
@@ -387,6 +387,28 @@ class EDELIB_API Resource {
 		 * \param val value to store within key
 		 */
 		void set(const char* section, const char* key, double val);
+
+		/**
+		 * Locate path of config filename using XDG paths. Config filename <em>must not</em>
+		 * have an extension, example:
+		 * \code
+		 *   String path = Resource::find_config("myconfig", RES_USER_FIRST);
+		 * \endcode
+		 * 
+		 * \return path if filename was found or empty string if failed
+		 * \param name is config filename without extension
+		 * \param rt is ResourceType variable
+		 */
+		static String find_config(const char* name, ResourceType rt = RES_USER_FIRST);
+		
+		/**
+		 * Locate directory path using XDG paths
+		 *
+		 * \return path if directory was found or empty string if failed
+		 * \param name is directory name
+		 * \param rt is ResourceType variable
+		 */
+		static String find_dir(const char* name, ResourceType rt = RES_USER_FIRST);
 };
 
 EDELIB_NS_END

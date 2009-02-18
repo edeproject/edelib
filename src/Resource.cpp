@@ -10,6 +10,8 @@
  * See COPYING for details.
  */
 
+#include <unistd.h>
+
 #include <edelib/Resource.h>
 #include <edelib/Config.h>
 #include <edelib/Debug.h>
@@ -259,6 +261,81 @@ void Resource::set(const char* section, const char* key, float val) {
 
 void Resource::set(const char* section, const char* key, double val) {
 	STORE_RESOURCE(section, key, val, set);
+}
+
+static bool locate_resource_sys(const char* name, String& path) {
+	StrList dirs;
+	system_config_dirs(dirs);
+	StrListIter it = dirs.begin(), it_end = dirs.end();
+	
+	for(; it != it_end; ++it) {
+		*it += E_DIR_SEPARATOR;
+		*it += name;
+
+		if(access((*it).c_str(), F_OK) == 0) {
+			path = *it;
+			return true;
+		}
+	}
+
+	path.clear();
+	return false; 
+}
+
+static bool locate_resource_user(const char* name, String& path) {
+	path = user_config_dir();
+	path += E_DIR_SEPARATOR;
+	path += name;
+
+	if(access(path.c_str(), F_OK) == 0)
+		return true;
+
+	path.clear();
+	return false;
+}
+
+static String locate_resource(const char* name, ResourceType r) {
+	String ret;
+
+	switch(r) {
+		case RES_USER_ONLY:
+			/* can be empty; intentional */
+			locate_resource_user(name, ret);
+			break;
+		case RES_SYS_ONLY:
+			/* can be empty; intentional */
+			locate_resource_sys(name, ret);
+			break;
+		case RES_USER_FIRST:
+			if(!locate_resource_user(name, ret))
+				locate_resource_sys(name, ret);
+			break;
+		case RES_SYS_FIRST:
+			if(!locate_resource_sys(name, ret))
+				locate_resource_user(name, ret);
+			break;
+		default:
+			E_ASSERT(0 && "Unknown resource type");
+	}
+
+	return ret;
+}
+		
+String Resource::find_config(const char* name, ResourceType r) {
+	String n = name;
+	n += ".conf";
+
+	String ret = locate_resource(n.c_str(), r);
+	E_RETURN_VAL_IF_FAIL(file_exists(ret.c_str()), "");
+	return ret;
+}
+
+String Resource::find_dir(const char* name, ResourceType r) {
+	E_ASSERT(name != NULL);
+
+	String ret = locate_resource(name, r);
+	E_RETURN_VAL_IF_FAIL(dir_exists(ret.c_str()), "");
+	return ret;
 }
 
 EDELIB_NS_END

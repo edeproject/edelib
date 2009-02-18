@@ -191,6 +191,10 @@ user_altered_value = 5\n\
 	UT_VERIFY( r.get("global", "user_altered_value", ret, 0) == true );
 	UT_VERIFY( ret == 5 );
 
+	// restore env vars and delete files
+	edelib_setenv(CONFIG_HOME_ENV, config_home_saved.c_str(), 1);
+	edelib_setenv(CONFIG_DIRS_ENV, config_dirs_saved.c_str(), 1);
+
 	file_remove(SAMPLE_USER_DIR"/foo.conf");
 	file_remove(SAMPLE_SYS_DIR"/foo.conf");
 	dir_remove(SAMPLE_SYS_DIR);
@@ -263,8 +267,117 @@ buggy buggy value = 3 \n\
 	// shoud be 'buggy buggy value'
 	UT_VERIFY( r.get("global", "buggy_buggy_value", ret, 3) == false );
 
+	// restore env vars and delete files
+	edelib_setenv(CONFIG_HOME_ENV, config_home_saved.c_str(), 1);
+	edelib_setenv(CONFIG_DIRS_ENV, config_dirs_saved.c_str(), 1);
+
 	file_remove(SAMPLE_USER_DIR"/foo.conf");
 	file_remove(SAMPLE_SYS_DIR"/foo-not-found.conf");
+	dir_remove(SAMPLE_SYS_DIR);
+	dir_remove(SAMPLE_USER_DIR);
+	dir_remove(SAMPLE_RES_DIR);
+}
+
+UT_FUNC(ResourceTestFindConf, "Test resource config find")
+{
+	dir_create(SAMPLE_RES_DIR);
+	dir_create(SAMPLE_SYS_DIR);
+	dir_create(SAMPLE_USER_DIR);
+
+	const char* sys_conf = "\
+[global]          \n\
+int_value = 3     \n\
+";
+
+	const char* user_conf = "\
+[global]              \n\
+int_value = 4         \n\
+user_altered_value = 5\n\
+";
+
+	File f;
+	f.open(SAMPLE_SYS_DIR"/foo.conf", FIO_WRITE);
+	f.write(sys_conf);
+	f.close();
+
+	f.open(SAMPLE_USER_DIR"/foo.conf", FIO_WRITE);
+	f.write(user_conf);
+	f.close();
+
+	// save previous values
+	char* p;
+	String config_home_saved;
+	String config_dirs_saved;
+
+	p = getenv(CONFIG_HOME_ENV);
+	if(p)
+		config_home_saved = p;
+	p = getenv(CONFIG_DIRS_ENV);
+	if(p)
+		config_dirs_saved = p;
+
+	edelib_setenv(CONFIG_HOME_ENV, SAMPLE_USER_DIR, 1);
+	edelib_setenv(CONFIG_DIRS_ENV, SAMPLE_SYS_DIR, 1);
+
+	// check it's location
+	UT_VERIFY( Resource::find_config("foo") == SAMPLE_USER_DIR"/foo.conf");
+	UT_VERIFY( Resource::find_config("foo", RES_USER_FIRST) == SAMPLE_USER_DIR"/foo.conf");
+	UT_VERIFY( Resource::find_config("foo", RES_USER_ONLY) == SAMPLE_USER_DIR"/foo.conf");
+
+	UT_VERIFY( Resource::find_config("foo", RES_SYS_FIRST) == SAMPLE_SYS_DIR"/foo.conf");
+	UT_VERIFY( Resource::find_config("foo", RES_SYS_ONLY) == SAMPLE_SYS_DIR"/foo.conf");
+
+	// restore env vars and delete files
+	edelib_setenv(CONFIG_HOME_ENV, config_home_saved.c_str(), 1);
+	edelib_setenv(CONFIG_DIRS_ENV, config_dirs_saved.c_str(), 1);
+
+	file_remove(SAMPLE_USER_DIR"/foo.conf");
+	file_remove(SAMPLE_SYS_DIR"/foo.conf");
+	dir_remove(SAMPLE_SYS_DIR);
+	dir_remove(SAMPLE_USER_DIR);
+	dir_remove(SAMPLE_RES_DIR);
+}
+
+
+UT_FUNC(ResourceTestFindDir, "Test resource dir find")
+{
+	dir_create(SAMPLE_RES_DIR);
+	dir_create(SAMPLE_SYS_DIR);
+	dir_create(SAMPLE_USER_DIR);
+
+	dir_create(SAMPLE_USER_DIR"/baz");
+	dir_create(SAMPLE_SYS_DIR"/taz");
+
+	// save previous values
+	char* p;
+	String config_home_saved;
+	String config_dirs_saved;
+
+	p = getenv(CONFIG_HOME_ENV);
+	if(p)
+		config_home_saved = p;
+	p = getenv(CONFIG_DIRS_ENV);
+	if(p)
+		config_dirs_saved = p;
+
+	edelib_setenv(CONFIG_HOME_ENV, SAMPLE_USER_DIR, 1);
+	edelib_setenv(CONFIG_DIRS_ENV, SAMPLE_SYS_DIR, 1);
+
+	// check it's location
+	UT_VERIFY( Resource::find_dir("baz") == SAMPLE_USER_DIR"/baz");
+	UT_VERIFY( Resource::find_dir("baz", RES_USER_FIRST) == SAMPLE_USER_DIR"/baz");
+	UT_VERIFY( Resource::find_dir("baz", RES_USER_ONLY) == SAMPLE_USER_DIR"/baz");
+
+	UT_VERIFY( Resource::find_dir("taz", RES_SYS_FIRST) == SAMPLE_SYS_DIR"/taz");
+	UT_VERIFY( Resource::find_dir("taz", RES_SYS_ONLY) == SAMPLE_SYS_DIR"/taz");
+
+	// restore env vars and delete files
+	edelib_setenv(CONFIG_HOME_ENV, config_home_saved.c_str(), 1);
+	edelib_setenv(CONFIG_DIRS_ENV, config_dirs_saved.c_str(), 1);
+
+	dir_remove(SAMPLE_USER_DIR"/baz");
+	dir_remove(SAMPLE_SYS_DIR"/taz");
+
 	dir_remove(SAMPLE_SYS_DIR);
 	dir_remove(SAMPLE_USER_DIR);
 	dir_remove(SAMPLE_RES_DIR);
