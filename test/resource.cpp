@@ -18,6 +18,9 @@ EDELIB_NS_USE
 #define CONFIG_HOME_ENV "XDG_CONFIG_HOME"
 #define CONFIG_DIRS_ENV "XDG_CONFIG_DIRS"
 
+#define DATA_HOME_ENV  "XDG_DATA_HOME"
+#define DATA_DIRS_ENV  "XDG_DATA_DIRS"
+
 UT_FUNC(ResourceTestReading, "Test resource reading")
 {
 	dir_create(SAMPLE_RES_DIR);
@@ -339,7 +342,7 @@ user_altered_value = 5\n\
 }
 
 
-UT_FUNC(ResourceTestFindDir, "Test resource dir find")
+UT_FUNC(ResourceTestFindData, "Test resource data find")
 {
 	dir_create(SAMPLE_RES_DIR);
 	dir_create(SAMPLE_SYS_DIR);
@@ -350,30 +353,30 @@ UT_FUNC(ResourceTestFindDir, "Test resource dir find")
 
 	// save previous values
 	char* p;
-	String config_home_saved;
-	String config_dirs_saved;
+	String data_home_saved;
+	String data_dirs_saved;
 
-	p = getenv(CONFIG_HOME_ENV);
+	p = getenv(DATA_HOME_ENV);
 	if(p)
-		config_home_saved = p;
-	p = getenv(CONFIG_DIRS_ENV);
+		data_home_saved = p;
+	p = getenv(DATA_DIRS_ENV);
 	if(p)
-		config_dirs_saved = p;
+		data_dirs_saved = p;
 
-	edelib_setenv(CONFIG_HOME_ENV, SAMPLE_USER_DIR, 1);
-	edelib_setenv(CONFIG_DIRS_ENV, SAMPLE_SYS_DIR, 1);
+	edelib_setenv(DATA_HOME_ENV, SAMPLE_USER_DIR, 1);
+	edelib_setenv(DATA_DIRS_ENV, SAMPLE_SYS_DIR, 1);
 
 	// check it's location
-	UT_VERIFY( Resource::find_dir("baz") == SAMPLE_USER_DIR"/baz");
-	UT_VERIFY( Resource::find_dir("baz", RES_USER_FIRST) == SAMPLE_USER_DIR"/baz");
-	UT_VERIFY( Resource::find_dir("baz", RES_USER_ONLY) == SAMPLE_USER_DIR"/baz");
+	UT_VERIFY( Resource::find_data("baz") == SAMPLE_USER_DIR"/baz");
+	UT_VERIFY( Resource::find_data("baz", RES_USER_FIRST) == SAMPLE_USER_DIR"/baz");
+	UT_VERIFY( Resource::find_data("baz", RES_USER_ONLY) == SAMPLE_USER_DIR"/baz");
 
-	UT_VERIFY( Resource::find_dir("taz", RES_SYS_FIRST) == SAMPLE_SYS_DIR"/taz");
-	UT_VERIFY( Resource::find_dir("taz", RES_SYS_ONLY) == SAMPLE_SYS_DIR"/taz");
+	UT_VERIFY( Resource::find_data("taz", RES_SYS_FIRST) == SAMPLE_SYS_DIR"/taz");
+	UT_VERIFY( Resource::find_data("taz", RES_SYS_ONLY) == SAMPLE_SYS_DIR"/taz");
 
 	// restore env vars and delete files
-	edelib_setenv(CONFIG_HOME_ENV, config_home_saved.c_str(), 1);
-	edelib_setenv(CONFIG_DIRS_ENV, config_dirs_saved.c_str(), 1);
+	edelib_setenv(DATA_HOME_ENV, data_home_saved.c_str(), 1);
+	edelib_setenv(DATA_DIRS_ENV, data_dirs_saved.c_str(), 1);
 
 	dir_remove(SAMPLE_USER_DIR"/baz");
 	dir_remove(SAMPLE_SYS_DIR"/taz");

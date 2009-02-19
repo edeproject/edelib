@@ -30,5 +30,4 @@ AC_DEFUN([EDELIB_CHECK_LIBXPM], [
 	else
 		AC_MSG_RESULT(no)
 	fi
-
 ])

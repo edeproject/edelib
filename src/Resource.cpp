@@ -11,7 +11,6 @@
  */
 
 #include <unistd.h>
-
 #include <edelib/Resource.h>
 #include <edelib/Config.h>
 #include <edelib/Debug.h>
@@ -24,6 +23,74 @@ EDELIB_NS_BEGIN
 typedef list<String> StrList;
 typedef list<String>::iterator StrListIter;
 
+static bool locate_resource_sys(const char* name, String& path, bool is_config) {
+	StrList dirs;
+
+	if(is_config)
+		system_config_dirs(dirs);
+	else
+		system_data_dirs(dirs);
+
+	StrListIter it = dirs.begin(), it_end = dirs.end();
+	
+	for(; it != it_end; ++it) {
+		*it += E_DIR_SEPARATOR;
+		*it += name;
+
+		if(access((*it).c_str(), F_OK) == 0) {
+			path = *it;
+			return true;
+		}
+	}
+
+	path.clear();
+	return false; 
+}
+
+static bool locate_resource_user(const char* name, String& path, bool is_config) {
+	if(is_config)
+		path = user_config_dir();
+	else
+		path = user_data_dir();
+
+	path += E_DIR_SEPARATOR;
+	path += name;
+
+	if(access(path.c_str(), F_OK) == 0)
+		return true;
+
+	path.clear();
+	return false;
+}
+
+static String locate_resource(const char* name, ResourceType r, bool is_config) {
+	String ret;
+
+	switch(r) {
+		case RES_USER_ONLY:
+			/* can be empty; intentional */
+			locate_resource_user(name, ret, is_config);
+			break;
+		case RES_SYS_ONLY:
+			/* can be empty; intentional */
+			locate_resource_sys(name, ret, is_config);
+			break;
+		case RES_USER_FIRST:
+			if(!locate_resource_user(name, ret, is_config))
+				locate_resource_sys(name, ret, is_config);
+			break;
+		case RES_SYS_FIRST:
+			if(!locate_resource_sys(name, ret, is_config))
+				locate_resource_user(name, ret, is_config);
+			break;
+		default:
+			E_ASSERT(0 && "Unknown resource type");
+	}
+
+	return ret;
+}
+
+
 Resource::Resource() : sys_conf(NULL), user_conf(NULL) {
 }
 
@@ -31,6 +98,7 @@ Resource::~Resource() {
 	clear();
 }
 
+#if 0
 bool Resource::load(const char* domain) {
 	E_ASSERT(domain != NULL);
 
@@ -77,6 +145,40 @@ bool Resource::load(const char* domain) {
 		user_conf = new Config;
 
 		if(!user_conf->load(ufile.c_str())) {
+			delete user_conf;
+			user_conf = NULL;
+		}
+	}
+
+	return (sys_conf != NULL || user_conf != NULL);
+}
+#endif
+
+bool Resource::load(const char* domain) {
+	E_ASSERT(domain != NULL);
+
+	clear();
+
+	String path, file = domain;
+	file += ".conf";
+
+	/* check first in system directories */
+	if(locate_resource_sys(file.c_str(), path, true)) {
+		sys_conf = new Config;
+
+		if(!sys_conf->load(path.c_str())) {
+			delete sys_conf;
+			sys_conf = NULL;
+		}
+	}
+
+	path.clear();
+
+	/* now go to user directory */
+	if(locate_resource_user(file.c_str(), path, true)) {
+		user_conf = new Config;
+
+		if(!user_conf->load(path.c_str())) {
 			delete user_conf;
 			user_conf = NULL;
 		}
@@ -262,79 +364,19 @@ void Resource::set(const char* section, const char* key, float val) {
 void Resource::set(const char* section, const char* key, double val) {
 	STORE_RESOURCE(section, key, val, set);
 }
-
-static bool locate_resource_sys(const char* name, String& path) {
-	StrList dirs;
-	system_config_dirs(dirs);
-	StrListIter it = dirs.begin(), it_end = dirs.end();
-	
-	for(; it != it_end; ++it) {
-		*it += E_DIR_SEPARATOR;
-		*it += name;
-
-		if(access((*it).c_str(), F_OK) == 0) {
-			path = *it;
-			return true;
-		}
-	}
-
-	path.clear();
-	return false; 
-}
-
-static bool locate_resource_user(const char* name, String& path) {
-	path = user_config_dir();
-	path += E_DIR_SEPARATOR;
-	path += name;
-
-	if(access(path.c_str(), F_OK) == 0)
-		return true;
-
-	path.clear();
-	return false;
-}
-
-static String locate_resource(const char* name, ResourceType r) {
-	String ret;
-
-	switch(r) {
-		case RES_USER_ONLY:
-			/* can be empty; intentional */
-			locate_resource_user(name, ret);
-			break;
-		case RES_SYS_ONLY:
-			/* can be empty; intentional */
-			locate_resource_sys(name, ret);
-			break;
-		case RES_USER_FIRST:
-			if(!locate_resource_user(name, ret))
-				locate_resource_sys(name, ret);
-			break;
-		case RES_SYS_FIRST:
-			if(!locate_resource_sys(name, ret))
-				locate_resource_user(name, ret);
-			break;
-		default:
-			E_ASSERT(0 && "Unknown resource type");
-	}
-
-	return ret;
-}
 		
 String Resource::find_config(const char* name, ResourceType r) {
 	String n = name;
 	n += ".conf";
 
-	String ret = locate_resource(n.c_str(), r);
+	String ret = locate_resource(n.c_str(), r, true);
 	E_RETURN_VAL_IF_FAIL(file_exists(ret.c_str()), "");
 	return ret;
 }
 
-String Resource::find_dir(const char* name, ResourceType r) {
+String Resource::find_data(const char* name, ResourceType r) {
 	E_ASSERT(name != NULL);
-
-	String ret = locate_resource(name, r);
-	E_RETURN_VAL_IF_FAIL(dir_exists(ret.c_str()), "");
+	String ret = locate_resource(name, r, false);
 	return ret;
 }
 

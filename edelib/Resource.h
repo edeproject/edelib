@@ -389,11 +389,15 @@ class EDELIB_API Resource {
 		void set(const char* section, const char* key, double val);
 
 		/**
-		 * Locate path of config filename using XDG paths. Config filename <em>must not</em>
-		 * have an extension, example:
+		 * Locate path of config filename searching XDG_CONFIG_HOME and XDG_CONFIG_DIRS paths. 
+		 * It is meant for locting config files. Config filename must not have an extension, 
+		 * example:
 		 * \code
 		 *   String path = Resource::find_config("myconfig", RES_USER_FIRST);
 		 * \endcode
+		 *
+		 * Returned value is tested for accessibility via access() function, so you
+		 * can be sure that returned value exists.
 		 * 
 		 * \return path if filename was found or empty string if failed
 		 * \param name is config filename without extension
@@ -402,13 +406,14 @@ class EDELIB_API Resource {
 		static String find_config(const char* name, ResourceType rt = RES_USER_FIRST);
 		
 		/**
-		 * Locate directory path using XDG paths
+		 * Locate data in XDG_DATA_HOME and XDG_DATA_DIRS paths. Data can be anything,
+		 * like file, directory, link, etc.
 		 *
 		 * \return path if directory was found or empty string if failed
 		 * \param name is directory name
 		 * \param rt is ResourceType variable
 		 */
-		static String find_dir(const char* name, ResourceType rt = RES_USER_FIRST);
+		static String find_data(const char* name, ResourceType rt = RES_USER_FIRST);
 };
 
 EDELIB_NS_END

@@ -1,3 +1,12 @@
+2009-02-19  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Resource.h:
+	* src/Resource.cpp: s/find_dir/find_data and changed concept; it should
+	seach through data directories and (now) will search anything, like
+	directory, file, etc.
+	* test/resource.cpp: updated tests
+	* src/Resource.cpp: refactored load() function
+
 2009-02-18  Sanel <karijes@users.sourceforge.net>
 
 	* edelib/Resource.h:
