@@ -2,30 +2,32 @@
  * $Id$
  *
  * Config file reader and writer
- * Part of edelib.
- * Copyright (c) 2005-2007 EDE Authors.
+ * Copyright (c) 2005-2007 edelib authors
  *
- * This program is licenced under terms of the
- * GNU General Public Licence version 2 or newer.
- * See COPYING for details.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <edelib/econfig.h>
+#include <stdio.h>   // snprintf
+#include <ctype.h>
+#include <string.h>  // strchr, strncpy, strlen
+#include <stdlib.h>  // free, atoi, atol, atof, getenv
+
 #include <edelib/Config.h>
 #include <edelib/Debug.h>
 #include <edelib/StrUtil.h>
 #include <edelib/File.h>
 #include <edelib/Nls.h>
-
-#include <stdio.h>   // snprintf
-#include <ctype.h>
-
-#include <string.h>  // strchr, strncpy, strlen
-#include <stdlib.h>  // free, atoi, atol, atof, getenv
-
-#ifdef USE_NLS
-#include <libintl.h> // setlocale
-#endif
 
 // max section len
 #define ESECT_MAX 128
@@ -52,25 +54,25 @@ struct ConfigEntry {
 };
 
 class ConfigSection {
-	private:
-		friend class Config;
+private:
+	friend class Config;
 
-		char*  sname;
-		size_t snamelen;
-		unsigned shash;
+	char*  sname;
+	size_t snamelen;
+	unsigned shash;
 
-		EntryList entry_list;
+	EntryList entry_list;
 
-		ConfigSection(const ConfigSection&);
-		ConfigSection& operator=(ConfigSection&);
+	ConfigSection(const ConfigSection&);
+	ConfigSection& operator=(ConfigSection&);
 
-		void add_entry(const char* key, const char* value);
-		void remove_entry(const char* key);
-		ConfigEntry* find_entry(const char* key);
+	void add_entry(const char* key, const char* value);
+	void remove_entry(const char* key);
+	ConfigEntry* find_entry(const char* key);
 
-	public:
-		ConfigSection(const char* n);
-		~ConfigSection();
+public:
+	ConfigSection(const char* n);
+	~ConfigSection();
 };
 
 /*
@@ -713,13 +715,7 @@ bool Config::get(const char* section, const char* key, char* ret, unsigned int s
 }
 
 bool Config::get_localized(const char* section, const char* key, char* ret, unsigned int size) {
-	char* lang;
-	/*
-	#ifdef USE_NLS
-		if((lang = setlocale(LC_MESSAGES, NULL)) == NULL)
-	#endif
-	*/
-	lang = getenv("LANG");
+	char* lang = getenv("LANG");
 
 	// fallback
 	if (!lang)

@@ -2,18 +2,25 @@
  * $Id$
  *
  * Regex class
- * Part of edelib.
- * Copyright (c) 2000-2007 EDE Authors.
+ * Copyright (c) 2005-2007 edelib authors
  *
- * This program is licensed under terms of the
- * GNU General Public License version 2 or newer.
- * See COPYING for details.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef __REGEX_H__
 #define __REGEX_H__
 
-#include "econfig.h"
 #include "List.h"
 #include "String.h"
 
@@ -164,99 +171,99 @@ struct RegexData;
  * will fail. This will be addressed in the future.
  */
 class EDELIB_API Regex {
-	private:
-		int errcode;
-		RegexData* data;
+private:
+	int errcode;
+	RegexData* data;
 
-		void clear(void);
-		void clear_regs(void);
-		void map_errcode(int ret);
+	void clear(void);
+	void clear_regs(void);
+	void map_errcode(int ret);
 
-		Regex(const Regex&);
-		Regex& operator=(const Regex&);
+	Regex(const Regex&);
+	Regex& operator=(const Regex&);
 
-	public:
-		/**
-		 * Empty constructor
-		 */
-		Regex();
+public:
+	/**
+	 * Empty constructor
+	 */
+	Regex();
 
-		/**
-		 * Clears all internal data
-		 */
-		~Regex();
+	/**
+	 * Clears all internal data
+	 */
+	~Regex();
 
-		/**
-		 * Compile pattern for matching. This <b>must</b> be called
-		 * before match().
-		 *
-		 * \return true if pattern compiled successfully, or false if not.
-		 * \param pattern is matching pattern
-		 * \param m is RegexMode type
-		 */
-		bool compile(const char* pattern, int m = RX_EXTENDED);
+	/**
+	 * Compile pattern for matching. This <b>must</b> be called
+	 * before match().
+	 *
+	 * \return true if pattern compiled successfully, or false if not.
+	 * \param pattern is matching pattern
+	 * \param m is RegexMode type
+	 */
+	bool compile(const char* pattern, int m = RX_EXTENDED);
 
-		/**
-		 * Validate was compile() was successfull. This is short way for compile()
-		 * returned value, like:
-		 * \code
-		 *   Regex r;
-		 *   r.compile(...);
-		 *   if(!r)
-		 *      // die
-		 * \endcode
-		 */
-		operator bool(void) const   { return ((errcode == RX_SUCCESS) ? 1 : 0); }
+	/**
+	 * Validate was compile() was successfull. This is short way for compile()
+	 * returned value, like:
+	 * \code
+	 *   Regex r;
+	 *   r.compile(...);
+	 *   if(!r)
+	 *      // die
+	 * \endcode
+	 */
+	operator bool(void) const   { return ((errcode == RX_SUCCESS) ? 1 : 0); }
 
-		/**
-		 * Returns true if given string matches compiled pattern (aka. pattern
-		 * is found inside string) or false if not.
-		 */
-		bool match(const char* str);
+	/**
+	 * Returns true if given string matches compiled pattern (aka. pattern
+	 * is found inside string) or false if not.
+	 */
+	bool match(const char* str);
 
-		/**
-		 * Search compiled pattern in str with given size and return position
-		 * where matched data starts and it's length. If optional start is
-		 * given, searching will be started from that point.
-		 *
-		 * \return position where searched data starts or -1 if not found or -2 in case of internal error
-		 * \param str is data to be searched
-		 * \param len is length of searched data
-		 * \param matchlen is returned length of matched data
-		 * \param start is position to start from
-		 */
-		int search(const char* str, int len, int& matchlen, int start);
+	/**
+	 * Search compiled pattern in str with given size and return position
+	 * where matched data starts and it's length. If optional start is
+	 * given, searching will be started from that point.
+	 *
+	 * \return position where searched data starts or -1 if not found or -2 in case of internal error
+	 * \param str is data to be searched
+	 * \param len is length of searched data
+	 * \param matchlen is returned length of matched data
+	 * \param start is position to start from
+	 */
+	int search(const char* str, int len, int& matchlen, int start);
 
-		/**
-		 * Same as search(str, strlen(str), matchlen, 0)
-		 */
-		int search(const char* str, int& matchlen, int start = 0);
+	/**
+	 * Same as search(str, strlen(str), matchlen, 0)
+	 */
+	int search(const char* str, int& matchlen, int start = 0);
 
-		/**
-		 * Split given str and put each of splitted items in list.
-		 *
-		 * \return 0 if pattern didn't find or size of the list
-		 * \param str is data to be splitted
-		 * \param ls is list where to put data
-		 */
-		int split(const char* str, list<String>& ls);
+	/**
+	 * Split given str and put each of splitted items in list.
+	 *
+	 * \return 0 if pattern didn't find or size of the list
+	 * \param str is data to be splitted
+	 * \param ls is list where to put data
+	 */
+	int split(const char* str, list<String>& ls);
 
-		/**
-		 * Return current error code
-		 */
-		int error(void) { return errcode; }
+	/**
+	 * Return current error code
+	 */
+	int error(void) { return errcode; }
 
-		/**
-		 * Interpret parameter and return associated error code. Returned
-		 * value points to static data and <b>must not</b> be modified or cleared.
-		 */
-		static const char* strerror(int code);
+	/**
+	 * Interpret parameter and return associated error code. Returned
+	 * value points to static data and <b>must not</b> be modified or cleared.
+	 */
+	static const char* strerror(int code);
 
-		/**
-		 * Return error in string form. Returned
-		 * value points to static data and <b>must not</b> be modified or cleared.
-		 */
-		const char* strerror(void) { return Regex::strerror(errcode); }
+	/**
+	 * Return error in string form. Returned
+	 * value points to static data and <b>must not</b> be modified or cleared.
+	 */
+	const char* strerror(void) { return Regex::strerror(errcode); }
 };
 
 EDELIB_NS_END

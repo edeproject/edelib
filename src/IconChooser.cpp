@@ -1,13 +1,21 @@
 /*
  * $Id$
  *
- * Icon choose dialog
- * Part of edelib.
- * Copyright (c) 2006-2008 EDE Authors.
+ * Icon chooser
+ * Copyright (c) 2005-2007 edelib authors
  *
- * This program is licenced under terms of the
- * GNU General Public Licence version 2 or newer.
- * See COPYING for details.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <FL/Fl_Window.H>
@@ -39,20 +47,20 @@
 EDELIB_NS_BEGIN
 
 class IconBox : public Fl_Button {
-	private: 
-		bool sel;
-		Fl_Color corig;
-		String iconpth;
-		char* iconname;
-	public:
-		IconBox(int x, int y, int w, int h, const char* l=0);
-		~IconBox();
+private: 
+	bool sel;
+	Fl_Color corig;
+	String iconpth;
+	char* iconname;
+public:
+	IconBox(int x, int y, int w, int h, const char* l=0);
+	~IconBox();
 
-		void set_icon_path(const String& s);
-		const String& icon_path(void) const { return iconpth; }
-		bool selected(void) { return sel; }
+	void set_icon_path(const String& s);
+	const String& icon_path(void) const { return iconpth; }
+	bool selected(void) { return sel; }
 
-		int handle(int event);
+	int handle(int event);
 };
 
 IconBox::IconBox(int x, int y, int w, int h, const char* l) : Fl_Button(x, y, w, h, l) {
@@ -141,26 +149,26 @@ int IconBox::handle(int event) {
 }
 
 class IconChooser : public Fl_Window {
-	private:
-		String ret;
-		String start;
+private:
+	String ret;
+	String start;
 
-		Fl_Input* path;
-		Fl_Button* bbrowse;
-		Fl_Button* bok;
-		Fl_Button* bcancel;
-		Fl_Progress* progress;
-		ExpandableGroup* icongrp;
+	Fl_Input* path;
+	Fl_Button* bbrowse;
+	Fl_Button* bok;
+	Fl_Button* bcancel;
+	Fl_Progress* progress;
+	ExpandableGroup* icongrp;
 
-	public:
-		IconChooser();
-		~IconChooser();
-		void load(const char* dir);
-		void load_from_list(list<String>& lst);
-		bool find_focused(void);
+public:
+	IconChooser();
+	~IconChooser();
+	void load(const char* dir);
+	void load_from_list(list<String>& lst);
+	bool find_focused(void);
 
-		String get_ret(void)    { return ret; }
-		String& get_start(void) { return start; }
+	String get_ret(void)    { return ret; }
+	String& get_start(void) { return start; }
 };
 
 static void cancel_cb(Fl_Widget*, void* w) {

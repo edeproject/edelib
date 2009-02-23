@@ -2,13 +2,21 @@
  * $Id$
  *
  * Client part of XSETTINGS protocol
- * Part of edelib.
  * Based on implementation from Owen Tylor, copyright (c) 2001 Red Hat, inc.
- * Copyright (c) 2005-2007 EDE Authors.
+ * Copyright (c) 2005-2007 edelib authors
  *
- * This program is licensed under terms of the 
- * GNU General Public License version 2 or newer.
- * See COPYING for details.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef __XSETTINGSCLIENT_H__
@@ -99,92 +107,92 @@ typedef void (*XSettingsCallback)(const char* name, XSettingsAction action, XSet
  * until one of the settings is changed on manager side.
  */
 class EDELIB_API XSettingsClient {
-	private:
-		XSettingsData* client_data;
-		XSettingsCallback settings_cb;
-		void* settings_cb_data;
+private:
+	XSettingsData* client_data;
+	XSettingsCallback settings_cb;
+	void* settings_cb_data;
 
-		void check_manager_window(void);
-		void read_settings(void);
+	void check_manager_window(void);
+	void read_settings(void);
 
-		XSettingsClient(const XSettingsClient&);
-		XSettingsClient& operator=(const XSettingsClient&);
+	XSettingsClient(const XSettingsClient&);
+	XSettingsClient& operator=(const XSettingsClient&);
 
-	public:
-		/**
-		 * Empty constructor
-		 */
-		XSettingsClient();
+public:
+	/**
+	 * Empty constructor
+	 */
+	XSettingsClient();
 
-		/**
-		 * Clears internal data
-		 */
-		~XSettingsClient();
+	/**
+	 * Clears internal data
+	 */
+	~XSettingsClient();
 
-		/**
-		 * Init needed communication parts.
-		 * \return false if failed, true otherwise
-		 * \param dpy is display
-		 * \param screen is screen
-		 * \param cb is callback parameter
-		 * \param data is data passed to the callback function
-		 */
-		bool init(Display* dpy, int screen, XSettingsCallback cb = 0, void* data = 0);
+	/**
+	 * Init needed communication parts.
+	 * \return false if failed, true otherwise
+	 * \param dpy is display
+	 * \param screen is screen
+	 * \param cb is callback parameter
+	 * \param data is data passed to the callback function
+	 */
+	bool init(Display* dpy, int screen, XSettingsCallback cb = 0, void* data = 0);
 
-		/**
-		 * Clears internal data. init() must be called agan if other
-		 * functions are going to be called
-		 */
-		void clear(void);
+	/**
+	 * Clears internal data. init() must be called agan if other
+	 * functions are going to be called
+	 */
+	void clear(void);
 
-		/**
-		 * Checks if manager is running
-		 * \return true if does otherwise false
-		 * \param dpy is display
-		 * \param screen is screen
-		 */
-		static bool manager_running(Display* dpy, int screen);
+	/**
+	 * Checks if manager is running
+	 * \return true if does otherwise false
+	 * \param dpy is display
+	 * \param screen is screen
+	 */
+	static bool manager_running(Display* dpy, int screen);
 
-		/**
-		 * Set callback for listening changes
-		 * \param cb is callback parameter
-		 * \param data is data passed to the callback function
-		 */
-		void callback(XSettingsCallback cb, void* data = 0);
+	/**
+	 * Set callback for listening changes
+	 * \param cb is callback parameter
+	 * \param data is data passed to the callback function
+	 */
+	void callback(XSettingsCallback cb, void* data = 0);
 
-		/**
-		 * This function should be placed in loop with X events
-		 */
-		int process_xevent(const XEvent* xev);
+	/**
+	 * This function should be placed in loop with X events
+	 */
+	int process_xevent(const XEvent* xev);
 
-		/**
-		 * Set integer value on manager
-		 * \param name is setting name
-		 * \param val is int value
-		 */
-		void set(const char* name, int val);
+	/**
+	 * Set integer value on manager
+	 * \param name is setting name
+	 * \param val is int value
+	 */
+	void set(const char* name, int val);
 
-		/**
-		 * Set string (char*) value on manager. Data will be copied
-		 * \param name is setting name
-		 * \param val is string value
-		 */
-		void set(const char* name, const char* val);
+	/**
+	 * Set string (char*) value on manager. Data will be copied
+	 * \param name is setting name
+	 * \param val is string value
+	 */
+	void set(const char* name, const char* val);
 
-		/**
-		 * Set RGBA color values on manager
-		 * \param name is setting name
-		 * \param red is red component
-		 * \param green is green component
-		 * \param blue is blue component
-		 * \param alpha is alpha component
-		 */
-		void set(const char* name, unsigned short red, unsigned short green, unsigned short blue, unsigned short alpha);
+	/**
+	 * Set RGBA color values on manager
+	 * \param name is setting name
+	 * \param red is red component
+	 * \param green is green component
+	 * \param blue is blue component
+	 * \param alpha is alpha component
+	 */
+	void set(const char* name, unsigned short red, unsigned short green, unsigned short blue, unsigned short alpha);
 
-		/**
-		 * Send changed data to manager. This should be called aftear set()
-		 */
-		void manager_notify(void);
+	/**
+	 * Send changed data to manager. This should be called aftear set()
+	 */
+	void manager_notify(void);
 };
 
 EDELIB_NS_END

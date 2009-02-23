@@ -2,18 +2,26 @@
  * $Id$
  *
  * Directory changes notifier
- * Part of edelib.
- * Copyright (c) 2005-2007 EDE Authors.
+ * Copyright (c) 2005-2007 edelib authors
  *
- * This program is licenced under terms of the 
- * GNU General Public Licence version 2 or newer.
- * See COPYING for details.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef __DIRWATCH_H__
 #define __DIRWATCH_H__
 
-#include "econfig.h"
+#include "edelib-global.h"
 
 EDELIB_NS_BEGIN
 
@@ -183,78 +191,78 @@ typedef void (DirWatchCallback)(const char* dir, const char* w, int flags, void*
  * \endcode
  */
 class EDELIB_API DirWatch {
-	private:
-		static DirWatch* pinstance;
+private:
+	static DirWatch* pinstance;
 
-		DirWatchImpl*    impl;
-		DirWatchNotifier backend_notifier;
+	DirWatchImpl*    impl;
+	DirWatchNotifier backend_notifier;
 
-		bool init_backend(void);
-		/*
-		DirWatchEntry* scan(int fd);
+	bool init_backend(void);
+	/*
+	DirWatchEntry* scan(int fd);
 
-		const char* figure_changed(DirWatchEntry* e);
-		void fill_content(DirWatchEntry* e);
-		*/
+	const char* figure_changed(DirWatchEntry* e);
+	void fill_content(DirWatchEntry* e);
+	*/
 
-		DirWatch(const DirWatch&);
-		DirWatch& operator=(DirWatch&);
+	DirWatch(const DirWatch&);
+	DirWatch& operator=(DirWatch&);
 
-	public:
-		/**
-		 * Empty constructor
-		 */
-		DirWatch();
+public:
+	/**
+	 * Empty constructor
+	 */
+	DirWatch();
 
-		/**
-		 * Clean internal data
-		 */
-		~DirWatch();
+	/**
+	 * Clean internal data
+	 */
+	~DirWatch();
 
 #ifndef SKIP_DOCS
-		static DirWatch* instance(void);
+	static DirWatch* instance(void);
 
-		bool add_entry(const char* dir, int flags);
-		bool remove_entry(const char* dir);
-		bool have_entry(const char* dir);
-		void add_callback(DirWatchCallback* cb, void* data);
-		void run_callback(int fd);
-		DirWatchNotifier get_notifier(void) { return backend_notifier; }
+	bool add_entry(const char* dir, int flags);
+	bool remove_entry(const char* dir);
+	bool have_entry(const char* dir);
+	void add_callback(DirWatchCallback* cb, void* data);
+	void run_callback(int fd);
+	DirWatchNotifier get_notifier(void) { return backend_notifier; }
 #endif
-		/**
-		 * Prepare internal data. This <b>must</b> be called
-		 * before any further add()
-		 */
-		static bool init(void);
+	/**
+	 * Prepare internal data. This <b>must</b> be called
+	 * before any further add()
+	 */
+	static bool init(void);
 
-		/**
-		 * Shutdown watcher and clean data. Any further add() call 
-		 * after this will trigger assertion.
-		 */
-		static void shutdown(void);
+	/**
+	 * Shutdown watcher and clean data. Any further add() call 
+	 * after this will trigger assertion.
+	 */
+	static void shutdown(void);
 
-		/**
-		 * Add directory to be watched. Directory <b>must</b> exists
-		 * or will be ignored. It will return true if addition was succesfull
-		 * or false if not.
-		 */
-		static bool add(const char* dir, int flags);
+	/**
+	 * Add directory to be watched. Directory <b>must</b> exists
+	 * or will be ignored. It will return true if addition was succesfull
+	 * or false if not.
+	 */
+	static bool add(const char* dir, int flags);
 
-		/**
-		 * Remove added entry.
-		 */
-		static bool remove(const char* dir);
+	/**
+	 * Remove added entry.
+	 */
+	static bool remove(const char* dir);
 
-		/**
-		 * Register callback called when content of one of added directories
-		 * was changed.
-		 */
-		static void callback(DirWatchCallback& cb, void* data = 0);
+	/**
+	 * Register callback called when content of one of added directories
+	 * was changed.
+	 */
+	static void callback(DirWatchCallback& cb, void* data = 0);
 
-		/**
-		 * Return current notifier used, or DW_NONE if none of them.
-		 */
-		static DirWatchNotifier notifier(void);
+	/**
+	 * Return current notifier used, or DW_NONE if none of them.
+	 */
+	static DirWatchNotifier notifier(void);
 };
 
 EDELIB_NS_END

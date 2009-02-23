@@ -1,13 +1,21 @@
 /*
  * $Id$
  *
- * D-Bus stuff
- * Part of edelib.
- * Copyright (c) 2008 EDE Authors.
+ * D-BUS stuff
+ * Copyright (c) 2008 edelib authors
  *
- * This program is licenced under terms of the 
- * GNU General Public Licence version 2 or newer.
- * See COPYING for details.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef __EDBUSLIST_H__
@@ -104,99 +112,99 @@ EDELIB_NS_BEGIN
  * EdbusList uses implicit sharing.
  */
 class EDELIB_API EdbusList : public EdbusContainer<EdbusData> {
-	private:
-		bool array_mode;
-		EdbusList();
+private:
+	bool array_mode;
+	EdbusList();
 
-	public:
-		/**
-	 	 * Declares EdbusList iterator
-	 	 */
-		typedef EdbusContainer<EdbusData>::const_iterator const_iterator;
+public:
+	/**
+	 * Declares EdbusList iterator
+	 */
+	typedef EdbusContainer<EdbusData>::const_iterator const_iterator;
 
-		/**
-		 * Create empty container
-		 * \param a if true, container will be array type, else it will be struct type
-		 */
-		explicit EdbusList(bool a);
+	/**
+	 * Create empty container
+	 * \param a if true, container will be array type, else it will be struct type
+	 */
+	explicit EdbusList(bool a);
 
-		/**
-		 * Adds element to the end of the container
-		 */
-		void append(const EdbusData& val);
+	/**
+	 * Adds element to the end of the container
+	 */
+	void append(const EdbusData& val);
 
-		/**
-		 * Clears content of container
-		 */
-		void clear(void);
+	/**
+	 * Clears content of container
+	 */
+	void clear(void);
 
-		/**
-		 * Remove element from container, if element is found
-		 */
-		void remove(const EdbusData& val);
+	/**
+	 * Remove element from container, if element is found
+	 */
+	void remove(const EdbusData& val);
 
-		/**
-		 * Remove all elements that are equal to the <em>val</em>
-		 */
-		void remove_all(const EdbusData& val);
+	/**
+	 * Remove all elements that are equal to the <em>val</em>
+	 */
+	void remove_all(const EdbusData& val);
 
-		/**
-		 * Compares if two arrays or structs are equal
-		 */
-		bool operator==(const EdbusList& other) const;
+	/**
+	 * Compares if two arrays or structs are equal
+	 */
+	bool operator==(const EdbusList& other) const;
 
-		/**
-		 * Compares if two arrays or structs are not equal
-		 */
-		bool operator!=(const EdbusList& other) const { return !operator==(other); }
+	/**
+	 * Compares if two arrays or structs are not equal
+	 */
+	bool operator!=(const EdbusList& other) const { return !operator==(other); }
 
-		/**
-		 * Returns type of values stored in container. Only valid if container is array;
-		 * if not, EDBUS_TYPE_INVALID will be returned
-		 */
-		EdbusDataType value_type(void);
+	/**
+	 * Returns type of values stored in container. Only valid if container is array;
+	 * if not, EDBUS_TYPE_INVALID will be returned
+	 */
+	EdbusDataType value_type(void);
 
-		/**
-		 * Return true if value type is container (EdbusDict or EdbusList). Only valid if container is array;
-		 * if not, EDBUS_TYPE_INVALID will be returned
-		 */
-		bool value_type_is_container(void);
+	/**
+	 * Return true if value type is container (EdbusDict or EdbusList). Only valid if container is array;
+	 * if not, EDBUS_TYPE_INVALID will be returned
+	 */
+	bool value_type_is_container(void);
 
-		/**
-		 * Returns true if object behaves as array
-		 */
-		bool list_is_array(void) const { return array_mode; }
+	/**
+	 * Returns true if object behaves as array
+	 */
+	bool list_is_array(void) const { return array_mode; }
 
-		/**
-		 * Returns true if object behaves as struct
-		 */
-		bool list_is_struct(void) const { return !array_mode; }
+	/**
+	 * Returns true if object behaves as struct
+	 */
+	bool list_is_struct(void) const { return !array_mode; }
 
-		/**
-		 * Returns iterator at the container start. It points to the first element
-		 */
-		const_iterator begin(void) const;
+	/**
+	 * Returns iterator at the container start. It points to the first element
+	 */
+	const_iterator begin(void) const;
 
-		/**
-		 * Returns iterator at the container end. It <b>does not</b> points to
-		 * the last element, but element after the last, and you must not dereferce it
-		 */
-		const_iterator end(void) const;
+	/**
+	 * Returns iterator at the container end. It <b>does not</b> points to
+	 * the last element, but element after the last, and you must not dereferce it
+	 */
+	const_iterator end(void) const;
 
-		/**
-		 * Returns size of container content. This is a constant operation
-		 */
-		unsigned int size(void) const;
+	/**
+	 * Returns size of container content. This is a constant operation
+	 */
+	unsigned int size(void) const;
 
-		/**
-		 * Explicitly create array. This function should be used to create arrays
-		 */
-		static EdbusList create_array(void) { return EdbusList(true); }
+	/**
+	 * Explicitly create array. This function should be used to create arrays
+	 */
+	static EdbusList create_array(void) { return EdbusList(true); }
 
-		/**
-		 * Explicitly create struct. This function should be used to create structs 
-		 */
-		static EdbusList create_struct(void) { return EdbusList(false); }
+	/**
+	 * Explicitly create struct. This function should be used to create structs 
+	 */
+	static EdbusList create_struct(void) { return EdbusList(false); }
 };
 
 /**

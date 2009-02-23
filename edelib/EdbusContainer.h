@@ -1,13 +1,21 @@
 /*
  * $Id$
  *
- * D-Bus stuff
- * Part of edelib.
- * Copyright (c) 2008 EDE Authors.
+ * D-BUS stuff
+ * Copyright (c) 2008 edelib authors
  *
- * This program is licenced under terms of the 
- * GNU General Public Licence version 2 or newer.
- * See COPYING for details.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef __EDBUSCONTAINER_H__
@@ -43,114 +51,114 @@ struct EdbusContainerImpl {
  */
 template <typename T>
 class EdbusContainer {
-	public:
-		/**
-		 * Iterator type for container
-		 */
-		typedef typename list<T>::iterator iterator;
+public:
+	/**
+	 * Iterator type for container
+	 */
+	typedef typename list<T>::iterator iterator;
 
-		/**
-		 * Const iterator type for container
-		 */
-		typedef typename list<T>::const_iterator const_iterator;
+	/**
+	 * Const iterator type for container
+	 */
+	typedef typename list<T>::const_iterator const_iterator;
 
 #ifndef SKIP_DOCS
-		typedef EdbusContainerImpl<T> EdbusContainerPrivate;
+	typedef EdbusContainerImpl<T> EdbusContainerPrivate;
 #endif
 
-	protected:
-		/**
-		 * Allows access to the private data by inherited classes
+protected:
+	/**
+	 * Allows access to the private data by inherited classes
+	 */
+	EdbusContainerPrivate* impl;
+
+	/**
+	 * Clears internal data
+	 */
+	void dispose(void) {
+		if(!impl)
+			return;
+
+		delete impl;
+		impl = 0;
+	}
+
+	/**
+	 * Do actual copying. Referece counter is set to 1.
+	 * This function must be called when inherited implementations
+	 * do write or change internal data
+	 */
+	void unhook(void) {
+		E_ASSERT(impl != NULL);
+
+		if(impl->ref == 1)
+			return;
+
+		EdbusContainerPrivate* new_one = new EdbusContainerPrivate;
+		new_one->ref = 1;
+
+		/* 
+		 * Copy the content
+		 *
+		 * edelib::list does not have implemented copy operator
+		 * and that is the way I like
 		 */
-		EdbusContainerPrivate* impl;
+		if(impl->lst.size() > 0) {
+			iterator it = impl->lst.begin(), it_end = impl->lst.end();
 
-		/**
-		 * Clears internal data
-		 */
-		void dispose(void) {
-			if(!impl)
-				return;
-
-			delete impl;
-			impl = 0;
-		}
-
-		/**
-		 * Do actual copying. Referece counter is set to 1.
-		 * This function must be called when inherited implementations
-		 * do write or change internal data
-		 */
-		void unhook(void) {
-			E_ASSERT(impl != NULL);
-
-			if(impl->ref == 1)
-				return;
-
-			EdbusContainerPrivate* new_one = new EdbusContainerPrivate;
-			new_one->ref = 1;
-
-			/* 
-			 * Copy the content
-			 *
-			 * edelib::list does not have implemented copy operator
-			 * and that is the way I like
-			 */
-			if(impl->lst.size() > 0) {
-				iterator it = impl->lst.begin(), it_end = impl->lst.end();
-
-				while(it != it_end) {
-					new_one->lst.push_back(*it);
-					++it;
-				}
+			while(it != it_end) {
+				new_one->lst.push_back(*it);
+				++it;
 			}
-
-			impl->ref--;
-			impl = new_one;
 		}
 
-		/**
-		 * Create empty container
-		 */
-		EdbusContainer() : impl(0) {
-			impl = new EdbusContainerPrivate;
-			impl->ref = 1;
-		};
+		impl->ref--;
+		impl = new_one;
+	}
 
-		/**
-		 * Do a shallow copying from other container
-		 */
-		EdbusContainer(const EdbusContainer& other) {
-			if(this == &other)
-				return;
+	/**
+	 * Create empty container
+	 */
+	EdbusContainer() : impl(0) {
+		impl = new EdbusContainerPrivate;
+		impl->ref = 1;
+	};
 
-			impl = other.impl;
-			other.impl->ref++;
-		}
+	/**
+	 * Do a shallow copying from other container
+	 */
+	EdbusContainer(const EdbusContainer& other) {
+		if(this == &other)
+			return;
 
-		/**
-		 * Decrease reference counter and if reached 0 it will
-		 * clear allocated data
-		 */
-		~EdbusContainer() {
-			impl->ref--;
+		impl = other.impl;
+		other.impl->ref++;
+	}
 
-			if(impl->ref == 0)
-				dispose();
-		}
+	/**
+	 * Decrease reference counter and if reached 0 it will
+	 * clear allocated data
+	 */
+	~EdbusContainer() {
+		impl->ref--;
 
-		/**
-		 * Do a shallow copying from other container
-		 */
-		EdbusContainer& operator=(const EdbusContainer& other) {
-			other.impl->ref++;
-			impl->ref--;
+		if(impl->ref == 0)
+			dispose();
+	}
 
-			if(impl->ref == 0)
-				dispose();
+	/**
+	 * Do a shallow copying from other container
+	 */
+	EdbusContainer& operator=(const EdbusContainer& other) {
+		other.impl->ref++;
+		impl->ref--;
 
-			impl = other.impl;
-			return *this;
-		}
+		if(impl->ref == 0)
+			dispose();
+
+		impl = other.impl;
+		return *this;
+	}
 };
 
 EDELIB_NS_END

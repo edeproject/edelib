@@ -1,14 +1,24 @@
 /*
  * $Id$
  *
- * Mime handling class.
- * Part of edelib.
- * Copyright (c) 2005-2007 EDE Authors.
+ * Mime handling class
+ * Copyright (c) 2005-2007 edelib authors
  *
- * This program is licenced under terms of the 
- * GNU General Public Licence version 2 or newer.
- * See COPYING for details.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
+
+#include <string.h>  // strncmp
 
 #include <edelib/MimeType.h>
 #include <edelib/TiXml.h>
@@ -16,9 +26,8 @@
 #include <edelib/Util.h>
 #include <edelib/StrUtil.h>
 #include <edelib/List.h>
-#include "xdgmime/xdgmime.h"
 
-#include <string.h>  // strncmp
+#include "xdgmime/xdgmime.h"
 
 #define MIME_LOADED    1
 #define COMMENT_LOADED 2

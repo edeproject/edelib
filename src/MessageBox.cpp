@@ -2,29 +2,37 @@
  * $Id$
  *
  * Message dialog
- * Part of edelib.
- * Copyright (c) 2005-2007 EDE Authors.
+ * Copyright (c) 2005-2007 edelib authors
  *
- * This program is licensed under terms of the 
- * GNU General Public License version 2 or newer.
- * See COPYING for details.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <edelib/MessageBox.h>
-#include <edelib/IconTheme.h>
-#include <edelib/Nls.h>
-
+#include <stdlib.h>
+#include <stdarg.h>
+#include <stdio.h>
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Return_Button.H>
 #include <FL/Fl_Shared_Image.H>
 #include <FL/Fl_Pixmap.H>
 
-#include <stdlib.h>
-#include <stdarg.h>           //
-#include <stdio.h>            //
-#include "icons/warning.xpm"  // used by message(), ask()...
-#include "icons/info.xpm"     //
+#include <edelib/MessageBox.h>
+#include <edelib/IconTheme.h>
+#include <edelib/Nls.h>
+
+#include "icons/warning.xpm"
+#include "icons/info.xpm"
 
 #define MAX_TXT_W 365 // Max text width before dialog is started to be resized
 #define MIN_TXT_W 225 // Min text width; used by Fl_Input mostly

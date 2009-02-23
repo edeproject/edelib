@@ -2,24 +2,31 @@
  * $Id$
  *
  * Classes related to date/time and timezones.
- * Part of edelib.
- * Copyright (c) 2005-2007 EDE Authors.
+ * Copyright (c) 2005-2007 edelib authors
  *
- * This program is licenced under terms of the
- * GNU General Public Licence version 2 or newer.
- * See COPYING for details.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
-
-
-#include <edelib/DateTime.h>
-#include <edelib/Nls.h>
-#include <edelib/Debug.h>
-#include <edelib/Missing.h>
 
 #include <stdlib.h> // free, getenv
 #include <string.h> // strdup, strlen
 #include <time.h>
 #include <stdio.h>
+
+#include <edelib/DateTime.h>
+#include <edelib/Nls.h>
+#include <edelib/Debug.h>
+#include <edelib/Missing.h>
 
 #ifdef HAVE_SETTIMEOFDAY
 #include <sys/time.h> // for settimeofday()
@@ -49,7 +56,7 @@ static const short days_in_year[2][12] = {
 	{0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335} // Leap year
 };
 
-const char *day_names[] = {
+static const char *day_names[] = {
 	_("Sunday"),
 	_("Monday"),
 	_("Tuesday"),
@@ -59,7 +66,7 @@ const char *day_names[] = {
 	_("Saturday")
 };
 
-const char *month_names[] = {
+static const char *month_names[] = {
 	_("January"),
 	_("February"),
 	_("March"),

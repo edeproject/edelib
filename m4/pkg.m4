@@ -1,13 +1,20 @@
 dnl
 dnl $Id$
 dnl
-dnl PKG_CHECK_MODULES(GSTUFF, gtk+-2.0 >= 1.3 glib = 1.3.4, action-if, action-not)
-dnl defines GSTUFF_LIBS, GSTUFF_CFLAGS, see pkg-config man page
-dnl also defines GSTUFF_PKG_ERRORS on error
+dnl Copyright (c) 2005-2007 edelib authors
 dnl
-dnl This is a modified pkg.m4 for edelib. Contrary to the original implementation
-dnl this version will continue, even if pkg-config was not found. In that case a variable
-dnl $pkg_config_found will be set to "no", so the caller can decide what to do next. (Sanel)
+dnl This library is free software; you can redistribute it and/or
+dnl modify it under the terms of the GNU Lesser General Public
+dnl License as published by the Free Software Foundation; either
+dnl version 2 of the License, or (at your option) any later version.
+dnl
+dnl This library is distributed in the hope that it will be useful,
+dnl but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+dnl Lesser General Public License for more details.
+dnl
+dnl You should have received a copy of the GNU Lesser General Public License
+dnl along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 AC_DEFUN([EDELIB_PKG_CHECK_MODULES], [
   succeeded=no

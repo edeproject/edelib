@@ -2,18 +2,26 @@
  * $Id$
  *
  * A very simple IPC
- * Part of edelib.
- * Copyright (c) 2008 EDE Authors.
+ * Copyright (c) 2008 edelib authors
  *
- * This program is licenced under terms of the 
- * GNU General Public Licence version 2 or newer.
- * See COPYING for details.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef __SIPC_H__
 #define __SIPC_H__
 
-#include "econfig.h"
+#include "edelib-global.h"
 
 EDELIB_NS_BEGIN
 
@@ -73,38 +81,38 @@ typedef void (*SipcCallback)(const char*, void*);
  * for that D-BUS exists :P
  */
 class EDELIB_API SipcServer {
-	private:
-		SipcServerPrivate* priv;
+private:
+	SipcServerPrivate* priv;
 
-		SipcServer(const SipcServer&);
-		SipcServer& operator=(const SipcServer&);
-	public:
-		/**
-		 * Constructor; prepares internal data
-		 */
-		SipcServer();
+	SipcServer(const SipcServer&);
+	SipcServer& operator=(const SipcServer&);
+public:
+	/**
+	 * Constructor; prepares internal data
+	 */
+	SipcServer();
 
-		/**
-		 * Cleans internal stuff, closes connections
-		 */
-		~SipcServer();
+	/**
+	 * Cleans internal stuff, closes connections
+	 */
+	~SipcServer();
 
-		/**
-		 * Register name to be listening on. The name should be unique
-		 * and not taken by other listener.
-		 *
-		 * \return false if failed or true otherwise
-		 * \param prefix is name clients will use for connection
-		 */
-		bool request_name(const char* prefix);
+	/**
+	 * Register name to be listening on. The name should be unique
+	 * and not taken by other listener.
+	 *
+	 * \return false if failed or true otherwise
+	 * \param prefix is name clients will use for connection
+	 */
+	bool request_name(const char* prefix);
 
-		/**
-		 * Register callback, called when message arrives.
-		 *
-		 * \param cb is callback
-		 * \param data is optional data passet to the callback
-		 */
-		void callback(SipcCallback cb, void* data);
+	/**
+	 * Register callback, called when message arrives.
+	 *
+	 * \param cb is callback
+	 * \param data is optional data passet to the callback
+	 */
+	void callback(SipcCallback cb, void* data);
 };
 
 /**
@@ -125,36 +133,36 @@ class EDELIB_API SipcServer {
  * \note Message length is currently is limited to 1024 bytes.
  */
 class EDELIB_API SipcClient {
-	private:
-		SipcClientPrivate* priv;
+private:
+	SipcClientPrivate* priv;
 
-		SipcClient(const SipcClient&);
-		SipcClient& operator=(const SipcClient&);
-	public:
-		/**
-		 * Constructor; prepares internal data
-		 */
-		SipcClient();
+	SipcClient(const SipcClient&);
+	SipcClient& operator=(const SipcClient&);
+public:
+	/**
+	 * Constructor; prepares internal data
+	 */
+	SipcClient();
 
-		/**
-		 * Cleans internal stuff, closes connections
-		 */
-		~SipcClient();
+	/**
+	 * Cleans internal stuff, closes connections
+	 */
+	~SipcClient();
 
-		/**
-		 * Connects to the given name
-		 *
-		 * \return false if name does not exists or some error occured
-		 * \param prefix is name to be connected to
-		 */
-		bool connect(const char* prefix);
+	/**
+	 * Connects to the given name
+	 *
+	 * \return false if name does not exists or some error occured
+	 * \param prefix is name to be connected to
+	 */
+	bool connect(const char* prefix);
 
-		/**
-		 * Sends an message
-		 *
-		 * \param msg is textual message
-		 */
-		void send(const char* msg);
+	/**
+	 * Sends an message
+	 *
+	 * \param msg is textual message
+	 */
+	void send(const char* msg);
 };
 
 EDELIB_NS_END

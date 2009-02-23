@@ -44,6 +44,7 @@ MakeApiDocumentation [ FDirName $(SUBDIR) html ] : [ FFileName $(SUBDIR) Doxyfil
 
 InstallDocumentation [ FDirName $(docdir) $(EDELIB_DOCDIR) ] : [ FFileName $(TOP) README ] ;
 InstallDocumentation [ FDirName $(docdir) $(EDELIB_DOCDIR) ] : [ FFileName $(TOP) INSTALL ] ;
+InstallDocumentation [ FDirName $(docdir) $(EDELIB_DOCDIR) ] : [ FFileName $(TOP) COPYING ] ;
 InstallDirectory     [ FDirName $(docdir) $(EDELIB_DOCDIR) ] : [ FDirName $(SUBDIR) html ] ;
 
 LocalClean distclean : Doxyfile ;

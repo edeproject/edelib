@@ -2,35 +2,40 @@
  * $Id$
  *
  * File IO stream
- * Part of edelib.
- * Copyright (c) 2005-2007 EDE Authors.
+ * Copyright (c) 2005-2007 edelib authors
  *
- * This program is licenced under terms of the 
- * GNU General Public Licence version 2 or newer.
- * See COPYING for details.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <edelib/econfig.h>
+#include <stdlib.h> // getenv
+#include <string.h> // strlen, strncpy
+#include <stdarg.h> // va_xxx stuff, vfprintf
+#include <sys/types.h> // stat, chmod, utime
+#include <sys/stat.h>  // stat, chmod
+#include <utime.h>     // utime
+#include <unistd.h>    // access, stat, unlink
+#include <stdio.h>     // rename
+
 #include <edelib/File.h>
 #include <edelib/Debug.h>
 #include <edelib/StrUtil.h>
 #include <edelib/List.h>
 
-#include <stdlib.h> // getenv
-#include <string.h> // strlen, strncpy
-#include <stdarg.h> // va_xxx stuff, vfprintf
-
-#include <sys/types.h> // stat, chmod, utime
-#include <sys/stat.h>  // stat, chmod
-#include <utime.h>     // utime
-#include <unistd.h>    // access, stat, unlink
-
-#include <stdio.h>     // rename
-
 EDELIB_NS_BEGIN
 
 bool file_exists(const char* name) {
-	EASSERT(name != NULL);
+	E_ASSERT(name != NULL);
 	struct stat s;
 	// FIXME: stat or lstat
 	if(stat(name, &s) != 0)
@@ -39,7 +44,7 @@ bool file_exists(const char* name) {
 }
 
 bool file_readable(const char* name) {
-	EASSERT(name != NULL);
+	E_ASSERT(name != NULL);
 	struct stat s;
 	// FIXME: stat or lstat
 	if(stat(name, &s) != 0)
@@ -48,7 +53,7 @@ bool file_readable(const char* name) {
 }
 
 bool file_writeable(const char* name) {
-	EASSERT(name != NULL);
+	E_ASSERT(name != NULL);
 	struct stat s;
 	// FIXME: stat or lstat
 	if(stat(name, &s) != 0)
@@ -57,7 +62,7 @@ bool file_writeable(const char* name) {
 }
 
 bool file_executable(const char* name) {
-	EASSERT(name != NULL);
+	E_ASSERT(name != NULL);
 	struct stat s;
 	// FIXME: stat or lstat
 	if(stat(name, &s) != 0)
@@ -66,7 +71,7 @@ bool file_executable(const char* name) {
 }
 
 bool file_remove(const char* name) {
-	EASSERT(name != NULL);
+	E_ASSERT(name != NULL);
 
 	if(file_exists(name)) {
 		int ret = unlink(name);
@@ -81,8 +86,8 @@ bool file_remove(const char* name) {
 }
 
 bool file_copy(const char* src, const char* dest, bool exact) {
-	EASSERT(src != NULL);
-	EASSERT(dest != NULL);
+	E_ASSERT(src != NULL);
+	E_ASSERT(dest != NULL);
 
 	FILE* f1 = NULL;
 	if((f1 = fopen(src, "rb")) == NULL)
@@ -131,8 +136,8 @@ bool file_copy(const char* src, const char* dest, bool exact) {
 }
 
 bool file_rename(const char* from, const char* to) {
-	EASSERT(from != NULL);
-	EASSERT(to != NULL);
+	E_ASSERT(from != NULL);
+	E_ASSERT(to != NULL);
 
 	if(!file_exists(from))
 		return false;
@@ -145,7 +150,7 @@ bool file_rename(const char* from, const char* to) {
 }
 
 String file_path(const char* fname, bool check_link) {
-	EASSERT(fname != NULL);
+	E_ASSERT(fname != NULL);
 
 	if(file_exists(fname))
 		return fname;
@@ -205,7 +210,7 @@ File::File(const char* name, int mode) {
  * it will open file via C stdio facility
  */
 bool File::open(const char* name, int mode) {
-	EASSERT(name != NULL && "File name is NULL");
+	E_ASSERT(name != NULL && "File name is NULL");
 
 	const char* flags;
 	switch(mode) {
@@ -285,26 +290,26 @@ const char* File::name(void) const {
 }
 
 bool File::eof(void) {
-	EASSERT(opened != false && "File stream not opened");
+	E_ASSERT(opened != false && "File stream not opened");
 
 	return feof(fobj);
 }
 
 int File::getch(void) {
-	EASSERT(opened != false && "File stream not opened");
+	E_ASSERT(opened != false && "File stream not opened");
 
 	return fgetc(fobj);
 }
 
 int File::putch(int c) {
-	EASSERT(opened != false && "File stream not opened");
-	EASSERT(have_flag(FIO_WRITE, fmode)||have_flag(FIO_APPEND, fmode) && "File stream not in write mode");
+	E_ASSERT(opened != false && "File stream not opened");
+	E_ASSERT(have_flag(FIO_WRITE, fmode)||have_flag(FIO_APPEND, fmode) && "File stream not in write mode");
 
 	return fputc(c, fobj);
 }
 int File::read(void* buff, int typesz, int buffsz) {
-	EASSERT(opened != false && "File stream not opened");
-	EASSERT(buff != NULL);
+	E_ASSERT(opened != false && "File stream not opened");
+	E_ASSERT(buff != NULL);
 
 	return fread(buff, typesz, buffsz, fobj);
 }
@@ -313,8 +318,8 @@ int File::read(void* buff, int typesz, int buffsz) {
  * same sa fgets, but return len of line
  */
 int File::readline(char* buff, int buffsz) {
-	EASSERT(opened != false && "File stream not opened");
-	EASSERT(buff != NULL);
+	E_ASSERT(opened != false && "File stream not opened");
+	E_ASSERT(buff != NULL);
 
 	int i = 0;
 	int c;
@@ -336,15 +341,15 @@ int File::readline(char* buff, int buffsz) {
 }
 
 int File::write(const void* buff, int typesz, int buffsz) {
-	EASSERT(opened != false && "File stream not opened or not opened in write mode");
-	EASSERT(have_flag(FIO_WRITE, fmode)||have_flag(FIO_APPEND, fmode) && "File stream not in write mode");
+	E_ASSERT(opened != false && "File stream not opened or not opened in write mode");
+	E_ASSERT(have_flag(FIO_WRITE, fmode)||have_flag(FIO_APPEND, fmode) && "File stream not in write mode");
 
 	return fwrite(buff, typesz, buffsz, fobj);
 }
 
 int File::write(const char* buff, unsigned int buffsz) {
 	// assure we don't write data out of the bounds
-	EASSERT(strlen(buff)+1 >= buffsz && "Buffer size is greater than actual size");
+	E_ASSERT(strlen(buff)+1 >= buffsz && "Buffer size is greater than actual size");
 
 	return write(buff, 1, buffsz);
 }
@@ -354,9 +359,9 @@ int File::write(const char* buff) {
 }
 
 int File::printf(const char* fmt, ...) {
-	EASSERT(opened != false && "File stream not opened or not opened in write mode");
-	EASSERT(have_flag(FIO_WRITE, fmode)||have_flag(FIO_APPEND, fmode) && "File stream not in write mode");
-	EASSERT(fmt != NULL);
+	E_ASSERT(opened != false && "File stream not opened or not opened in write mode");
+	E_ASSERT(have_flag(FIO_WRITE, fmode)||have_flag(FIO_APPEND, fmode) && "File stream not in write mode");
+	E_ASSERT(fmt != NULL);
 
 	va_list ap;
 	va_start(ap, fmt);

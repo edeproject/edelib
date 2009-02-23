@@ -1,12 +1,20 @@
 dnl
 dnl $Id$
 dnl
-dnl Part of edelib.
-dnl Copyright (c) 2000-2007 EDE Authors.
-dnl 
-dnl This program is licenced under terms of the 
-dnl GNU General Public Licence version 2 or newer.
-dnl See COPYING for details.
+dnl Copyright (c) 2005-2007 edelib authors
+dnl
+dnl This library is free software; you can redistribute it and/or
+dnl modify it under the terms of the GNU Lesser General Public
+dnl License as published by the Free Software Foundation; either
+dnl version 2 of the License, or (at your option) any later version.
+dnl
+dnl This library is distributed in the hope that it will be useful,
+dnl but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+dnl Lesser General Public License for more details.
+dnl
+dnl You should have received a copy of the GNU Lesser General Public License
+dnl along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 dnl Date/time functions checks
 AC_DEFUN([EDELIB_DATETIME], [

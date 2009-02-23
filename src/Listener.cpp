@@ -1,19 +1,22 @@
 /*
  * $Id$
  *
- * Descriptor monitoring functions.
- * Part of edelib.
- * Copyright (c) 2008 EDE Authors.
+ * Descriptor monitoring functions
+ * Copyright (c) Bill Spitzak and the others
+ * Copyright (c) 2008 edelib authors
  *
- * This program is licenced under terms of the 
- * GNU General Public Licence version 2 or newer.
- * See COPYING for details.
- */
-
-/*
- * A bunch of this code (almost all) is stolen from FLTK's Fl_x.cxx,
- * removing implementation via poll(). This means that credits and 
- * (C) goes to "Bill Spitzak and the others" too :)
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <sys/select.h>

@@ -2,19 +2,21 @@
  * $Id$
  *
  * Directory handlers
- * Part of edelib.
- * Copyright (c) 2005-2007 EDE Authors.
+ * Copyright (c) 2005-2007 edelib authors
  *
- * This program is licenced under terms of the 
- * GNU General Public Licence version 2 or newer.
- * See COPYING for details.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-#include <edelib/econfig.h>
-#include <edelib/Directory.h>
-#include <edelib/Debug.h>
-#include <edelib/StrUtil.h>
-#include <edelib/File.h>
 
 #include <stdlib.h>    // getenv
 #include <sys/types.h> // stat, struct passwd, mkdir, opendir, closedir,readdir
@@ -27,6 +29,11 @@
 #include <stdio.h>     // snprintf
 #include <string.h>
 
+#include <edelib/Directory.h>
+#include <edelib/Debug.h>
+#include <edelib/StrUtil.h>
+#include <edelib/File.h>
+
 #ifndef PATH_MAX
 	#define PATH_MAX 256
 #endif
@@ -37,7 +44,7 @@
 EDELIB_NS_BEGIN
 
 bool dir_exists(const char* name) {
-	EASSERT(name != NULL);
+	E_ASSERT(name != NULL);
 	struct stat s;
 	if(stat(name, &s) != 0)
 		return false;
@@ -45,7 +52,7 @@ bool dir_exists(const char* name) {
 }
 
 bool dir_readable(const char* name) {
-	EASSERT(name != NULL);
+	E_ASSERT(name != NULL);
 	struct stat s;
 	if(stat(name, &s) != 0)
 		return false;
@@ -53,7 +60,7 @@ bool dir_readable(const char* name) {
 }
 
 bool dir_writeable(const char* name) {
-	EASSERT(name != NULL);
+	E_ASSERT(name != NULL);
 	struct stat s;
 	if(stat(name, &s) != 0)
 		return false;
@@ -61,7 +68,7 @@ bool dir_writeable(const char* name) {
 }
 
 bool dir_create(const char* name, int perm) {
-	EASSERT(name != NULL);
+	E_ASSERT(name != NULL);
 
 	/*
 	 * Checks are not done (line in dir_remove() case since
@@ -84,7 +91,7 @@ bool dir_create(const char* name, int perm) {
  * too much.
  */
 bool dir_create_with_parents(const char* name, int perm) {
-	EASSERT(name != NULL);
+	E_ASSERT(name != NULL);
 
 	char* fn = strdup(name);
 	char* p = fn;
@@ -131,7 +138,7 @@ bool dir_create_with_parents(const char* name, int perm) {
 }
 
 bool dir_remove(const char* name) {
-	EASSERT(name != NULL);
+	E_ASSERT(name != NULL);
 
 	if(dir_exists(name)) {
 		int ret = rmdir(name);
@@ -145,8 +152,8 @@ bool dir_remove(const char* name) {
 }
 
 bool dir_rename(const char* from, const char* to) {
-	EASSERT(from != NULL);
-	EASSERT(to != NULL);
+	E_ASSERT(from != NULL);
+	E_ASSERT(to != NULL);
 
 	if(!dir_exists(from))
 		return false;
@@ -171,7 +178,7 @@ static struct dirent* readdir_ignoring_dots(DIR* dirp) {
 }
 
 bool dir_empty(const char* name) {
-	EASSERT(name != NULL);
+	E_ASSERT(name != NULL);
 
 	if(!dir_exists(name))
 		return false;
@@ -220,7 +227,7 @@ String dir_home(void) {
 		return "";
 	}
 
-	EASSERT(pw != NULL);
+	E_ASSERT(pw != NULL);
 
 	String ret = pw->pw_dir;
 	delete [] buff;

@@ -1,19 +1,25 @@
 /*
  * $Id$
  *
- * D-Bus stuff
- * Part of edelib.
- * Copyright (c) 2008 EDE Authors.
+ * D-BUS stuff
+ * Copyright (c) 2008 edelib authors
  *
- * This program is licenced under terms of the 
- * GNU General Public Licence version 2 or newer.
- * See COPYING for details.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef __EDBUSDATA_H__
 #define __EDBUSDATA_H__
-
-#include "econfig.h"
 
 #include <inttypes.h>
 #include "EdbusObjectPath.h"
@@ -97,378 +103,378 @@ struct EdbusVariant;
  * that expects uint16_t will probably result rejecting whole message!
  */
 class EDELIB_API EdbusData {
-	private:
-		EdbusDataPrivate* impl;
-		void dispose(void);
-
-	public:
-		/**
-		 * Construct object with invalid type
-		 */
-		EdbusData();
-
-		/**
-		 * Construct object with byte (char) type
-		 */
-		EdbusData(byte_t val);
-
-		/**
-		 * Construct object with bool type
-		 */
-		EdbusData(bool val);
-
-		/**
-		 * Construct object with int16 (short) type
-		 */
-		EdbusData(int16_t val);
-
-		/**
-		 * Construct object with uint16 (unsigned short) type
-		 */
-		EdbusData(uint16_t val);
-
-		/**
-		 * Construct object with int32 (int) type
-		 */
-		EdbusData(int32_t val);
-
-		/**
-		 * Construct object with uint32 (unsigned int) type
-		 */
-		EdbusData(uint32_t val);
-
-		/**
-		 * Construct object with int64 (long long) type
-		 */
-		EdbusData(int64_t val);
-
-		/**
-		 * Construct object with uint64 (unsigned long long) type
-		 */
-		EdbusData(uint64_t val);
-
-		/**
-		 * Construct object with double type
-		 */
-		EdbusData(double val);
-
-		/**
-		 * Construct object with string type
-		 */
-		EdbusData(const char* val);
-
-		/**
-		 * Construct object with EdbusObjectPath type
-		 */
-		EdbusData(const EdbusObjectPath& val);
-
-		/**
-		 * Construct object with EdbusVariant type
-		 */
-		EdbusData(const EdbusVariant& val);
-
-		/**
-		 * Construct object with EdbusDict type
-		 */
-		EdbusData(const EdbusDict& val);
-
-		/**
-		 * Construct object with EdbusList type. Correct type will
-		 * be deduced from EdbusList::list_is_array() and EdbusList::list_is_struct() members
-		 */
-		EdbusData(const EdbusList& val);
-
-		/**
-		 * Construct object with already constructed object.
-		 * Essential for containers
-		 */
-		EdbusData(const EdbusData& other);
-
-		/**
-		 * Destructs object cleaning allocated data
-		 */
-		~EdbusData();
-
-		/**
-		 * Returns a current holding type
-		 */
-		EdbusDataType type(void) const;
-
-		/**
-		 * Returns a byte value if it holds
-		 */
-		byte_t to_byte(void) const;
-
-		/**
-		 * Returns a char value if it holds
-		 */
-		char to_char(void) const { return to_byte(); }
-
-		/**
-		 * Returns a bool value if it holds
-		 */
-		bool to_bool(void) const;
-
-		/**
-		 * Returns a int16 value if it holds
-		 */
-		int16_t to_int16(void) const;
-
-		/**
-		 * Returns a uint16 value if it holds
-		 */
-		uint16_t to_uint16(void) const;
-
-		/**
-		 * Returns a int32 value if it holds
-		 */
-		int32_t to_int32(void) const;
-
-		/**
-		 * Returns a uint32 value if it holds
-		 */
-		uint32_t to_uint32(void) const;
-
-		/**
-		 * Returns a int64 value if it holds
-		 */
-		int64_t  to_int64(void) const;
-
-		/**
-		 * Returns a uint64 value if it holds
-		 */
-		uint64_t to_uint64(void) const;
-
-		/**
-		 * Returns a double value if it holds
-		 */
-		double to_double(void) const;
-
-		/**
-		 * Returns a string value if it holds
-		 */
-		const char* to_string(void) const;
-
-		/**
-		 * Returns a EdbusObjectPath value if it holds
-		 */
-		EdbusObjectPath to_object_path(void) const;
-
-		/**
-		 * Returns a EdbusVariant value if it holds
-		 */
-		EdbusVariant to_variant(void) const;
-
-		/**
-		 * Returns a EdbusDict value if it holds
-		 */
-		EdbusDict to_dict(void) const;
-
-		/**
-		 * Returns a EdbusList object as array
-		 */
-		EdbusList to_array(void) const;
-
-		/**
-		 * Returns a EdbusList object as struct
-		 */
-		EdbusList to_struct(void) const;
-
-		/**
-		 * Assign existing object
-		 */
-		EdbusData& operator=(const EdbusData& other);
-
-		/**
-		 * Check if two objects are the same checking their types
-		 * and comparing their values if they are same type
-		 */
-		bool operator==(const EdbusData& other) const;
-
-		/**
-		 * Check if two objects are not equal
-		 */
-		bool operator!=(const EdbusData& other) const { return !operator==(other); }
-
-		/**
-		 * Returns true if object currently holds a value of valid type
-		 */
-		bool is_valid(void) const { return type() != EDBUS_TYPE_INVALID; }
-
-		/**
-		 * Returns true if object currently holds a byte value
-		 */
-		bool is_byte(void) const { return type() == EDBUS_TYPE_BYTE; }
-
-		/**
-		 * Returns true if object currently holds a char value
-		 */
-		bool is_char(void) const { return is_byte(); }
-
-		/**
-		 * Returns true if object currently holds a bool value
-		 */
-		bool is_bool(void) const { return type() == EDBUS_TYPE_BOOL; }
-
-		/**
-		 * Returns true if object currently holds a int16 value
-		 */
-		bool is_int16(void) const { return type() == EDBUS_TYPE_INT16; }
-
-		/**
-		 * Returns true if object currently holds a uint16 value
-		 */
-		bool is_uint16(void) const { return type() == EDBUS_TYPE_UINT16; }
-
-		/**
-		 * Returns true if object currently holds a int32 value
-		 */
-		bool is_int32(void) const { return type() == EDBUS_TYPE_INT32; }
-
-		/**
-		 * Returns true if object currently holds a uint32 value
-		 */
-		bool is_uint32(void) const { return type() == EDBUS_TYPE_UINT32; }
-
-		/**
-		 * Returns true if object currently holds a int64 value
-		 */
-		bool is_int64(void) const { return type() == EDBUS_TYPE_INT64; }
-
-		/**
-		 * Returns true if object currently holds a uint64 value
-		 */
-		bool is_uint64(void) const { return type() == EDBUS_TYPE_UINT64; }
-
-		/**
-		 * Returns true if object currently holds a double value
-		 */
-		bool is_double(void) const { return type() == EDBUS_TYPE_DOUBLE; }
-
-		/**
-		 * Returns true if object currently holds a string value
-		 */
-		bool is_string(void) const { return type() == EDBUS_TYPE_STRING; }
-
-		/**
-		 * Returns true if object currently holds a EdbusObjectPath value
-		 */
-		bool is_object_path(void) const { return type() == EDBUS_TYPE_OBJECT_PATH; }
-
-		/**
-		 * Returns true if object currently holds a EdbusList as array value
-		 */
-		bool is_array(void) const { return type() == EDBUS_TYPE_ARRAY; }
-
-		/**
-		 * Returns true if object currently holds a EdbusList as struct value
-		 */
-		bool is_struct(void) const { return type() == EDBUS_TYPE_STRUCT; }
-
-		/**
-		 * Returns true if object currently holds a EdbusVariant value
-		 */
-		bool is_variant(void) const { return type() == EDBUS_TYPE_VARIANT; }
-
-		/**
-		 * Returns true if object currently holds a EdbusDict value
-		 */
-		bool is_dict(void) const { return type() == EDBUS_TYPE_DICT; }
-
-		/**
-		 * Returns true if given object is basic type.
-		 * Basic types (to D-Bus) are all EdbusDataType types except
-		 * array, structure, dict and variant
-		 */
-		static bool basic_type(const EdbusData& val) {
-			return ((val.type() != EDBUS_TYPE_ARRAY) && (val.type() != EDBUS_TYPE_STRUCT) &&
-				(val.type() != EDBUS_TYPE_VARIANT) && (val.type() != EDBUS_TYPE_DICT));
-		}
-
-		/**
-		 * Creates object of invalid type
-		 */
-		static EdbusData from_invalid(void) { return EdbusData(); }
-
-		/**
-		 * Creates object with byte value
-		 */
-		static EdbusData from_byte(byte_t val) { return EdbusData((byte_t)val); }
-
-		/**
-		 * Creates object with char value
-		 */
-		static EdbusData from_char(char val) { return from_byte(val); }
-
-		/**
-		 * Creates object with bool value
-		 */
-		static EdbusData from_bool(bool val) { return EdbusData((bool)val); }
-
-		/**
-		 * Creates object with int16 value
-		 */
-		static EdbusData from_int16(int16_t val) { return EdbusData((int16_t)val); }
-
-		/**
-		 * Creates object with uint16 value
-		 */
-		static EdbusData from_uint16(uint16_t val) { return EdbusData((uint16_t)val); }
-
-		/**
-		 * Creates object with int32 value
-		 */
-		static EdbusData from_int32(int32_t val) { return EdbusData((int32_t)val); }
-
-		/**
-		 * Creates object with uint32 value
-		 */
-		static EdbusData from_uint32(uint32_t val) { return EdbusData((uint32_t)val); }
-
-		/**
-		 * Creates object with int64 value
-		 */
-		static EdbusData from_int64(int64_t val) { return EdbusData((int64_t)val); }
-
-		/**
-		 * Creates object with uint64 value
-		 */
-		static EdbusData from_uint64(uint64_t val) { return EdbusData((uint64_t)val); }
-
-		/**
-		 * Creates object with double value
-		 */
-		static EdbusData from_double(double val) { return EdbusData((double)val); }
-
-		/**
-		 * Creates object with string value
-		 */
-		static EdbusData from_string(const char* val) { return EdbusData((const char*)val); }
-
-		/**
-		 * Creates object with EdbusObjectPath value
-		 */
-		static EdbusData from_object_path(const EdbusObjectPath& val) { return EdbusData(val); }
-
-		/**
-		 * Creates object with EdbusVariant value
-		 */
-		static EdbusData from_variant(const EdbusVariant& val) { return EdbusData(val); }
-
-		/**
-		 * Creates object with EdbusDict value
-		 */
-		static EdbusData from_dict(const EdbusDict& val) { return EdbusData(val); }
-
-		/**
-		 * Creates array object. EdbusData constructor will handle EdbusList type
-		 */
-		static EdbusData from_array(const EdbusList& val) { return EdbusData(val); }
-
-		/**
-		 * Creates struct object. EdbusData constructor will handle EdbusList type
-		 */
-		static EdbusData from_struct(const EdbusList& val) { return EdbusData(val); }
+private:
+	EdbusDataPrivate* impl;
+	void dispose(void);
+
+public:
+	/**
+	 * Construct object with invalid type
+	 */
+	EdbusData();
+
+	/**
+	 * Construct object with byte (char) type
+	 */
+	EdbusData(byte_t val);
+
+	/**
+	 * Construct object with bool type
+	 */
+	EdbusData(bool val);
+
+	/**
+	 * Construct object with int16 (short) type
+	 */
+	EdbusData(int16_t val);
+
+	/**
+	 * Construct object with uint16 (unsigned short) type
+	 */
+	EdbusData(uint16_t val);
+
+	/**
+	 * Construct object with int32 (int) type
+	 */
+	EdbusData(int32_t val);
+
+	/**
+	 * Construct object with uint32 (unsigned int) type
+	 */
+	EdbusData(uint32_t val);
+
+	/**
+	 * Construct object with int64 (long long) type
+	 */
+	EdbusData(int64_t val);
+
+	/**
+	 * Construct object with uint64 (unsigned long long) type
+	 */
+	EdbusData(uint64_t val);
+
+	/**
+	 * Construct object with double type
+	 */
+	EdbusData(double val);
+
+	/**
+	 * Construct object with string type
+	 */
+	EdbusData(const char* val);
+
+	/**
+	 * Construct object with EdbusObjectPath type
+	 */
+	EdbusData(const EdbusObjectPath& val);
+
+	/**
+	 * Construct object with EdbusVariant type
+	 */
+	EdbusData(const EdbusVariant& val);
+
+	/**
+	 * Construct object with EdbusDict type
+	 */
+	EdbusData(const EdbusDict& val);
+
+	/**
+	 * Construct object with EdbusList type. Correct type will
+	 * be deduced from EdbusList::list_is_array() and EdbusList::list_is_struct() members
+	 */
+	EdbusData(const EdbusList& val);
+
+	/**
+	 * Construct object with already constructed object.
+	 * Essential for containers
+	 */
+	EdbusData(const EdbusData& other);
+
+	/**
+	 * Destructs object cleaning allocated data
+	 */
+	~EdbusData();
+
+	/**
+	 * Returns a current holding type
+	 */
+	EdbusDataType type(void) const;
+
+	/**
+	 * Returns a byte value if it holds
+	 */
+	byte_t to_byte(void) const;
+
+	/**
+	 * Returns a char value if it holds
+	 */
+	char to_char(void) const { return to_byte(); }
+
+	/**
+	 * Returns a bool value if it holds
+	 */
+	bool to_bool(void) const;
+
+	/**
+	 * Returns a int16 value if it holds
+	 */
+	int16_t to_int16(void) const;
+
+	/**
+	 * Returns a uint16 value if it holds
+	 */
+	uint16_t to_uint16(void) const;
+
+	/**
+	 * Returns a int32 value if it holds
+	 */
+	int32_t to_int32(void) const;
+
+	/**
+	 * Returns a uint32 value if it holds
+	 */
+	uint32_t to_uint32(void) const;
+
+	/**
+	 * Returns a int64 value if it holds
+	 */
+	int64_t  to_int64(void) const;
+
+	/**
+	 * Returns a uint64 value if it holds
+	 */
+	uint64_t to_uint64(void) const;
+
+	/**
+	 * Returns a double value if it holds
+	 */
+	double to_double(void) const;
+
+	/**
+	 * Returns a string value if it holds
+	 */
+	const char* to_string(void) const;
+
+	/**
+	 * Returns a EdbusObjectPath value if it holds
+	 */
+	EdbusObjectPath to_object_path(void) const;
+
+	/**
+	 * Returns a EdbusVariant value if it holds
+	 */
+	EdbusVariant to_variant(void) const;
+
+	/**
+	 * Returns a EdbusDict value if it holds
+	 */
+	EdbusDict to_dict(void) const;
+
+	/**
+	 * Returns a EdbusList object as array
+	 */
+	EdbusList to_array(void) const;
+
+	/**
+	 * Returns a EdbusList object as struct
+	 */
+	EdbusList to_struct(void) const;
+
+	/**
+	 * Assign existing object
+	 */
+	EdbusData& operator=(const EdbusData& other);
+
+	/**
+	 * Check if two objects are the same checking their types
+	 * and comparing their values if they are same type
+	 */
+	bool operator==(const EdbusData& other) const;
+
+	/**
+	 * Check if two objects are not equal
+	 */
+	bool operator!=(const EdbusData& other) const { return !operator==(other); }
+
+	/**
+	 * Returns true if object currently holds a value of valid type
+	 */
+	bool is_valid(void) const { return type() != EDBUS_TYPE_INVALID; }
+
+	/**
+	 * Returns true if object currently holds a byte value
+	 */
+	bool is_byte(void) const { return type() == EDBUS_TYPE_BYTE; }
+
+	/**
+	 * Returns true if object currently holds a char value
+	 */
+	bool is_char(void) const { return is_byte(); }
+
+	/**
+	 * Returns true if object currently holds a bool value
+	 */
+	bool is_bool(void) const { return type() == EDBUS_TYPE_BOOL; }
+
+	/**
+	 * Returns true if object currently holds a int16 value
+	 */
+	bool is_int16(void) const { return type() == EDBUS_TYPE_INT16; }
+
+	/**
+	 * Returns true if object currently holds a uint16 value
+	 */
+	bool is_uint16(void) const { return type() == EDBUS_TYPE_UINT16; }
+
+	/**
+	 * Returns true if object currently holds a int32 value
+	 */
+	bool is_int32(void) const { return type() == EDBUS_TYPE_INT32; }
+
+	/**
+	 * Returns true if object currently holds a uint32 value
+	 */
+	bool is_uint32(void) const { return type() == EDBUS_TYPE_UINT32; }
+
+	/**
+	 * Returns true if object currently holds a int64 value
+	 */
+	bool is_int64(void) const { return type() == EDBUS_TYPE_INT64; }
+
+	/**
+	 * Returns true if object currently holds a uint64 value
+	 */
+	bool is_uint64(void) const { return type() == EDBUS_TYPE_UINT64; }
+
+	/**
+	 * Returns true if object currently holds a double value
+	 */
+	bool is_double(void) const { return type() == EDBUS_TYPE_DOUBLE; }
+
+	/**
+	 * Returns true if object currently holds a string value
+	 */
+	bool is_string(void) const { return type() == EDBUS_TYPE_STRING; }
+
+	/**
+	 * Returns true if object currently holds a EdbusObjectPath value
+	 */
+	bool is_object_path(void) const { return type() == EDBUS_TYPE_OBJECT_PATH; }
+
+	/**
+	 * Returns true if object currently holds a EdbusList as array value
+	 */
+	bool is_array(void) const { return type() == EDBUS_TYPE_ARRAY; }
+
+	/**
+	 * Returns true if object currently holds a EdbusList as struct value
+	 */
+	bool is_struct(void) const { return type() == EDBUS_TYPE_STRUCT; }
+
+	/**
+	 * Returns true if object currently holds a EdbusVariant value
+	 */
+	bool is_variant(void) const { return type() == EDBUS_TYPE_VARIANT; }
+
+	/**
+	 * Returns true if object currently holds a EdbusDict value
+	 */
+	bool is_dict(void) const { return type() == EDBUS_TYPE_DICT; }
+
+	/**
+	 * Returns true if given object is basic type.
+	 * Basic types (to D-Bus) are all EdbusDataType types except
+	 * array, structure, dict and variant
+	 */
+	static bool basic_type(const EdbusData& val) {
+		return ((val.type() != EDBUS_TYPE_ARRAY) && (val.type() != EDBUS_TYPE_STRUCT) &&
+			(val.type() != EDBUS_TYPE_VARIANT) && (val.type() != EDBUS_TYPE_DICT));
+	}
+
+	/**
+	 * Creates object of invalid type
+	 */
+	static EdbusData from_invalid(void) { return EdbusData(); }
+
+	/**
+	 * Creates object with byte value
+	 */
+	static EdbusData from_byte(byte_t val) { return EdbusData((byte_t)val); }
+
+	/**
+	 * Creates object with char value
+	 */
+	static EdbusData from_char(char val) { return from_byte(val); }
+
+	/**
+	 * Creates object with bool value
+	 */
+	static EdbusData from_bool(bool val) { return EdbusData((bool)val); }
+
+	/**
+	 * Creates object with int16 value
+	 */
+	static EdbusData from_int16(int16_t val) { return EdbusData((int16_t)val); }
+
+	/**
+	 * Creates object with uint16 value
+	 */
+	static EdbusData from_uint16(uint16_t val) { return EdbusData((uint16_t)val); }
+
+	/**
+	 * Creates object with int32 value
+	 */
+	static EdbusData from_int32(int32_t val) { return EdbusData((int32_t)val); }
+
+	/**
+	 * Creates object with uint32 value
+	 */
+	static EdbusData from_uint32(uint32_t val) { return EdbusData((uint32_t)val); }
+
+	/**
+	 * Creates object with int64 value
+	 */
+	static EdbusData from_int64(int64_t val) { return EdbusData((int64_t)val); }
+
+	/**
+	 * Creates object with uint64 value
+	 */
+	static EdbusData from_uint64(uint64_t val) { return EdbusData((uint64_t)val); }
+
+	/**
+	 * Creates object with double value
+	 */
+	static EdbusData from_double(double val) { return EdbusData((double)val); }
+
+	/**
+	 * Creates object with string value
+	 */
+	static EdbusData from_string(const char* val) { return EdbusData((const char*)val); }
+
+	/**
+	 * Creates object with EdbusObjectPath value
+	 */
+	static EdbusData from_object_path(const EdbusObjectPath& val) { return EdbusData(val); }
+
+	/**
+	 * Creates object with EdbusVariant value
+	 */
+	static EdbusData from_variant(const EdbusVariant& val) { return EdbusData(val); }
+
+	/**
+	 * Creates object with EdbusDict value
+	 */
+	static EdbusData from_dict(const EdbusDict& val) { return EdbusData(val); }
+
+	/**
+	 * Creates array object. EdbusData constructor will handle EdbusList type
+	 */
+	static EdbusData from_array(const EdbusList& val) { return EdbusData(val); }
+
+	/**
+	 * Creates struct object. EdbusData constructor will handle EdbusList type
+	 */
+	static EdbusData from_struct(const EdbusList& val) { return EdbusData(val); }
 };
 
 /**

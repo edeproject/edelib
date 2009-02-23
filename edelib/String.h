@@ -1,19 +1,27 @@
 /*
  * $Id$
  *
- * A simple string class.
- * Part of edelib.
- * Copyright (c) 2005-2007 EDE Authors.
+ * A simple string class
+ * Copyright (c) 2005-2007 edelib authors
  *
- * This program is licenced under terms of the 
- * GNU General Public Licence version 2 or newer.
- * See COPYING for details.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef __STRING_H__
 #define __STRING_H__
 
-#include "econfig.h"
+#include "edelib-global.h"
 #include <string.h>
 
 EDELIB_NS_BEGIN
@@ -96,250 +104,250 @@ EDELIB_NS_BEGIN
  * For all these quirks and details about them you should consult some good C++ book :P
  */
 class EDELIB_API String {
-	public: 
+public: 
 #ifndef SKIP_DOCS
-		typedef unsigned int size_type;
+	typedef unsigned int size_type;
 #endif
 
-	private:
+private:
 #ifndef SKIP_DOCS
-		struct StringData {
-			size_type length;
-			size_type capacity;
-			char      *chars;
-		};
+	struct StringData {
+		size_type length;
+		size_type capacity;
+		char      *chars;
+	};
 #endif
-		static StringData null_data;
-		StringData* sdata;
+	static StringData null_data;
+	StringData* sdata;
 
-		void init(size_type len, size_type cap);
-		void dispose(void);
+	void init(size_type len, size_type cap);
+	void dispose(void);
 
-	public:
-		/**
-		 * This will be returned when find() method fails. If is meant
-		 * to be used in form:
-		 * \code
-		 *   String s;
-		 *   if(s.find("this does not exist") == String::npos)
-		 *     // do something smart
-		 * \endcode
-		 */
-		static const size_type npos;
+public:
+	/**
+	 * This will be returned when find() method fails. If is meant
+	 * to be used in form:
+	 * \code
+	 *   String s;
+	 *   if(s.find("this does not exist") == String::npos)
+	 *     // do something smart
+	 * \endcode
+	 */
+	static const size_type npos;
 
-		/**
-		 * Create empty string object
-		 */
-		String();
+	/**
+	 * Create empty string object
+	 */
+	String();
 
-		/**
-		 * Create a new string with copy of pointer to characters
-		 *
-		 * \param str a pointer to c-like string (it should not be NULL)
-		 */
-		String(const char* str);
+	/**
+	 * Create a new string with copy of pointer to characters
+	 *
+	 * \param str a pointer to c-like string (it should not be NULL)
+	 */
+	String(const char* str);
 
-		/**
-		 * Create a new string with copy of another string
-		 *
-		 * \param str is object of type String
-		 */
-		String(const String& str);
+	/**
+	 * Create a new string with copy of another string
+	 *
+	 * \param str is object of type String
+	 */
+	String(const String& str);
 
-		/**
-		 * Clears all internal data. All possible external pointers
-		 * to internal buffer will be invalidated
-		 */
-		~String();
+	/**
+	 * Clears all internal data. All possible external pointers
+	 * to internal buffer will be invalidated
+	 */
+	~String();
 
-		/**
-		 * Assign content of c-like string, with given size. This method
-		 * will destroy the previous content of the string
-		 *
-		 * \return itself
-		 * \param str a pointer to c-like string (it should not be NULL)
-		 * \param len a number of character that will be assigned
-		 */
-		String& assign(const char* str, size_type len);
+	/**
+	 * Assign content of c-like string, with given size. This method
+	 * will destroy the previous content of the string
+	 *
+	 * \return itself
+	 * \param str a pointer to c-like string (it should not be NULL)
+	 * \param len a number of character that will be assigned
+	 */
+	String& assign(const char* str, size_type len);
 
-		/**
-		 * Assign content of c-like string with it's full length.
-		 *
-		 * \return itself
-		 * \param str a pointer to c-like string (it should not be NULL)
-		 */
-		String& assign(const char* str);
+	/**
+	 * Assign content of c-like string with it's full length.
+	 *
+	 * \return itself
+	 * \param str a pointer to c-like string (it should not be NULL)
+	 */
+	String& assign(const char* str);
 
-		/**
-		 * Assing content of String object
-		 *
-		 * \return itself
-		 * \param str a object of type String
-		 */
-		String& assign(const String& str);
+	/**
+	 * Assing content of String object
+	 *
+	 * \return itself
+	 * \param str a object of type String
+	 */
+	String& assign(const String& str);
 
-		/**
-		 * Appends content of c-like string, with given length to the end
-		 * of current string
-		 *
-		 * \return itself
-		 * \param str a pointer to c-like string (it should not be NULL)
-		 * \param len a number of character that will be appended
-		 */
-		String& append(const char* str, size_type len);
+	/**
+	 * Appends content of c-like string, with given length to the end
+	 * of current string
+	 *
+	 * \return itself
+	 * \param str a pointer to c-like string (it should not be NULL)
+	 * \param len a number of character that will be appended
+	 */
+	String& append(const char* str, size_type len);
 
-		/**
-		 * Appends content of c-like string with it's full length to the
-		 * end of current string
-		 *
-		 * \return itself
-		 * \param str a pointer to c-like string (it should not be NULL)
-		 */
-		String& append(const char* str);
+	/**
+	 * Appends content of c-like string with it's full length to the
+	 * end of current string
+	 *
+	 * \return itself
+	 * \param str a pointer to c-like string (it should not be NULL)
+	 */
+	String& append(const char* str);
 
-		/**
-		 * Appends content of String object to the end of current string
-		 *
-		 * \return itself
-		 * \param str a object of type String
-		 */
-		String& append(const String& str);
+	/**
+	 * Appends content of String object to the end of current string
+	 *
+	 * \return itself
+	 * \param str a object of type String
+	 */
+	String& append(const String& str);
 
 
-		/**
-		 * Appends given character num times at the end of character string
-		 *
-		 * \return itself
-		 * \param num is number of given character
-		 * \param ch is character to append
-		 */
-		String& append(size_type num, const char& ch);
+	/**
+	 * Appends given character num times at the end of character string
+	 *
+	 * \return itself
+	 * \param num is number of given character
+	 * \param ch is character to append
+	 */
+	String& append(size_type num, const char& ch);
 
-		/**
-		 * Set size of internal buffer
-		 *
-		 * \param len is size we want
-		 */
-		void reserve(size_type len);
+	/**
+	 * Set size of internal buffer
+	 *
+	 * \param len is size we want
+	 */
+	void reserve(size_type len);
 
-		/**
-		 * Exchange the elements of current string with given
-		 *
-		 * \param from is replacement target
-		 */
-		void swap(String& from);
+	/**
+	 * Exchange the elements of current string with given
+	 *
+	 * \param from is replacement target
+	 */
+	void swap(String& from);
 
-		/**
-		 * Returns a substring of the current string starting at the
-		 * index with num characters long. If num is not specified, returned
-		 * will be remain data starting from index
-		 *
-		 * \return substring
-		 * \param index starting position for substring
-		 * \param num ending position for substring
-		 */
-		String substr(size_type index, size_type num = npos) const;
+	/**
+	 * Returns a substring of the current string starting at the
+	 * index with num characters long. If num is not specified, returned
+	 * will be remain data starting from index
+	 *
+	 * \return substring
+	 * \param index starting position for substring
+	 * \param num ending position for substring
+	 */
+	String substr(size_type index, size_type num = npos) const;
 
-		/**
-		 * Returns starting position of str starting at offset. If str is not
-		 * found, String::npos will be returned
-		 *
-		 * \return position of str, or String::npos if not found
-		 * \param str is string we are looking for
-		 * \param offset position to start looking from
-		 */
-		size_type find(const char* str, size_type offset) const;
+	/**
+	 * Returns starting position of str starting at offset. If str is not
+	 * found, String::npos will be returned
+	 *
+	 * \return position of str, or String::npos if not found
+	 * \param str is string we are looking for
+	 * \param offset position to start looking from
+	 */
+	size_type find(const char* str, size_type offset) const;
 
-		/**
-		 * Returns starting position of given character starting at the given
-		 * offset. If character is not found, String::npos will be returned
-		 *
-		 * \return position of given character, or String::npos if not found
-		 * \param ch character we are looking for
-		 * \param offset position to start looking from
-		 */
-		size_type find(char ch, size_type offset) const;
+	/**
+	 * Returns starting position of given character starting at the given
+	 * offset. If character is not found, String::npos will be returned
+	 *
+	 * \return position of given character, or String::npos if not found
+	 * \param ch character we are looking for
+	 * \param offset position to start looking from
+	 */
+	size_type find(char ch, size_type offset) const;
 
-		/**
-		 * Returns start of given string. Behaves same as find(str, 0)
-		 */
-		size_type find(const char* str) const;
+	/**
+	 * Returns start of given string. Behaves same as find(str, 0)
+	 */
+	size_type find(const char* str) const;
 
-		/**
-		 * Clear all elements of current string
-		 */
-		void clear(void);
+	/**
+	 * Clear all elements of current string
+	 */
+	void clear(void);
 
-		/**
-		 * Assign data in printf form, like:
-		 * \code
-		 *   String s;
-		 *   s.printf("This is %i number", 3);
-		 * \endcode
-		 *
-		 * All previous content will be deleted.
-		 */
-		void printf(const char* fmt, ...);
+	/**
+	 * Assign data in printf form, like:
+	 * \code
+	 *   String s;
+	 *   s.printf("This is %i number", 3);
+	 * \endcode
+	 *
+	 * All previous content will be deleted.
+	 */
+	void printf(const char* fmt, ...);
 
-		/** 
-		 * Return data formated as c-like string 
-		 * 
-		 * Can be used as input for C functions, like:
-		 * \code
-		 *   if(strcmp(s.c_str(), "my smart string") == 0)
-		 *     ...
-		 * \endcode
-		 * */
-		const char* c_str(void)  { return sdata->chars; }
+	/** 
+	 * Return data formated as c-like string 
+	 * 
+	 * Can be used as input for C functions, like:
+	 * \code
+	 *   if(strcmp(s.c_str(), "my smart string") == 0)
+	 *     ...
+	 * \endcode
+	 * */
+	const char* c_str(void)  { return sdata->chars; }
 
-		/** Return data formated as c-like string */
-		const char* c_str(void) const { return sdata->chars; }
+	/** Return data formated as c-like string */
+	const char* c_str(void) const { return sdata->chars; }
 
-		/** 
-		 * Retrun pointer to internal buffer 
-		 *
-		 * Do \b not use this function as input for C functions.
-		 * */
-		const char* data(void) const  { return sdata->chars; }
+	/** 
+	 * Retrun pointer to internal buffer 
+	 *
+	 * Do \b not use this function as input for C functions.
+	 * */
+	const char* data(void) const  { return sdata->chars; }
 
-		/** Retrun size of character data */
-		size_type length(void) const { return sdata->length; }
+	/** Retrun size of character data */
+	size_type length(void) const { return sdata->length; }
 
-		/** Retrun size of internal buffer */
-		size_type capacity(void) const { return sdata->capacity; }
+	/** Retrun size of internal buffer */
+	size_type capacity(void) const { return sdata->capacity; }
 
-		/** Checks if string is empty */
-		bool empty(void) const  { return length() == 0; }
+	/** Checks if string is empty */
+	bool empty(void) const  { return length() == 0; }
 
-		/** 
-		 * Replace every occurence of c1 with the c2
-		 *
-		 * \return itself
-		 * \param c1 is character that will be replaced
-		 * \param c2 is character used for replacement
-		 */
-		String& replace(char c1, char c2);
+	/** 
+	 * Replace every occurence of c1 with the c2
+	 *
+	 * \return itself
+	 * \param c1 is character that will be replaced
+	 * \param c2 is character used for replacement
+	 */
+	String& replace(char c1, char c2);
 
-		/** Returns character at given index */
-		char& operator[](size_type index);
+	/** Returns character at given index */
+	char& operator[](size_type index);
 
-		/** Returns character at given index */
-		char  operator[](size_type index) const;
+	/** Returns character at given index */
+	char  operator[](size_type index) const;
 
-		/** Same as assign(str) */
-		String& operator=(const char* str);
+	/** Same as assign(str) */
+	String& operator=(const char* str);
 
-		/** Same as assign(String type) */
-		String& operator=(const String& str);
+	/** Same as assign(String type) */
+	String& operator=(const String& str);
 
-		/** Same as append(str) */
-		String& operator+=(const char* str);
+	/** Same as append(str) */
+	String& operator+=(const char* str);
 
-		/** Same as append(String type) */
-		String& operator+=(const String& str);
+	/** Same as append(String type) */
+	String& operator+=(const String& str);
 
-		/** Same as append(1, ch) */
-		String& operator+=(const char& ch);
+	/** Same as append(1, ch) */
+	String& operator+=(const char& ch);
 };
 
 /*

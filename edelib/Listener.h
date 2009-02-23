@@ -1,19 +1,27 @@
 /*
  * $Id$
  *
- * Descriptor monitoring functions.
- * Part of edelib.
- * Copyright (c) 2008 EDE Authors.
+ * Descriptor monitoring functions
+ * Copyright (c) 2008 edelib authors
  *
- * This program is licenced under terms of the 
- * GNU General Public Licence version 2 or newer.
- * See COPYING for details.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef __LISTENER_H__
 #define __LISTENER_H__
 
-#include "econfig.h"
+#include "edelib-global.h"
 
 EDELIB_NS_BEGIN
 
@@ -60,8 +68,8 @@ EDELIB_API void listener_remove_fd(int fd, int when);
 /**
  * listener_remove_fd() function with LISTENER_READ bit set.
  */
-EDELIB_API inline void listener_remove_fd(int fd) {
-	listener_remove_fd(fd, LISTENER_READ);
+EDELIB_API inline void listener_remove_fd(int fd) { 
+	listener_remove_fd(fd, LISTENER_READ); 
 }
 
 /**

@@ -2,20 +2,27 @@
  * $Id$
  *
  * File IO stream
- * Part of edelib.
- * Copyright (c) 2005-2007 EDE Authors.
+ * Copyright (c) 2005-2007 edelib authors
  *
- * This program is licenced under terms of the 
- * GNU General Public Licence version 2 or newer.
- * See COPYING for details.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef __FILE_H__
 #define __FILE_H__
 
-#include "econfig.h"
+#include <stdio.h>
 #include "String.h"
-#include <stdio.h> // FILE
 
 EDELIB_NS_BEGIN
 
@@ -62,136 +69,135 @@ enum FileIOMode {
  *  f.close(); // optional
  * \endcode
  */
-
 class EDELIB_API File {
-	private:
-		FILE* fobj;
-		char* fname;
-		int fmode;
-		int errcode;
-		bool opened;
-		bool alloc;
+private:
+	FILE* fobj;
+	char* fname;
+	int fmode;
+	int errcode;
+	bool opened;
+	bool alloc;
 
-		File(const File&);
-		File& operator=(File&);
+	File(const File&);
+	File& operator=(File&);
 
-	public:
-		/**
-		 * Creates empty file object.
-		 */
-		File();
+public:
+	/**
+	 * Creates empty file object.
+	 */
+	File();
 
-		/**
-		 * Open stream for reading or writing
-		 *
-		 * \param fname file name to open
-		 * \param mode how to open file; default is read-only
-		 */
-		File(const char* fname, int mode);
+	/**
+	 * Open stream for reading or writing
+	 *
+	 * \param fname file name to open
+	 * \param mode how to open file; default is read-only
+	 */
+	File(const char* fname, int mode);
 
-		/**
-		 * Cleans reserved data, and closes
-		 * all possible opened descriptors.
-		 */
-		~File();
+	/**
+	 * Cleans reserved data, and closes
+	 * all possible opened descriptors.
+	 */
+	~File();
 
-		/**
-		 * Open file in given mode
-		 *
-		 * \param fname file name to open
-		 * \param mode how to open file; default is read-only
-		 */
-		bool open(const char* fname, int mode = FIO_READ);
+	/**
+	 * Open file in given mode
+	 *
+	 * \param fname file name to open
+	 * \param mode how to open file; default is read-only
+	 */
+	bool open(const char* fname, int mode = FIO_READ);
 
-		/**
-		 * Close current open descriptor, and clean reserved data.
-		 * If is not opened, function will do nothing, except to
-		 * clean reserved data if needed.
-		 */
-		void close(void);
+	/**
+	 * Close current open descriptor, and clean reserved data.
+	 * If is not opened, function will do nothing, except to
+	 * clean reserved data if needed.
+	 */
+	void close(void);
 
-		/**
-		 * Returns name of curent opened stream. If is called
-		 * close() before, it will return NULL.
-		 *
-		 * \return name of curent opened stream
-		 */
-		const char* name(void) const;
+	/**
+	 * Returns name of curent opened stream. If is called
+	 * close() before, it will return NULL.
+	 *
+	 * \return name of curent opened stream
+	 */
+	const char* name(void) const;
 
-		/**
-		 * Checks if end of file reached.
-		 *
-		 * \return true if end of file is reached.
-		 */
-		bool eof(void);
+	/**
+	 * Checks if end of file reached.
+	 *
+	 * \return true if end of file is reached.
+	 */
+	bool eof(void);
 
-		/**
-		 * Read an character from stream.
-		 *
-		 * \return character or EOF.
-		 */
-		int getch(void);
+	/**
+	 * Read an character from stream.
+	 *
+	 * \return character or EOF.
+	 */
+	int getch(void);
 
-		/**
-		 * Read data from the stream, with specified size.
-		 *
-		 * \return number of read data
-		 * \param buff where to place data
-		 * \param typesz size of each item
-		 * \param buffsz size of buffer
-		 */
-		int read(void* buff, int typesz, int buffsz);
+	/**
+	 * Read data from the stream, with specified size.
+	 *
+	 * \return number of read data
+	 * \param buff where to place data
+	 * \param typesz size of each item
+	 * \param buffsz size of buffer
+	 */
+	int read(void* buff, int typesz, int buffsz);
 
-		/**
-		 * Read line from stream in specified buffer, with given
-		 * size. If buffer size is less than read line, only
-		 * given size will be filled. A '\\0' is stored as last
-		 * character in buffer. It will return EOF if end of stream
-		 * is reached.
-		 *
-		 * \return size of readed data or EOF for end.
-		 * \param buff where to place content
-		 * \param buffsz size of buffer
-		 */
-		int readline(char* buff, int buffsz);
+	/**
+	 * Read line from stream in specified buffer, with given
+	 * size. If buffer size is less than read line, only
+	 * given size will be filled. A '\\0' is stored as last
+	 * character in buffer. It will return EOF if end of stream
+	 * is reached.
+	 *
+	 * \return size of readed data or EOF for end.
+	 * \param buff where to place content
+	 * \param buffsz size of buffer
+	 */
+	int readline(char* buff, int buffsz);
 
-		/**
-		 * Write character to the stream.
-		 *
-		 * \return a character written, or EOF in case of error.
-		 */
-		int putch(int c);
+	/**
+	 * Write character to the stream.
+	 *
+	 * \return a character written, or EOF in case of error.
+	 */
+	int putch(int c);
 
-		/**
-		 * Write data to the stream, with specified size.
-		 *
-		 * \return number of written data
-		 * \param buff data to write
-		 * \param typesz size of each item
-		 * \param buffsz size of buffer
-		 */
-		int write(const void* buff, int typesz, int buffsz);
+	/**
+	 * Write data to the stream, with specified size.
+	 *
+	 * \return number of written data
+	 * \param buff data to write
+	 * \param typesz size of each item
+	 * \param buffsz size of buffer
+	 */
+	int write(const void* buff, int typesz, int buffsz);
 
-		/**
-		 * Write char data to the stream.
-		 *
-		 * \return number of written data
-		 * \param buff data to write
-		 * \param buffsz size of buffer
-		 */
-		int write(const char* buff, unsigned int buffsz);
+	/**
+	 * Write char data to the stream.
+	 *
+	 * \return number of written data
+	 * \param buff data to write
+	 * \param buffsz size of buffer
+	 */
+	int write(const char* buff, unsigned int buffsz);
 
-		/**
-		 * Same as write(buff, strlen(buff))
-		 */
-		int write(const char* buff);
+	/**
+	 * Same as write(buff, strlen(buff))
+	 */
+	int write(const char* buff);
 
-		/**
-		 * printf function on the stream.
-		 *
-		 * \return size of writen data
-		 */
-		int printf(const char* fmt, ...);
+	/**
+	 * printf function on the stream.
+	 *
+	 * \return size of writen data
+	 */
+	int printf(const char* fmt, ...);
 };
 
 /** 

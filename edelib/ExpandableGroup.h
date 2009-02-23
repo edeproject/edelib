@@ -2,18 +2,26 @@
  * $Id$
  *
  * Group with applied layout on childs
- * Part of edelib.
- * Copyright (c) 2000-2007 EDE Authors.
+ * Copyright (c) 2005-2007 edelib authors
  *
- * This program is licenced under terms of the
- * GNU General Public Licence version 2 or newer.
- * See COPYING for details.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef __EXPANDABLEGROUP_H__
 #define __EXPANDABLEGROUP_H__
 
-#include "econfig.h"
+#include "edelib-global.h"
 
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Scrollbar.H>
@@ -44,37 +52,37 @@ EDELIB_NS_BEGIN
  */
 
 class EDELIB_API ExpandableGroup : public Fl_Group {
-	private:
-		int px, py;
-		int sval, sval_curr, sval_old;
-		int area_x, area_y, area_w, area_h;
+private:
+	int px, py;
+	int sval, sval_curr, sval_old;
+	int area_x, area_y, area_w, area_h;
 
-		Fl_Scrollbar*  vscrollbar;
+	Fl_Scrollbar*  vscrollbar;
 
-		void reposition_childs(void);
-		void fix_scrollbar_order(void);
-		static void draw_clip(void* d, int X, int Y, int W, int H);
+	void reposition_childs(void);
+	void fix_scrollbar_order(void);
+	static void draw_clip(void* d, int X, int Y, int W, int H);
 
-	public:
-		/**
-		 * Constructs an empty group.
-		 */
-		ExpandableGroup(int x, int y, int w, int h, const char* l=0);
+public:
+	/**
+	 * Constructs an empty group.
+	 */
+	ExpandableGroup(int x, int y, int w, int h, const char* l=0);
 
-		/**
-		 * Clear data and call destructor on widgets.
-		 */
-		~ExpandableGroup();
+	/**
+	 * Clear data and call destructor on widgets.
+	 */
+	~ExpandableGroup();
 
 #ifndef SKIP_DOCS
-		virtual void draw(void);
-		virtual void resize(int x, int y, int w, int h);
-		virtual int handle(int event);
-		void clear(void);
-		int children(void);
-		void scrolly(int yp);
-		void add(Fl_Widget* o);
-		Fl_Scrollbar* get_scroll(void) { return vscrollbar; }
+	virtual void draw(void);
+	virtual void resize(int x, int y, int w, int h);
+	virtual int handle(int event);
+	void clear(void);
+	int children(void);
+	void scrolly(int yp);
+	void add(Fl_Widget* o);
+	Fl_Scrollbar* get_scroll(void) { return vscrollbar; }
 #endif
 };
 

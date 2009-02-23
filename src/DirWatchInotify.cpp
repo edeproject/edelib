@@ -1,14 +1,23 @@
 /*
  * $Id$
  *
- * Directory changes notifier based on inotify
- * Part of edelib.
- * Copyright (c) 2005-2007 EDE Authors.
+ * Directory changes notifier
+ * Copyright (c) 2005-2007 edelib authors
  *
- * This program is licenced under terms of the 
- * GNU General Public Licence version 2 or newer.
- * See COPYING for details.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
+
 
 #include <sys/inotify.h>
 #include <unistd.h>
@@ -36,7 +45,7 @@ struct DirWatchImpl {
 
 typedef list<DirWatchEntry*>::iterator DirEntryIter;
 
-void watch_callback(int fd, void* data) { 
+static void watch_callback(int fd, void* data) { 
 	char buff[BUFF_LEN];
 	int len = 0;
 	int i = 0;
@@ -133,8 +142,8 @@ bool DirWatch::init_backend(void) {
 }
 
 bool DirWatch::add_entry(const char* dir, int flags) {
-	EASSERT(dir != NULL);
-	EASSERT(impl != NULL);
+	E_ASSERT(dir != NULL);
+	E_ASSERT(impl != NULL);
 
 	/* 
 	 * if entry already exists, just skip it since calling inotify code on the already
@@ -166,8 +175,8 @@ bool DirWatch::add_entry(const char* dir, int flags) {
 }
 
 bool DirWatch::remove_entry(const char* dir) {
-	EASSERT(dir != NULL);
-	EASSERT(impl != NULL);
+	E_ASSERT(dir != NULL);
+	E_ASSERT(impl != NULL);
 
 	if(impl->entries.empty())
 		return false;
@@ -189,7 +198,7 @@ bool DirWatch::remove_entry(const char* dir) {
 
 void DirWatch::add_callback(DirWatchCallback* cb, void* data) {
 	/* allow NULL callbacks */
-	EASSERT(impl != NULL);
+	E_ASSERT(impl != NULL);
 
 	impl->callback = cb;
 	impl->callback_data = data;

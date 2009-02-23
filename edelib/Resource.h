@@ -2,12 +2,20 @@
  * $Id$
  *
  * Resource reader and writer
- * Part of edelib.
- * Copyright (c) 2008-2009 EDE Authors.
+ * Copyright (c) 2008-2009 edelib authors
  *
- * This program is licensed under terms of the 
- * GNU General Public License version 2 or newer.
- * See COPYING for details.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef __RESOURCE_H__
@@ -133,287 +141,287 @@ class Config;
  * \endcode
  */
 class EDELIB_API Resource {
-	private:
-		Config* sys_conf;
-		Config* user_conf;
+private:
+	Config* sys_conf;
+	Config* user_conf;
 
-		Resource(const Resource&);
-		Resource& operator=(const Resource&);
-	public:
-		/**
-		 * Empty constructor
-		 */
-		Resource();
+	Resource(const Resource&);
+	Resource& operator=(const Resource&);
+public:
+	/**
+	 * Empty constructor
+	 */
+	Resource();
 
-		/**
-		 * Clears internals
-		 */
-		~Resource();
+	/**
+	 * Clears internals
+	 */
+	~Resource();
 
-		/**
-		 * Load resource settings file. Internals will be cleared.
-		 *
-		 * \return true if was able to find either user or system file
-		 * \param domain is application specific settings file; by default it
-		 * will search for <em>domain</em>.conf file
-		 */
-		bool load(const char* domain);
+	/**
+	 * Load resource settings file. Internals will be cleared.
+	 *
+	 * \return true if was able to find either user or system file
+	 * \param domain is application specific settings file; by default it
+	 * will search for <em>domain</em>.conf file
+	 */
+	bool load(const char* domain);
 
-		/**
-		 * Save content to the file.
-		 *
-		 * \return true if file saving was ok, otherwise false.
-		 * \param domain is application specific settings file; by default it
-		 * will be <em>domain</em>.conf and will be stored in $XDG_CONFIG_HOME directory
-		 */
-		bool save(const char* domain);
+	/**
+	 * Save content to the file.
+	 *
+	 * \return true if file saving was ok, otherwise false.
+	 * \param domain is application specific settings file; by default it
+	 * will be <em>domain</em>.conf and will be stored in $XDG_CONFIG_HOME directory
+	 */
+	bool save(const char* domain);
 
-		/**
-		 * Clears all loaded data. Calls to any get() member after this will
-		 * return false.
-		 */
-		void clear(void);
+	/**
+	 * Clears all loaded data. Calls to any get() member after this will
+	 * return false.
+	 */
+	void clear(void);
 
-		/**
-		 * With this, you can use:
-		 * \code
-		 *   Resource r;
-		 *   r.load(...);
-		 *   if(!r)
-		 *     ...
-		 * \endcode
-		 */
-		operator bool(void) const   { return (sys_conf != NULL || user_conf != NULL); }
+	/**
+	 * With this, you can use:
+	 * \code
+	 *   Resource r;
+	 *   r.load(...);
+	 *   if(!r)
+	 *     ...
+	 * \endcode
+	 */
+	operator bool(void) const   { return (sys_conf != NULL || user_conf != NULL); }
 
-		/**
-		 * Get char* value from named section.
-		 *
-		 * \return true if value exist
-		 * \param section name of target section
-		 * \param key name of target key
-		 * \param ret buffer to copy returned value
-		 * \param size size of buffer
-		 * \param rt is ResourceType variable
-		 */
-		bool get(const char* section, const char* key, char* ret, unsigned int size, 
-				ResourceType rt = RES_USER_FIRST);
+	/**
+	 * Get char* value from named section.
+	 *
+	 * \return true if value exist
+	 * \param section name of target section
+	 * \param key name of target key
+	 * \param ret buffer to copy returned value
+	 * \param size size of buffer
+	 * \param rt is ResourceType variable
+	 */
+	bool get(const char* section, const char* key, char* ret, unsigned int size, 
+			ResourceType rt = RES_USER_FIRST);
 
-		/**
-		 * Get localized character data. Check get_localized() from Config for the details.
-		 *
-		 * \return true if value exist
-		 * \param section name of target section
-		 * \param key name of target key
-		 * \param ret buffer to copy returned value
-		 * \param size size of buffer
-		 * \param rt is ResourceType variable
-		 */
-		bool get_localized(const char* section, const char* key, char* ret, unsigned int size, 
-				ResourceType rt = RES_USER_FIRST);
+	/**
+	 * Get localized character data. Check get_localized() from Config for the details.
+	 *
+	 * \return true if value exist
+	 * \param section name of target section
+	 * \param key name of target key
+	 * \param ret buffer to copy returned value
+	 * \param size size of buffer
+	 * \param rt is ResourceType variable
+	 */
+	bool get_localized(const char* section, const char* key, char* ret, unsigned int size, 
+			ResourceType rt = RES_USER_FIRST);
 
-		/**
-		 * This function is the same as get() with char*, except returned data is allocated.
-		 * Use <b>must</b> call delete[] on returned data. If this function returns false,
-		 * returned data will not be allocated and <em>retsize</em> will be 0.
-		 *
-		 * \return true if value exists
-		 * \param section name of target section
-		 * \param key name of target key
-		 * \param ret is allocated by this function ad returned value will be copied in it
-		 * \param retsize size of buffer
-		 * \param rt is ResourceType variable
-		 */
-		bool get_allocated(const char* section, const char* key, char** ret, unsigned int& retsize, 
-				ResourceType rt = RES_USER_FIRST);
+	/**
+	 * This function is the same as get() with char*, except returned data is allocated.
+	 * Use <b>must</b> call delete[] on returned data. If this function returns false,
+	 * returned data will not be allocated and <em>retsize</em> will be 0.
+	 *
+	 * \return true if value exists
+	 * \param section name of target section
+	 * \param key name of target key
+	 * \param ret is allocated by this function ad returned value will be copied in it
+	 * \param retsize size of buffer
+	 * \param rt is ResourceType variable
+	 */
+	bool get_allocated(const char* section, const char* key, char** ret, unsigned int& retsize, 
+			ResourceType rt = RES_USER_FIRST);
 
-		/**
-		 * Get int value from named section.
-		 *
-		 * \return true if value exist
-		 * \param section name of target section
-		 * \param key name of target key
-		 * \param ret where to place returned value
-		 * \param dfl default value, in case real value not found
-		 * \param rt is ResourceType variable
-		 */
-		bool get(const char* section, const char* key, int& ret, int dfl = 0, ResourceType rt = RES_USER_FIRST);
+	/**
+	 * Get int value from named section.
+	 *
+	 * \return true if value exist
+	 * \param section name of target section
+	 * \param key name of target key
+	 * \param ret where to place returned value
+	 * \param dfl default value, in case real value not found
+	 * \param rt is ResourceType variable
+	 */
+	bool get(const char* section, const char* key, int& ret, int dfl = 0, ResourceType rt = RES_USER_FIRST);
 
-		/**
-		 * Get bool value from named section.
-		 *
-		 * \return true if value exist
-		 * \param section name of target section
-		 * \param key name of target key
-		 * \param ret where to place returned value
-		 * \param dfl default value, in case real value not found
-		 * \param rt is ResourceType variable
-		 */
-		bool get(const char* section, const char* key, bool& ret, bool dfl = false, ResourceType rt = RES_USER_FIRST);
+	/**
+	 * Get bool value from named section.
+	 *
+	 * \return true if value exist
+	 * \param section name of target section
+	 * \param key name of target key
+	 * \param ret where to place returned value
+	 * \param dfl default value, in case real value not found
+	 * \param rt is ResourceType variable
+	 */
+	bool get(const char* section, const char* key, bool& ret, bool dfl = false, ResourceType rt = RES_USER_FIRST);
 
-		/**
-		 * Get float value from named section.
-		 *
-		 * \return true if value exist
-		 * \param section name of target section
-		 * \param key name of target key
-		 * \param ret where to place returned value
-		 * \param dfl default value, in case real value not found
-		 * \param rt is ResourceType variable
-		 */
-		bool get(const char* section, const char* key, float& ret, float dfl = 0, ResourceType rt = RES_USER_FIRST);
+	/**
+	 * Get float value from named section.
+	 *
+	 * \return true if value exist
+	 * \param section name of target section
+	 * \param key name of target key
+	 * \param ret where to place returned value
+	 * \param dfl default value, in case real value not found
+	 * \param rt is ResourceType variable
+	 */
+	bool get(const char* section, const char* key, float& ret, float dfl = 0, ResourceType rt = RES_USER_FIRST);
 
-		/**
-		 * Get long value from named section.
-		 *
-		 * \return true if value exist
-		 * \param section name of target section
-		 * \param key name of target key
-		 * \param ret where to place returned value
-		 * \param dfl default value, in case real value not found
-		 * \param rt is ResourceType variable
-		 */
-		bool get(const char* section, const char* key, long& ret, long dfl = 0, ResourceType rt = RES_USER_FIRST);
+	/**
+	 * Get long value from named section.
+	 *
+	 * \return true if value exist
+	 * \param section name of target section
+	 * \param key name of target key
+	 * \param ret where to place returned value
+	 * \param dfl default value, in case real value not found
+	 * \param rt is ResourceType variable
+	 */
+	bool get(const char* section, const char* key, long& ret, long dfl = 0, ResourceType rt = RES_USER_FIRST);
 
-		/**
-		 * Get double value from named section.
-		 *
-		 * \return true if value exist
-		 * \param section name of target section
-		 * \param key name of target key
-		 * \param ret where to place returned value
-		 * \param dfl default value, in case real value not found
-		 * \param rt is ResourceType variable
-		 */
-		bool get(const char* section, const char* key, double& ret, double dfl = 0, ResourceType rt = RES_USER_FIRST);
+	/**
+	 * Get double value from named section.
+	 *
+	 * \return true if value exist
+	 * \param section name of target section
+	 * \param key name of target key
+	 * \param ret where to place returned value
+	 * \param dfl default value, in case real value not found
+	 * \param rt is ResourceType variable
+	 */
+	bool get(const char* section, const char* key, double& ret, double dfl = 0, ResourceType rt = RES_USER_FIRST);
 
-		/**
-		 * Get char value from named section.
-		 *
-		 * \return true if value exist
-		 * \param section name of target section
-		 * \param key name of target key
-		 * \param ret where to place returned value
-		 * \param dfl default value, in case real value not found
-		 * \param rt is ResourceType variable
-		 */
-		bool get(const char* section, const char* key, char& ret, char dfl = 0, ResourceType rt = RES_USER_FIRST);
+	/**
+	 * Get char value from named section.
+	 *
+	 * \return true if value exist
+	 * \param section name of target section
+	 * \param key name of target key
+	 * \param ret where to place returned value
+	 * \param dfl default value, in case real value not found
+	 * \param rt is ResourceType variable
+	 */
+	bool get(const char* section, const char* key, char& ret, char dfl = 0, ResourceType rt = RES_USER_FIRST);
 
-		/**
-		 * Set char* value in named section. If section, or key does not
-		 * exists, they will be created.
-		 *
-		 * \param section name of target section
-		 * \param key name of target key
-		 * \param val value to store within key
-		 */
-		void set(const char* section, const char* key, char* val);
+	/**
+	 * Set char* value in named section. If section, or key does not
+	 * exists, they will be created.
+	 *
+	 * \param section name of target section
+	 * \param key name of target key
+	 * \param val value to store within key
+	 */
+	void set(const char* section, const char* key, char* val);
 
-		/**
-		 * Set const char* value in named section. If section, or key does not
-		 * exists, they will be created.
-		 *
-		 * \param section name of target section
-		 * \param key name of target key
-		 * \param val value to store within key
-		 */
-		void set(const char* section, const char* key, const char* val);
+	/**
+	 * Set const char* value in named section. If section, or key does not
+	 * exists, they will be created.
+	 *
+	 * \param section name of target section
+	 * \param key name of target key
+	 * \param val value to store within key
+	 */
+	void set(const char* section, const char* key, const char* val);
 
-		/**
-		 * Set char* value for localized named section. Description for get_localized()
-		 * applies here too.
-		 *
-		 * \param section name of target section
-		 * \param key name of target key
-		 * \param val value to store within key
-		 */
-		void set_localized(const char* section, const char* key, char* val);
+	/**
+	 * Set char* value for localized named section. Description for get_localized()
+	 * applies here too.
+	 *
+	 * \param section name of target section
+	 * \param key name of target key
+	 * \param val value to store within key
+	 */
+	void set_localized(const char* section, const char* key, char* val);
 
-		/**
-		 * Set const char* value for localized named section. Description for get_localized()
-		 * applies here too.
-		 *
-		 * \param section name of target section
-		 * \param key name of target key
-		 * \param val value to store within key
-		 */
-		void set_localized(const char* section, const char* key, const char* val);
+	/**
+	 * Set const char* value for localized named section. Description for get_localized()
+	 * applies here too.
+	 *
+	 * \param section name of target section
+	 * \param key name of target key
+	 * \param val value to store within key
+	 */
+	void set_localized(const char* section, const char* key, const char* val);
 
-		/**
-		 * Set bool value in named section. If section, or key does not
-		 * exists, they will be created.
-		 *
-		 * \param section name of target section
-		 * \param key name of target key
-		 * \param val value to store within key
-		 */
-		void set(const char* section, const char* key, bool val);
+	/**
+	 * Set bool value in named section. If section, or key does not
+	 * exists, they will be created.
+	 *
+	 * \param section name of target section
+	 * \param key name of target key
+	 * \param val value to store within key
+	 */
+	void set(const char* section, const char* key, bool val);
 
-		/**
-		 * Set int value in named section. If section, or key does not
-		 * exists, they will be created.
-		 *
-		 * \param section name of target section
-		 * \param key name of target key
-		 * \param val value to store within key
-		 */
-		void set(const char* section, const char* key, int val);
+	/**
+	 * Set int value in named section. If section, or key does not
+	 * exists, they will be created.
+	 *
+	 * \param section name of target section
+	 * \param key name of target key
+	 * \param val value to store within key
+	 */
+	void set(const char* section, const char* key, int val);
 
-		/**
-		 * Set long value in named section. If section, or key does not
-		 * exists, they will be created.
-		 *
-		 * \param section name of target section
-		 * \param key name of target key
-		 * \param val value to store within key
-		 */
-		void set(const char* section, const char* key, long val);
+	/**
+	 * Set long value in named section. If section, or key does not
+	 * exists, they will be created.
+	 *
+	 * \param section name of target section
+	 * \param key name of target key
+	 * \param val value to store within key
+	 */
+	void set(const char* section, const char* key, long val);
 
-		/**
-		 * Set float value in named section. If section, or key does not
-		 * exists, they will be created.
-		 *
-		 * \param section name of target section
-		 * \param key name of target key
-		 * \param val value to store within key
-		 */
-		void set(const char* section, const char* key, float val);
+	/**
+	 * Set float value in named section. If section, or key does not
+	 * exists, they will be created.
+	 *
+	 * \param section name of target section
+	 * \param key name of target key
+	 * \param val value to store within key
+	 */
+	void set(const char* section, const char* key, float val);
 
-		/**
-		 * Set double value in named section. If section, or key does not
-		 * exists, they will be created.
-		 *
-		 * \param section name of target section
-		 * \param key name of target key
-		 * \param val value to store within key
-		 */
-		void set(const char* section, const char* key, double val);
+	/**
+	 * Set double value in named section. If section, or key does not
+	 * exists, they will be created.
+	 *
+	 * \param section name of target section
+	 * \param key name of target key
+	 * \param val value to store within key
+	 */
+	void set(const char* section, const char* key, double val);
 
-		/**
-		 * Locate path of config filename searching XDG_CONFIG_HOME and XDG_CONFIG_DIRS paths. 
-		 * It is meant for locting config files. Config filename must not have an extension, 
-		 * example:
-		 * \code
-		 *   String path = Resource::find_config("myconfig", RES_USER_FIRST);
-		 * \endcode
-		 *
-		 * Returned value is tested for accessibility via access() function, so you
-		 * can be sure that returned value exists.
-		 * 
-		 * \return path if filename was found or empty string if failed
-		 * \param name is config filename without extension
-		 * \param rt is ResourceType variable
-		 */
-		static String find_config(const char* name, ResourceType rt = RES_USER_FIRST);
-		
-		/**
-		 * Locate data in XDG_DATA_HOME and XDG_DATA_DIRS paths. Data can be anything,
-		 * like file, directory, link, etc.
-		 *
-		 * \return path if directory was found or empty string if failed
-		 * \param name is directory name
-		 * \param rt is ResourceType variable
-		 */
-		static String find_data(const char* name, ResourceType rt = RES_USER_FIRST);
+	/**
+	 * Locate path of config filename searching XDG_CONFIG_HOME and XDG_CONFIG_DIRS paths. 
+	 * It is meant for locting config files. Config filename must not have an extension, 
+	 * example:
+	 * \code
+	 *   String path = Resource::find_config("myconfig", RES_USER_FIRST);
+	 * \endcode
+	 *
+	 * Returned value is tested for accessibility via access() function, so you
+	 * can be sure that returned value exists.
+	 * 
+	 * \return path if filename was found or empty string if failed
+	 * \param name is config filename without extension
+	 * \param rt is ResourceType variable
+	 */
+	static String find_config(const char* name, ResourceType rt = RES_USER_FIRST);
+	
+	/**
+	 * Locate data in XDG_DATA_HOME and XDG_DATA_DIRS paths. Data can be anything,
+	 * like file, directory, link, etc.
+	 *
+	 * \return path if directory was found or empty string if failed
+	 * \param name is directory name
+	 * \param rt is ResourceType variable
+	 */
+	static String find_data(const char* name, ResourceType rt = RES_USER_FIRST);
 };
 
 EDELIB_NS_END

@@ -1,13 +1,21 @@
 /*
  * $Id$
  *
- * D-Bus stuff
- * Part of edelib.
- * Copyright (c) 2008 EDE Authors.
+ * D-BUS stuff
+ * Copyright (c) 2008 edelib authors
  *
- * This program is licenced under terms of the 
- * GNU General Public Licence version 2 or newer.
- * See COPYING for details.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef __EDBUSMESSAGE_H__
@@ -94,223 +102,223 @@ struct EdbusMessageImpl;
  */
 
 class EDELIB_API EdbusMessage {
-	private:
-		friend class EdbusConnection;
+private:
+	friend class EdbusConnection;
 
-		EdbusMessageImpl* dm;
-		list<EdbusData> msg_content;
+	EdbusMessageImpl* dm;
+	list<EdbusData> msg_content;
 
-		void from_dbus_message(DBusMessage* m);
-		DBusMessage* to_dbus_message(void) const;
+	void from_dbus_message(DBusMessage* m);
+	DBusMessage* to_dbus_message(void) const;
 
-		EdbusMessage(const EdbusMessage&);
-		EdbusMessage& operator=(const EdbusMessage&);
+	EdbusMessage(const EdbusMessage&);
+	EdbusMessage& operator=(const EdbusMessage&);
 
-	public:
-		/**
-		 * Declare EdbusMessage iterator
-		 */
-		typedef list<EdbusData>::iterator iterator;
+public:
+	/**
+	 * Declare EdbusMessage iterator
+	 */
+	typedef list<EdbusData>::iterator iterator;
 
-		/**
-		 * Declare EdbusMessage const iterator
-		 */
-		typedef list<EdbusData>::const_iterator const_iterator;
+	/**
+	 * Declare EdbusMessage const iterator
+	 */
+	typedef list<EdbusData>::const_iterator const_iterator;
 
-		/**
-		 * Create an empty EdbusMessage object. Nothing will be allocated
-		 * until you call one of the <em>create_</em> members. Until that, message
-		 * is marked as invalid and EdbusConnection will refuse to send it
-		 */
-		EdbusMessage();
+	/**
+	 * Create an empty EdbusMessage object. Nothing will be allocated
+	 * until you call one of the <em>create_</em> members. Until that, message
+	 * is marked as invalid and EdbusConnection will refuse to send it
+	 */
+	EdbusMessage();
 
-		/**
-		 * Create an EdbusMessage from DBusMessage. This is used to simplify
-		 * internals and you should not use it directly
-		 */
-		EdbusMessage(DBusMessage* msg);
+	/**
+	 * Create an EdbusMessage from DBusMessage. This is used to simplify
+	 * internals and you should not use it directly
+	 */
+	EdbusMessage(DBusMessage* msg);
 
-		/**
-		 * Clears internal data
-		 */
-		~EdbusMessage();
+	/**
+	 * Clears internal data
+	 */
+	~EdbusMessage();
 
-		/**
-		 * Create a signal message
-		 *
-		 * \param path is destination object path
-		 * \param interface is destination interface name
-		 * \param name is signal name
-		 */
-		void create_signal(const char* path, const char* interface, const char* name);
+	/**
+	 * Create a signal message
+	 *
+	 * \param path is destination object path
+	 * \param interface is destination interface name
+	 * \param name is signal name
+	 */
+	void create_signal(const char* path, const char* interface, const char* name);
 
-		/**
-		 * Create a method call
-		 *
-		 * \param service is destination service name
-		 * \param path is destination object path
-		 * \param interface is destination interface name
-		 * \param method is method to be called
-		 */
-		void create_method_call(const char* service, const char* path, const char* interface, const char* method);
+	/**
+	 * Create a method call
+	 *
+	 * \param service is destination service name
+	 * \param path is destination object path
+	 * \param interface is destination interface name
+	 * \param method is method to be called
+	 */
+	void create_method_call(const char* service, const char* path, const char* interface, const char* method);
 
-		/**
-		 * Create a reply for method
-		 *
-		 * \param replying_to is a message to be replyed
-		 */
-		void create_reply(const EdbusMessage& replying_to);
+	/**
+	 * Create a reply for method
+	 *
+	 * \param replying_to is a message to be replyed
+	 */
+	void create_reply(const EdbusMessage& replying_to);
 
-		/**
-		 * Create error reply
-		 *
-		 * \param replying_to is a message to be replyed
-		 * \param errmsg is error string to be sent
-		 */
-		void create_error_reply(const EdbusMessage& replying_to, const char* errmsg);
+	/**
+	 * Create error reply
+	 *
+	 * \param replying_to is a message to be replyed
+	 * \param errmsg is error string to be sent
+	 */
+	void create_error_reply(const EdbusMessage& replying_to, const char* errmsg);
 
-		/**
-		 * Clears all EdbusMessage data (including message headers with destination, type and etc.) 
-		 * and marks it as invalid. If you want to send this object again, make sure to re-create
-		 * it again with one of <em>create_</em> members.
-		 *
-		 * This is since DBus internally queues messages after they are sent (if there is need to 
-		 * re-send them again) there is no way to clear message content without destroying headers
-		 */
-		void clear_all(void);
+	/**
+	 * Clears all EdbusMessage data (including message headers with destination, type and etc.) 
+	 * and marks it as invalid. If you want to send this object again, make sure to re-create
+	 * it again with one of <em>create_</em> members.
+	 *
+	 * This is since DBus internally queues messages after they are sent (if there is need to 
+	 * re-send them again) there is no way to clear message content without destroying headers
+	 */
+	void clear_all(void);
 
-		/**
-		 * Returns true if current message is signal type
-		 */
-		bool is_signal(void);
+	/**
+	 * Returns true if current message is signal type
+	 */
+	bool is_signal(void);
 
-		/**
-		 * Returns true if current message is method call type
-		 */
-		bool is_method_call(void);
+	/**
+	 * Returns true if current message is method call type
+	 */
+	bool is_method_call(void);
 
-		/**
-		 * Returns true if current message is error reply type
-		 */
-		bool is_error_reply(const char* errmsg);
+	/**
+	 * Returns true if current message is error reply type
+	 */
+	bool is_error_reply(const char* errmsg);
 
-		/**
-		 * Set object path for destination
-		 * It will do nothing if one of the <em>create_</em> members are called before
-		 */
-		void path(const char* np);
+	/**
+	 * Set object path for destination
+	 * It will do nothing if one of the <em>create_</em> members are called before
+	 */
+	void path(const char* np);
 
-		/**
-		 * Get object path for destination
-		 * It will return NULL if one of the <em>create_</em> members are not called before
-		 */
-		const char* path(void) const;
+	/**
+	 * Get object path for destination
+	 * It will return NULL if one of the <em>create_</em> members are not called before
+	 */
+	const char* path(void) const;
 
-		/**
-		 * Set interface name for destination. 
-		 * It will do nothing if one of the <em>create_</em> members are not called before
-		 */
-		void interface(const char* ni);
+	/**
+	 * Set interface name for destination. 
+	 * It will do nothing if one of the <em>create_</em> members are not called before
+	 */
+	void interface(const char* ni);
 
-		/**
-		 * Get interface name for destination
-		 * It will return NULL if one of the <em>create_</em> members are not called before
-		 */
-		const char* interface(void) const;
+	/**
+	 * Get interface name for destination
+	 * It will return NULL if one of the <em>create_</em> members are not called before
+	 */
+	const char* interface(void) const;
 
-		/**
-		 * Sets the message's destination.
-		 *
-		 * The destination is the name of another connection on the bus 
-		 * and may be either the unique name assigned by the bus to each 
-		 * connection, or a well-known name specified in advance
-		 *
-		 * It will do nothing if one of the <em>create_</em> members are not called before
-		 */
-		void destination(const char* nd);
+	/**
+	 * Sets the message's destination.
+	 *
+	 * The destination is the name of another connection on the bus 
+	 * and may be either the unique name assigned by the bus to each 
+	 * connection, or a well-known name specified in advance
+	 *
+	 * It will do nothing if one of the <em>create_</em> members are not called before
+	 */
+	void destination(const char* nd);
 
-		/**
-		 * Get a message destination
-		 * It will return NULL if one of the <em>create_</em> members are not called before
-		 */
-		const char* destination(void) const;
+	/**
+	 * Get a message destination
+	 * It will return NULL if one of the <em>create_</em> members are not called before
+	 */
+	const char* destination(void) const;
 
-		/**
-		 * Set method name to be called.
-		 * \note This function can be used to set signal name too
-		 *
-		 * It will do nothing if one of the <em>create_</em> members are not called before
-		 */
-		void member(const char* nm);
+	/**
+	 * Set method name to be called.
+	 * \note This function can be used to set signal name too
+	 *
+	 * It will do nothing if one of the <em>create_</em> members are not called before
+	 */
+	void member(const char* nm);
 
-		/**
-		 * Get method or signal name from message
-		 * It will return NULL if one of the <em>create_</em> members are not called before
-		 */
-		const char* member(void) const;
+	/**
+	 * Get method or signal name from message
+	 * It will return NULL if one of the <em>create_</em> members are not called before
+	 */
+	const char* member(void) const;
 
-		/**
-		 * Sets the message sender.
-		 *
-		 * The sender must be a valid bus name as defined in the D-Bus 
-		 * specification
-		 *
-		 * It will do nothing if one of the <em>create_</em> members are not called before
-		 */
-		void sender(const char* ns);
+	/**
+	 * Sets the message sender.
+	 *
+	 * The sender must be a valid bus name as defined in the D-Bus 
+	 * specification
+	 *
+	 * It will do nothing if one of the <em>create_</em> members are not called before
+	 */
+	void sender(const char* ns);
 
-		/**
-		 * Gets the unique name of the connection which originated this 
-		 * message, or NULL if unknown or inapplicable.
-		 *
-		 * The sender is filled in by the message bus.
-		 *
-		 * It will return NULL if one of the <em>create_</em> members are not called before
-		 */
-		const char* sender(void) const;
+	/**
+	 * Gets the unique name of the connection which originated this 
+	 * message, or NULL if unknown or inapplicable.
+	 *
+	 * The sender is filled in by the message bus.
+	 *
+	 * It will return NULL if one of the <em>create_</em> members are not called before
+	 */
+	const char* sender(void) const;
 
-		/**
-		 * Returns the signature of this message. You will not need this
-		 * unless you know what returned value means.
-		 *
-		 * A signature will contain only reasonable content when you receive message
-		 * via one of the callbacks set inside EdbusConnection.
-		 *
-		 * It will return NULL if one of the <em>create_</em> members are not called before
-		 */
-		const char* signature(void) const;
+	/**
+	 * Returns the signature of this message. You will not need this
+	 * unless you know what returned value means.
+	 *
+	 * A signature will contain only reasonable content when you receive message
+	 * via one of the callbacks set inside EdbusConnection.
+	 *
+	 * It will return NULL if one of the <em>create_</em> members are not called before
+	 */
+	const char* signature(void) const;
 
-		/**
-		 * Append EdbusData object in message
-		 */
-		void append(const EdbusData& data) { msg_content.push_back(data); }
+	/**
+	 * Append EdbusData object in message
+	 */
+	void append(const EdbusData& data) { msg_content.push_back(data); }
 
-		/**
-		 * Returns iterator at the message start. It points to the first element
-		 */
-		iterator begin(void) { return msg_content.begin(); }
+	/**
+	 * Returns iterator at the message start. It points to the first element
+	 */
+	iterator begin(void) { return msg_content.begin(); }
 
-		/**
-		 * Returns const iterator at the message start. It points to the first element
-		 */
-		const_iterator begin(void) const { return msg_content.begin(); }
+	/**
+	 * Returns const iterator at the message start. It points to the first element
+	 */
+	const_iterator begin(void) const { return msg_content.begin(); }
 
-		/**
-		 * Returns iterator at the message end. It <b>does not</b> points to
-		 * the last element, but element after the last, and you must not dereferce it
-		 */
-		iterator end(void) { return msg_content.end(); }
+	/**
+	 * Returns iterator at the message end. It <b>does not</b> points to
+	 * the last element, but element after the last, and you must not dereferce it
+	 */
+	iterator end(void) { return msg_content.end(); }
 
-		/**
-		 * Returns const iterator at the message end. It <b>does not</b> points to
-		 * the last element, but element after the last, and you must not dereferce it
-		 */
-		const_iterator end(void) const { return msg_content.end(); }
+	/**
+	 * Returns const iterator at the message end. It <b>does not</b> points to
+	 * the last element, but element after the last, and you must not dereferce it
+	 */
+	const_iterator end(void) const { return msg_content.end(); }
 
-		/**
-		 * Returns the size of EdbusMessage content
-		 */
-		unsigned int size(void) const { return msg_content.size(); }
+	/**
+	 * Returns the size of EdbusMessage content
+	 */
+	unsigned int size(void) const { return msg_content.size(); }
 };
 
 /**

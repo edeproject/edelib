@@ -2,18 +2,26 @@
  * $Id$
  *
  * Message dialog
- * Part of edelib.
- * Copyright (c) 2005-2007 EDE Authors.
+ * Copyright (c) 2005-2007 edelib authors
  *
- * This program is licensed under terms of the 
- * GNU General Public License version 2 or newer.
- * See COPYING for details.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef __MESSAGEBOX_H__
 #define __MESSAGEBOX_H__
 
-#include "econfig.h"
+#include "edelib-global.h"
 
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Button.H>
@@ -173,118 +181,118 @@ enum MessageBoxButtonType {
  * (like calling hide() or closing it via window manager) it will return -1.
  */
 class EDELIB_API MessageBox : public Fl_Window {
-	private:
-		Fl_Box* img;
-		Fl_Box* txt;
-		Fl_Input* inpt;
-		Fl_Group* gr;
-		Fl_Pixmap* pix;
+private:
+	Fl_Box* img;
+	Fl_Box* txt;
+	Fl_Input* inpt;
+	Fl_Group* gr;
+	Fl_Pixmap* pix;
 
-		MessageBoxType mbt;
+	MessageBoxType mbt;
 
-		int nbuttons;
-		int b_start;
-		Fl_Button* buttons[MSGBOX_MAX_BUTTONS];
+	int nbuttons;
+	int b_start;
+	Fl_Button* buttons[MSGBOX_MAX_BUTTONS];
 
-		void init(void);
-		void fix_sizes(void);
+	void init(void);
+	void fix_sizes(void);
 
-		void add(Fl_Widget*) { } // in case someone tries to be too smart
+	void add(Fl_Widget*) { } // in case someone tries to be too smart
 
-	public:
-		/**
-		 * Constructor which initialize internal data
-		 * \param t is MessageBoxType type
-		 */
-		MessageBox(MessageBoxType t = MSGBOX_PLAIN);
+public:
+	/**
+	 * Constructor which initialize internal data
+	 * \param t is MessageBoxType type
+	 */
+	MessageBox(MessageBoxType t = MSGBOX_PLAIN);
 
-		/**
-		 * Clears internal data
-		 */
-		~MessageBox();
+	/**
+	 * Clears internal data
+	 */
+	~MessageBox();
 
-		/**
-		 * Set message text
-		 * \param txt is message text
-		 */
-		void set_text(const char* txt);
+	/**
+	 * Set message text
+	 * \param txt is message text
+	 */
+	void set_text(const char* txt);
 
-		/**
-		 * Set icon giving absolute path
-		 * \return true if icon was able to set
-		 * \param path is full path to icon
-		 */
-		bool set_icon(const char* path);
+	/**
+	 * Set icon giving absolute path
+	 * \return true if icon was able to set
+	 * \param path is full path to icon
+	 */
+	bool set_icon(const char* path);
 
-		/**
-		 * Set icon using loaded theme. Given icon name should not
-		 * have an extension, nor should have path in it's name.
-		 * \return true if icon was found
-		 * \param name is icon name (without path and extension)
-		 */
-		bool set_theme_icon(const char* name);
+	/**
+	 * Set icon using loaded theme. Given icon name should not
+	 * have an extension, nor should have path in it's name.
+	 * \return true if icon was found
+	 * \param name is icon name (without path and extension)
+	 */
+	bool set_theme_icon(const char* name);
 
-		/**
-		 * Set XPM icon. Parameter should be pointer to XPM array.
-		 */
-		void set_xpm_icon(const char* const* arr);
+	/**
+	 * Set XPM icon. Parameter should be pointer to XPM array.
+	 */
+	void set_xpm_icon(const char* const* arr);
 
-		/**
-		 * Returns value from input field. Returned pointer points to internal storage
-		 * and that storage is available during MessageBox instance life or untill clear()
-		 * is called.
-		 *
-		 * Returned pointer value can be NULL when nothing was entered or MessageBox is type
-		 * of MSGBOX_PLAIN.
-		 */
-		const char* get_input(void);
+	/**
+	 * Returns value from input field. Returned pointer points to internal storage
+	 * and that storage is available during MessageBox instance life or untill clear()
+	 * is called.
+	 *
+	 * Returned pointer value can be NULL when nothing was entered or MessageBox is type
+	 * of MSGBOX_PLAIN.
+	 */
+	const char* get_input(void);
 
-		/**
-		 * Set default value to input field. Does nothing if dialog is MSGBOX_PLAIN type.
-		 */
-		void set_input(const char* txt);
+	/**
+	 * Set default value to input field. Does nothing if dialog is MSGBOX_PLAIN type.
+	 */
+	void set_input(const char* txt);
 
-		/**
-		 * Focus a button. If number is greater than added buttons, it will to nothing.
-		 */
-		void focus_button(int b);
+	/**
+	 * Focus a button. If number is greater than added buttons, it will to nothing.
+	 */
+	void focus_button(int b);
 
-		/**
-		 * Add button to dialog.
-		 * \param b is already allocated button
-		 * \param bt is button type
-		 */
-		void add_button(Fl_Button* b, MessageBoxButtonType bt = MSGBOX_BUTTON_PLAIN);
+	/**
+	 * Add button to dialog.
+	 * \param b is already allocated button
+	 * \param bt is button type
+	 */
+	void add_button(Fl_Button* b, MessageBoxButtonType bt = MSGBOX_BUTTON_PLAIN);
 
-		/**
-		 * Add button to dialog.
-		 * \param l is button label
-		 * \param bt is button type
-		 * \param cb is callback for button
-		 * \param param is data sent to callback
-		 */
-		void add_button(const char* l, MessageBoxButtonType bt = MSGBOX_BUTTON_PLAIN, Fl_Callback cb = 0, void* param = 0);
+	/**
+	 * Add button to dialog.
+	 * \param l is button label
+	 * \param bt is button type
+	 * \param cb is callback for button
+	 * \param param is data sent to callback
+	 */
+	void add_button(const char* l, MessageBoxButtonType bt = MSGBOX_BUTTON_PLAIN, Fl_Callback cb = 0, void* param = 0);
 
-		/**
-		 * Clears dialog and prepare internal data for next one.
-		 * \param t is parameter telling how to prepare internal data for next dialog
-		 */
-		void clear(MessageBoxType t = MSGBOX_PLAIN);
+	/**
+	 * Clears dialog and prepare internal data for next one.
+	 * \param t is parameter telling how to prepare internal data for next dialog
+	 */
+	void clear(MessageBoxType t = MSGBOX_PLAIN);
 
-		/**
-		 * Runs dialog until called hide() or dialog was closed in normal way (clicking X in titlebar).
-		 * \param center if set, dialog will be centered at the screen
-		 */
-		void run_plain(bool center = true);
+	/**
+	 * Runs dialog until called hide() or dialog was closed in normal way (clicking X in titlebar).
+	 * \param center if set, dialog will be centered at the screen
+	 */
+	void run_plain(bool center = true);
 
-		/**
-		 * Runs dialog until pressed some of it's buttons or was called hide() on dialog. 
-		 * \return -1 if nothing was pressed (but window was closed) or number of pressed button, starting
-		 *    from 0. Also, buttons are counted from right (most right, if pressed will be 0, second will
-		 *    be 1 and so).
-		 * \param center if set, dialog will be centered at the screen
-		 */
-		int run(bool center = true);
+	/**
+	 * Runs dialog until pressed some of it's buttons or was called hide() on dialog. 
+	 * \return -1 if nothing was pressed (but window was closed) or number of pressed button, starting
+	 *    from 0. Also, buttons are counted from right (most right, if pressed will be 0, second will
+	 *    be 1 and so).
+	 * \param center if set, dialog will be centered at the screen
+	 */
+	int run(bool center = true);
 };
 
 /**

@@ -1,19 +1,27 @@
 /*
  * $Id$
  *
- * D-Bus stuff
- * Part of edelib.
- * Copyright (c) 2008 EDE Authors.
+ * D-BUS stuff
+ * Copyright (c) 2008 edelib authors
  *
- * This program is licenced under terms of the 
- * GNU General Public Licence version 2 or newer.
- * See COPYING for details.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef __EDBUSERROR_H__
 #define __EDBUSERROR_H__
 
-#include "econfig.h"
+#include "edelib-global.h"
 
 struct DBusError;
 
@@ -58,59 +66,59 @@ struct EdbusErrorImpl;
  * \brief A class representing D-Bus error
  */
 class EdbusError {
-	private:
-		EdbusErrorImpl* impl;
-		void dispose(void);
-	public:
-		/**
-		 * Create invalid error object
-		 */
-		EdbusError();
+private:
+	EdbusErrorImpl* impl;
+	void dispose(void);
+public:
+	/**
+	 * Create invalid error object
+	 */
+	EdbusError();
 
-		/**
-		 * Destroys object
-		 */
-		~EdbusError();
+	/**
+	 * Destroys object
+	 */
+	~EdbusError();
 
-		/**
-		 * Create error object from DBusError
-		 */
-		EdbusError(const DBusError* err);
+	/**
+	 * Create error object from DBusError
+	 */
+	EdbusError(const DBusError* err);
 
-		/**
-		 * Create error object from another object
-		 */
-		EdbusError(const EdbusError& other);
+	/**
+	 * Create error object from another object
+	 */
+	EdbusError(const EdbusError& other);
 
-		/**
-		 * Assing another object
-		 */
-		EdbusError& operator=(const EdbusError& other);
+	/**
+	 * Assing another object
+	 */
+	EdbusError& operator=(const EdbusError& other);
 
-		/**
-		 * Explicitly create error with given EdbusErrorType and text
-		 */
-		EdbusError(EdbusErrorType t, const char* msg);
+	/**
+	 * Explicitly create error with given EdbusErrorType and text
+	 */
+	EdbusError(EdbusErrorType t, const char* msg);
 
-		/**
-		 * Returns error type
-		 */
-		EdbusErrorType type(void) const;
+	/**
+	 * Returns error type
+	 */
+	EdbusErrorType type(void) const;
 
-		/**
-		 * Returns the D-Bus error name. It will be NULL if error is invalid
-		 */
-		const char* name(void) const;
+	/**
+	 * Returns the D-Bus error name. It will be NULL if error is invalid
+	 */
+	const char* name(void) const;
 
-		/**
-		 * Returns a string describing the error. It will be NULL if error is invalid
-		 */
-		const char* message(void) const;
+	/**
+	 * Returns a string describing the error. It will be NULL if error is invalid
+	 */
+	const char* message(void) const;
 
-		/**
-		 * Returns true if error object contains valid type (any except EDBUS_ERROR_INVALID)
-		 */
-		bool valid(void) const { return type() != EDBUS_ERROR_INVALID; }
+	/**
+	 * Returns true if error object contains valid type (any except EDBUS_ERROR_INVALID)
+	 */
+	bool valid(void) const { return type() != EDBUS_ERROR_INVALID; }
 };
 
 EDELIB_NS_END

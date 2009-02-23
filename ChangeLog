@@ -1,3 +1,12 @@
+2009-02-23  Sanel <karijes@users.sourceforge.net>
+
+	* m4/stl.m4:
+	* m4/sound.m4:
+	* edelib/XSet.h:
+	* src/XSet.cpp: removed
+	* all-over-the-code: changed license to LGPL, coding standard rechecked
+	* COPYING: added file with LGPL license
+
 2009-02-21  Sanel <karijes@users.sourceforge.net>
 
 	* edelib/Run.h:
