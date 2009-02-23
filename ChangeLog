@@ -1,3 +1,14 @@
+2009-02-21  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Run.h:
+	* src/Run.cpp: removed 'root' option, a planned option for (possible)
+	running program as root, where password would be prompted with dialog;
+	planned to be implemeted as external program; also shell path will be
+	first read from $SHELL variable, then /bin/sh will be executed
+
+	* edelib/Run.h:
+	* src/Run.cpp: added run_program_fmt() for printf-like formatted command
+
 2009-02-19  Sanel <karijes@users.sourceforge.net>
 
 	* edelib/Resource.h:

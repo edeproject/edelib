@@ -18,14 +18,12 @@
 EDELIB_NS_BEGIN
 
 enum {
-	RUN_NOT_FOUND       = 65535,  ///< executable not found
-	RUN_EMPTY           = 65534,  ///< given parameter is NULL
-	RUN_NOT_EXEC        = 65533,  ///< given parameter is not executable on system 
-	RUN_FORK_FAILED	    = 65532,  ///< internal fork failed
-	RUN_WAITPID_FAILED  = 65531,  ///< internal waitpid failed
-	RUN_EXECVE_FAILED   = 65530,  ///< internal execve failed
-	RUN_PTY_FAILED      = 65529,  ///< todo
-	RUN_USER_CANCELED   = 65528   ///< todo
+	RUN_NOT_FOUND      = 65535, ///< executable not found
+	RUN_EMPTY          = 65534, ///< given parameter is NULL
+	RUN_NOT_EXEC       = 65533, ///< given parameter is not executable on system 
+	RUN_FORK_FAILED	   = 65532, ///< internal fork failed
+	RUN_WAITPID_FAILED = 65531, ///< internal waitpid failed
+	RUN_EXECVE_FAILED  = 65530  ///< internal execve failed
 };
 
 /**
@@ -42,9 +40,13 @@ enum {
  * above codes, or errno value for not checked codes
  * \param cmd is commad to be executed with optional full path and parameters
  * \param wait if is true (default) function will not exit until program exists
- * \param root todo
  */
-EDELIB_API int run_program(const char* cmd, bool wait = true, bool root = false);
+EDELIB_API int run_program(const char* cmd, bool wait = true);
+
+/**
+ * Same as run_program(), but run printf-like constructed command
+ */
+EDELIB_API int run_program_fmt(bool wait, const char* fmt, ...);
 
 EDELIB_NS_END
 #endif // __RUN_H__

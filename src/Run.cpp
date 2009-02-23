@@ -11,13 +11,17 @@
  */
 
 #include <sys/types.h> // fork
-#include <unistd.h>    // fork, open, close, dup
 #include <sys/stat.h>
 #include <sys/wait.h>
+#include <unistd.h>    // fork, open, close, dup
+#include <stdlib.h>    // getenv
 #include <fcntl.h>
 #include <errno.h>
+#include <stdarg.h>
+#include <stdio.h>
 
 #include <edelib/Run.h>
+#include <edelib/Missing.h>
 #include <edelib/Debug.h>
 
 /*
@@ -28,9 +32,8 @@ extern char** environ;
 
 EDELIB_NS_BEGIN
 
-int run_fork(const char* cmd, bool wait) {
-	if(!cmd)
-		return RUN_EMPTY;
+static int run_fork(const char* cmd, bool wait) {
+	E_RETURN_VAL_IF_FAIL(cmd, RUN_EMPTY);
 
 	int nulldev = -1;
 	int status = 0;
@@ -42,10 +45,14 @@ int run_fork(const char* cmd, bool wait) {
 	if(pid == -1)
 		return RUN_FORK_FAILED;
 
+	char* shell = getenv("SHELL");
+	if(!shell)
+		shell = "/bin/sh";
+
 	// run the child
 	if(pid == 0) {
 		char* argv[4];
-		argv[0] = (char*)"/bin/sh";
+		argv[0] = shell;
 		argv[1] = (char*)"-c";
 		argv[2] = (char*)cmd;
 		argv[3] = NULL;
@@ -74,13 +81,11 @@ int run_fork(const char* cmd, bool wait) {
 		else {
 			if(!WIFEXITED(status)) {
 				status_ret = WEXITSTATUS(status);
-				EDEBUG(ESTRLOC ": run_fork(): Child '%s' died with %i\n", cmd, status_ret);
-			}
-			else if(WIFSIGNALED(status)) {
+				E_DEBUG(E_STRLOC ": run_fork(): Child '%s' died with %i\n", cmd, status_ret);
+			} else if(WIFSIGNALED(status)) {
 				status_ret = WTERMSIG(status);
-				EDEBUG(ESTRLOC ": run_fork(): Child '%s' signaled with %i\n", cmd,  status_ret);
-			}
-			else {
+				E_DEBUG(E_STRLOC ": run_fork(): Child '%s' signaled with %i\n", cmd,  status_ret);
+			} else {
 				// convert status signal to errno format
 				int s = WEXITSTATUS(status);
 				if(s == 127)
@@ -93,16 +98,22 @@ int run_fork(const char* cmd, bool wait) {
 		}
 	}
 
-	/*
-	if(nulldev > -1)
-		close(nulldev);
-	*/
-
 	return status_ret;
 }
 
-int run_program(const char* cmd, bool wait, bool root) {
+int run_program(const char* cmd, bool wait) {
 	return run_fork(cmd, wait);
+}
+
+int run_program_fmt(bool wait, const char* fmt, ...) {
+	char buff[256];
+	va_list ap;
+
+	va_start(ap, fmt);
+	vsnprintf(buff, sizeof(buff), fmt, ap);
+	va_end(ap);
+
+	return run_program(buff, wait);
 }
 
 EDELIB_NS_END
