@@ -7,6 +7,9 @@
 	* all-over-the-code: changed license to LGPL, coding standard rechecked
 	* COPYING: added file with LGPL license
 	* econfig.h: renamed to edelib-global.h
+	* src/Resource.cpp: now all files will be saved/read-from "ede" directory
+	as base directory if RESOURCE_DOMAIN_PREFIX wasn't given during compile
+	* test/resource.cpp: updated tests too
 
 2009-02-21  Sanel <karijes@users.sourceforge.net>
 

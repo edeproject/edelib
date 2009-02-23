@@ -26,6 +26,8 @@ UT_FUNC(ResourceTestReading, "Test resource reading")
 	dir_create(SAMPLE_RES_DIR);
 	dir_create(SAMPLE_SYS_DIR);
 	dir_create(SAMPLE_USER_DIR);
+	dir_create(SAMPLE_SYS_DIR"/ede");
+	dir_create(SAMPLE_USER_DIR"/ede");
 
 	const char* sys_conf = "\
 [global]          \n\
@@ -45,11 +47,11 @@ long_str_value = aaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaa aaaaaaaa
 ";
 
 	File f;
-	f.open(SAMPLE_SYS_DIR"/foo.conf", FIO_WRITE);
+	f.open(SAMPLE_SYS_DIR"/ede/foo.conf", FIO_WRITE);
 	f.write(sys_conf);
 	f.close();
 
-	f.open(SAMPLE_USER_DIR"/foo.conf", FIO_WRITE);
+	f.open(SAMPLE_USER_DIR"/ede/foo.conf", FIO_WRITE);
 	f.write(user_conf);
 	f.close();
 
@@ -123,8 +125,10 @@ long_str_value = aaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaa aaaaaaaa
 	edelib_setenv(CONFIG_HOME_ENV, config_home_saved.c_str(), 1);
 	edelib_setenv(CONFIG_DIRS_ENV, config_dirs_saved.c_str(), 1);
 
-	file_remove(SAMPLE_USER_DIR"/foo.conf");
-	file_remove(SAMPLE_SYS_DIR"/foo.conf");
+	file_remove(SAMPLE_USER_DIR"/ede/foo.conf");
+	file_remove(SAMPLE_SYS_DIR"/ede/foo.conf");
+	dir_remove(SAMPLE_SYS_DIR"/ede");
+	dir_remove(SAMPLE_USER_DIR"/ede");
 	dir_remove(SAMPLE_SYS_DIR);
 	dir_remove(SAMPLE_USER_DIR);
 	dir_remove(SAMPLE_RES_DIR);
@@ -142,6 +146,8 @@ UT_FUNC(ResourceTestSaving, "Test resource saving")
 	dir_create(SAMPLE_RES_DIR);
 	dir_create(SAMPLE_SYS_DIR);
 	dir_create(SAMPLE_USER_DIR);
+	dir_create(SAMPLE_SYS_DIR"/ede");
+	dir_create(SAMPLE_USER_DIR"/ede");
 
 	const char* sys_conf = "\
 [global]          \n\
@@ -155,11 +161,11 @@ user_altered_value = 5\n\
 ";
 
 	File f;
-	f.open(SAMPLE_SYS_DIR"/foo.conf", FIO_WRITE);
+	f.open(SAMPLE_SYS_DIR"/ede/foo.conf", FIO_WRITE);
 	f.write(sys_conf);
 	f.close();
 
-	f.open(SAMPLE_USER_DIR"/foo.conf", FIO_WRITE);
+	f.open(SAMPLE_USER_DIR"/ede/foo.conf", FIO_WRITE);
 	f.write(user_conf);
 	f.close();
 
@@ -198,8 +204,10 @@ user_altered_value = 5\n\
 	edelib_setenv(CONFIG_HOME_ENV, config_home_saved.c_str(), 1);
 	edelib_setenv(CONFIG_DIRS_ENV, config_dirs_saved.c_str(), 1);
 
-	file_remove(SAMPLE_USER_DIR"/foo.conf");
-	file_remove(SAMPLE_SYS_DIR"/foo.conf");
+	file_remove(SAMPLE_USER_DIR"/ede/foo.conf");
+	file_remove(SAMPLE_SYS_DIR"/ede/foo.conf");
+	dir_remove(SAMPLE_SYS_DIR"/ede");
+	dir_remove(SAMPLE_USER_DIR"/ede");
 	dir_remove(SAMPLE_SYS_DIR);
 	dir_remove(SAMPLE_USER_DIR);
 	dir_remove(SAMPLE_RES_DIR);
@@ -210,6 +218,8 @@ UT_FUNC(ResourceTestBuggy, "Test resource buggy read/save")
 	dir_create(SAMPLE_RES_DIR);
 	dir_create(SAMPLE_SYS_DIR);
 	dir_create(SAMPLE_USER_DIR);
+	dir_create(SAMPLE_SYS_DIR"/ede");
+	dir_create(SAMPLE_USER_DIR"/ede");
 
 	const char* sys_conf = "\
 [global]          \n\
@@ -225,11 +235,11 @@ buggy buggy value = 3 \n\
 ";
 
 	File f;
-	f.open(SAMPLE_SYS_DIR"/foo-not-found.conf", FIO_WRITE);
+	f.open(SAMPLE_SYS_DIR"/ede/foo-not-found.conf", FIO_WRITE);
 	f.write(sys_conf);
 	f.close();
 
-	f.open(SAMPLE_USER_DIR"/foo.conf", FIO_WRITE);
+	f.open(SAMPLE_USER_DIR"/ede/foo.conf", FIO_WRITE);
 	f.write(user_conf);
 	f.close();
 
@@ -274,8 +284,10 @@ buggy buggy value = 3 \n\
 	edelib_setenv(CONFIG_HOME_ENV, config_home_saved.c_str(), 1);
 	edelib_setenv(CONFIG_DIRS_ENV, config_dirs_saved.c_str(), 1);
 
-	file_remove(SAMPLE_USER_DIR"/foo.conf");
-	file_remove(SAMPLE_SYS_DIR"/foo-not-found.conf");
+	file_remove(SAMPLE_USER_DIR"/ede/foo.conf");
+	file_remove(SAMPLE_SYS_DIR"/ede/foo-not-found.conf");
+	dir_remove(SAMPLE_SYS_DIR"/ede");
+	dir_remove(SAMPLE_USER_DIR"/ede");
 	dir_remove(SAMPLE_SYS_DIR);
 	dir_remove(SAMPLE_USER_DIR);
 	dir_remove(SAMPLE_RES_DIR);
@@ -286,6 +298,8 @@ UT_FUNC(ResourceTestFindConf, "Test resource config find")
 	dir_create(SAMPLE_RES_DIR);
 	dir_create(SAMPLE_SYS_DIR);
 	dir_create(SAMPLE_USER_DIR);
+	dir_create(SAMPLE_SYS_DIR"/ede");
+	dir_create(SAMPLE_USER_DIR"/ede");
 
 	const char* sys_conf = "\
 [global]          \n\
@@ -299,11 +313,11 @@ user_altered_value = 5\n\
 ";
 
 	File f;
-	f.open(SAMPLE_SYS_DIR"/foo.conf", FIO_WRITE);
+	f.open(SAMPLE_SYS_DIR"/ede/foo.conf", FIO_WRITE);
 	f.write(sys_conf);
 	f.close();
 
-	f.open(SAMPLE_USER_DIR"/foo.conf", FIO_WRITE);
+	f.open(SAMPLE_USER_DIR"/ede/foo.conf", FIO_WRITE);
 	f.write(user_conf);
 	f.close();
 
@@ -323,19 +337,21 @@ user_altered_value = 5\n\
 	edelib_setenv(CONFIG_DIRS_ENV, SAMPLE_SYS_DIR, 1);
 
 	// check it's location
-	UT_VERIFY( Resource::find_config("foo") == SAMPLE_USER_DIR"/foo.conf");
-	UT_VERIFY( Resource::find_config("foo", RES_USER_FIRST) == SAMPLE_USER_DIR"/foo.conf");
-	UT_VERIFY( Resource::find_config("foo", RES_USER_ONLY) == SAMPLE_USER_DIR"/foo.conf");
+	UT_VERIFY( Resource::find_config("foo") == SAMPLE_USER_DIR"/ede/foo.conf");
+	UT_VERIFY( Resource::find_config("foo", RES_USER_FIRST) == SAMPLE_USER_DIR"/ede/foo.conf");
+	UT_VERIFY( Resource::find_config("foo", RES_USER_ONLY) == SAMPLE_USER_DIR"/ede/foo.conf");
 
-	UT_VERIFY( Resource::find_config("foo", RES_SYS_FIRST) == SAMPLE_SYS_DIR"/foo.conf");
-	UT_VERIFY( Resource::find_config("foo", RES_SYS_ONLY) == SAMPLE_SYS_DIR"/foo.conf");
+	UT_VERIFY( Resource::find_config("foo", RES_SYS_FIRST) == SAMPLE_SYS_DIR"/ede/foo.conf");
+	UT_VERIFY( Resource::find_config("foo", RES_SYS_ONLY) == SAMPLE_SYS_DIR"/ede/foo.conf");
 
 	// restore env vars and delete files
 	edelib_setenv(CONFIG_HOME_ENV, config_home_saved.c_str(), 1);
 	edelib_setenv(CONFIG_DIRS_ENV, config_dirs_saved.c_str(), 1);
 
-	file_remove(SAMPLE_USER_DIR"/foo.conf");
-	file_remove(SAMPLE_SYS_DIR"/foo.conf");
+	file_remove(SAMPLE_USER_DIR"/ede/foo.conf");
+	file_remove(SAMPLE_SYS_DIR"/ede/foo.conf");
+	dir_remove(SAMPLE_SYS_DIR"/ede");
+	dir_remove(SAMPLE_USER_DIR"/ede");
 	dir_remove(SAMPLE_SYS_DIR);
 	dir_remove(SAMPLE_USER_DIR);
 	dir_remove(SAMPLE_RES_DIR);

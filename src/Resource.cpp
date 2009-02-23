@@ -26,6 +26,12 @@
 #include <edelib/File.h>
 #include <edelib/Directory.h>
 
+#define CONFIG_FILE_SUFFIX ".conf"
+
+#ifndef RESOURCE_DOMAIN_PREFIX
+# define RESOURCE_DOMAIN_PREFIX "ede"
+#endif
+
 EDELIB_NS_BEGIN
 
 typedef list<String> StrList;
@@ -98,6 +104,12 @@ static String locate_resource(const char* name, ResourceType r, bool is_config) 
 	return ret;
 }
 
+static void construct_name_from_domain(const char* domain, String& ret) {
+	ret = RESOURCE_DOMAIN_PREFIX;
+	ret += E_DIR_SEPARATOR;
+	ret += domain;
+	ret += CONFIG_FILE_SUFFIX;
+}
 
 Resource::Resource() : sys_conf(NULL), user_conf(NULL) {
 }
@@ -106,69 +118,13 @@ Resource::~Resource() {
 	clear();
 }
 
-#if 0
 bool Resource::load(const char* domain) {
 	E_ASSERT(domain != NULL);
 
 	clear();
 
-	String file = domain;
-	file += ".conf";
-
-	// check first in system directories
-	StrList dirs;
-	if(system_config_dirs(dirs)) {
-		StrListIter it = dirs.begin(), it_end = dirs.end();
-		const char* p = NULL;
-
-		for(; it != it_end; ++it) {
-			*it += E_DIR_SEPARATOR;
-			*it += file;
-
-			if(file_exists((*it).c_str())) {
-				p = (*it).c_str();
-				break;
-			}
-		}
-
-		// now try to load it
-		if(p) {
-			sys_conf = new Config;
-
-			if(!sys_conf->load(p)) {
-				delete sys_conf;
-				sys_conf = NULL;
-			}
-		}
-	}
-
-	dirs.clear();
-
-	// now go to user directory
-	String ufile = user_config_dir();
-	ufile += E_DIR_SEPARATOR;
-	ufile += file;
-
-	if(file_exists(ufile.c_str())) {
-		user_conf = new Config;
-
-		if(!user_conf->load(ufile.c_str())) {
-			delete user_conf;
-			user_conf = NULL;
-		}
-	}
-
-	return (sys_conf != NULL || user_conf != NULL);
-}
-#endif
-
-bool Resource::load(const char* domain) {
-	E_ASSERT(domain != NULL);
-
-	clear();
-
-	String path, file = domain;
-	file += ".conf";
+	String path, file;
+	construct_name_from_domain(domain, file);
 
 	/* check first in system directories */
 	if(locate_resource_sys(file.c_str(), path, true)) {
@@ -199,25 +155,27 @@ bool Resource::save(const char* domain) {
 	E_ASSERT(domain != NULL);
 	E_RETURN_VAL_IF_FAIL(user_conf != NULL, false);
 
-	String ufile = user_config_dir();
-	ufile += E_DIR_SEPARATOR;
-	ufile += domain;
-	ufile += ".conf";
+	String path, file;
+	construct_name_from_domain(domain, file);
 
-	// Create directory if necessary
+	path = user_config_dir();
+	path += E_DIR_SEPARATOR;
+	path += file;
+
+	/* Create directory if necessary */
 	String::size_type loc = 0, loc2 = 0;
 
-	// find last slash
-	while((loc2 = ufile.find('/', loc + 1)) != String::npos) 
+	/* find last slash */
+	while((loc2 = path.find('/', loc + 1)) != String::npos) 
 		loc = loc2;
 
-	String tmp = ufile.substr(0, loc);
+	String tmp = path.substr(0, loc);
 	const char* dname = tmp.c_str();
 
-	if(!dir_exists(dname))
-		dir_create_with_parents(dname, 0700); // default perms
+	if(!dir_create_with_parents(dname, 0700))
+		return false;
 
-	return user_conf->save(ufile.c_str());
+	return user_conf->save(path.c_str());
 }
 
 void Resource::clear(void) {
@@ -373,9 +331,11 @@ void Resource::set(const char* section, const char* key, double val) {
 	STORE_RESOURCE(section, key, val, set);
 }
 		
-String Resource::find_config(const char* name, ResourceType r) {
-	String n = name;
-	n += ".conf";
+String Resource::find_config(const char* domain, ResourceType r) {
+	E_ASSERT(domain != NULL);
+
+	String n;
+	construct_name_from_domain(domain, n);
 
 	String ret = locate_resource(n.c_str(), r, true);
 	E_RETURN_VAL_IF_FAIL(file_exists(ret.c_str()), "");
