@@ -129,6 +129,9 @@ String& String::assign(const String& str) {
 }
 
 String& String::append(const char* str, size_type len) {
+	if(len == 0)
+		return *this;
+
 	if(len + length() <= capacity()) {
 		memcpy(sdata->chars + length(), str, len);
 		sdata->length += len;

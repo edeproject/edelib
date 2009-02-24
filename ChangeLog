@@ -5,6 +5,8 @@
 	parameter, as Vedran proposed, and it behaves as subdirectory of XDG
 	config dirs
 	* test/resource.cpp: updated tests
+	* src/String.cpp: fixed a crash when append() is called with empty string
+	* test/string.cpp: updated tests
 
 2009-02-23  Sanel <karijes@users.sourceforge.net>
 

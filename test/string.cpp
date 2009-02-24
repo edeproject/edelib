@@ -307,3 +307,22 @@ UT_FUNC(StringComparison, "Test std::string comparison")
 
 	UT_VERIFY( s1 == s2.c_str() );
 }
+
+UT_FUNC(StringEmptyAppend, "Test string empty append")
+{
+	String s;
+	s += "";
+
+	UT_VERIFY( s.length() == 0 );
+
+	s = "";
+	s += "";
+	s += "";
+	s += "";
+
+	UT_VERIFY( s.length() == 0 );
+
+	s = s + "";
+
+	UT_VERIFY( s.length() == 0 );
+}
