@@ -164,8 +164,21 @@ public:
 	 * \return true if was able to find either user or system file
 	 * \param domain is application specific settings file; by default it
 	 * will search for <em>domain</em>.conf file
+	 * \param prefix is added at the beggining of domain (e.g. "prefix/domain")
+	 * and is used to setup default reading directory, so all config files can
+	 * be stored in one place, like:
+	 * \code
+	 *   Resource r;
+	 *   // load foo.conf from XDG config dirs and 'ede' as subdirectory
+	 *   // e.g. if XDG_CONFIG_DIRS is "/etc/xdg:/opt/etc", directories "/etc/xdg/ede"
+	 *   // and "/opt/etc/ede" will be searched
+	 *   r.load("foo");
+	 *
+	 *   // or load straight from /etc/xdg and /opt/etc directories
+	 *   r.load("foo", "");
+	 * \endcode
 	 */
-	bool load(const char* domain);
+	bool load(const char* domain, const char* prefix = "ede");
 
 	/**
 	 * Save content to the file.
@@ -173,8 +186,9 @@ public:
 	 * \return true if file saving was ok, otherwise false.
 	 * \param domain is application specific settings file; by default it
 	 * will be <em>domain</em>.conf and will be stored in $XDG_CONFIG_HOME directory
+	 * \param prefix same as from load()
 	 */
-	bool save(const char* domain);
+	bool save(const char* domain, const char* prefix = "ede");
 
 	/**
 	 * Clears all loaded data. Calls to any get() member after this will
@@ -410,8 +424,9 @@ public:
 	 * \return path if filename was found or empty string if failed
 	 * \param name is config filename without extension
 	 * \param rt is ResourceType variable
+	 * \param prefix same as from load()
 	 */
-	static String find_config(const char* name, ResourceType rt = RES_USER_FIRST);
+	static String find_config(const char* name, ResourceType rt = RES_USER_FIRST, const char* prefix = "ede");
 	
 	/**
 	 * Locate data in XDG_DATA_HOME and XDG_DATA_DIRS paths. Data can be anything,

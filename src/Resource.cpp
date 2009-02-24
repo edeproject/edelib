@@ -28,10 +28,6 @@
 
 #define CONFIG_FILE_SUFFIX ".conf"
 
-#ifndef RESOURCE_DOMAIN_PREFIX
-# define RESOURCE_DOMAIN_PREFIX "ede"
-#endif
-
 EDELIB_NS_BEGIN
 
 typedef list<String> StrList;
@@ -104,8 +100,8 @@ static String locate_resource(const char* name, ResourceType r, bool is_config) 
 	return ret;
 }
 
-static void construct_name_from_domain(const char* domain, String& ret) {
-	ret = RESOURCE_DOMAIN_PREFIX;
+static void construct_name_from_domain(const char* domain, const char* prefix, String& ret) {
+	ret = prefix;
 	ret += E_DIR_SEPARATOR;
 	ret += domain;
 	ret += CONFIG_FILE_SUFFIX;
@@ -118,13 +114,14 @@ Resource::~Resource() {
 	clear();
 }
 
-bool Resource::load(const char* domain) {
+bool Resource::load(const char* domain, const char* prefix) {
 	E_ASSERT(domain != NULL);
+	E_ASSERT(prefix != NULL);
 
 	clear();
 
 	String path, file;
-	construct_name_from_domain(domain, file);
+	construct_name_from_domain(domain, prefix, file);
 
 	/* check first in system directories */
 	if(locate_resource_sys(file.c_str(), path, true)) {
@@ -151,12 +148,13 @@ bool Resource::load(const char* domain) {
 	return (sys_conf != NULL || user_conf != NULL);
 }
 
-bool Resource::save(const char* domain) {
+bool Resource::save(const char* domain, const char* prefix) {
 	E_ASSERT(domain != NULL);
+	E_ASSERT(prefix != NULL);
 	E_RETURN_VAL_IF_FAIL(user_conf != NULL, false);
 
 	String path, file;
-	construct_name_from_domain(domain, file);
+	construct_name_from_domain(domain, prefix, file);
 
 	path = user_config_dir();
 	path += E_DIR_SEPARATOR;
@@ -331,11 +329,12 @@ void Resource::set(const char* section, const char* key, double val) {
 	STORE_RESOURCE(section, key, val, set);
 }
 		
-String Resource::find_config(const char* domain, ResourceType r) {
+String Resource::find_config(const char* domain, ResourceType r, const char* prefix) {
 	E_ASSERT(domain != NULL);
+	E_ASSERT(prefix != NULL);
 
 	String n;
-	construct_name_from_domain(domain, n);
+	construct_name_from_domain(domain, prefix, n);
 
 	String ret = locate_resource(n.c_str(), r, true);
 	E_RETURN_VAL_IF_FAIL(file_exists(ret.c_str()), "");

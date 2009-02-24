@@ -1,3 +1,11 @@
+2009-02-24  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Resource.h:
+	* src/Resource.cpp: save(), load() and find_conf() have additional prefix
+	parameter, as Vedran proposed, and it behaves as subdirectory of XDG
+	config dirs
+	* test/resource.cpp: updated tests
+
 2009-02-23  Sanel <karijes@users.sourceforge.net>
 
 	* m4/stl.m4:
