@@ -7,6 +7,7 @@
 	* test/resource.cpp: updated tests
 	* src/String.cpp: fixed a crash when append() is called with empty string
 	* test/string.cpp: updated tests
+	* autogen.sh: code cleanup
 
 2009-02-23  Sanel <karijes@users.sourceforge.net>
 
