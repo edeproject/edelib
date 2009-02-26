@@ -1,7 +1,7 @@
 dnl
 dnl $Id$
 dnl
-dnl Copyright (c) 2005-2007 edelib authors
+dnl Copyright (c) 2005-2009 edelib authors
 dnl
 dnl This library is free software; you can redistribute it and/or
 dnl modify it under the terms of the GNU Lesser General Public
@@ -32,63 +32,6 @@ AC_DEFUN([EDELIB_CHECK_DBUS], [
 				DBUS_CFLAGS="$gcc_long_long_stuf $DBUS_CFLAGS"
 			else
 				AC_MSG_RESULT(no)
-				AC_MSG_ERROR([D-Bus libraries not found! Please install them first])
-			fi
-		fi
-
-		dnl The hard way, pkg-config was not found so we must
-		dnl scan manually for the library. 
-		dnl
-		dnl In case if pkg-config is used, it would append to macro's first
-		dnl parameter _CFLAGS and _LIBS (e.g. DBUS_CFLAGS and DBUS_LIBS) so
-		dnl I'm mimicking that here too.
-		if eval "test $pkg_config_found = no"; then
-			dbus_search_failed=no
-
-			dbus_include_dirs="/usr/include /usr/include/dbus-1.0 /usr/local/include /usr/local/include/dbus-1.0"
-			dbus_include_arch_deps="/usr/lib/dbus-1.0/include /usr/local/lib/dbus-1.0/include"
-			dbus_lib_dirs="/lib /usr/lib /usr/local/lib"
-
-			AC_MSG_CHECKING([for dbus/dbus.h])
-			EDELIB_FIND_FILE(dbus/dbus.h, $dbus_include_dirs, dbus_incdir)
-
-			if eval "test $dbus_incdir = no"; then
-				dbus_search_failed=yes
-				AC_MSG_RESULT(no)
-			else
-				AC_MSG_RESULT(yes)
-			fi
-
-			if eval "test $dbus_search_failed = no"; then
-				AC_MSG_CHECKING([for dbus/dbus-arch-deps.h])
-				EDELIB_FIND_FILE(dbus/dbus-arch-deps.h, $dbus_include_arch_deps, dbus_incdir_arch_deps)
-				
-				if eval "test $dbus_incdir_arch_deps = no"; then
-					dbus_search_failed=yes
-					AC_MSG_RESULT(no)
-				else
-					AC_MSG_RESULT(yes)
-				fi
-			fi
-
-			if eval "test $dbus_search_failed = no"; then
-				AC_MSG_CHECKING([for libdbus-1.so])
-				EDELIB_FIND_FILE(libdbus-1.so, $dbus_lib_dirs, dbus_libdir)
-
-				if eval "test $dbus_libdir = no"; then
-					dbus_search_failed=yes
-					AC_MSG_RESULT(no)
-				else
-					AC_MSG_RESULT(yes)
-				fi
-			fi
-
-			if eval "test $dbus_search_failed = no"; then
-				AC_DEFINE(HAVE_DBUS, 1, [Define to 1 if you have libdbus])
-
-				DBUS_CFLAGS="$gcc_long_long_stuf -I$dbus_incdir -I$dbus_incdir_arch_deps"
-				DBUS_LIBS="-L$dbus_libdir -ldbus-1"
-			else
 				AC_MSG_ERROR([D-Bus libraries not found! Please install them first])
 			fi
 		fi

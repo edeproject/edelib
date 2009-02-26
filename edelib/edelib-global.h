@@ -2,7 +2,7 @@
  * $Id$
  *
  * Base defs for edelib
- * Copyright (c) 2005-2007 edelib authors
+ * Copyright (c) 2005-2009 edelib authors
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -49,6 +49,12 @@
 
 #define EDELIB_API E_EXPORT
 #define EDELIB_NO_API E_NO_EXPORT
+
+#ifdef __GNUC__
+	#define EDELIB_DEPRECATED __attribute__ ((deprecated))
+#else
+	#define EDELIB_DEPRECATED
+#endif
 
 #ifdef HAVE_EDELIB_BASE_CONFIG_H
 #include "_conf.h"

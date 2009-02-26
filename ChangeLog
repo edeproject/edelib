@@ -1,3 +1,11 @@
+2009-02-26  Sanel <karijes@users.sourceforge.net>
+
+	* m4/dbus.m4: removed obsolete code
+	* edelib/edelib-global.h: added EDELIB_DEPRECATED macro
+	* edelib/Run.h:
+	* src/Run.cpp: run_program() and run_program_fmt() marked as deprecated;
+	replacement is in run_sync() and run_async()
+
 2009-02-24  Sanel <karijes@users.sourceforge.net>
 
 	* edelib/Resource.h:

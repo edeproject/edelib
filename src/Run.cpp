@@ -32,6 +32,8 @@
 #include <edelib/Missing.h>
 #include <edelib/Debug.h>
 
+#define CMD_BUFF_SIZE 128
+
 /*
  * Make sure this is declared outside namespace; when shared
  * linking is done linker will see it as edelib::environ not plain environ
@@ -114,7 +116,7 @@ int run_program(const char* cmd, bool wait) {
 }
 
 int run_program_fmt(bool wait, const char* fmt, ...) {
-	char buff[256];
+	char buff[CMD_BUFF_SIZE];
 	va_list ap;
 
 	va_start(ap, fmt);
@@ -122,6 +124,32 @@ int run_program_fmt(bool wait, const char* fmt, ...) {
 	va_end(ap);
 
 	return run_program(buff, wait);
+}
+
+int run_sync(const char* fmt, ...) {
+	E_ASSERT(fmt != NULL);
+
+	char buff[CMD_BUFF_SIZE];
+	va_list ap;
+
+	va_start(ap, fmt);
+	vsnprintf(buff, sizeof(buff), fmt, ap);
+	va_end(ap);
+
+	return run_fork(buff, true);
+}
+
+int run_async(const char* fmt, ...) {
+	E_ASSERT(fmt != NULL);
+
+	char buff[CMD_BUFF_SIZE];
+	va_list ap;
+
+	va_start(ap, fmt);
+	vsnprintf(buff, sizeof(buff), fmt, ap);
+	va_end(ap);
+
+	return run_fork(buff, false);
 }
 
 EDELIB_NS_END

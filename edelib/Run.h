@@ -48,13 +48,32 @@ enum {
  * above codes, or errno value for not checked codes
  * \param cmd is commad to be executed with optional full path and parameters
  * \param wait if is true (default) function will not exit until program exists
+ * \deprecated in a favor of run_sync() and run_async()
  */
-EDELIB_API int run_program(const char* cmd, bool wait = true);
+EDELIB_API int run_program(const char* cmd, bool wait = true) EDELIB_DEPRECATED;
 
 /**
  * Same as run_program(), but run printf-like constructed command
+ * \deprecated in a favor of run_sync() and run_async()
  */
-EDELIB_API int run_program_fmt(bool wait, const char* fmt, ...);
+EDELIB_API int run_program_fmt(bool wait, const char* fmt, ...) EDELIB_DEPRECATED;
+
+/**
+ * Executes the given program. If full path to the executable was given, it will be 
+ * directly called; if not, PATH environment variable should contain a path where
+ * executable is placed.
+ *
+ * This function will run a command and wait until it finishes.
+ * \return 0 if starting and quitting program went fine; otherwise return one of
+ * above codes, or errno value for not checked codes
+ * \param fmt is printf-like formated string
+ */
+EDELIB_API int run_sync(const char* fmt, ...);
+
+/**
+ * Same as run_sync(), except it will run command without blocking
+ */
+EDELIB_API int run_async(const char* fmt, ...);
 
 EDELIB_NS_END
 #endif // __RUN_H__
