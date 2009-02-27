@@ -1,6 +1,13 @@
 2009-02-27  Sanel <karijes@users.sourceforge.net>
 
 	* tools/edelib-mime-find: added
+	* edelib/Pty.h:
+	* edelib/PtyProcess.h:
+	* src/Pty.cpp:
+	* src/PtyProcess.cpp: added Vedran's work on synchronous chat with
+	terminal programs
+	* configure.in: added checks for functions needed by PTY and PtyProcess
+	classes
 
 2009-02-26  Sanel <karijes@users.sourceforge.net>
 

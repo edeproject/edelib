@@ -68,6 +68,15 @@ AC_CHECK_HEADER(string.h, AC_DEFINE(HAVE_STRING_H, 1, [Define to 1 if you have s
 AC_CHECK_FUNC(snprintf, AC_DEFINE(HAVE_SNPRINTF, 1, [Define to 1 if you have snprintf()]))
 AC_CHECK_FUNC(vsnprintf, AC_DEFINE(HAVE_VSNPRINTF, 1, [Define to 1 if you have vsnprintf()]))
 
+dnl terminal stuff
+AC_CHECK_FUNC(grantpt, AC_DEFINE(HAVE_GRANTPT, 1, [Define to 1 if you have grantpt()]))
+AC_CHECK_FUNC(ptsname, AC_DEFINE(HAVE_PTSNAME, 1, [Define to 1 if you have ptsname()]))
+AC_CHECK_FUNC(unlockpt, AC_DEFINE(HAVE_UNLOCKPT, 1, [Define to 1 if you have unlockpt()]))
+AC_CHECK_FUNC(_getpty, AC_DEFINE(HAVE__GETPTY, 1, [Define to 1 if you have _getpty()]))
+AC_CHECK_HEADER(pty.h, AC_DEFINE(HAVE_PTY_H, 1, [Define to 1 if you have pty.h]))
+AC_CHECK_HEADER(libutil.h, AC_DEFINE(HAVE_LIBUTIL_H, 1, [Define to 1 if you have libutil.h]))
+AC_CHECK_HEADER(util.h, AC_DEFINE(HAVE_UTIL_H, 1, [Define to 1 if you have util.h]))
+
 EDELIB_DATETIME
 EDELIB_DEVELOPMENT
 

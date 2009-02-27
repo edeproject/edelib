@@ -52,6 +52,8 @@ SOURCE =
 	MimeType.cpp
 	rx/regex.c
 	Regex.cpp
+	Pty.cpp
+	PtyProcess.cpp
 	$(XDGMIME) ;
 
 SOURCE_GUI = 
