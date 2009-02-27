@@ -1,0 +1,37 @@
+#!/usr/bin/python
+
+import sys
+import os
+import stat
+
+def visit(arg, dirname, names):
+	for name in names:
+		if name[-4:] == ".xml" and name[:-4] == arg:
+			print "%s/%s" % (dirname, name)
+
+def mime_search(mime):
+	dirs = []
+	data_dirs = os.environ.get("XDG_DATA_DIRS", "/usr/local/share:/usr/share")
+	data_home = os.environ.get("XDG_DATA_HOME")
+
+	for i in data_dirs.split(":"):
+		dirs.append("%s/mime" % i)
+
+	if data_home:
+		for i in data_home.split(":"):
+			dirs.append("%s/mime" % i)
+
+	for d in dirs:
+		os.path.walk(d, visit, mime)
+
+def main():
+	if len(sys.argv) != 2:
+		print("Usage: edelib-mime-find [mime-part]")
+		print("Find the given mime part type and return full path")
+		print("e.g. 'edelib-mime-find plain'")
+	else:
+		mime_search(sys.argv[1])
+
+
+if __name__ == "__main__":
+	main()
