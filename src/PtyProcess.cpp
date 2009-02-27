@@ -270,7 +270,6 @@ char *PtyProcess::read_line(bool block) {
 	return ret;
 }
 
-
 void PtyProcess::write_line(const char *line, bool addnl) {
 	if(!line)
 		return;
@@ -283,7 +282,6 @@ void PtyProcess::write_line(const char *line, bool addnl) {
 	if(addnl)
 		write(m_Fd, "\n", 1);
 }
-
 
 void PtyProcess::unread_line(const char *line, bool addnl) {
 	char *tmp = (char*) malloc(strlen(line) + 1);
@@ -347,7 +345,6 @@ int PtyProcess::exec(const char *command, const char **args) {
 	return -1; /* never reached */
 }
 
-
 /*
  * Wait until the terminal is set into no echo mode. At least one su
  * (RH6 w/ Linux-PAM patches) sets noecho mode AFTER writing the Password:
@@ -357,7 +354,6 @@ int PtyProcess::exec(const char *command, const char **args) {
  * Note that this is done on the slave fd. While Linux allows tcgetattr() on
  * the master side, Solaris doesn't.
  */
-
 int PtyProcess::wait_slave() {
 	int slave = open(m_TTY, O_RDWR);
 	if (slave < 0) {
@@ -394,7 +390,6 @@ int PtyProcess::wait_slave() {
 	close(slave);
 	return 0;
 }
-
 
 int PtyProcess::enable_local_echo(bool enable) {
 	int slave = open(m_TTY, O_RDWR);
