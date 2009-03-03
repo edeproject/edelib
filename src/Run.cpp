@@ -2,7 +2,7 @@
  * $Id$
  *
  * Run external program
- * Copyright (c) 2005-2007 edelib authors
+ * Copyright (c) 2005-2009 edelib authors
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -32,7 +32,7 @@
 #include <edelib/Missing.h>
 #include <edelib/Debug.h>
 
-#define CMD_BUFF_SIZE 128
+#define CMD_BUF_SIZE 128
 
 /*
  * Make sure this is declared outside namespace; when shared
@@ -42,7 +42,7 @@ extern char** environ;
 
 EDELIB_NS_BEGIN
 
-static int run_fork(const char* cmd, bool wait) {
+static int run_forked(const char* cmd, bool wait) {
 	E_RETURN_VAL_IF_FAIL(cmd, RUN_EMPTY);
 
 	int nulldev = -1;
@@ -91,10 +91,10 @@ static int run_fork(const char* cmd, bool wait) {
 		else {
 			if(!WIFEXITED(status)) {
 				status_ret = WEXITSTATUS(status);
-				E_DEBUG(E_STRLOC ": run_fork(): Child '%s' died with %i\n", cmd, status_ret);
+				E_DEBUG(E_STRLOC ": run_forked(): Child '%s' died with %i\n", cmd, status_ret);
 			} else if(WIFSIGNALED(status)) {
 				status_ret = WTERMSIG(status);
-				E_DEBUG(E_STRLOC ": run_fork(): Child '%s' signaled with %i\n", cmd,  status_ret);
+				E_DEBUG(E_STRLOC ": run_forked(): Child '%s' signaled with %i\n", cmd,  status_ret);
 			} else {
 				// convert status signal to errno format
 				int s = WEXITSTATUS(status);
@@ -112,44 +112,44 @@ static int run_fork(const char* cmd, bool wait) {
 }
 
 int run_program(const char* cmd, bool wait) {
-	return run_fork(cmd, wait);
+	return run_forked(cmd, wait);
 }
 
 int run_program_fmt(bool wait, const char* fmt, ...) {
-	char buff[CMD_BUFF_SIZE];
+	char buf[CMD_BUF_SIZE];
 	va_list ap;
 
 	va_start(ap, fmt);
-	vsnprintf(buff, sizeof(buff), fmt, ap);
+	vsnprintf(buf, sizeof(buf), fmt, ap);
 	va_end(ap);
 
-	return run_program(buff, wait);
+	return run_forked(buf, wait);
 }
 
 int run_sync(const char* fmt, ...) {
 	E_ASSERT(fmt != NULL);
 
-	char buff[CMD_BUFF_SIZE];
+	char buf[CMD_BUF_SIZE];
 	va_list ap;
 
 	va_start(ap, fmt);
-	vsnprintf(buff, sizeof(buff), fmt, ap);
+	vsnprintf(buf, sizeof(buf), fmt, ap);
 	va_end(ap);
 
-	return run_fork(buff, true);
+	return run_forked(buf, true);
 }
 
 int run_async(const char* fmt, ...) {
 	E_ASSERT(fmt != NULL);
 
-	char buff[CMD_BUFF_SIZE];
+	char buf[CMD_BUF_SIZE];
 	va_list ap;
 
 	va_start(ap, fmt);
-	vsnprintf(buff, sizeof(buff), fmt, ap);
+	vsnprintf(buf, sizeof(buf), fmt, ap);
 	va_end(ap);
 
-	return run_fork(buff, false);
+	return run_forked(buf, false);
 }
 
 EDELIB_NS_END

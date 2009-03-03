@@ -68,6 +68,8 @@ enum FileIOMode {
  *  	printf("%s", f.readline());
  *  f.close(); // optional
  * \endcode
+ *
+ * \todo error checks during stream read/write (ferror)
  */
 class EDELIB_API File {
 private:
@@ -154,6 +156,8 @@ public:
 	 * given size will be filled. A '\\0' is stored as last
 	 * character in buffer. It will return EOF if end of stream
 	 * is reached.
+	 *
+	 * \todo it does not return 1 when line contains only '\\n' char. Should return?
 	 *
 	 * \return size of readed data or EOF for end.
 	 * \param buff where to place content

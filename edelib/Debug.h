@@ -111,47 +111,19 @@ EDELIB_API void _edelib_fatal(const char* fmt, ...);
 EDELIB_NS_BEGIN
 
 /**
- * \enum MsgType
+ * \enum ErrorMessageType
  * \brief Type of messages received in error message handler
  */
-enum MsgType {
-	MsgDebug = 0,         ///< debug messages
-	MsgWarn,              ///< warnings
-	MsgFatal              ///< failed assertions and EFatal calls
+enum ErrorMessageType {
+	ERROR_MESSAGE_DEBUG,
+	ERROR_MESSAGE_WARNING,
+	ERROR_MESSAGE_FATAL
 };
 
-/** Handler type for error messages */
-typedef void (*MsgHandlerType)(MsgType t, const char* msg);
 /** 
- * Installs handler for error messages.
- *
- * This function is used to redirect all
- * messages to users defined function. User later
- * can do what is apropriate. This is sample
- * of usage:
- * \code
- *   MsgHandlerType myfunc;
- *   void myfunc(MsgType type, const char* msg)
- *   {
- *      switch(type)
- *      {
- *         // debug messages
- *         case MsgDebug:
- *            // do something
- *         break;
- *         // warrnings
- *         case MsgWarn:
- *            // do something
- *         break;
- *         // fatals and assertions (abort() is advised)
- *         case MsgFatal:
- *            abort();
- *         break;
- *       }
- *   }
- * \endcode
+ * Installs handler for error messages
  */
-EDELIB_API void InstallMsgHandler(MsgHandlerType m);
+EDELIB_API void error_mesage_handler_install(void (*)(ErrorMessageType t, const char* msg));
 
 EDELIB_NS_END
 #endif // __DEBUG_H__

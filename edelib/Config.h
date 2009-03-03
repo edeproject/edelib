@@ -104,6 +104,10 @@ typedef list<ConfigSection*>::iterator SectionListIter;
  * \code
  *   get("parent/child", "item", &val, valsz);
  * \endcode
+ *
+ * \todo don't allow [] sections
+ * \todo What Config as localized keys should read: LC_MESSAGES or LANG ??? I'm using for now LANG,
+ * but fd.o people said it should be LC_MESSAGES. Inspect this.
  */
 class EDELIB_API Config {
 private:

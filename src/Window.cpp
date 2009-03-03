@@ -20,6 +20,7 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <ctype.h>
 #include <FL/Fl.H>
 #include <FL/x.H>
@@ -47,10 +48,11 @@ extern int FL_NORMAL_SIZE;
 EDELIB_NS_BEGIN
 
 static XSettingsClient* xcli = NULL;
-static Window* local_window  = NULL;
+static Window*          local_window  = NULL;
+static char*            seen_theme = NULL;
 
 char fl_show_iconic;	// hack for iconize()
-int fl_disable_transient_for; // secret method of removing TRANSIENT_FOR
+int  fl_disable_transient_for; // secret method of removing TRANSIENT_FOR
 
 static const int childEventMask = ExposureMask;
 
@@ -59,6 +61,20 @@ static const int XEventMask = ExposureMask | StructureNotifyMask |
 	ButtonPressMask | ButtonReleaseMask | 
 	EnterWindowMask | LeaveWindowMask | 
 	PointerMotionMask;
+
+static bool icon_theme_load_once(const char* theme) {
+	if(seen_theme && strcmp(seen_theme, theme) == 0)
+		return false;
+
+	seen_theme = strdup(theme);
+	E_DEBUG(E_STRLOC ": loading '%s' theme\n", theme);
+
+	if(IconTheme::inited())
+		IconTheme::shutdown();
+
+	IconTheme::init(theme);
+	return true;
+}
 
 static void send_client_message(::Window w, Atom a, unsigned int uid) {
 	XEvent xev;
@@ -179,25 +195,22 @@ static void xsettings_cb(const char* name, XSettingsAction action, XSettingsSett
 		FL_NORMAL_SIZE = normal_size;
 		changed = true;
 	} else if(strcmp(name, "Net/IconThemeName") == 0) {
-		const char* icon_theme = NULL;
+		const char* th = NULL;
 
 		if(action == XSETTINGS_ACTION_DELETED || setting->type != XSETTINGS_TYPE_STRING)
-			icon_theme = DEFAULT_ICON_THEME;
+			th = DEFAULT_ICON_THEME;
 		else
-			icon_theme = setting->data.v_string;
+			th = setting->data.v_string;
 
-		if(IconTheme::inited())
-			IconTheme::shutdown();
-
-		IconTheme::init(icon_theme);
-		changed = true;
+		changed = icon_theme_load_once(th);
 	} else if(win->xsettings_callback()) {
 		// finally pass data to the user
 		changed = (*win->xsettings_callback())(name, action, setting, win->xsettings_callback_data());
 	}
 
-	if(changed)
+	if(changed) {
 		win->redraw();
+	}
 }
 
 Window::Window(int X, int Y, int W, int H, const char* l) : Fl_Double_Window(X, Y, W, H, l), 
@@ -220,6 +233,9 @@ Window::~Window() {
 	if(IconTheme::inited())
 		IconTheme::shutdown();
 
+	if(seen_theme)
+		free(seen_theme);
+
 	hide();
 }
 
@@ -237,12 +253,15 @@ void Window::init(int component) {
 		if(XSettingsClient::manager_running(fl_display, fl_screen))
 		{ }
 
-		IconTheme::init(DEFAULT_ICON_THEME);
+		icon_theme_load_once(DEFAULT_ICON_THEME);
 	}
 
 	// setup icons for dialogs
-	themed_dialog_icons(MSGBOX_ICON_INFO, MSGBOX_ICON_ERROR, MSGBOX_ICON_QUESTION, 
-			MSGBOX_ICON_QUESTION, MSGBOX_ICON_PASSWORD);
+	MessageBox::set_themed_icons(MSGBOX_ICON_INFO, 
+								 MSGBOX_ICON_ERROR, 
+								 MSGBOX_ICON_QUESTION, 
+								 MSGBOX_ICON_QUESTION, 
+								 MSGBOX_ICON_PASSWORD);
 
 	// FIXME: uh, uh ???
 	local_window = this;
@@ -347,7 +366,7 @@ void Window::show(void) {
 			background_pixel = int(fl_xpixel(color()));
 		}
 
-		create_window_xid(this, set_titlebar_icon, background_pixel);
+		window_xid_create(this, set_titlebar_icon, background_pixel);
 	} else
 		XMapRaised(fl_display, fl_xid(this));
 
@@ -358,7 +377,7 @@ void Window::show(void) {
 }
 
 // This function is stolen from FLTK and yes it is a mess !
-void create_window_xid(Fl_Window* win, void (*before_map_func)(Fl_Window*), int background_pixel) {
+void window_xid_create(Fl_Window* win, void (*before_map_func)(Fl_Window*), int background_pixel) {
 	Fl_Group::current(0); // get rid of very common user bug: forgot end()
 
 	int X = win->x();

@@ -30,6 +30,7 @@
 #include <edelib/MessageBox.h>
 #include <edelib/IconTheme.h>
 #include <edelib/Nls.h>
+#include <edelib/Debug.h>
 
 #include "icons/warning.xpm"
 #include "icons/info.xpm"
@@ -87,10 +88,8 @@ void MessageBox::clear(MessageBoxType t) {
 }
 
 void MessageBox::add_button(Fl_Button* b, MessageBoxButtonType bt) {
-	if(nbuttons >= MSGBOX_MAX_BUTTONS)
-		return;
-	if(!b)
-		return;
+	E_RETURN_IF_FAIL(nbuttons < MSGBOX_MAX_BUTTONS);
+	E_RETURN_IF_FAIL(b != NULL);
 
 	int W = 0, H = 0;
 
@@ -245,21 +244,17 @@ bool MessageBox::set_icon(const char* path) {
 	fl_register_images();
 
 	Fl_Image* i = Fl_Shared_Image::get(path);
-	if(!i)
-		return false;
+	E_RETURN_VAL_IF_FAIL(i, false);
 
 	img->image(i);
 	return true;
 }
 
 bool MessageBox::set_theme_icon(const char* name) {
-	if(!IconTheme::inited())
-		return false;
+	E_RETURN_VAL_IF_FAIL(IconTheme::inited(), false);
 
 	String p = IconTheme::get(name, ICON_SIZE_MEDIUM);
-	if(p.empty())
-		return false;
-
+	E_RETURN_VAL_IF_FAIL(p.empty(), false);
 	return set_icon(p.c_str());
 }
 
@@ -271,8 +266,7 @@ void MessageBox::set_xpm_icon(const char* const* arr) {
 }
 
 const char* MessageBox::get_input(void) {
-	if(!inpt)
-		return NULL;
+	E_RETURN_VAL_IF_FAIL(inpt != NULL, NULL);
 	return inpt->value();
 }
 
@@ -286,24 +280,25 @@ void MessageBox::focus_button(int b) {
 		buttons[b]->take_focus();
 }
 
+#define BUF_LEN 1024
+static char internal_buf[BUF_LEN];
+static char internal_ret_buf[BUF_LEN];
 
-#define BUFF_LEN 1024
-static char internal_buff[BUFF_LEN];
-static char internal_ret_buff[BUFF_LEN];
-
-static char msg_icon[BUFF_LEN]    = {0};
-static char alert_icon[BUFF_LEN]  = {0};
-static char ask_icon[BUFF_LEN]    = {0};
-static char input_icon[BUFF_LEN]  = {0};
-static char passwd_icon[BUFF_LEN] = {0};
+static char msg_icon[BUF_LEN]    = {0};
+static char alert_icon[BUF_LEN]  = {0};
+static char ask_icon[BUF_LEN]    = {0};
+static char input_icon[BUF_LEN]  = {0};
+static char passwd_icon[BUF_LEN] = {0};
 
 #define DO_COPY(src, dest) \
 	if(src) { \
-		strncpy(dest, src, BUFF_LEN); \
-		dest[BUFF_LEN - 1] = 0; \
+		strncpy(dest, src, BUF_LEN); \
+		dest[BUF_LEN - 1] = 0; \
 	}
 
-void themed_dialog_icons(const char* msg, const char* alert, const char* ask, const char* input, const char* password) {
+void MessageBox::set_themed_icons(const char* msg, const char* alert, const char* ask, 
+			const char* input, const char* password) 
+{
 	DO_COPY(msg, msg_icon)
 	DO_COPY(alert, alert_icon)
 	DO_COPY(ask, ask_icon)
@@ -311,7 +306,7 @@ void themed_dialog_icons(const char* msg, const char* alert, const char* ask, co
 	DO_COPY(password, passwd_icon)
 }
 
-void clear_dialog_icons(void) {
+void MessageBox::clear_themed_icons(void) {
 	msg_icon[0]   = 0;
 	alert_icon[0] = 0;
 	ask_icon[0]   = 0;
@@ -319,14 +314,22 @@ void clear_dialog_icons(void) {
 	passwd_icon [0] = 0;
 }
 
+void themed_dialog_icons(const char* msg, const char* alert, const char* ask, const char* input, const char* password) {
+	MessageBox::set_themed_icons(msg, alert, ask, input, password);
+}
+
+void clear_dialog_icons(void) {
+	MessageBox::clear_themed_icons();
+}
+
 void message(const char *fmt, ...) {
 	va_list ap;
 	va_start(ap, fmt);
-	vsnprintf(internal_buff, BUFF_LEN, fmt, ap);
+	vsnprintf(internal_buf, BUF_LEN, fmt, ap);
 	va_end(ap);
 
 	MessageBox mb;
-	mb.set_text(internal_buff);
+	mb.set_text(internal_buf);
 	mb.add_button(_("&Close"));
 
 	if(msg_icon[0] != 0)
@@ -340,11 +343,11 @@ void message(const char *fmt, ...) {
 void alert(const char *fmt, ...) {
 	va_list ap;
 	va_start(ap, fmt);
-	vsnprintf(internal_buff, BUFF_LEN, fmt, ap);
+	vsnprintf(internal_buf, BUF_LEN, fmt, ap);
 	va_end(ap);
 
 	MessageBox mb;
-	mb.set_text(internal_buff);
+	mb.set_text(internal_buf);
 	mb.add_button(_("&Close"));
 
 	if(alert_icon[0] != 0)
@@ -357,15 +360,15 @@ void alert(const char *fmt, ...) {
 }
 
 int ask(const char *fmt, ...) {
-	char buffer[BUFF_LEN];
+	char bufer[BUF_LEN];
 	va_list ap;
 
 	va_start(ap, fmt);
-	vsnprintf(buffer, BUFF_LEN - 1, fmt, ap);
+	vsnprintf(bufer, BUF_LEN - 1, fmt, ap);
 	va_end(ap);
 
 	MessageBox mb;
-	mb.set_text(buffer);
+	mb.set_text(bufer);
 	mb.add_button(_("&No"));
 	mb.add_button(_("&Yes"));
 
@@ -381,11 +384,11 @@ int ask(const char *fmt, ...) {
 const char* input(const char *fmt, const char *deflt, ...) {
 	va_list ap;
 	va_start(ap, deflt);
-	vsnprintf(internal_buff, BUFF_LEN, fmt, ap);
+	vsnprintf(internal_buf, BUF_LEN, fmt, ap);
 	va_end(ap);
 
 	MessageBox mb(MSGBOX_INPUT);
-	mb.set_text(internal_buff);
+	mb.set_text(internal_buf);
 
 	if(deflt)
 		mb.set_input(deflt);
@@ -405,20 +408,20 @@ const char* input(const char *fmt, const char *deflt, ...) {
 	if(!mb.get_input())
 		return NULL;
 
-	strncpy(internal_ret_buff, mb.get_input(), BUFF_LEN);
-	internal_ret_buff[BUFF_LEN-1] = 0;
+	strncpy(internal_ret_buf, mb.get_input(), BUF_LEN);
+	internal_ret_buf[BUF_LEN-1] = 0;
 
-	return internal_ret_buff;
+	return internal_ret_buf;
 }
 
 const char* password(const char *fmt, const char *deflt, ...) {
 	va_list ap;
 	va_start(ap, deflt);
-	vsnprintf(internal_buff, BUFF_LEN, fmt, ap);
+	vsnprintf(internal_buf, BUF_LEN, fmt, ap);
 	va_end(ap);
 
 	MessageBox mb(MSGBOX_INPUT_SECRET);
-	mb.set_text(internal_buff);
+	mb.set_text(internal_buf);
 
 	if(deflt)
 		mb.set_input(deflt);
@@ -438,10 +441,10 @@ const char* password(const char *fmt, const char *deflt, ...) {
 	if(!mb.get_input())
 		return NULL;
 
-	strncpy(internal_ret_buff, mb.get_input(), BUFF_LEN);
-	internal_ret_buff[BUFF_LEN-1] = 0;
+	strncpy(internal_ret_buf, mb.get_input(), BUF_LEN);
+	internal_ret_buf[BUF_LEN-1] = 0;
 
-	return internal_ret_buff;
+	return internal_ret_buf;
 }
 
 // FLTK compatibility

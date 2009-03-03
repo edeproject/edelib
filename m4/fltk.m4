@@ -16,7 +16,7 @@ dnl
 dnl You should have received a copy of the GNU Lesser General Public License
 dnl along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-AC_DEFUN([EDELIB_CHECK_FLTK], [
+AC_DEFUN([EDELIB_FLTK], [
 	AC_ARG_WITH(fltk_path, [  --with-fltk-path=[DIR]    alternative directory where FLTK is installed])
 
 	if test "x$with_fltk_path" = "x"; then

@@ -18,19 +18,18 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <edelib/Debug.h>
 
-#define ERROR_BUFFLEN 1024
+#define ERROR_BUFFLEN 256
 
-// in case we wan't to disable namespaces
-#define EMsgHandlerType   EDELIB_NS::MsgHandlerType
-#define EMsgDebug         EDELIB_NS::MsgDebug
-#define EMsgWarn          EDELIB_NS::MsgWarn
-#define EMsgFatal         EDELIB_NS::MsgFatal
+/* in case namespace was changed or disabled */
+EDELIB_NS_USE
+
+typedef void (*MessageHandlerType)(ErrorMessageType t, const char* msg);
+static MessageHandlerType default_msg_handler = 0;
 
 #ifdef __GLIBC__
 #include <execinfo.h>
@@ -44,47 +43,37 @@ static void __dump_stack(int fd) {
 }
 
 #define DUMP_STACK(err, fd)                   \
-	fprintf(err, "----- Stack dump -----\n"); \
+	fprintf(err, "----- stack dump -----\n"); \
 	__dump_stack(fd);                         \
 	fprintf(err, "----------------------\n")
 #else
 #define DUMP_STACK(err, fd)
 #endif
 
-static EMsgHandlerType default_msg_handler = 0;
-
-void InstallMsgHandler(EMsgHandlerType m) {
-	default_msg_handler = m;
-}
-
-/*
- * NOTE: content buffers are intentionaly declared in
- * each function due possible threaded environment
- */
 void _edelib_debug(const char* fmt, ...) {
-	char buff[ERROR_BUFFLEN];
+	char buf[ERROR_BUFFLEN];
 	va_list ap;
 	va_start(ap, fmt);
-	vsnprintf(buff, ERROR_BUFFLEN, fmt, ap);
+	vsnprintf(buf, ERROR_BUFFLEN, fmt, ap);
 	va_end(ap);
 
 	if(default_msg_handler)
-		default_msg_handler(EMsgDebug, buff);
+		default_msg_handler(ERROR_MESSAGE_DEBUG, buf);
 	else
-		fprintf(stderr, "%s", buff);
+		fprintf(stderr, "%s", buf);
 }
 
 void _edelib_warning(const char* fmt, ...) {
-	char buff[ERROR_BUFFLEN];
+	char buf[ERROR_BUFFLEN];
 	va_list ap;
 	va_start(ap, fmt);
-	vsnprintf(buff, ERROR_BUFFLEN, fmt, ap);
+	vsnprintf(buf, ERROR_BUFFLEN, fmt, ap);
 	va_end(ap);
 
 	if(default_msg_handler)
-		default_msg_handler(EMsgWarn, buff);
+		default_msg_handler(ERROR_MESSAGE_WARNING, buf);
 	else
-		fprintf(stderr, "%s", buff);
+		fprintf(stderr, "%s", buf);
 }
 
 void _edelib_assert(int cond, const char* cond_text, const char* file, int line, const char* func) {
@@ -93,16 +82,16 @@ void _edelib_assert(int cond, const char* cond_text, const char* file, int line,
 }
 
 void _edelib_fatal(const char* fmt, ...) {
-	char buff[ERROR_BUFFLEN];
+	char buf[ERROR_BUFFLEN];
 	va_list ap;
 	va_start(ap, fmt);
-	vsnprintf(buff, ERROR_BUFFLEN, fmt, ap);
+	vsnprintf(buf, ERROR_BUFFLEN, fmt, ap);
 	va_end(ap);
 
 	if(default_msg_handler)
-		default_msg_handler(EMsgFatal, buff);
+		default_msg_handler(ERROR_MESSAGE_FATAL, buf);
 	else {
-		fprintf(stderr, "%s", buff);
+		fprintf(stderr, "%s", buf);
 		/*
 		 * glibc redefined stderr pointing it to internal IO struct, so here is used 
 		 * good-old-defalut-normal-every_one_use_it alias for it. Yuck!
@@ -110,4 +99,8 @@ void _edelib_fatal(const char* fmt, ...) {
 		DUMP_STACK(stderr, 2);
 		abort();
 	}
+}
+
+void error_mesage_handler_install(MessageHandlerType m) {
+	default_msg_handler = m;
 }

@@ -1,0 +1,29 @@
+// vim: ft=doxygen
+/** \mainpage EDE Library API reference
+
+This is the reference for developing with the EDE Library (%edelib).
+
+%edelib is set of classes and functions for easier EDE development.
+As EDE uses FLTK (http://www.fltk.org) as main GUI library (and FLTK is
+primarly GUI library), %edelib extends it with additional widgets and functionality.
+
+In short, %edelib provides:
+- <a href="group__widgets.html">FLTK GUI extension</a>
+- <a href="dbusdoc.html">D-BUS support</a>
+- various http://freedesktop.org standards implementations, like:
+  - standard directories
+  - icon themes (edelib::IconTheme)
+  - shared mime support (edelib::MimeType) and etc.
+- file monitor facility (edelib::DirWatch)
+- chatting with terminal processes (edelib::PtyProcess)
+- etc.
+
+As %edelib development is always in progress, you can check <a href="todo.html">TODO</a>
+list to see what is not finished yet. This also a good starting point to check if you
+would like to contribute.
+
+Some features will be deprecated over the time, and at some point completely removed. For a
+list of currently deprecated things, check <a href="deprecated.html">Deprecated List</a>.
+
+News, latest releases and link for bug reports you can find at http://equinox-project.org
+*/

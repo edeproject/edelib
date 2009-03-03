@@ -19,22 +19,22 @@ dnl along with this library. If not, see <http://www.gnu.org/licenses/>.
 dnl Date/time functions checks
 AC_DEFUN([EDELIB_DATETIME], [
 	AC_CHECK_FUNC(gmtime_r, [have_gmtime_r=yes], [have_gmtime_r=no])
-	if eval "test $have_gmtime_r = yes"; then
+	if test "$have_gmtime_r" = yes; then
 		AC_DEFINE(HAVE_GMTIME_R, 1, [Define to 1 if you have gmtime_r()])
 	fi
 
 	AC_CHECK_FUNC(localtime_r, [have_localtime_r=yes], [have_localtime_r=no])
-	if eval "test $have_localtime_r = yes"; then
+	if test "$have_localtime_r" = yes; then
 		AC_DEFINE(HAVE_LOCALTIME_R, 1, [Define to 1 if you have localtime_r()])
 	fi
 
 	AC_CHECK_FUNC(settimeofday, [have_settimeofday=yes], [have_settimeofday=no])
-	if eval "test $have_settimeofday = yes"; then
+	if test "$have_settimeofday" = yes; then
 		AC_DEFINE(HAVE_SETTIMEOFDAY, 1, [Define to 1 if you have settimeofday()])
 	fi
 
 	AC_CHECK_FUNC(stime, [have_stime=yes], [have_stime=no])
-	if eval "test $have_stime = yes"; then
+	if test "$have_stime" = yes; then
 		AC_DEFINE(HAVE_STIME, 1, [Define to 1 if you have stime()])
 	fi
 
@@ -50,7 +50,7 @@ AC_DEFUN([EDELIB_DATETIME], [
 	],[have_daylight=yes],[have_daylight=no])
 	AC_LANG_RESTORE
 
-	if eval "test $have_daylight = yes"; then
+	if test "$have_daylight" = yes; then
 		AC_DEFINE(HAVE_DAYLIGHT, 1, [Define to 1 if you have daylight variable])
 		AC_MSG_RESULT(yes)
 	else

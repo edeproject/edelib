@@ -293,6 +293,23 @@ public:
 	 * \param center if set, dialog will be centered at the screen
 	 */
 	int run(bool center = true);
+
+	/**
+	 * Set icon names used by IconTheme.
+	 * \param msg is icon for message()
+	 * \param alert is icon for alert()
+	 * \param ask is icon for ask()
+	 * \param input is icon for input()
+	 * \param password is icon for password()
+	 */
+	static void set_themed_icons(const char* msg, const char* alert = 0, const char* ask = 0, 
+			const char* input = 0, const char* password = 0);
+
+	/**
+	 * \ingroup widgets
+	 * Clear icon names used by IconTheme.
+	 */
+	static void clear_themed_icons(void);
 };
 
 /**
@@ -303,15 +320,17 @@ public:
  * \param ask is icon for ask()
  * \param input is icon for input()
  * \param password is icon for password()
+ * \deprecated with MessageBox::set_themed_icons()
  */
 EDELIB_API void themed_dialog_icons(const char* msg, const char* alert = 0, 
-	const char* ask = 0, const char* input = 0, const char* password = 0);
+	const char* ask = 0, const char* input = 0, const char* password = 0) EDELIB_DEPRECATED;
 
 /**
  * \ingroup widgets
  * Clear icon names used by IconTheme.
+ * \deprecated with MessageBox::clear_themed_icons()
  */
-EDELIB_API void clear_dialog_icons(void);
+EDELIB_API void clear_dialog_icons(void) EDELIB_DEPRECATED;
 
 /**
  * Display message dialog in printf form.

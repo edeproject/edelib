@@ -169,6 +169,8 @@ struct RegexData;
  *
  * Note that Regex will work only on 8-bit characters and UTF-8 (or else)
  * will fail. This will be addressed in the future.
+ *
+ * \todo port it to pcre backend
  */
 class EDELIB_API Regex {
 private:

@@ -26,6 +26,10 @@
 EDELIB_NS_BEGIN
 
 /**
+ * \defgroup dbus D-Bus classes and functions
+ */
+
+/**
  * \ingroup dbus
  * \enum EdbusConnectionType
  * \brief Represents connection either to system or session bus
@@ -103,10 +107,6 @@ struct EdbusConnImpl;
  * D-Bus brings some common terms from other IPC systems and introduce more. They are following:
  *
  * \subsection dbusservice Services
- */
-
-/**
- * \defgroup dbus D-Bus classes and functions
  */
 
 /**
@@ -271,11 +271,13 @@ public:
 	 * if none object was added, other objects receiving data will be reported here too.
 	 *
 	 * \note This function only stores pointer to the string, so <em>make sure</em> it is in static memory
+	 * \todo remove it?
 	 */
 	void register_object(const char* path);
 
 	/**
 	 * Unregister already registered object
+	 * \todo remove it?
 	 */
 	void unregister_object(const char* path);
 

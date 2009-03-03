@@ -265,7 +265,7 @@ public:
  *
  * In short, if you have not clue what I was talking about, then you don't need this function at all ;-).
  */
-void create_window_xid(Fl_Window* win, void (*before_map_func)(Fl_Window*) = NULL, int background_pixel = -1);
+void window_xid_create(Fl_Window* win, void (*before_map_func)(Fl_Window*) = NULL, int background_pixel = -1);
 
 EDELIB_NS_END
 

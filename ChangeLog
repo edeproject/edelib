@@ -1,3 +1,26 @@
+2009-03-01  Sanel <karijes@users.sourceforge.net>
+
+	* m4/pkg.m4: imported modification from ede2 module, where spaces in
+	returned flags will be removed; also pkg-config is mandatory so it will
+	not continue if wasn't found, as was previously; XY_VERSION is set too
+	* m4/dbus.m4: removed checks if pkg-config wasn't found
+	* m4/*.m4:
+	* configure.in: s/EDELIB_CHECK_/EDELIB_; removed that CHECK part for
+	consistency
+	* m4/*.m4: removed 'eval' from 'if' statement
+	* doc/Doxyfile.in: hide scope names
+	* doc/Mainpage.dox: added as main page
+	* TODO: removed; all todo's are placed either in *.h or todo.dox files via
+	\todo tag so doxygen could do the better job
+	* edelib/Debug.h:
+	* src/Debug.cpp: message handler recoded
+	* edelib/MessageBox.h:
+	* src/MessageBox.cpp: themed_dialog_icons() and clear_dialog_icons() are
+	deprecated with set_themed_icons() and clear_themed_icons() from
+	MessageBox; some internal refactoring to use E_RETURN_XXX macros
+	* edelib/Regex.h: added todo for porting it on pcre backend
+	* m4/xlib.m4: remove AC_PATH_X since AC_PATH_XTRA already contains it
+
 2009-02-27  Sanel <karijes@users.sourceforge.net>
 
 	* tools/edelib-mime-find: added
@@ -8,6 +31,9 @@
 	terminal programs
 	* configure.in: added checks for functions needed by PTY and PtyProcess
 	classes
+	* Window.h:
+	* Window.cpp: renamed create_window_xid() to window_xid_create(); better
+	control of icon theme loading/reloading
 
 2009-02-26  Sanel <karijes@users.sourceforge.net>
 

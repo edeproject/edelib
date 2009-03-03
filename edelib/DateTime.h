@@ -208,6 +208,8 @@ public:
 	 *
 	 * Input can be either in form of numbers or abbreviations for month.
 	 *
+	 * \todo it can accept set(0,1,0); leave this or... (possible bugs ?)
+	 *
 	 * \return todo
 	 * \param y fill with year value
 	 * \param m fill with month value; should be 1 <= m <= 12

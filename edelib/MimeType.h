@@ -47,6 +47,10 @@ EDELIB_NS_BEGIN
  * comment() will return full description for recognized file, looking inside
  * $XDG_DATA_DIRS/mime/context/file-type.xml file. This description can be
  * plain english (default) or localized (not implemented yet).
+ *
+ * \todo add locale during read of comments
+ * \todo  Last change in xdgmime.c moved stat-ed code to be executed first so ambiguous directory names
+ * (like ".kde" or ".emacs.d" or ".e") doesn't be recognized as files or unknown types; can stat's be delayed?
  */
 class EDELIB_API MimeType {
 private:

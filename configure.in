@@ -80,19 +80,19 @@ AC_CHECK_HEADER(util.h, AC_DEFINE(HAVE_UTIL_H, 1, [Define to 1 if you have util.
 EDELIB_DATETIME
 EDELIB_DEVELOPMENT
 
-EDELIB_CHECK_X11
+EDELIB_X11
 
 dnl user fired --without-x, we disable FLTK checks
 if test "$have_x" = "yes"; then
-	EDELIB_CHECK_FLTK
-	EDELIB_CHECK_LIBXPM
+	EDELIB_FLTK
+	EDELIB_LIBXPM
 fi
 
 EDELIB_NOTIFY
 EDELIB_SHARED
 EDELIB_NLS
 EDELIB_MIME
-EDELIB_CHECK_DBUS
+EDELIB_DBUS
 
 AC_ARG_VAR([PKG_CONFIG], [pkg-config command])
 AC_ARG_VAR([PKG_CONFIG_PATH], [A directory with .pc files for pkg-config])
@@ -132,11 +132,11 @@ AC_SUBST(LDFLAGS)
 AC_SUBST(LDLIBS)
 
 AC_OUTPUT([
-edelib/Version.h
-doc/Doxyfile
-Jamconfig
-edelib.pc
-edelib-dbus.pc
+ edelib/Version.h
+ doc/Doxyfile
+ Jamconfig
+ edelib.pc
+ edelib-dbus.pc
 ])
 
 echo ""

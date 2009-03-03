@@ -16,19 +16,17 @@ dnl
 dnl You should have received a copy of the GNU Lesser General Public License
 dnl along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-AC_DEFUN([EDELIB_CHECK_X11], [
-	dnl generic X11 checkers
-	AC_PATH_X
+AC_DEFUN([EDELIB_X11], [
 	AC_PATH_XTRA
 
 	dnl user does not have X installed
 	dnl if we want let him build, he will explicitely must add '--without-x' option
 	dnl since last one is for debugging purposes
-	if eval "test $have_x = no"; then
+	if test "$have_x" = no; then
 		AC_MSG_ERROR(X11 libraries are not found! Please install them first)
 	fi
 
-	if eval "test $have_x = disabled"; then
+	if test "$have_x" = disabled; then
 		AC_MSG_NOTICE(*****************************************************)
 		AC_MSG_NOTICE(* edelib will be built without X11 and FLTK support *)
 		AC_MSG_NOTICE(*****************************************************)

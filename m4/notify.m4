@@ -30,7 +30,7 @@ AC_DEFUN([__INOTIFY_CHECK], [
 	],[have_inotify=yes],[have_inotify=no])
 	AC_LANG_RESTORE
 
-	if eval "test $have_inotify = yes"; then
+	if test "$have_inotify" = yes; then
 		AC_DEFINE(HAVE_INOTIFY, 1, [Define to 1 if you have inotify support in the kernel (Linux only)])
 		AC_MSG_RESULT(yes)
 	else
@@ -62,7 +62,7 @@ AC_DEFUN([__DNOTIFY_CHECK], [
 	],[have_dnotify=yes],[have_dnotify=no])
 	AC_LANG_RESTORE
 		
-	if eval "test $have_dnotify = yes"; then
+	if test "$have_dnotify" = yes; then
 		AC_DEFINE(HAVE_DNOTIFY, 1, [Define to 1 if you have dnotify support in the kernel (Linux only)])
 		AC_MSG_RESULT(yes)
 	else
@@ -86,7 +86,7 @@ AC_DEFUN([__KQUEUE_CHECK], [
 	],[have_kqueue=yes],[have_kqueue=no])
 	AC_LANG_RESTORE
 
-	if eval "test $have_kqueue = yes"; then
+	if test "$have_kqueue" = yes; then
 		AC_DEFINE(HAVE_KQUEUE, 1, [Define to 1 if you have kqueue support in the kernel (BSDs only)])
 		AC_MSG_RESULT(yes)
 	else
@@ -107,7 +107,7 @@ AC_DEFUN([__FAM_CHECK], [
 	],[have_fam=yes],[have_fam=no])
 	AC_LANG_RESTORE
 
-	if eval "test $have_fam = yes"; then
+	if test "$have_fam" = yes; then
 		AC_DEFINE(HAVE_FAM, 1, [Define to 1 if you have FAM installed])
 		AC_MSG_RESULT(yes)
 
@@ -117,7 +117,7 @@ AC_DEFUN([__FAM_CHECK], [
 		tmp_libs="$LIBS"
 		LIBS="$LIBS $FAMLIB"
 		AC_CHECK_FUNC([FAMNoExists], [have_famnoexists=yes], [have_famnoexists=no])
-		if eval "test $have_famnoexists = yes"; then
+		if test "$have_famnoexists" = yes; then
 			AC_DEFINE(HAVE_FAMNOEXISTS, 1, [Define to 1 if you have FAMNoExists in FAM implementation])
 		fi
 
@@ -138,7 +138,7 @@ AC_DEFUN([EDELIB_NOTIFY], [
 	dnl this must be global since 'have_fam' is visible only inside if/fi block
 	notify_have_fam=no
 
-	if eval "test $enable_fam_only = yes"; then
+	if test "$enable_fam_only" = yes; then
 		__FAM_CHECK
 		notify_have_fam=$have_fam
 	else
@@ -146,15 +146,14 @@ AC_DEFUN([EDELIB_NOTIFY], [
 		dnl FAM fallback so we don't link code with libfam
 		__INOTIFY_CHECK
 
-		if eval "test $have_inotify = no"; then
+		if test "$have_inotify" = no; then
 			__FAM_CHECK
 			notify_have_fam=$have_fam
 		fi
 	fi
 
-	dnl FIXME: make this part of LIBS variable
 	dnl FAMLIB will be set only when tests for FAM are passed
-	if eval "test $notify_have_fam = yes"; then
+	if test "$notify_have_fam" = yes; then
 		LIBFAM_LIBS="$FAMLIB"
 	fi
 ])

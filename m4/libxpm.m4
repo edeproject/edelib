@@ -16,7 +16,7 @@ dnl
 dnl You should have received a copy of the GNU Lesser General Public License
 dnl along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-AC_DEFUN([EDELIB_CHECK_LIBXPM], [
+AC_DEFUN([EDELIB_LIBXPM], [
 	AC_MSG_CHECKING([for libXpm])
 
 	AC_LANG_SAVE
@@ -31,7 +31,7 @@ AC_DEFUN([EDELIB_CHECK_LIBXPM], [
 	],[have_libxpm=yes],[have_libxpm=no])
 	AC_LANG_RESTORE
 
-	if eval "test $have_libxpm = yes"; then
+	if test "$have_libxpm" = yes; then
 		AC_DEFINE(HAVE_LIBXPM, 1, [Define to 1 if you have libXpm])
 		AC_MSG_RESULT(yes)
 		LIBXPM_LIBS="-lXpm"

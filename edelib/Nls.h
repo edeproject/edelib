@@ -78,6 +78,8 @@ EDELIB_API void nls_locale_from_c(char* old);
  *   }
  * \endcode
  *
+ * \todo  what should set_textdomain_dir() and set_textdomain() return when NLS is disabled?
+ *
  * \param appname is a set of translatable messages, coresponding to the target application's executable
  * \param dir the base directory for appname
  */
