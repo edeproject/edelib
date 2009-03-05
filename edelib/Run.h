@@ -31,7 +31,8 @@ enum {
 	RUN_NOT_EXEC       = 65533, ///< given parameter is not executable on system 
 	RUN_FORK_FAILED	   = 65532, ///< internal fork failed
 	RUN_WAITPID_FAILED = 65531, ///< internal waitpid failed
-	RUN_EXECVE_FAILED  = 65530  ///< internal execve failed
+	RUN_EXECVE_FAILED  = 65530, ///< internal execve failed
+	RUN_PIPE_FAILED    = 65529  ///< internal pipe failed
 };
 
 /**
