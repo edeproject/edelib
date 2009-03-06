@@ -1,3 +1,10 @@
+2009-03-06  Sanel <karijes@users.sourceforge.net>
+
+	* test/string.cpp: removed unneeded stdio.h inclusion
+	* test/run.cpp: added tests for run_XXX functions
+	* edelib/Run.h: document some caveats
+	* src/Run.cpp: some refactoring, cleaning bad deallocation, misc
+
 2009-03-05  Sanel <karijes@users.sourceforge.net>
 
 	* src/Run.cpp: reimlemented code for asynchronous process spawning, mainly

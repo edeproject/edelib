@@ -68,8 +68,26 @@ static char** cmd_split(const char* cmd, int* count) {
 	return arr;
 }
 
+static int convert_from_errno(int e, int fallback) {
+	switch(e) {
+		case ENOEXEC:
+			return RUN_NOT_EXEC;
+		case ENOENT:
+			return RUN_NOT_FOUND;
+		case EACCES:
+			return RUN_NO_ACCESS;
+	}
+
+	return fallback;
+}
+
 static void close_and_invalidate(int* fd) {
-	E_RETURN_IF_FAIL(*fd != -1);
+	/* 
+	 * not needed E_RETURN_IF_FAIL() or will receive 'Condition failed' each
+	 * time when program wasn't found
+	 */
+	if(*fd == -1)
+		return;
 
 	close(*fd);
 	*fd = -1;
@@ -133,18 +151,12 @@ static void exec_cmd_via_shell(char* program, char** args, int count) {
 	new_args[1] = program;
 
 	int i, j;
-	for(i = 1, j = 2; args[i]; i++, j++) {
+	for(i = 1, j = 2; args[i]; i++, j++)
 		new_args[j] = args[i];
-		free(args[i]);
-	}
 
-	free(args);
 	new_args[j] = NULL;
 
 	execv(new_args[0], (char* const*)new_args); 
-
-	for(i = 0; new_args[i]; i++)
-		free(new_args[i]);
 	free(new_args);
 }
 
@@ -153,14 +165,21 @@ static void exec_cmd(const char* cmd, int child_err_report_fd) {
 	if(child_err_report_fd != -1)
 		fcntl(child_err_report_fd, F_SETFD, FD_CLOEXEC); 
 
-	int count = 0;
+	int errnosv, count = 0;
 	char** args = cmd_split(cmd, &count);
+
 	if(!args) {
-		/* report it to the pipe */
-		errno = ENOMEM;
-		write_int(child_err_report_fd, RUN_EXECVE_FAILED);
-		write_int(child_err_report_fd, errno);
-		_exit(1);
+		errnosv = ENOMEM;
+
+		if(child_err_report_fd != -1) {
+			/* report it to the pipe if it was used*/
+			write_int(child_err_report_fd, RUN_EXECVE_FAILED);
+			write_int(child_err_report_fd, errnosv);
+			_exit(1);
+		} else {
+			/* or directly if wasn't */
+			_exit(errnosv);
+		}
 	}
 
 	/* see if it has a path component in itself */
@@ -202,12 +221,16 @@ static void exec_cmd(const char* cmd, int child_err_report_fd) {
 					continue;
 
 				/* if we got here, it means it is bad; break it and let errno be reported via pipe */
+				errnosv = errno;
 				break;
 			}
 
 			free(path_copy);
 		}
 	}
+
+	/* quickly save it before any further stdlib calls */
+	errnosv = errno;
 
 	/* got here; everything failed so report it then */
 	for(int i = 0; args[i]; i++)
@@ -217,11 +240,11 @@ static void exec_cmd(const char* cmd, int child_err_report_fd) {
 	if(child_err_report_fd != -1) {
 		/* report for async code */
 		write_int(child_err_report_fd, RUN_EXECVE_FAILED);
-		write_int(child_err_report_fd, errno);
+		write_int(child_err_report_fd, errnosv);
 		_exit(1);
 	} else {
 		/* report for sync code */
-		_exit(errno);
+		_exit(errnosv);
 	}
 }
 
@@ -269,6 +292,7 @@ static int fork_child_async(const char* cmd, int* child_pid) {
 			 * is reported via pipe
 			 */
 			null_dev = open("/dev/null", O_RDWR);
+
 			if(null_dev == -1) {
 				write_int(child_pid_report_pipe[1], grandchild_pid);
 				write_int(child_err_report_pipe[1], errno);
@@ -309,13 +333,12 @@ static int fork_child_async(const char* cmd, int* child_pid) {
 			break;
 		}
 
-		if(!read_ints(child_err_report_pipe[0], buf, 2, &n_ints)) {
+		if(!read_ints(child_err_report_pipe[0], buf, 2, &n_ints))
 			goto fail;
-		}
 
+		/* child signaled some error; inspect it and bail out */
 		if(n_ints >= 2) {
-			ret = buf[0];
-			E_WARNING(E_STRLOC ": got error from child: %i with errno: %i\n", buf[0], buf[1]);
+			ret = convert_from_errno(buf[1], buf[0]);
 			goto fail;
 		}
 
@@ -343,8 +366,6 @@ static int fork_child_async(const char* cmd, int* child_pid) {
 fail:
 	/* we got some error in first child; reap it so it does not become a zombie */
 	if(pid > 0) {
-		errno = 0;
-
 		while(waitpid(pid, NULL, 0) < 0) {
 			if(errno != EINTR)
 				break;
@@ -396,12 +417,7 @@ static int fork_child_sync(const char* cmd) {
 		ret = WTERMSIG(status);
 	else {
 		int s = WEXITSTATUS(status);
-		if(s == 127)
-			ret = RUN_NOT_FOUND;
-		else if(s == 126)
-			ret = RUN_NOT_EXEC;
-		else
-			ret = s;
+		ret = convert_from_errno(s, s);
 	}
 
 	return ret;

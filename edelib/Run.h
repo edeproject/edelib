@@ -32,7 +32,8 @@ enum {
 	RUN_FORK_FAILED	   = 65532, ///< internal fork failed
 	RUN_WAITPID_FAILED = 65531, ///< internal waitpid failed
 	RUN_EXECVE_FAILED  = 65530, ///< internal execve failed
-	RUN_PIPE_FAILED    = 65529  ///< internal pipe failed
+	RUN_PIPE_FAILED    = 65529, ///< internal pipe failed
+	RUN_NO_ACCESS      = 65528  ///< not enough permissions to execute it
 };
 
 /**
@@ -63,6 +64,10 @@ EDELIB_API int run_program_fmt(bool wait, const char* fmt, ...) EDELIB_DEPRECATE
  * Executes the given program. If full path to the executable was given, it will be 
  * directly called; if not, PATH environment variable should contain a path where
  * executable is placed.
+ *
+ * \note Some programs that exists and are run without parameters (but internaly are executed 
+ * via shell) could set <em>errno</em> to 2 which is usually interpreted as ENOENT (or 
+ * program does not exists); for examle <em>tar</em> is known for this. Solution? Rewrite that tar!!!
  *
  * This function will run a command and wait until it finishes.
  * \return 0 if starting and quitting program went fine; otherwise return one of

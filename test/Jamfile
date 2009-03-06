@@ -41,6 +41,7 @@ TEST_FILES =
 	color.cpp
 	xml.cpp
 	mime.cpp
+	run.cpp
 	run_tests.cpp ;
 
 if $(DBUS_LIBS) {

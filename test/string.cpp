@@ -1,7 +1,6 @@
 #include <edelib/String.h>
 #include <stdlib.h>
 #include "UnitTest.h"
-#include <stdio.h>
 
 EDELIB_NS_USE
 
