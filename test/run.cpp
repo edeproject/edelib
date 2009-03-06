@@ -14,7 +14,7 @@ UT_FUNC(RunSyncTest, "Test run_sync()")
 	UT_VERIFY( run_sync("pwd") == 0 );
 	UT_VERIFY( run_sync("/bin/uname") == 0 );
 
-	UT_VERIFY( run_sync("Jamfile") == RUN_NO_ACCESS );
+	UT_VERIFY( run_sync("./Jamfile") == RUN_NO_ACCESS );
 }
 
 UT_FUNC(RunSyncStupidTar, "Test run_sync() + stupid tar")
@@ -37,5 +37,5 @@ UT_FUNC(RunAsync, "Test run_async()")
 	// always '0'
 	UT_VERIFY( run_async("tar") == 0 );
 
-	UT_VERIFY( run_async("Jamfile") == RUN_NO_ACCESS );
+	UT_VERIFY( run_async("./Jamfile") == RUN_NO_ACCESS );
 }

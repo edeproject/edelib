@@ -4,6 +4,8 @@
 	* test/run.cpp: added tests for run_XXX functions
 	* edelib/Run.h: document some caveats
 	* src/Run.cpp: some refactoring, cleaning bad deallocation, misc
+	* test/run.cpp: explictitly say that running file is local or run commands
+	will search PATH for it
 
 2009-03-05  Sanel <karijes@users.sourceforge.net>
 
