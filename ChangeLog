@@ -1,3 +1,18 @@
+2009-03-08  Sanel <karijes@users.sourceforge.net>
+
+	* src/MessageBox.cpp: dumped DO_COPY() macro in a favor of edelib_strlcpy()
+
+2009-03-07  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/EdbusConnection.h: fixed a typo in enum name
+	* edelib/EdbusConnection.h:
+	* src/EdbusConnection.cpp: request_name() now follows policy issued with
+	second 'mode' parameter
+	* edelib/EdbusConnection.h: request_name() documentation update
+	* edelib/DesktopFile.h: todo about Exec special variables
+	* edelib/EdbusMessage.h: documentation fix
+	* src/MessageBox.cpp: do not call fl_register_images()
+
 2009-03-06  Sanel <karijes@users.sourceforge.net>
 
 	* test/string.cpp: removed unneeded stdio.h inclusion
@@ -6,6 +21,10 @@
 	* src/Run.cpp: some refactoring, cleaning bad deallocation, misc
 	* test/run.cpp: explictitly say that running file is local or run commands
 	will search PATH for it
+	* src/EdbusMessage.cpp: removed some puts()/printf()'s and internal
+	from_edbusdata_type_to_dbus_type_string() will call E_FATAL() if end was
+	reached
+	* src/EdbusConnection.cpp: commenting debug messages output
 
 2009-03-05  Sanel <karijes@users.sourceforge.net>
 

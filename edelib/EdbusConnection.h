@@ -45,9 +45,9 @@ enum EdbusConnectionType {
  * \brief What to do when known name is acquired
  */
 enum EdbusNameMode {
-	EDBUS_NAME_NO_REPLACE        = 0,  ///< Do not replace existing name
-	EDBUS_NAME_ALLOW_REPLACE     = 1,  ///< Existing name can be replaced
-	EDBUS_NAME_REPLACE_EXISTITNG = 2   ///< Force replacement
+	EDBUS_NAME_NO_REPLACE       = 0,  ///< Do not replace existing name
+	EDBUS_NAME_ALLOW_REPLACE    = 1,  ///< Existing name can be replaced
+	EDBUS_NAME_REPLACE_EXISTING = 2   ///< Force replacement
 };
 
 /**
@@ -174,7 +174,24 @@ public:
 
 	/**
 	 * Try to set readable name, e.g. <em>org.equinoxproject.Listener</em>. 
-	 * If EdbusConnection object wants to accept messages, clients will send them to this name
+	 * If EdbusConnection object wants to accept messages, clients will send them to this name.
+	 * 
+	 * This function also can be used to assure unique name in the bus; if you set EDBUS_NAME_NO_REPLACE
+	 * every other call (from program itself or external program) for request with the same name will
+	 * return false value. This does not mean you will not receive a bus messages; they would be queued and
+	 * dispatched among listeners with the same name.
+	 *
+	 * With other flags (EDBUS_NAME_REPLACE_EXISTING and EDBUS_NAME_NO_REPLACE) you can achieve smooth name
+	 * replacement. For example, if you have program service1 that registered org.example.Service and
+	 * (during runtime) want to replace it with upgraded or modified service2, simply setting in service2
+	 * EDBUS_NAME_REPLACE_EXISTING flag, and EDBUS_NAME_ALLOW_REPLACE service1 will do the job. Then, service1
+	 * will receive <em>NameLost</em> from org.freedesktop.DBus interface and can choose to quit or do
+	 * something else.
+	 *
+	 * \em mode flags can be OR-ed, so EDBUS_NAME_ALLOW_REPLACE | EDBUS_NAME_REPLACE_EXISTING can work
+	 * in both programs (in given example), except <em>NameLost</em> will receive program that was started
+	 * first, but request_name() will not return false. OR-ing with EDBUS_NAME_NO_REPLACE have no much sense, 
+	 * and if is detected, it is considered as plain EDBUS_NAME_NO_REPLACE.
 	 *
 	 * \return true if got requested name
 	 * \param name is name to be requested
@@ -183,7 +200,7 @@ public:
 	bool request_name(const char* name, int mode = EDBUS_NAME_NO_REPLACE);
 
 	/**
-	 * Get unique name for this connection
+	 * Get unique name for this connection. Returned value have sense only for D-BUS
 	 */
 	const char* unique_name(void);
 

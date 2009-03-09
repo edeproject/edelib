@@ -73,7 +73,7 @@ static const char* from_edbusdata_type_to_dbus_type_string(EdbusDataType t) {
 	}
 
 	/* should be never reached in valid code */
-	printf("Got unknown (%i) type. Marking it as invalid...\n", t);
+	E_FATAL(E_STRLOC ": Got unknown (%i) type. Marking it as invalid...\n", t);
 	return 0;
 }
 
@@ -264,7 +264,7 @@ static void to_dbus_iter_from_dict(DBusMessageIter* parent_it, const EdbusData& 
 			value_sig,
 			DBUS_DICT_ENTRY_END_CHAR);
 
-	printf("Dict entry signature: %s\n", sig);
+	/* printf("Dict entry signature: %s\n", sig); */
 
 	DBusMessageIter sub;
 	dbus_message_iter_open_container(parent_it, DBUS_TYPE_ARRAY, sig, &sub);
@@ -316,7 +316,7 @@ static void to_dbus_iter_from_array(DBusMessageIter* parent_it, const EdbusData&
 		value_sig = from_edbusdata_type_to_dbus_type_string(arr.value_type());
 
 
-	printf("Array entry signature: %s\n", value_sig);
+	/* printf("Array entry signature: %s\n", value_sig); */
 
 	/* 
 	 * dbus_message_iter_open_container() will by default append container
@@ -368,7 +368,7 @@ static void to_dbus_iter_from_variant(DBusMessageIter* parent_it, const EdbusDat
 	} else
 		value_sig = from_edbusdata_type_to_dbus_type_string(var.value.type());
 
-	printf("variant entry is %s\n", value_sig);
+	/* printf("variant entry is %s\n", value_sig); */
 
 	DBusMessageIter sub;
 	dbus_message_iter_open_container(parent_it, DBUS_TYPE_VARIANT, value_sig, &sub);
@@ -494,7 +494,7 @@ static void from_dbus_iter_to_edbusdata_type(DBusMessageIter* iter, EdbusData& d
 
 			/* check type of array entries */
 			if(dbus_message_iter_get_arg_type(&array_iter) == DBUS_TYPE_INVALID) {
-				puts("Invalid in dict array !?");
+				E_WARNING(E_STRLOC ": invalid in dict array!?");
 
 				/* if fails, construct empty dict */
 				EdbusDict empty;
@@ -624,7 +624,7 @@ void EdbusMessage::from_dbus_message(DBusMessage* m) {
 
 	DBusMessageIter iter;
 	if(!dbus_message_iter_init(dm->msg, &iter)) {
-		puts("Can't init iterator");
+		/* empty message */
 		return;
 	}
 

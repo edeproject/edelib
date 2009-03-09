@@ -20,7 +20,8 @@
 
 #include <stdlib.h>
 #include <stdarg.h>
-#include <stdio.h>
+#include <stdio.h> 
+
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Return_Button.H>
@@ -31,6 +32,7 @@
 #include <edelib/IconTheme.h>
 #include <edelib/Nls.h>
 #include <edelib/Debug.h>
+#include <edelib/Missing.h>
 
 #include "icons/warning.xpm"
 #include "icons/info.xpm"
@@ -241,8 +243,6 @@ void MessageBox::set_text(const char* t) {
 }
 
 bool MessageBox::set_icon(const char* path) {
-	fl_register_images();
-
 	Fl_Image* i = Fl_Shared_Image::get(path);
 	E_RETURN_VAL_IF_FAIL(i, false);
 
@@ -254,7 +254,9 @@ bool MessageBox::set_theme_icon(const char* name) {
 	E_RETURN_VAL_IF_FAIL(IconTheme::inited(), false);
 
 	String p = IconTheme::get(name, ICON_SIZE_MEDIUM);
-	E_RETURN_VAL_IF_FAIL(p.empty(), false);
+	if(p.empty())
+		return false;
+
 	return set_icon(p.c_str());
 }
 
@@ -280,7 +282,7 @@ void MessageBox::focus_button(int b) {
 		buttons[b]->take_focus();
 }
 
-#define BUF_LEN 1024
+#define BUF_LEN 256
 static char internal_buf[BUF_LEN];
 static char internal_ret_buf[BUF_LEN];
 
@@ -290,20 +292,14 @@ static char ask_icon[BUF_LEN]    = {0};
 static char input_icon[BUF_LEN]  = {0};
 static char passwd_icon[BUF_LEN] = {0};
 
-#define DO_COPY(src, dest) \
-	if(src) { \
-		strncpy(dest, src, BUF_LEN); \
-		dest[BUF_LEN - 1] = 0; \
-	}
-
 void MessageBox::set_themed_icons(const char* msg, const char* alert, const char* ask, 
 			const char* input, const char* password) 
 {
-	DO_COPY(msg, msg_icon)
-	DO_COPY(alert, alert_icon)
-	DO_COPY(ask, ask_icon)
-	DO_COPY(input, input_icon)
-	DO_COPY(password, passwd_icon)
+	edelib_strlcpy(msg_icon, msg, BUF_LEN);
+	edelib_strlcpy(alert_icon, alert, BUF_LEN);
+	edelib_strlcpy(ask_icon, ask, BUF_LEN);
+	edelib_strlcpy(input_icon, input, BUF_LEN);
+	edelib_strlcpy(passwd_icon, password, BUF_LEN);
 }
 
 void MessageBox::clear_themed_icons(void) {

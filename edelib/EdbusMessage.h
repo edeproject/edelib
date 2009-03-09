@@ -83,7 +83,7 @@ struct EdbusMessageImpl;
  *
  * Let say you received above message and wants to get a content from it. You will do it like:
  * \code
- *   EdbusMessage::iterator it = m.begin(), it_end = m.end();
+ *   EdbusMessage::const_iterator it = m.begin(), it_end = m.end();
  *
  *   for(; it != it_end; ++it) {
  *     if((*it).is_int32())

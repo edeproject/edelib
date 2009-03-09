@@ -164,7 +164,7 @@ static void dispatch_cb(void* d) {
 	EdbusConnImpl* dc = (EdbusConnImpl*)d;
 	E_ASSERT(dc != NULL);
 
-	E_DEBUG(E_STRLOC ": dispatch_cb()\n");
+	/* E_DEBUG(E_STRLOC ": dispatch_cb()\n"); */
 
 	while(dbus_connection_dispatch(dc->conn) == DBUS_DISPATCH_DATA_REMAINS)
 		;
@@ -173,7 +173,7 @@ static void dispatch_cb(void* d) {
 }
 
 static void read_watch_cb(int fd, void* d) { 
-	E_DEBUG(E_STRLOC ": read_watch_cb()\n");
+	/* E_DEBUG(E_STRLOC ": read_watch_cb()\n"); */
 
 	EdbusConnImpl* dc = (EdbusConnImpl*)d;
 	E_ASSERT(dc != NULL);
@@ -205,7 +205,7 @@ static void read_watch_cb(int fd, void* d) {
 }
 
 static void write_watch_cb(int fd, void* d) { 
-	E_DEBUG(E_STRLOC ": write_watch_cb()\n");
+	/* E_DEBUG(E_STRLOC ": write_watch_cb()\n"); */
 
 	EdbusConnImpl* dc = (EdbusConnImpl*)d;
 	E_ASSERT(dc != NULL);
@@ -223,7 +223,7 @@ static void write_watch_cb(int fd, void* d) {
 }
 
 static void timeout_cb(void* d) {
-	E_DEBUG(E_STRLOC ": timeout_cb()\n");
+	/* E_DEBUG(E_STRLOC ": timeout_cb()\n"); */
 
 	EdbusConnImpl* dc = (EdbusConnImpl*)d;
 	E_ASSERT(dc != NULL);
@@ -267,7 +267,7 @@ static void edbus_remove_watch(DBusWatch* watch, void* d) {
 	E_ASSERT(dc != NULL);
 	E_ASSERT(dc->watch_list != NULL);
 
-	E_DEBUG(E_STRLOC ": removing watch\n");
+	/* E_DEBUG(E_STRLOC ": removing watch\n"); */
 
 	int fd = dbus_watch_get_fd(watch);
 	int flags = dbus_watch_get_flags(watch);
@@ -303,7 +303,7 @@ static dbus_bool_t edbus_add_timeout(DBusTimeout* timeout, void* data) {
 	/* D-Bus interval sees in miliseconds, but FLTK see it in seconds */
 	int interval = dbus_timeout_get_interval(timeout);
 
-	E_DEBUG(E_STRLOC ": added timeout to %i ms\n", interval);
+	/* E_DEBUG(E_STRLOC ": added timeout to %i ms\n", interval); */
 	Fl::add_timeout(interval / 1000, timeout_cb, data);
 	return 1;
 }
@@ -526,28 +526,38 @@ bool EdbusConnection::request_name(const char* name, int mode) {
 	if(!dc || !dc->conn)
 		return false;
 
-	/* TODO: this should be assertion */
-	if(mode < 0)
-		return false;
+	E_ASSERT(mode >= 0 && "Invalid 'mode' value");
 
 	int flags = 0;
-	if(mode & EDBUS_NAME_ALLOW_REPLACE)
-		flags |= DBUS_NAME_FLAG_ALLOW_REPLACEMENT;
-	if(mode & EDBUS_NAME_REPLACE_EXISTITNG)
-		flags |= DBUS_NAME_FLAG_REPLACE_EXISTING;
+	bool ret = false;
+
+	/* mixing them have no much sense */
+	if(mode & EDBUS_NAME_NO_REPLACE)
+		flags = 0;
+	else {
+		if(mode & EDBUS_NAME_ALLOW_REPLACE)
+			flags |= DBUS_NAME_FLAG_ALLOW_REPLACEMENT;
+
+		if(mode & EDBUS_NAME_REPLACE_EXISTING)
+			flags |= DBUS_NAME_FLAG_REPLACE_EXISTING;
+	}
 
 	DBusError err;
 	dbus_error_init(&err);
 
-	dbus_bus_request_name(dc->conn, name, flags, &err);
+	/* see if we got the name */
+	if(dbus_bus_request_name(dc->conn, name, flags, &err) == DBUS_REQUEST_NAME_REPLY_PRIMARY_OWNER)
+		ret = true;
+	else
+		ret = false;
 
 	if(dbus_error_is_set(&err)) {
 		E_WARNING(E_STRLOC ": Name request error: %s, %s\n", err.name, err.message);
 		dbus_error_free(&err);
-		return false;
+		ret = false;
 	}
 
-	return true;
+	return ret;
 }
 
 const char* EdbusConnection::unique_name(void) {

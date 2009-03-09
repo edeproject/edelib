@@ -157,8 +157,8 @@ public:
 	bool icon(char* val, int len);
 
 	/**
-	 * Get value from <em>Exec</em> key. Various codes/escapes required by specification are
-	 * not implemented yet.
+	 * Get value from <em>Exec</em> key.
+	 * \todo special variables and symbol escaping are not implemented yet
 	 */
 	bool exec(char* val, int len);
 
