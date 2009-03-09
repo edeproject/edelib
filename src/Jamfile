@@ -18,7 +18,7 @@
 
 SubDir TOP src ;
 
-XDGMIME_SRC = 
+XDGMIME_SRC_OLD = 
 	xdgmime.c 
 	xdgmimeglob.c 
 	xdgmimeint.c 
@@ -27,7 +27,19 @@ XDGMIME_SRC =
 	xdgmimeparent.c 
 	xdgmimecache.c ;
 
+XDGMIME_SRC = 
+	xdgmime.c
+	xdgmimealias.c
+	xdgmimecache.c
+	xdgmimeglob.c
+	xdgmimeicon.c
+	xdgmimeint.c
+	xdgmimemagic.c
+	xdgmimeparent.c ;
+
 XDGMIME = xdgmime/$(XDGMIME_SRC) ;
+
+LibraryObjectCcFlags $(XDGMIME) : $(XDG_MIME_HAVE_MMAP) ;
 
 SOURCE = 
 	Missing.c

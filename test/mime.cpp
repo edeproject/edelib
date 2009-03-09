@@ -1,6 +1,8 @@
-#include <edelib/MimeType.h>
-#include "UnitTest.h"
 #include <stdio.h>
+#include <edelib/MimeType.h>
+#include <edelib/Directory.h>
+
+#include "UnitTest.h"
 
 EDELIB_NS_USE
 
@@ -46,14 +48,28 @@ UT_FUNC(MimeTypeTest, "Test MimeType")
 
 	// folder;
 	mt.set("/");
+
 	UT_VERIFY( mt.type() == "inode/directory" );
 	UT_VERIFY( mt.icon_name() == "folder" );
+}
 
+UT_FUNC(MimeTypeTestCaveat, "Test MimeType caveats")
+{
+	MimeType mt;
 
-	/* TODO
-	UT_VERIFY( mt.set("this-does-not-exists") == false );
-	UT_VERIFY( mt.type().empty() == true );
-	UT_VERIFY( mt.comment().empty() == true );
-	UT_VERIFY( mt.icon_name().empty() == true );
-	*/
+	dir_create(".e");
+	mt.set(".e");
+
+	UT_VERIFY( mt.type() == "inode/directory" );
+	UT_VERIFY( mt.icon_name() == "folder") ;
+
+	dir_remove(".e");
+
+	dir_create(".emacs.d");
+	mt.set(".emacs.d");
+
+	UT_VERIFY( mt.type() == "inode/directory" );
+	UT_VERIFY( mt.icon_name() == "folder") ;
+
+	dir_remove(".emacs.d");
 }

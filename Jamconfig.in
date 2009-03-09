@@ -61,5 +61,8 @@ SHARED ?= "@SHARED@" ;
 # version string
 EDELIB_VERSION ?= "@EDELIB_API_VERSION@" ;
 
+# xdgmime
+XDG_MIME_HAVE_MMAP ?= "@XDG_MIME_HAVE_MMAP@" ;
+
 # do not touch this
 JAMCONFIG_READ = "yes" ;

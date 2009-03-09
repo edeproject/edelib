@@ -1,3 +1,13 @@
+2009-03-09  Sanel <karijes@users.sourceforge.net>
+
+	* src/xdgmime:
+	* src/Jamfile
+	* src/Jamfile
+	* configure.in:
+	* Jamconfig.in: updated xdgmime sources to the latest versions and changed
+	accompanying files to reflect that
+	* test/mime.cpp: added tests for caveats
+
 2009-03-08  Sanel <karijes@users.sourceforge.net>
 
 	* src/MessageBox.cpp: dumped DO_COPY() macro in a favor of edelib_strlcpy()

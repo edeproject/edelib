@@ -77,6 +77,9 @@ AC_CHECK_HEADER(pty.h, AC_DEFINE(HAVE_PTY_H, 1, [Define to 1 if you have pty.h])
 AC_CHECK_HEADER(libutil.h, AC_DEFINE(HAVE_LIBUTIL_H, 1, [Define to 1 if you have libutil.h]))
 AC_CHECK_HEADER(util.h, AC_DEFINE(HAVE_UTIL_H, 1, [Define to 1 if you have util.h]))
 
+dnl xdgmimcache.c
+AC_CHECK_FUNC(mmap, XDG_MIME_HAVE_MMAP=-DHAVE_MMAP)
+
 EDELIB_DATETIME
 EDELIB_DEVELOPMENT
 
@@ -130,6 +133,7 @@ AC_SUBST(CFLAGS)
 AC_SUBST(CXXFLAGS)
 AC_SUBST(LDFLAGS)
 AC_SUBST(LDLIBS)
+AC_SUBST(XDG_MIME_HAVE_MMAP)
 
 AC_OUTPUT([
  edelib/Version.h
