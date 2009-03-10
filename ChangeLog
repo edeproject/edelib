@@ -1,3 +1,8 @@
+2009-03-10  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Pty.h:
+	* edelib/PtyProcess.h: added EDELIB_API exporter
+
 2009-03-09  Sanel <karijes@users.sourceforge.net>
 
 	* src/xdgmime:

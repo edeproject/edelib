@@ -35,7 +35,7 @@ EDELIB_NS_BEGIN
  * PTY compatibility routines. This class tries to emulate a UNIX98 PTY API
  * on various platforms.
  */
-class PTY {
+class EDELIB_API PTY {
 private:
 	int ptyfd;
 	char *ptyname, *ttyname;

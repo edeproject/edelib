@@ -39,7 +39,7 @@ class PTY;
  * The communications channel used is a pseudo tty (as opposed to a pipe)
  * This means that programs which require a terminal will work.
  */
-class PtyProcess {
+class EDELIB_API PtyProcess {
 private:
 	int init();
 	int setup_tty(int fd);
