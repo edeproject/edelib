@@ -2,6 +2,7 @@
 
 	* edelib/Pty.h:
 	* edelib/PtyProcess.h: added EDELIB_API exporter
+	* edelib/DirWatch.h: a little documentation revision
 
 2009-03-09  Sanel <karijes@users.sourceforge.net>
 

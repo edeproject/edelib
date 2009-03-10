@@ -45,7 +45,6 @@ enum DirWatchFlags {
 enum DirWatchNotifier {
 	DW_NONE = 0,                ///< None notifier; watching disabled
 	DW_INOTIFY,                 ///< inotify (linux kernel >= 2.6.13)
-	DW_KQUEUE,                  ///< BSDs
 	DW_FAM                      ///< FAM/gamin
 };
 
@@ -85,12 +84,11 @@ typedef void (DirWatchCallback)(const char* dir, const char* w, int flags, void*
  * Some of the parameters can be NULL or -1, depending if DirWatch was able to
  * figure out what was happened.
  *
- * After initialization, application should go into <em>loop state</em> so it can
- * wait for the events. This is not a problem for GUI applications since they already
- * use event loops.
+ * After initialization, application should go into loop state so it can listen and 
+ * receive events. This is not a problem for GUI applications since they already use event loops.
  *
- * \note DirWatch relies on FLTK loop, so code like <em>Fl::wait()</em> must be provided
- * for non GUI applications.
+ * \note DirWatch relies on FLTK loop, and in case of non GUI application, <em>Fl::wait()</em>
+ * still has to be used.
  *
  * This is sample:
  * \code
@@ -103,7 +101,7 @@ typedef void (DirWatchCallback)(const char* dir, const char* w, int flags, void*
  *   }
  *
  *   // somewhere in the code
- *   DirWatch::init();  // must be called first
+ *   DirWatch::init();
  *
  *   // check creating/deleting
  *   if(!DirWatch::add("/some/directory1", DW_CREATE | DW_DELETE)) 
@@ -113,13 +111,12 @@ typedef void (DirWatchCallback)(const char* dir, const char* w, int flags, void*
  *   if(!DirWatch::add("/some/directory2", DW_MODIFY))
  *      printf("Fatal, can't monitor /some/directory2\n");
  *
+ *   // callback called when something was changed
  *   DirWatch::callback(notify_cb);
  *
- *   // go into loop (this should not be used in case of GUI application
- *   // since toolkits already provide similar infinite loops
+ *   // go into loop
  *   while(1) {
- *      // do not use Fl::wait() or FLTK will not be able to poll events from
- *      // notification code; here we restart loop each 5 seconds
+ *      // here we restart loop each 5 seconds
  *      Fl::wait(5);
  *   }
  *
@@ -136,9 +133,8 @@ typedef void (DirWatchCallback)(const char* dir, const char* w, int flags, void*
  * Final application should be prepared for this.
  *
  * When DirWatch was not able to figure out what was changed, <em>what_changed</em> could be
- * set to NULL or <em>flag</em> could be set -1.
+ * set to NULL or <em>flag</em> could be set -1, like:
  * \code
- *    // sample callback
  *    void notify_cb(const char* dir, const char* what_changed, int flag) {
  *       // what_changed can be NULL or name of changed file if succeded
  *       // flag can be -1 if failed or one of DirWatchFlags if succeded
@@ -165,8 +161,7 @@ typedef void (DirWatchCallback)(const char* dir, const char* w, int flags, void*
  *
  * After directory is removed from notifier, further change events in it will not be delivered.
  *
- * If you want to deliver some data in callback, you can use <em>void*</em> parameter
- * (avid reader will notice similarities with fltk callbacks :P). To remind:
+ * If you want to deliver some data in callback, you can use <em>void*</em> parameter. To remind:
  * \code
  *   void notify_cb(const char* dir, const char* what_changed, int flags, void* d) {
  *      MySampleWidget* w = (MySampleWidget*)d;
@@ -179,16 +174,8 @@ typedef void (DirWatchCallback)(const char* dir, const char* w, int flags, void*
  * \endcode
  *
  * DirWatch can report what backend it use for notification via notifier() member
- * who will return one of the DirWatchNotifier elements. Then application can choose special
+ * which will return one of the DirWatchNotifier elements. Then application can choose special
  * case for some backend when is compiled in.
- * \code
- *   if(DirWatch::notifier() == DW_DNOTIFY)
- *     puts("I'm using dnotify");
- *   else if(DirWatch::notifier() == DW_INOTIFY)
- *     puts("I'm using inotify");
- *   else if
- *     // you got the point :)
- * \endcode
  */
 class EDELIB_API DirWatch {
 private:
