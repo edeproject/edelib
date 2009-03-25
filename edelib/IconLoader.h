@@ -144,8 +144,8 @@ public:
 	 * if <em>name</em> is absolute path to the icon (when <em>allow_absolute_path</em> was true, which is 
 	 * default) and will try to load it. If fails, it will consult icon theme.
 	 *
-	 * If icon wasn't found, NULL will be returned. For further members of Fl_Shared_Image, see FLTK 
-	 * documentation
+	 * If icon wasn't found, fallback icon will be loaded. If fails, NULL will be returned. For further members 
+	 * of Fl_Shared_Image, see FLTK documentation
 	 */
 	static Fl_Shared_Image* get(const char* name, IconSizes sz, IconContext ctx = ICON_CONTEXT_ANY, 
 			bool allow_absolute_path = true);
