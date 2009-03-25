@@ -34,8 +34,9 @@
 #include <edelib/Debug.h>
 #include <edelib/Missing.h>
 
-#include "icons/warning.xpm"
 #include "icons/info.xpm"
+#include "icons/critical.xpm"
+#include "icons/question.xpm"
 
 #define MAX_TXT_W 365 // Max text width before dialog is started to be resized
 #define MIN_TXT_W 225 // Min text width; used by Fl_Input mostly
@@ -350,7 +351,7 @@ void alert(const char *fmt, ...) {
 	if(alert_icon[0] != 0)
 		mb.set_theme_icon(alert_icon);
 	else
-		mb.set_xpm_icon(warning_xpm);
+		mb.set_xpm_icon(critical_xpm);
 
 	mb.set_modal();
 	mb.run();
@@ -371,7 +372,8 @@ int ask(const char *fmt, ...) {
 
 	if(ask_icon[0] != 0)
 		mb.set_theme_icon(ask_icon);
-	// FIXME: set_xpm_icon()
+	else
+		mb.set_xpm_icon(question_xpm);
 
 	mb.set_modal();
 	int ret = mb.run();
@@ -395,7 +397,8 @@ const char* input(const char *fmt, const char *deflt, ...) {
 
 	if(input_icon[0] != 0)
 		mb.set_theme_icon(input_icon);
-	// FIXME: set_xpm_icon()
+	else
+		mb.set_xpm_icon(question_xpm);
 	
 	mb.set_modal();
 	int ret = mb.run();
@@ -428,7 +431,8 @@ const char* password(const char *fmt, const char *deflt, ...) {
 
 	if(passwd_icon[0] != 0)
 		mb.set_theme_icon(passwd_icon);
-	// FIXME: set_xpm_icon()
+	else
+		mb.set_xpm_icon(question_xpm);
 
 	mb.set_modal();
 	int ret = mb.run();
