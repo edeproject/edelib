@@ -3,6 +3,7 @@
 	* src/IconLoader.cpp: let get() check fallback icon too; some sanity
 	checks
 	* edelib/IconLoader.h: document get() behaviour
+	* edelib/IconLoader.h: document how to get image object
 
 2009-03-24  Sanel <karijes@users.sourceforge.net>
 

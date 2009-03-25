@@ -162,7 +162,9 @@ public:
 	 *
 	 * It will try to load icon the sam way as get() does: first it will check if <em>name</em> is
 	 * absolute path then will go in icon theme. If this fails, it will try to load fallback icon and if 
-	 * succeeded (in one of the cases), it will redraw the widget (if <em>redraw_widget</em> is set to true)
+	 * succeeded (in one of the cases), it will redraw the widget (if <em>redraw_widget</em> is set to true).
+	 *
+	 * To retrieve the image object of set image, you can use image() function from given widget object.
 	 */
 	static bool set(Fl_Widget* widget, const char* name, IconSizes sz, IconContext ctx = ICON_CONTEXT_ANY,
 			bool allow_absolute_path = true, bool redraw_widget = true);
