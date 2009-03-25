@@ -30,24 +30,16 @@ EDELIB_NS_BEGIN
  * \class String
  * \brief A (relatively simple) string implementation.
  *
- * This implementation tries to be compatible with
- * std::string implementation, althought it does not implement
- * all gory details from std::string. There are few reasons
- * why this class exists:
- *   - complilation time; things with this class compile 3x faster
- *   than with std::string
- *   - extending; std::string is pain in the ass to extend, and
- *   providing possible copy of std::string implementation would
- *   require to provide a bunch of additional code
+ * This implementation tries to be compatible with std::string implementation, althought it does not implement
+ * all gory details from std::string. There are few reasons why this class exists:
+ *  - complilation time; things with this class compile 3x faster than with std::string
+ *  - extending; std::string is pain in the ass to extend, and providing possible copy of std::string 
+ *  implementation would require to provide a bunch of additional code
  *
- * This class <b>does not</b> provide <em>find_xxx, insert and erase</em> methods and
- * iterators. 
+ * This class does not provide find_xxx(), insert() and erase methods and iterators. 
  *
- * Also what is important, this is not COW (Copy-On-Write) implementation since 
- * those have very bad performance in multi-thread world.
- *
- * Some methods, like \e printf() does not exist in std::string. Also, the
- * behaviour of \e capacity() differs from std::string like:
+ * Some methods, like \e printf() does not exist in std::string. Also, the behaviour of \e capacity() differs 
+ * from std::string like:
  * \code
  *   String s = "foo";
  *   std::string s1 = "baz";
@@ -58,9 +50,6 @@ EDELIB_NS_BEGIN
  *   s1.reserve(20);
  *   s.capacity() == s1.capacity()   // same sizes
  * \endcode
- *
- * So, to sum all things up, in them most code replacing edelib::String
- * with std::string should provide exact behavour (except when printf is used).
  *
  * If you are not familiar with std::string, following things with this
  * class can be done:
@@ -83,25 +72,12 @@ EDELIB_NS_BEGIN
  *   s.printf("%s = %i", "num", 4);  // will be "num = 4"
  * \endcode
  *
- * \note
- * Since String increase internal buffer's size when is needed, some things
- * should be considered to minimize reallocations:
- *   - use reserve() if you know the length
- *   - prefer operator+= than operator+
+ * \note Since String increase internal buffer's size when is needed, some things should be considered to 
+ * minimize reallocations:
+ *  - use reserve() if you know the length
+ *  - prefer operator+= than operator+
  *
- * Like:
- * \code
- *   String s = "foo";
- *   s.reserve(20)         // keep content, and set internal buffer to 20 characters
- *   s += "baz";           // reallocation not needed
- *   s += "foo";           // not needed; will be needed when we exceed the size
- *
- *   // and...
- *   s = s + "baz";        // is not like below
- *   s += "baz";           // much faster than above
- * \endcode
- *
- * For all these quirks and details about them you should consult some good C++ book :P
+ * \todo COW would be nice
  */
 class EDELIB_API String {
 public: 
@@ -125,8 +101,7 @@ private:
 
 public:
 	/**
-	 * This will be returned when find() method fails. If is meant
-	 * to be used in form:
+	 * This will be returned when find() method fails. If is meant to be used in form:
 	 * \code
 	 *   String s;
 	 *   if(s.find("this does not exist") == String::npos)
@@ -155,14 +130,12 @@ public:
 	String(const String& str);
 
 	/**
-	 * Clears all internal data. All possible external pointers
-	 * to internal buffer will be invalidated
+	 * Clears all internal data. All possible external pointers to internal buffer will be invalidated
 	 */
 	~String();
 
 	/**
-	 * Assign content of c-like string, with given size. This method
-	 * will destroy the previous content of the string
+	 * Assign content of c-like string, with given size. This method will destroy the previous content of the string
 	 *
 	 * \return itself
 	 * \param str a pointer to c-like string (it should not be NULL)
@@ -187,8 +160,7 @@ public:
 	String& assign(const String& str);
 
 	/**
-	 * Appends content of c-like string, with given length to the end
-	 * of current string
+	 * Appends content of c-like string, with given length to the end of current string
 	 *
 	 * \return itself
 	 * \param str a pointer to c-like string (it should not be NULL)
@@ -197,8 +169,7 @@ public:
 	String& append(const char* str, size_type len);
 
 	/**
-	 * Appends content of c-like string with it's full length to the
-	 * end of current string
+	 * Appends content of c-like string with it's full length to the end of current string
 	 *
 	 * \return itself
 	 * \param str a pointer to c-like string (it should not be NULL)
@@ -238,9 +209,8 @@ public:
 	void swap(String& from);
 
 	/**
-	 * Returns a substring of the current string starting at the
-	 * index with num characters long. If num is not specified, returned
-	 * will be remain data starting from index
+	 * Returns a substring of the current string starting at the index with num characters long. 
+	 * If num is not specified, returned will be remain data starting from index
 	 *
 	 * \return substring
 	 * \param index starting position for substring
@@ -249,8 +219,7 @@ public:
 	String substr(size_type index, size_type num = npos) const;
 
 	/**
-	 * Returns starting position of str starting at offset. If str is not
-	 * found, String::npos will be returned
+	 * Returns starting position of str starting at offset. If str is not found, String::npos will be returned
 	 *
 	 * \return position of str, or String::npos if not found
 	 * \param str is string we are looking for
@@ -259,8 +228,8 @@ public:
 	size_type find(const char* str, size_type offset) const;
 
 	/**
-	 * Returns starting position of given character starting at the given
-	 * offset. If character is not found, String::npos will be returned
+	 * Returns starting position of given character starting at the given offset. If character is not 
+	 * found, String::npos will be returned
 	 *
 	 * \return position of given character, or String::npos if not found
 	 * \param ch character we are looking for
@@ -350,38 +319,132 @@ public:
 	String& operator+=(const char& ch);
 };
 
-/*
- * How the hell we place this functions on String class page ?
- * When I figure this out, SKIP_DOCS will be removed
+/**
+ * Concat two String objects
+ * \related String
  */
-#ifndef SKIP_DOCS
 EDELIB_API String operator+(const String& s1, const String& s2);
+
+/**
+ * Concat cstring and String object
+ * \related String
+ */
 EDELIB_API String operator+(const char* s1, const String& s2);
+
+/**
+ * Concat String and cstring
+ * \related String
+ */
 EDELIB_API String operator+(const String& s1, const char* s2);
 
+/**
+ * Check if String and cstring are equal
+ * \related String
+ */
 inline bool operator==(const String& str1, const char* str2) { return (strcmp(str1.c_str(), str2) == 0); }
+
+/**
+ * Check if String and cstring are not equal
+ * \related String
+ */
 inline bool operator!=(const String& str1, const char* str2) { return (strcmp(str1.c_str(), str2) != 0); }
+
+/**
+ * Check if String is larger than cstring
+ * \related String
+ */
 inline bool operator>(const String& str1, const char* str2) { return (strcmp(str1.c_str(), str2) > 0); }
+
+/**
+ * Check if String is larger or equal to the cstring
+ * \related String
+ */
 inline bool operator>=(const String& str1, const char* str2) { return (strcmp(str1.c_str(), str2) >= 0); }
+
+/**
+ * Check if String is less than cstring
+ * \related String
+ */
 inline bool operator<(const String& str1, const char* str2) { return (strcmp(str1.c_str(), str2) < 0); }
+
+/**
+ * Check if String is less or equal to cstring
+ * \related String
+ */
 inline bool operator<=(const String& str1, const char* str2) { return (strcmp(str1.c_str(), str2) <= 0); }
 
+/**
+ * Check if cstring and String are equal
+ * \related String
+ */
 inline bool operator==(const char* str1, const String& str2) { return (strcmp(str1, str2.c_str()) == 0); }
+
+/**
+ * Check if cstring and String are not equal
+ * \related String
+ */
 inline bool operator!=(const char* str1, const String& str2) { return (strcmp(str1, str2.c_str()) != 0); }
+
+/**
+ * Check if cstring is larger than String
+ * \related String
+ */
 inline bool operator>(const char* str1, const String& str2) { return (strcmp(str1, str2.c_str()) > 0); }
+
+/**
+ * Check if cstring is larger or equal to String
+ * \related String
+ */
 inline bool operator>=(const char* str1, const String& str2) { return (strcmp(str1, str2.c_str()) >= 0); }
+
+/**
+ * Check if cstring is less than String
+ * \related String
+ */
 inline bool operator<(const char* str1, const String& str2) { return (strcmp(str1, str2.c_str()) < 0); }
+
+/**
+ * Check if cstring is less or equal to the String
+ * \related String
+ */
 inline bool operator<=(const char* str1, const String& str2) { return (strcmp(str1, str2.c_str()) <= 0); }
 
+/**
+ * Check if two String's are equal
+ * \related String
+ */
 inline bool operator==(const String& str1, const String& str2) 
 { return (str1.length() == str2.length()) && (strcmp(str1.c_str(), str2.c_str()) == 0); }
 
+/**
+ * Check if two String's are not equal
+ * \related String
+ */
 inline bool operator!=(const String& str1, const String& str2) { return (strcmp(str1.c_str(), str2.c_str()) != 0); }
+
+/**
+ * Check if first String is larger than the second
+ * \related String
+ */
 inline bool operator>(const String& str1, const String& str2) { return (strcmp(str1.c_str(), str2.c_str()) > 0); }
+
+/**
+ * Check if first String is larger or equal than the second
+ * \related String
+ */
 inline bool operator>=(const String& str1, const String& str2) { return (strcmp(str1.c_str(), str2.c_str()) >= 0); }
+
+/**
+ * Check if first String is less than the second
+ * \related String
+ */
 inline bool operator<(const String& str1, const String& str2) { return (strcmp(str1.c_str(), str2.c_str()) < 0); }
+
+/**
+ * Check if first String is less or equal than the second
+ * \related String
+ */
 inline bool operator<=(const String& str1, const String& str2) { return (strcmp(str1.c_str(), str2.c_str()) <= 0); }
-#endif
 
 EDELIB_NS_END
 #endif // __STRING_H__

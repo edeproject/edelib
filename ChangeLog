@@ -7,6 +7,7 @@
 	* src/IconLoader.cpp: remove previous image from Fl_Shared_Image cache
 	whem icon theme was reloaded; some stats output
 	* src/IconTheme.cpp: removed debug output when go in 'hicolor' theme
+	* edelib/String.h: small documentation revision
 
 2009-03-24  Sanel <karijes@users.sourceforge.net>
 
