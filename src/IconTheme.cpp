@@ -215,7 +215,7 @@ void IconTheme::load_theme(const char* name) {
 
 	for(StrListIter it = dl.begin(); it != dl.end(); ++it) {
 		/* remove spaces */
-		str_trim((char*)(*it).c_str());
+		(*it).trim();
 
 		c.get((*it).c_str(), "Size", size, 0);
 		size = check_size(size);
@@ -278,7 +278,7 @@ void IconTheme::read_inherits(const char* buf) {
 	StrListIter it = parents.begin(), it_end = parents.end();
 
 	for(; it != it_end; ++it) { 
-		str_trim((char*)(*it).c_str());
+		(*it).trim();
 		load_theme((*it).c_str());
 	}
 }

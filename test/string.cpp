@@ -325,3 +325,59 @@ UT_FUNC(StringEmptyAppend, "Test string empty append")
 
 	UT_VERIFY( s.length() == 0 );
 }
+
+
+UT_FUNC(StringTrim, "Test string trim")
+{
+	String s = "some sample string";
+	s.trim();
+
+	UT_VERIFY( s == "some sample string" );
+
+	s = " some sample string";
+	s.trim_right();
+	UT_VERIFY( s == " some sample string" );
+
+	s.trim_left();
+	UT_VERIFY( s == "some sample string" );
+
+	s = "\t                                some string";
+	s.trim_left();
+	UT_VERIFY( s == "some string" );
+
+	s = "                    some   string                                        ";
+	s.trim_left();
+	UT_VERIFY( s == "some   string                                        " );
+
+	s.trim_right();
+	UT_VERIFY( s == "some   string" );
+
+	s = "\t                                some string            \t";
+	s.trim();
+	UT_VERIFY( s == "some string" );
+	UT_VERIFY( s.length() == 11 );
+
+	s.clear();
+	s.trim();
+	UT_VERIFY( s.empty() );
+
+	s = " aaa";
+	s.trim_left();
+	UT_VERIFY( s.length() == 3 );
+
+	s = " aaa";
+	s.trim_right();
+	UT_VERIFY( s.length() == 4 );
+
+	s = "         \t             ";
+	s.trim_left();
+	UT_VERIFY( s.empty() );
+
+	s = "         \t             ";
+	s.trim_right();
+	UT_VERIFY( s.empty() );
+
+	s = "         \t             ";
+	s.trim();
+	UT_VERIFY( s.empty() );
+}

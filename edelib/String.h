@@ -248,15 +248,24 @@ public:
 	void clear(void);
 
 	/**
-	 * Assign data in printf form, like:
-	 * \code
-	 *   String s;
-	 *   s.printf("This is %i number", 3);
-	 * \endcode
-	 *
-	 * All previous content will be deleted.
+	 * Assign data in printf form. All previous content will be deleted.
 	 */
 	void printf(const char* fmt, ...);
+
+	/**
+	 * Remove starting spaces
+	 */
+	void trim_left(void);
+
+	/**
+	 * Remove ending spaces
+	 */
+	void trim_right(void);
+
+	/**
+	 * Remove starting and ending spaces
+	 */
+	void trim(void);
 
 	/** 
 	 * Return data formated as c-like string 

@@ -8,6 +8,11 @@
 	whem icon theme was reloaded; some stats output
 	* src/IconTheme.cpp: removed debug output when go in 'hicolor' theme
 	* edelib/String.h: small documentation revision
+	* edelib/String.h:
+	* src/String.cpp:
+	* test/string.cpp: added trim_left(), trim_right(), trim() function with
+	the tests
+	* src/IconTheme.cpp: updated to use trim() function
 
 2009-03-24  Sanel <karijes@users.sourceforge.net>
 

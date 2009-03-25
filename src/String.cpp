@@ -20,10 +20,12 @@
 
 #include <stdarg.h>
 #include <stdio.h> // vsnprintf
+
 #include <edelib/String.h>
 #include <edelib/Debug.h>
+#include <edelib/StrUtil.h>
 
-#define PRINTF_BUFF 1024
+#define PRINTF_BUF 265
 #define STERM '\0'
 
 EDELIB_NS_BEGIN
@@ -57,7 +59,7 @@ String::~String()
 }
 
 void String::init(size_type len, size_type cap) {
-	EASSERT(len <= cap);
+	E_ASSERT(len <= cap);
 
 	sdata = new StringData;
 	sdata->chars = new char[cap + 1];
@@ -90,12 +92,12 @@ void String::swap(String& from) {
 }
 
 String& String::assign(const char* str, size_type len) {
-	EASSERT(str != NULL);
+	E_ASSERT(str != NULL);
 	/*
 	 * I'm not implementing max_size().
 	 * Here will be checked against only half, so memcpy does not goes crazy
 	 */
-	EASSERT(len < (String::npos / 2) && "Allocation exceeded max allowed size");
+	E_ASSERT(len < (String::npos / 2) && "Allocation exceeded max allowed size");
 
 	/*
 	 * Handle cases:
@@ -176,15 +178,39 @@ void String::clear(void) {
 }
 
 void String::printf(const char* fmt, ...) {
-	EASSERT(fmt != NULL);
+	E_ASSERT(fmt != NULL);
 
-	char buff[PRINTF_BUFF];
+	char buf[PRINTF_BUF];
 	va_list ap;
 	va_start(ap, fmt);
-	vsnprintf(buff, PRINTF_BUFF, fmt, ap);
+	vsnprintf(buf, PRINTF_BUF, fmt, ap);
 	va_end(ap);
 
-	assign((char*)buff);
+	assign((char*)buf);
+}
+
+void String::trim_left(void) {
+	if(length()) {
+		str_trimleft(sdata->chars);
+		/* update length */
+		sdata->length = strlen(sdata->chars);
+	}
+}
+
+void String::trim_right(void) {
+	if(length()) {
+		str_trimright(sdata->chars);
+		/* update length */
+		sdata->length = strlen(sdata->chars);
+	}
+}
+
+void String::trim(void) {
+	if(length()) {
+		str_trim(sdata->chars);
+		/* update length */
+		sdata->length = strlen(sdata->chars);
+	}
 }
 
 String& String::operator=(const char* str) {
@@ -212,13 +238,13 @@ String& String::operator+=(const char& ch) {
 }
 
 char& String::operator[](size_type index) {
-	EASSERT(index < length());
+	E_ASSERT(index < length());
 
 	return sdata->chars[index];
 }
 
 char String::operator[](size_type index) const {
-	EASSERT(index < length());
+	E_ASSERT(index < length());
 
 	return sdata->chars[index];
 }
@@ -267,7 +293,7 @@ String& String::replace(char c1, char c2) {
 	 * Never allow to replace terminating character or to add one.
 	 * TODO: the same must be for append() members
 	 */
-	EASSERT(c1 != STERM && c2 != STERM && "Replacing (or using as replacement) 0 character is not allowed");
+	E_ASSERT(c1 != STERM && c2 != STERM && "Replacing (or using as replacement) 0 character is not allowed");
 
 	if(c1 == c2)
 		return *this;
