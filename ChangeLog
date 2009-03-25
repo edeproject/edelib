@@ -13,6 +13,8 @@
 	* test/string.cpp: added trim_left(), trim_right(), trim() function with
 	the tests
 	* src/IconTheme.cpp: updated to use trim() function
+	* edelib.pc.in: added edelibdocdir variable; it will have full path to
+	edelib documentation directory
 
 2009-03-24  Sanel <karijes@users.sourceforge.net>
 
