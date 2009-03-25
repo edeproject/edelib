@@ -122,8 +122,8 @@ Fl_Shared_Image* IconLoader::get_icon(const char* name, IconSizes sz, IconContex
 
 	/* no image, try fallback then */
 	if(!img && fallback_icon) {
-		item = get_icon_path(fallback_icon, sz, ctx);
-		img = Fl_Shared_Image::get(item->path.c_str());
+		path = get_icon_path(fallback_icon, sz, ctx);
+		img = Fl_Shared_Image::get(path);
 	}
 
 	return img;
