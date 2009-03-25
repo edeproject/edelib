@@ -29,7 +29,7 @@
 #include <FL/Fl_Pixmap.H>
 
 #include <edelib/MessageBox.h>
-#include <edelib/IconTheme.h>
+#include <edelib/IconLoader.h>
 #include <edelib/Nls.h>
 #include <edelib/Debug.h>
 #include <edelib/Missing.h>
@@ -244,16 +244,17 @@ void MessageBox::set_text(const char* t) {
 
 bool MessageBox::set_icon(const char* path) {
 	Fl_Image* i = Fl_Shared_Image::get(path);
-	E_RETURN_VAL_IF_FAIL(i, false);
+	if(!i)
+		return false;
 
 	img->image(i);
 	return true;
 }
 
 bool MessageBox::set_theme_icon(const char* name) {
-	E_RETURN_VAL_IF_FAIL(IconTheme::inited(), false);
+	E_RETURN_VAL_IF_FAIL(IconLoader::inited(), false);
 
-	String p = IconTheme::get(name, ICON_SIZE_MEDIUM);
+	String p = IconLoader::get_path(name, ICON_SIZE_MEDIUM);
 	if(p.empty())
 		return false;
 

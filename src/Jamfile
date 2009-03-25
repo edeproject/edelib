@@ -74,7 +74,9 @@ SOURCE_GUI =
 	XSettingsClient.cpp
 	XSettingsManager.cpp
 	Window.cpp
+	WindowXid.cpp
 	ExpandableGroup.cpp
+	IconLoader.cpp
 	IconChooser.cpp 
 	FontChooser.cpp
 	MessageBox.cpp

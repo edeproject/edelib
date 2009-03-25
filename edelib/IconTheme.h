@@ -1,8 +1,8 @@
 /*
  * $Id$
  *
- * Icon loader according to the given theme
- * Copyright (c) 2005-2007 edelib authors
+ * Icon theme
+ * Copyright (c) 2005-2009 edelib authors
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -31,12 +31,12 @@ EDELIB_NS_BEGIN
  * \brief Icon sizes to look for
  */
 enum IconSizes {
-	ICON_SIZE_TINY         = 16,     ///< 16x16 icons
-	ICON_SIZE_SMALL        = 22,     ///< 22x22 icons
-	ICON_SIZE_MEDIUM       = 32,     ///< 32x32
-	ICON_SIZE_LARGE        = 48,     ///< 48x48
-	ICON_SIZE_HUGE         = 64,     ///< 64x64
-	ICON_SIZE_ENORMOUS     = 128     ///< 128x128
+	ICON_SIZE_TINY         = 16,   ///< 16x16 icons
+	ICON_SIZE_SMALL        = 22,   ///< 22x22 icons
+	ICON_SIZE_MEDIUM       = 32,   ///< 32x32
+	ICON_SIZE_LARGE        = 48,   ///< 48x48
+	ICON_SIZE_HUGE         = 64,   ///< 64x64
+	ICON_SIZE_ENORMOUS     = 128   ///< 128x128
 };
 
 /**
@@ -44,161 +44,110 @@ enum IconSizes {
  * \brief Icon types to look for
  */
 enum IconContext {
-	ICON_CONTEXT_ANY = 0,             ///< Can be any icon context
-	ICON_CONTEXT_ACTION,              ///< Icons representing actions
-	ICON_CONTEXT_APPLICATION,         ///< Icons representing applications
-	ICON_CONTEXT_DEVICE,              ///< Icons representing devices
-	ICON_CONTEXT_FILESYSTEM,          ///< Icons representing objects that are part of system
-	ICON_CONTEXT_MIMETYPE,            ///< Icons representing MIME types
-	ICON_CONTEXT_STOCK,               ///< Icons representing stock objects (gnome themes usually)
-	ICON_CONTEXT_EMBLEM,              ///< Icons representing emblem objects (gnome themes usually)
-	ICON_CONTEXT_MISC                 ///< Misc icons (gnome themes usually)
+	ICON_CONTEXT_ANY = 0,          ///< Can be any icon context
+	ICON_CONTEXT_ACTION,           ///< Icons representing actions
+	ICON_CONTEXT_APPLICATION,      ///< Icons representing applications
+	ICON_CONTEXT_DEVICE,           ///< Icons representing devices
+	ICON_CONTEXT_FILESYSTEM,       ///< Icons representing objects that are part of system
+	ICON_CONTEXT_MIMETYPE,         ///< Icons representing MIME types
+	ICON_CONTEXT_STOCK,            ///< Icons representing stock objects (gnome themes usually)
+	ICON_CONTEXT_EMBLEM,           ///< Icons representing emblem objects (gnome themes usually)
+	ICON_CONTEXT_MISC              ///< Misc icons (gnome themes usually)
 };
 
-#ifndef SKIP_DOCS
-struct IconDirInfo {
-	String      path;
-	int         size;
-	IconContext context;
-};
-
-#define CACHED_ICONS_SIZE 10
-
-struct IconsCached {
-	unsigned int hash;
-	IconContext  ctx;
-	IconSizes    sz;
-	String       path;
-};
-
-#endif
+class IconThemePrivate;
 
 /**
  * \class IconTheme
- * \brief Loads named icon according to given theme.
+ * \brief Finds named icon according to the given theme
  *
- * IconTheme is icon loader that follows <em>Icon Theme Specification</em>
- * from http://www.freedesktop.org and support PNG and XPM icons. This means 
- * that it can recognize icon themes from any desktop environment that
- * follows this specification.
+ * IconTheme is icon finder via <em>Icon Theme Specification</em> from http://www.freedesktop.org. 
+ * This specification prescribes how icons should be located when icon name was given in desktop neutral 
+ * way. With this, all common desktop environments and apps could share icons and themes.
  *
- * Some statements from specification are not added, like:
- *  - recognizing svg icons
+ * IconTheme closely follows this specification, with a few minor exceptions:
+ *  - recognizing SVG icons, since edelib currently does not have any SVG support
  *  - calculating Threshold key (todo for the future)
- *  - reading .icon data for specific icon, as no one use that in 
- *  time of this writing
+ *  - reading .icon data for specific icon, as no one use that in the time of this writing
  *
- * This is sample how to load theme, and, later, find and load
- * icon from it:
- * \code
- *    // this function should be called only once, at
- *    // program startup; the best place is before application
- *    // load gui data, inside main()
- *    IconTheme::init("some-theme-name");
+ * Icons are searched by giving the icon name, without extension, and IconTheme will try to find
+ * either PNG or XPM icon with the same name.
  *
- *    // ...somewhere in the code, when icon is needed
- *    String myicon = IconTheme::get("editor", ICON_SIZE_SMALL, ICON_CONTEXT_APPLICATION);
+ * Although this class can be used directly, preferred way is to load icons via IconLoader.
  *
- *    // ...at the end of programs code, when data is not needed
- *    // any more
- *    IconTheme::shutdown();
- *  \endcode
- *
- * IconTheme::init() <b>must</b> be called before IconTheme::get(), or
- * assertion will trigger. This function will search, check and cache
- * directories that contains given icon theme.
- *
- * If given theme is not found, empty string will be returned when icon
- * is tried to be fetched.
- *
- * IconTheme::get() accepts name of the icon <b>without extension</b>, icon
- * size, and optionally, icon context.
- *
- * \note Is prefered to specify icon context since it will decrease scanning
- * for icon, especially if theme contains a lot of icons.
- *
- * IconTheme::shutdown() <b>must</b> be called when there is no need to
- * lookup for icon inside theme again, or it will leave uncleared allocated data.
+ * \todo implement Threshold support (see icon-theme spec)
  */
 class EDELIB_API IconTheme {
 private:
-	static IconTheme* pinstance;
-	bool   fvisited;
-	String curr_theme;
-
-	list<String>      theme_dirs;
-	list<IconDirInfo> dirlist;
-
-	int cache_ptr;
-	IconsCached* icached[CACHED_ICONS_SIZE];
-	void cache_append(const char* icon, IconSizes sz, IconContext ctx, const String& path);
-	bool cache_lookup(const char* icon, IconSizes sz, IconContext ctx, String& ret);
-
-	IconTheme();
-	~IconTheme();
+	IconThemePrivate* priv;
 
 	IconTheme(const IconTheme&);
-	IconTheme& operator=(IconTheme&);
+	IconTheme& operator=(const IconTheme&);
 
-	void read_inherits(const char* buff);
-	void init_base_dirs(void);
+	void load_theme(const char* name);
+	void read_inherits(const char* buf);
 
 public:
-#ifndef SKIP_DOCS
-	String lookup(const char* icon, IconSizes sz, IconContext ctx);
-	void copy_known_icons(list<String>& lst, IconSizes sz, IconContext ctx);
-	void load_theme(const char* theme);
-	void clear_data(void);
-
-	const String& current_theme_name(void) const { return curr_theme; }
-
-	static IconTheme* instance(void);
-#endif
 	/**
-	 * Loads given theme from predefined directories
+	 * Empty constructor
 	 */
-	static void init(const char* theme);
+	IconTheme() : priv(NULL) { }
 
 	/**
-	 * Clear allocated data
+	 * Destructor, calls clear()
 	 */
-	static void shutdown(void);
+	~IconTheme() { clear(); }
 
 	/**
-	 * Return true if init() was called, but not shutdown().
-	 * Otherwise return false.
+	 * Load theme. Must be called before icons search. Calling load() again with
+	 * the new theme name will initialize that new theme
 	 */
-	static bool inited(void);
+	void load(const char* name);
 
 	/**
-	 * Return the name of current used theme
+	 * Unload current theme and clear allocated data
 	 */
-	static const String& theme_name(void);
+	void clear(void);
 
 	/**
-	 * Load another theme, clearing all previous internal
-	 * data, including cached one
+	 * Return full path to the icon name. If icon wasn't found, it will return empty string
 	 */
-	static void load(const char* theme);
+	String find_icon(const char* icon, IconSizes size, IconContext context = ICON_CONTEXT_ANY);
 
 	/**
-	 * Lookup for icon name
-	 * \return full path to icon name with extension
-	 * \param icon is icon name <b>without</b> extension
-	 * \param sz is desired icon size
-	 * \param ctx is desired icon context
+	 * Returns current given theme name, or NULL if theme wasn't loaded via load()
 	 */
-	static String get(const char* icon, IconSizes sz, IconContext ctx = ICON_CONTEXT_ANY);
+	const char* theme_name(void) const;
 
 	/**
-	 * Retrieve all icons with given size and context found in loaded theme.
-	 * Icons will be with full path
+	 * Returns current theme name. The difference between this function and theme_name() is that
+	 * theme_name() represents what was given to load() function, but stylized_theme_name() is the value
+	 * of the <em>Name</em> key in index.theme file.
 	 *
-	 * \param lst is list of icons
-	 * \param sz is icon size
-	 * \param ctx is icon context
+	 * <em>Name</em> is often localized so it should be used to publicly present icon theme name
 	 */
-	static void get_all(list<String>& lst, IconSizes sz, IconContext ctx = ICON_CONTEXT_ANY);
+	const char* stylized_theme_name(void) const;
+
+	/**
+	 * Returns description of loaded icon theme. If description wasn't found, returned string will be NULL
+	 */
+	const char* description(void) const;
+
+	/**
+	 * Returns the name of example icon or NULL if wasn't found. Example icon is value of <em>Example</em>
+	 * key and is plain name that could be used with find_icon() to search it's full path
+	 */
+	const char* example_icon(void) const;
+
+	/**
+	 * Query available icons from loaded theme and inherited themes. Icons will have full path
+	 */
+	void query_icons(list<String>& lst, IconSizes size, IconContext context = ICON_CONTEXT_ANY) const;
+
+	/**
+	 * Returns name for default icon theme
+	 */
+	static const char* default_theme_name(void) { return "edeneu"; }
 };
 
 EDELIB_NS_END

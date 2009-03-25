@@ -10,9 +10,9 @@
 
 #include <stdio.h>
 
-Fl_Double_Window* win = 0;
+Fl_Window* win = 0;
 Fl_Multi_Browser* dirlist = 0;
-Fl_Text_Buffer* log = 0;
+Fl_Text_Buffer* tlog = 0;
 
 char write_buff[256];
 
@@ -21,8 +21,7 @@ void add_cb(Fl_Widget*, void*) {
 	if(n) {
 		dirlist->add(n);
 		snprintf(write_buff, 256, "Added %s to be watched\n", n);
-		log->append(write_buff);
-		//edelib::DirWatch::add(n, edelib::DW_CREATE|edelib::DW_DELETE|edelib::DW_ATTRIB|edelib::DW_RENAME);
+		tlog->append(write_buff);
 		edelib::DirWatch::add(n, edelib::DW_CREATE|edelib::DW_DELETE|edelib::DW_ATTRIB|edelib::DW_RENAME|edelib::DW_MODIFY);
 	}
 }
@@ -41,7 +40,7 @@ void remove_cb(Fl_Widget*, void*) {
 	else
 		snprintf(write_buff, 256, "!!! Failed to removed %s\n", txt);
 
-	log->append(write_buff);
+	tlog->append(write_buff);
 }
 
 void close_cb(Fl_Widget*, void*) {
@@ -72,21 +71,21 @@ void notify_cb(const char* dir, const char* wh, int flag, void* l) {
 int main() {
 	edelib::DirWatch::init();
 
-	win = new Fl_Double_Window(380, 360, "Directory watch test");
+	win = new Fl_Window(380, 360, "Directory watch test");
 	win->begin();
 		dirlist = new Fl_Multi_Browser(10, 32, 360, 175, "Watched directories");
 		dirlist->align(FL_ALIGN_TOP_LEFT);
 
 		Fl_Text_Display* td = new Fl_Text_Display(10, 217, 360, 98);
-		log = new Fl_Text_Buffer();
-		td->buffer(log);
+		tlog = new Fl_Text_Buffer();
+		td->buffer(tlog);
 
 		if(edelib::DirWatch::notifier() == edelib::DW_FAM)
-			log->append("Loaded with FAM\n");
+			tlog->append("Loaded with FAM\n");
 		else if(edelib::DirWatch::notifier() == edelib::DW_INOTIFY)
-			log->append("Loaded with inotify\n");
+			tlog->append("Loaded with inotify\n");
 		else
-			log->append("Loaded with none notifier\n");
+			tlog->append("Loaded with none notifier\n");
 
 		Fl_Button* badd = new Fl_Button(80, 325, 90, 25, "&Add");
 		badd->callback(add_cb);
@@ -99,7 +98,7 @@ int main() {
 	win->end();
 	win->show();
 
-	edelib::DirWatch::callback(notify_cb, log);
+	edelib::DirWatch::callback(notify_cb, tlog);
 
 	Fl::run();
 	edelib::DirWatch::shutdown();

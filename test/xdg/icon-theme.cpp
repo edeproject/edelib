@@ -33,9 +33,9 @@ int main(int argc, char** argv) {
 		return 1;
 	}
 
-	IconTheme::init(icon_theme);
-	printf("%s\n", IconTheme::get(icon_name, (IconSizes)icon_size).c_str());
-	IconTheme::shutdown();
+	IconTheme theme;
+	theme.load(icon_theme);
+	printf("%s\n", theme.find_icon(icon_name, (IconSizes)icon_size).c_str());
 
 	return 0;
 }

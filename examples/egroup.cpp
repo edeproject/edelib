@@ -1,12 +1,12 @@
 #include <edelib/ExpandableGroup.h>
 #include <edelib/Color.h>
-#include <FL/Fl_Window.H>
+#include <edelib/Window.h>
 #include <FL/Fl.H>
 #include <FL/Fl_Button.H>
 
 int main()
 {
-	Fl_Window* win = new Fl_Window(480, 345, "Sample with 10 childs");
+	edelib::Window* win = new edelib::Window(480, 345, "Sample with 10 childs");
 	win->begin();
 	edelib::ExpandableGroup* eg = new edelib::ExpandableGroup(15, 15, 455, 315);
 	eg->box(FL_DOWN_BOX);

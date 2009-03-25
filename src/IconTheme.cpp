@@ -1,81 +1,118 @@
 /*
  * $Id$
  *
- * Icon loader according to given theme
- * Part of edelib.
- * Copyright (c) 2000-2007 EDE Authors.
+ * Icon theme
+ * Copyright (c) 2005-2009 edelib authors
  *
- * This program is licenced under terms of the
- * GNU General Public Licence version 2 or newer.
- * See COPYING for details.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 #include <edelib/IconTheme.h>
-#include <edelib/Debug.h>
-#include <edelib/Directory.h>
-#include <edelib/File.h>
 #include <edelib/Config.h>
-#include <edelib/StrUtil.h>
+#include <edelib/File.h>
 #include <edelib/Util.h>
-#include <stdio.h>
-#include <string.h> // strlen
+#include <edelib/StrUtil.h>
+#include <edelib/Directory.h>
 
 EDELIB_NS_BEGIN
 
-IconTheme* IconTheme::pinstance = NULL;
-
-typedef list<String>                StringList;
-typedef list<String>::iterator      StringListIter;
-typedef list<IconDirInfo>::iterator DirListIter;
-
-/*
- * Mandatory alternative theme if icon
- * is not found in specified one
- */
+/* Mandatory alternative theme if icon is not found in specified one */
 #define FALLBACK_THEME "hicolor"
 
-/*
- * Icon Theme Specification adds .svg too, but
- * we do not support them for now
- */
-#define ICON_EXT_SIZE 2
+/* * Icon Theme Specification adds .svg too, but we do not support them for now */
 static const char* icon_extensions[] = {
 	".png",
-	".xpm"
+	".xpm",
+	0
 };
 
-static void append_to_list(StringList& from, StringList& to) {
-	StringListIter it = from.begin(), it_end = from.end();
+struct IconDirInfo {
+	String      path;
+	int         size;
+	IconContext context;
+};
+
+typedef list<String>                StrList;
+typedef list<String>::iterator      StrListIter;
+
+typedef list<IconDirInfo>           DirList;
+typedef list<IconDirInfo>::iterator DirListIter;
+
+struct IconThemePrivate {
+	bool    fallback_visited;
+	bool    info_loaded;
+	String  curr_theme;
+	String  curr_theme_stylized;
+	String  curr_theme_descr;
+	String  curr_theme_example;
+	StrList theme_dirs;
+	DirList dirlist;
+};
+
+static void list_append(StrList& from, StrList& to) {
+	StrListIter it = from.begin(), it_end = from.end();
+
 	for(; it != it_end; ++it)
 		to.push_back(*it);
 }
 
-static unsigned int do_hash(const char* key, int keylen) {
-	unsigned hash ;
-	int i;
-	for (i = 0, hash = 0; i < keylen ;i++) {
-		hash += (long)key[i] ;
-		hash += (hash<<10);
-		hash ^= (hash>>6) ;
+/*
+ * Load base directories required from Theme specs in order as noted there. The order is:
+ *  1. $HOME/.icons
+ *  2. XDG_DATA_DIRS/icons
+ *  3. /usr/share/pixmaps
+ *  4. rest
+ *
+ * Note: init_base_dirs() should return paths ending with slashes
+ */
+static void init_base_dirs(StrList& dirs) {
+	String path = dir_home();
+	path += "/.icons/";
+	dirs.push_back(path);
+
+	path = user_data_dir();
+	path += "/icons/";
+	dirs.push_back(path);
+
+	StrList xdg_data_dirs;
+	system_data_dirs(xdg_data_dirs);
+
+	StrListIter it = xdg_data_dirs.begin(), it_end = xdg_data_dirs.end();
+
+	for(; it != it_end; ++it) {
+		path = *it;
+		path += "/icons/";
+		dirs.push_back(path);
 	}
-	hash += (hash <<3);
-	hash ^= (hash >>11);
-	hash += (hash <<15);
-	return hash ;
+
+	dirs.push_back("/usr/share/pixmaps/");
+
+	/* not in the Spec, but some systems puts KDE in 'opt' */
+	dirs.push_back("/opt/kde/share/icons/");
 }
 
-static int check_sz(int sz) {
+static int check_size(int sz) {
 	if(sz < ICON_SIZE_TINY || sz > ICON_SIZE_ENORMOUS) {
-		E_WARNING(E_STRLOC ": Unsupported size '%i', defaulting to the 32x32\n", sz);
+		/* got some unsupported size; return medium */
 		return ICON_SIZE_MEDIUM;
 	}
 
 	return sz;
 }
 
-static IconContext figure_ctx(const String& ctx) {
-	// mandatory ones
+static IconContext figure_context(const String& ctx) {
+	/* mandatory ones */
 	if(ctx == "Actions")
 		return ICON_CONTEXT_ACTION;
 	if(ctx == "Devices")
@@ -85,7 +122,7 @@ static IconContext figure_ctx(const String& ctx) {
 	if(ctx == "MimeTypes")
 		return ICON_CONTEXT_MIMETYPE;
 
-	// kde addons
+	/* kde addons */
 	if(ctx == "Applications")
 		return ICON_CONTEXT_APPLICATION;
 
@@ -100,189 +137,43 @@ static IconContext figure_ctx(const String& ctx) {
 	return ICON_CONTEXT_ANY;
 }
 
-
-IconTheme::IconTheme() : fvisited(false), curr_theme("") {
-	for(int i = 0; i < CACHED_ICONS_SIZE; i++)
-		icached[i] = NULL;
-
-	cache_ptr = 0;
-}
-
-IconTheme::~IconTheme() {
-	for(int i = 0; i < CACHED_ICONS_SIZE; i++) {
-		delete icached[i];
-		icached[i] = NULL;
-	}
-
-	E_DEBUG(E_STRLOC " : IconTheme::~IconTheme() cache dismiss\n");
-}
-
-void IconTheme::cache_append(const char* icon, IconSizes sz, IconContext ctx, const String& path) {
-	unsigned long hash = do_hash(icon, strlen(icon));
-	hash += sz;
-	hash += ctx;
-
-	if(cache_ptr == CACHED_ICONS_SIZE) {
-		cache_ptr = 0;
-		E_DEBUG(E_STRLOC ": IconTheme cache rollower\n");
-	}
-
-	if(icached[cache_ptr]) {
-		delete icached[cache_ptr];
-		icached[cache_ptr] = NULL;
-	}
-
-	icached[cache_ptr] = new IconsCached;
-	icached[cache_ptr]->hash = hash;
-	icached[cache_ptr]->path = path;
-	icached[cache_ptr]->sz   = sz;
-	icached[cache_ptr]->ctx  = ctx;
-
-	cache_ptr++;
-}
-
-bool IconTheme::cache_lookup(const char* icon, IconSizes sz, IconContext ctx, String& ret) {
-	unsigned long hash = do_hash(icon, strlen(icon));
-	hash += sz;
-	hash += ctx;
-
-	for(int i = 0; i < cache_ptr && i < CACHED_ICONS_SIZE; i++) {
-		if(icached[i]->hash == hash && icached[i]->sz == sz && icached[i]->ctx == ctx) {
-			E_DEBUG(E_STRLOC ": IconTheme::cache_lookup() : cache hit !\n");
-			ret = icached[i]->path;
-			return true;
-		}
-	}
-
-	E_DEBUG(E_STRLOC ": IconTheme::cache_lookup() : cache miss !!!\n");
-	return false;
-}
-
 /*
- * Load base directories required from Theme specs
- * in order as noted there. The order is:
- *  1. /home/user/.icons
- *  2. XDG_DATA_DIRS/icons
- *  3. /usr/share/pixmaps
- *  4. rest
+ * If given theme inherits one, all theme_dirs should be prescanned for 
+ * that theme; that applies too if inherited inherits another, and etc.
  */
-void IconTheme::init_base_dirs(void) {
-	String path = dir_home();
-	path += "/.icons/";
-
-	theme_dirs.push_back(path);
-
-	StringList xdg_data_dirs;
-	unsigned int sz = system_data_dirs(xdg_data_dirs);
-
-	if(sz) {
-		for(StringListIter it = xdg_data_dirs.begin(); it != xdg_data_dirs.end(); ++it) {
-			path.clear();
-			path = (*it);
-			path += "/icons/";
-
-			theme_dirs.push_back(path);
-		}
-	}
-
-	theme_dirs.push_back("/usr/share/pixmaps/");
-	theme_dirs.push_back("/opt/kde/share/icons/");
-}
-
-void IconTheme::init(const char* theme) {
-	if(IconTheme::pinstance != NULL)
-		return;
-
-	E_ASSERT(theme != NULL);
-	IconTheme::pinstance = new IconTheme();
-
-	IconTheme::pinstance->init_base_dirs();
-	IconTheme::pinstance->load_theme(theme);
-}
-
-void IconTheme::shutdown(void) {
-	if(IconTheme::pinstance == NULL)
-		return;
-
-	delete IconTheme::pinstance;
-	IconTheme::pinstance = NULL;
-}
-
-bool IconTheme::inited(void) {
-	return (IconTheme::pinstance != NULL);
-}
-
-IconTheme* IconTheme::instance(void) {
-	E_ASSERT(IconTheme::pinstance != NULL && "Did you run IconTheme::init() ?");
-	return IconTheme::pinstance;
-}
-
-/*
- * If given theme inherits one, all theme_dirs should
- * be prescanned for that theme; that applies too if inherited
- * inherits another, and etc.
- */
-void IconTheme::load_theme(const char* theme) {
-	curr_theme = theme;
-
-	String tpath;
-	String ipath;
-	bool found = false;
+void IconTheme::load_theme(const char* name) {
+	bool   found = false;
+	String index_path;
+	Config c;
 
 	/*
-	 * Lookup throught the icon_directories + theme name;
-	 * if found, try to locate index.theme since is
-	 * sign for theme directory
+	 * Lookup throught the icon_directories + theme name; if found, try to locate index.theme since it is
+	 * indicator for theme name
 	 */
-	const char* tt;
-	for(StringListIter it = theme_dirs.begin(); it != theme_dirs.end(); ++it) {
-		tt = (*it).c_str();
+	for(StrListIter it = priv->theme_dirs.begin(); it != priv->theme_dirs.end(); ++it) {
+		index_path = *it;
+		index_path += name;
+		index_path += E_DIR_SEPARATOR_STR "index.theme";
 
-		if(dir_exists(tt)) {
-			tpath = tt;
-			tpath += curr_theme;
-
-			if(dir_exists(tpath.c_str())) {
-				tpath += E_DIR_SEPARATOR_STR;
-
-				ipath = tpath;
-				ipath += "index.theme";
-
-				if(file_exists(ipath.c_str())) {
-					found = true;
-					break;
-				}
-				E_DEBUG(E_STRLOC ": index.theme not found in %s, skipping...\n", ipath.c_str());
-			}
+		if(c.load(index_path.c_str())) {
+			found = true;
+			break;
 		}
+
+		c.clear();
 	}
 
+	/* no 'index.theme' was found; we should quit */
 	if(!found)
 		return;
 
-	/*
-	 * Now open index.theme and read 'Directories' key;
-	 * this key contains in which subdirectories we should
-	 * look for icons and their sizes
-	 */
-	Config c;
-	if(!c.load(ipath.c_str())) {
-		E_WARNING(E_STRLOC ": %s not accessible\n", ipath.c_str());
-		return;
-	}
+	char* tmp_buf = NULL;
+	unsigned int tmp_buflen;
 
-	char* buffer = NULL;
-	unsigned int bufflen;
-
-	if(!c.get_allocated("Icon Theme", "Directories", &buffer, bufflen)) {
+	if(!c.get_allocated("Icon Theme", "Directories", &tmp_buf, tmp_buflen)) {
 		E_WARNING(E_STRLOC ": bad: %s\n", c.strerror());
 		return;
 	}
-
-	E_ASSERT(buffer != NULL);
-
-	// used for Context/Inherits
-	char static_buffer[1024];
 
 	/*
 	 * The format of Directories key is: 'Directories = size1/type, size2/type, size3/type, etc.'
@@ -296,146 +187,204 @@ void IconTheme::load_theme(const char* theme) {
 	 *
 	 * For now Threshold is ignored
 	 */
-	StringList dl;
-	stringtok(dl, buffer, ",");
-	delete [] buffer;
+	StrList dl;
+	stringtok(dl, tmp_buf, ",");
+	delete [] tmp_buf;
 
-	int sz = 0;
-	IconDirInfo dinfo;
-	for(StringListIter it = dl.begin(); it != dl.end(); ++it) {
-		// remove spaces
+	/* used to load theme info and Context/Inherits */
+	char static_buf[1024];
+
+	/* load theme informations */
+	if(!priv->info_loaded) {
+		if(c.get_localized("Icon Theme", "Name", static_buf, sizeof(static_buf)))
+			priv->curr_theme_stylized = static_buf;
+
+		if(c.get_localized("Icon Theme", "Comment", static_buf, sizeof(static_buf)))
+			priv->curr_theme_descr = static_buf;
+
+		if(c.get("Icon Theme", "Example", static_buf, sizeof(static_buf)))
+			priv->curr_theme_example = static_buf;
+
+		priv->info_loaded = true;
+	}
+
+	int         size = 0;
+	IconDirInfo dirinfo;
+	IconContext context;
+	String      theme_subdir_path;
+
+	for(StrListIter it = dl.begin(); it != dl.end(); ++it) {
+		/* remove spaces */
 		str_trim((char*)(*it).c_str());
 
-		if(!c.get((*it).c_str(), "Size", sz, 0))
-			E_WARNING(E_STRLOC ": Bad entry '%s' in %s, skipping...\n", (*it).c_str(), ipath.c_str());
+		c.get((*it).c_str(), "Size", size, 0);
+		size = check_size(size);
 
-		dinfo.size = check_sz(sz);
+		if(c.get((*it).c_str(), "Context", static_buf, sizeof(static_buf)))
+			context = figure_context(static_buf);
+		else {
+			/* 'Context' key not found */
+			context = ICON_CONTEXT_ANY;
+		}
 
-		if(!c.get((*it).c_str(), "Context", static_buffer, sizeof(static_buffer)))
-			E_WARNING(E_STRLOC ": Bad entry '%s' in %s, skipping...\n", (*it).c_str(), ipath.c_str());
+		/* 
+		 * Now, go through all theme directories and try to find subdirectory with 'Directories' values;
+		 * if found, it will be considered as part of theme package with images and will be recorded.
+		 *
+		 * With this, when we have /usr/share/icons/foo/index.theme with '48x48/apps' but not
+		 * /usr/share/icons/foo/48x48/apps, user can create e.g. ~/.icons/foo/48x48/apps and it will be considered
+		 * as part of theme. At least pyxdg implementation does this too.
+		 */
+		for(StrListIter dit = priv->theme_dirs.begin(); dit != priv->theme_dirs.end(); ++dit) {
+			theme_subdir_path = *dit;
+			theme_subdir_path += name;
+			theme_subdir_path += E_DIR_SEPARATOR_STR;
+			theme_subdir_path += *it;
 
-		dinfo.context = figure_ctx(static_buffer);
+			if(dir_exists(theme_subdir_path.c_str())) {
+				IconDirInfo dirinfo;
+				dirinfo.path = theme_subdir_path;
+				dirinfo.context = context;
+				dirinfo.size = size;
 
-		// and finally record the path
-		dinfo.path = tpath;
-		dinfo.path += (*it);
-
-		dirlist.push_back(dinfo);
+				priv->dirlist.push_back(dirinfo);
+			}
+		}
 	}
 	
 	/*
-	 * Now try to read Inherits key which represent parents; if
-	 * not found, default should be 'hicolor';
+	 * Now try to read Inherits key which represent parents; if not found, default should be 'hicolor';
 	 * this key can have multiple values, like:
 	 *
 	 * Inherits = theme1,theme2
 	 *
 	 * They all must be scanned :(
 	 */
-	if(!c.get("Icon Theme", "Inherits", static_buffer, sizeof(static_buffer))) {
-		// prevent infinite recursion
-		if(!fvisited) {
+	if(c.get("Icon Theme", "Inherits", static_buf, sizeof(static_buf)))
+		read_inherits(static_buf);
+	else {
+		/* prevent infinite recursion */
+		if(!priv->fallback_visited) {
 			E_DEBUG(E_STRLOC ": No parents, going for '%s'\n", FALLBACK_THEME);
-			fvisited = true;
+
+			priv->fallback_visited = true;
 			load_theme(FALLBACK_THEME);
 		}
 	}
-	else {
-		read_inherits(static_buffer);
-	}
 }
 
-void IconTheme::read_inherits(const char* buff) {
-	E_ASSERT(buff != NULL);
+void IconTheme::read_inherits(const char* buf) {
+	StrList parents;
+	stringtok(parents, buf, ",");
 
-	StringList parents;
-	stringtok(parents, buff, ",");
+	StrListIter it = parents.begin(), it_end = parents.end();
 
-	for(StringListIter it = parents.begin(); it != parents.end(); ++it) { 
-		// remove spaces
+	for(; it != it_end; ++it) { 
 		str_trim((char*)(*it).c_str());
-
 		load_theme((*it).c_str());
 	}
 }
 
-void IconTheme::clear_data(void) {
-	/*
-	 * This is not called inside load_theme()
-	 * so we can recursively collect Inherits key
-	 */
-	curr_theme = "";
-	dirlist.clear();
+void IconTheme::load(const char* name) {
+	E_ASSERT(name != NULL);
+
+	if(priv)
+		clear();
+
+	priv = new IconThemePrivate;
+	priv->fallback_visited = false;
+	priv->info_loaded = false;
+	priv->curr_theme = name;
+
+	init_base_dirs(priv->theme_dirs);
+	load_theme(name);
 }
 
-String IconTheme::lookup(const char* icon, IconSizes sz, IconContext ctx) {
-	if(dirlist.size() == 0)
+void IconTheme::clear(void) {
+	if(!priv)
+		return;
+
+	delete priv;
+	priv = NULL;
+}
+
+String IconTheme::find_icon(const char* icon, IconSizes sz, IconContext ctx) {
+	E_ASSERT(priv != NULL && "Did you call load() before this function?");
+
+	if(priv->dirlist.empty())
 		return "";
 
 	String ret;
-	ret.reserve(50);
+	ret.reserve(64);
 
-	if(cache_lookup(icon, sz, ctx, ret))
-		return ret;
+	DirListIter it = priv->dirlist.begin(), it_end = priv->dirlist.end();
 
-	/*
-	 * ICON_CONTEXT_ANY means context is ignored, but also means slower lookup
-	 * since all entries are searched
-	 */
-	for(DirListIter it = dirlist.begin(); it != dirlist.end(); ++it) 
+	/* ICON_CONTEXT_ANY means context is ignored, but also means slower lookup since all entries are searched */
+	for(; it != it_end; ++it) {
 		if((*it).size == sz && ((*it).context == ctx || ctx == ICON_CONTEXT_ANY)) {
-			for(int j = 0; j < ICON_EXT_SIZE; j++) {
+			for(int i = 0; icon_extensions[i]; i++) {
 				ret = (*it).path;
 				ret += E_DIR_SEPARATOR_STR;
 				ret += icon;
-				ret += icon_extensions[j];
+				ret += icon_extensions[i];
 
-				if(file_exists(ret.c_str())) {
-					cache_append(icon, sz, ctx, ret);
+				/* only check if exists; not too good, but we do not handle file opennings */
+				if(file_exists(ret.c_str()))
 					return ret;
-				}
 			}
 		}
+	}
 
 	return "";
 }
 
-void IconTheme::copy_known_icons(list<String>& lst, IconSizes sz, IconContext ctx) {
-	if(dirlist.size() == 0)
+const char* IconTheme::theme_name(void) const {
+	E_RETURN_VAL_IF_FAIL(priv != NULL, NULL);
+
+	if(priv->curr_theme.empty())
+		return NULL;
+	return priv->curr_theme.c_str();
+}
+
+const char* IconTheme::stylized_theme_name(void) const {
+	E_RETURN_VAL_IF_FAIL(priv != NULL, NULL);
+
+	if(priv->curr_theme_stylized.empty())
+		return NULL;
+	return priv->curr_theme_stylized.c_str();
+}
+
+const char* IconTheme::description(void) const {
+	E_RETURN_VAL_IF_FAIL(priv != NULL, NULL);
+
+	if(priv->curr_theme_descr.empty())
+		return NULL;
+	return priv->curr_theme_descr.c_str();
+}
+
+const char* IconTheme::example_icon(void) const {
+	E_RETURN_VAL_IF_FAIL(priv != NULL, NULL);
+
+	if(priv->curr_theme_example.empty())
+		return NULL;
+	return priv->curr_theme_example.c_str();
+}
+
+void IconTheme::query_icons(list<String>& lst, IconSizes sz, IconContext ctx) const {
+	E_RETURN_IF_FAIL(priv != NULL);
+
+	if(priv->dirlist.size() == 0)
 		return;
 
-	String icon;
-	icon.reserve(50);
+	StrList content;
+	DirListIter it = priv->dirlist.begin(), it_end = priv->dirlist.end();
 
-	StringList content;
-
-	DirListIter it = dirlist.begin(), it_end = dirlist.end();
 	for(; it != it_end; ++it) {
 		if((*it).size == sz && ((*it).context == ctx || ctx == ICON_CONTEXT_ANY)) {
 			if(dir_list((*it).path.c_str(), content, true))
-				append_to_list(content, lst);
+				list_append(content, lst);
 		}
 	}
-}
-
-const String& IconTheme::theme_name(void) {
-	return IconTheme::instance()->current_theme_name();
-}
-
-void IconTheme::load(const char* theme) {
-	E_ASSERT(theme != NULL);
-
-	IconTheme::instance()->clear_data();
-	IconTheme::instance()->load_theme(theme);
-}
-
-String IconTheme::get(const char* icon, IconSizes sz, IconContext ctx) {
-	E_ASSERT(icon != NULL);
-	return IconTheme::instance()->lookup(icon, sz, ctx);
-}
-
-void IconTheme::get_all(list<String>& lst, IconSizes sz, IconContext ctx) {
-	return IconTheme::instance()->copy_known_icons(lst, sz, ctx);
 }
 
 EDELIB_NS_END

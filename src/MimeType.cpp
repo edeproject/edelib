@@ -45,12 +45,10 @@ MimeType::~MimeType()
 }
 
 bool MimeType::set(const char* filename) {
-	EASSERT(filename != NULL);
+	E_ASSERT(filename != NULL);
 	/*
 	 * Call on the same file again check.
-	 *
-	 * FIXME: some stamp check would be nice here so if file 
-	 * with the same name change content, can be inspected.
+	 * FIXME: some stamp check would be nice here so if file  with the same name change content, can be inspected.
 	 */
 	if(mtype == filename)
 		return true;
@@ -94,7 +92,7 @@ const String& MimeType::comment(void) {
 	TiXmlDocument doc(path.c_str());
 
 	if(!doc.LoadFile()) {
-		EDEBUG(ESTRLOC ": MimeType::comment() %s malformed\n", path.c_str());
+		E_DEBUG(E_STRLOC ": MimeType::comment() %s malformed\n", path.c_str());
 		return mcmt;
 	}
 
@@ -126,7 +124,8 @@ const String& MimeType::comment(void) {
 }
 
 bool MimeType::subclass_of(const char* mime) {
-	EASSERT(mime != NULL);
+	E_ASSERT(mime != NULL);
+
 	if(!(status & MIME_LOADED))
 		return false;
 
@@ -140,32 +139,35 @@ const String& MimeType::icon_name(void) {
 	if(status & ICON_LOADED)
 		return micon;
 
-	list<String> vs;
-	stringtok(vs, mtype, "/");
+	/* check first for user aliases */
+	const char* ic = xdg_mime_get_icon(mtype.c_str());
+	if(ic) {
+		micon = ic;
 
-	// failed, accepted is only type/name
-	if(vs.size() != 2)
+		status |= ICON_LOADED;
+		return micon;
+	}
+
+	/* clear whatever we had previous */
+	micon.clear();
+
+	String::size_type pos = mtype.find('/', 0);
+	if(pos == String::npos)
 		return micon;
 
-	micon.clear();
-	micon.reserve(5);
-	list<String>::iterator it = vs.begin();
-
-	if((*it) == "inode") {
-		/*
-		 * XDG Mime guys decided that folders are named under 'inode/directory.xml'. 
-		 * But icon naming standard say it should contain name 'folder' (sigh!).
-		 */
-		++it;
-		if((*it) == "directory")
+	/*
+	 * XDG Mime guys decided that folders are named under 'inode/directory.xml'. 
+	 * But icon naming standard say it should contain name 'folder' (sigh!).
+	 *
+	 * FIXME: strncmp() here?
+	 */
+	if(mtype.substr(0, pos) == "inode") {
+		micon = mtype.substr(pos + 1);
+		if(micon == "directory")
 			micon = "folder";
-		else
-			micon = (*it);
 	} else {
-		micon = (*it);
-		micon += '-';
-		++it;
-		micon += (*it);
+		micon = mtype;
+		micon[pos] = '-';
 	}
 
 	status |= ICON_LOADED;

@@ -1,3 +1,62 @@
+2009-03-24  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/IconTheme.h: default_theme_name() added
+	* edelib/IconLoader.h: plain init() used default_theme_name()
+	* src/Window.cpp: DEFAULT_ICON_THEME replaced with default_theme_name()
+	* edelib/IconLoader.h:
+	* src/IconLoader.cpp: let IconLoader tries to directly load icon, then use
+	IconTheme
+	* src/IconLoader.cpp: removed checks if Fl_Shared_Image::get() fails;
+	image() will get NULL and widget will remove previous image, drawing
+	nothing; this behaviour is desired since image is not found anyway
+
+2009-03-23  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Window.h: small clarification about XSETTINGS callback;
+	documented XSETTINGS keys
+	* edelib/IconLoader.h:
+	* src/IconLoader.cpp: added parameter for widget redrawing in set()
+	* edelib/IconLoader.h: some documentation update
+	* src/MimeType.cpp: use new xdgmime's icon lookup feature in fetching icon
+	name, refactored icon fetcher to not use stringtok()
+	* src/MimeType.cpp: mark status as loaded when we have icon name
+
+2009-03-20  Sanel <karijes@users.sourceforge.net>
+
+	* src/ThreadableMember.h: removed; not used any more
+	* src/IconChooser.cpp: re-implemented loading via new IconLoader
+	* edelib/IconLoader.h: remove default parameters from hidden functions
+
+2009-03-19  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Window.h:
+	* src/Window.cpp:
+	* edelib/WindowXid.h:
+	* src/WindowXid.cpp: window_xid_create() moved to WindowXid.{h,cpp} for
+	easier maintenance
+	* edelib/IconLoader.h: documented caveats if IconLoader::reload() was used
+	when Window is used
+	* src/IconLoader.cpp: removing main() used for test code
+	* edelib/Window.h:
+	* src/Window.cpp: reimplemented previous settings stuff naming it as foreign
+	callbacks
+
+2009-03-17  Sanel <karijes@users.sourceforge.net>
+
+	* src/IconTheme.cpp: spec said $XDG_DATA_HOME/icons should be used too
+	* edelib/IconLoader.h: some documentation update
+
+2009-03-16  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/IconTheme.h:
+	* src/IconTheme.cpp: new code, new design, improved icon searching
+	* edelib/IconLoader.h:
+	* src/IconLoader.cpp: now this class actually loads icons, cache them and
+	displays inside widgets
+	* src/Window.cpp:
+	* src/IconChooser.cpp:
+	* test/xdg/icon-theme.cpp: updated because of these chages
+
 2009-03-10  Sanel <karijes@users.sourceforge.net>
 
 	* edelib/Pty.h:

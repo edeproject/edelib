@@ -30,14 +30,14 @@
 #include <FL/fl_draw.H>
 
 #include <edelib/IconChooser.h>
+#include <edelib/IconLoader.h>
 #include <edelib/Directory.h>
 #include <edelib/ExpandableGroup.h>
 #include <edelib/Nls.h>
 #include <edelib/Debug.h>
 #include <edelib/StrUtil.h>
-#include <edelib/IconTheme.h>
 
-// max icon sizes
+/* max icon sizes */
 #define MAX_ICON_W  128
 #define MAX_ICON_H  128
 
@@ -377,14 +377,17 @@ String icon_chooser(const char* dir) {
 	return ic.get_ret();
 }
 
-
 String icon_chooser(IconSizes sz, IconContext ctx) {
 	IconChooser ic;
 
-	if(IconTheme::inited()) {
-		list<String> all_icons;
-		IconTheme::get_all(all_icons, sz, ctx);
-		ic.load_from_list(all_icons);
+	if(IconLoader::inited()) {
+		list<String> all;
+
+		const IconTheme* t = IconLoader::theme();
+		E_ASSERT(t != NULL && "IconLoader loaded, but IconTheme object NULL");
+
+		t->query_icons(all, sz, ctx);
+		ic.load_from_list(all);
 	}
 
 	ic.show();
