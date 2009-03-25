@@ -4,6 +4,9 @@
 	checks
 	* edelib/IconLoader.h: document get() behaviour
 	* edelib/IconLoader.h: document how to get image object
+	* src/IconLoader.cpp: remove previous image from Fl_Shared_Image cache
+	whem icon theme was reloaded; some stats output
+	* src/IconTheme.cpp: removed debug output when go in 'hicolor' theme
 
 2009-03-24  Sanel <karijes@users.sourceforge.net>
 

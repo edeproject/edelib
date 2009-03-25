@@ -265,8 +265,6 @@ void IconTheme::load_theme(const char* name) {
 	else {
 		/* prevent infinite recursion */
 		if(!priv->fallback_visited) {
-			E_DEBUG(E_STRLOC ": No parents, going for '%s'\n", FALLBACK_THEME);
-
 			priv->fallback_visited = true;
 			load_theme(FALLBACK_THEME);
 		}

@@ -167,15 +167,24 @@ void IconLoader::reload_icons(void) {
 	ItemsIter it = items.begin(), it_end = items.end();
 	IconLoaderItem* item;
 
-	/* 
-	 * TODO: Fl_Shared_Image cache should be cleared here; not fully because
-	 * it could contain other images, not related to the icons.
-	 */
+	unsigned int removed = 0, reloaded = 0;
 
 	/* iterate over the list and update each icon name with the new path */
 	for(; it != it_end; ++it) {
 		item = *it;
+
+		/* remove previous icon from Fl_Shared_Image cache */
+		if(!item->path.empty()) {
+			Fl_Shared_Image* old_img = Fl_Shared_Image::find(item->path.c_str());
+
+			if(old_img) {
+				++removed;
+				old_img->release();
+			}
+		}
+
 		item->path = curr_theme->find_icon(item->name.c_str(), item->size, item->context);
+		++reloaded;
 
 		/* 
 		 * Also update widget icon. If Fl_Shared_Image::get() fails here, image() will
@@ -189,7 +198,10 @@ void IconLoader::reload_icons(void) {
 			wi->image(img);
 			wi->redraw();
 		}
-	}		
+	}
+
+	E_DEBUG(E_STRLOC ": icon theme reload (removed: %i, reloaded: %i, totally tracked: %i icons)\n", 
+			removed, reloaded, items.size());
 }
 
 void IconLoader::repoll_icons(void) {
