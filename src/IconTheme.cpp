@@ -20,10 +20,10 @@
 
 #include <edelib/IconTheme.h>
 #include <edelib/Config.h>
-#include <edelib/File.h>
 #include <edelib/Util.h>
 #include <edelib/StrUtil.h>
 #include <edelib/Directory.h>
+#include <edelib/FileTest.h>
 
 EDELIB_NS_BEGIN
 
@@ -241,7 +241,7 @@ void IconTheme::load_theme(const char* name) {
 			theme_subdir_path += E_DIR_SEPARATOR_STR;
 			theme_subdir_path += *it;
 
-			if(dir_exists(theme_subdir_path.c_str())) {
+			if(file_test(theme_subdir_path.c_str(), FILE_TEST_IS_DIR)) {
 				IconDirInfo dirinfo;
 				dirinfo.path = theme_subdir_path;
 				dirinfo.context = context;
@@ -327,7 +327,7 @@ String IconTheme::find_icon(const char* icon, IconSizes sz, IconContext ctx) {
 				ret += icon_extensions[i];
 
 				/* only check if exists; not too good, but we do not handle file opennings */
-				if(file_exists(ret.c_str()))
+				if(file_test(ret.c_str(), FILE_TEST_IS_REGULAR))
 					return ret;
 			}
 		}

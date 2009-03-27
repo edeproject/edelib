@@ -23,7 +23,7 @@
 #include <edelib/Config.h>
 #include <edelib/Debug.h>
 #include <edelib/Util.h>
-#include <edelib/File.h>
+#include <edelib/FileTest.h>
 #include <edelib/Directory.h>
 
 #define CONFIG_FILE_SUFFIX ".conf"
@@ -337,7 +337,11 @@ String Resource::find_config(const char* domain, ResourceType r, const char* pre
 	construct_name_from_domain(domain, prefix, n);
 
 	String ret = locate_resource(n.c_str(), r, true);
-	E_RETURN_VAL_IF_FAIL(file_exists(ret.c_str()), "");
+
+	/* FIXME: really need this here? */
+	bool exists = file_test(ret.c_str(), FILE_TEST_IS_REGULAR);
+	E_RETURN_VAL_IF_FAIL(exists, "");
+
 	return ret;
 }
 

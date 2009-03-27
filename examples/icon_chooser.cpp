@@ -4,7 +4,7 @@
 #include <FL/Fl_Shared_Image.H>
 #include <edelib/IconChooser.h>
 #include <edelib/String.h>
-#include <edelib/Directory.h>
+#include <edelib/FileTest.h>
 #include <FL/Fl.H>
 #include <stdio.h>
 
@@ -19,7 +19,7 @@ void run_cb(Fl_Widget*, void*) {
 	//const char* dd = "/opt/kde/share/icons/default.kde/48x48/apps/";
 	const char* dd = "/home/sanel/.icons/edeneu/16x16/apps/";
 	//const char* dd = "/";
-	if(!edelib::dir_exists(dd))
+	if(!edelib::file_test(dd, edelib::FILE_TEST_IS_DIR))
 		printf("Directory %s does not exists, continuing...\n", dd);
 
 	edelib::String r = edelib::icon_chooser(dd);

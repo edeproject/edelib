@@ -29,7 +29,7 @@
 
 EDELIB_NS_BEGIN
 
-bool file_test(const char* path, int flags) {
+bool file_test(const char* path, unsigned int flags) {
 	E_ASSERT(path != NULL);
 
 	bool ret = false;
@@ -66,13 +66,13 @@ bool file_test(const char* path, int flags) {
 	{
 		struct stat st;
 
-		if(stat(path, &st) == 0) {
+		if(flags & FILE_TEST_IS_SYMLINK && lstat(path, &st) == 0) {
+			ret = (S_ISLNK(st.st_mode) == 1);
+		} else if(stat(path, &st) == 0) {
 			if(flags & FILE_TEST_IS_REGULAR)
 				ret = (S_ISREG(st.st_mode) == 1);
 			else if(flags & FILE_TEST_IS_DIR)
 				ret = (S_ISDIR(st.st_mode) == 1);
-			else if(flags & FILE_TEST_IS_SYMLINK)
-				ret = (S_ISLNK(st.st_mode) == 1);
 			else if(flags & FILE_TEST_IS_CHAR)
 				ret = (S_ISCHR(st.st_mode) == 1);
 			else if(flags & FILE_TEST_IS_BLOCK)

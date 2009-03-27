@@ -18,16 +18,17 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdlib.h> // getenv
-#include <string.h> // strlen, strncpy
-#include <stdarg.h> // va_xxx stuff, vfprintf
-#include <sys/types.h> // stat, chmod, utime
-#include <sys/stat.h>  // stat, chmod
-#include <utime.h>     // utime
-#include <unistd.h>    // access, stat, unlink
-#include <stdio.h>     // rename
+#include <stdlib.h>
+#include <string.h>
+#include <stdarg.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <utime.h>
+#include <unistd.h>
+#include <stdio.h>
 
 #include <edelib/File.h>
+#include <edelib/FileTest.h>
 #include <edelib/Debug.h>
 #include <edelib/StrUtil.h>
 #include <edelib/List.h>
@@ -73,16 +74,7 @@ bool file_executable(const char* name) {
 bool file_remove(const char* name) {
 	E_ASSERT(name != NULL);
 
-	if(file_exists(name)) {
-		int ret = unlink(name);
-
-		if(ret == 0)
-			return true;
-		else
-			return false;
-	}
-
-	return false;
+	return (unlink(name) == 0);
 }
 
 bool file_copy(const char* src, const char* dest, bool exact) {
@@ -139,20 +131,13 @@ bool file_rename(const char* from, const char* to) {
 	E_ASSERT(from != NULL);
 	E_ASSERT(to != NULL);
 
-	if(!file_exists(from))
-		return false;
-
-	int ret = rename(from, to);
-	if(ret == 0)
-		return true;
-
-	return false;
+	return (rename(from, to) == 0);
 }
 
-String file_path(const char* fname, bool check_link) {
+String file_path(const char* fname, bool skip_link) {
 	E_ASSERT(fname != NULL);
 
-	if(file_exists(fname))
+	if(file_test(fname, FILE_TEST_IS_REGULAR | FILE_TEST_IS_EXECUTABLE))
 		return fname;
 
 	char* val = getenv("PATH");
@@ -169,20 +154,21 @@ String file_path(const char* fname, bool check_link) {
 	it = vs.begin();
 	it_end = vs.end();
 
-	struct stat s;
 	const char* sptr;
 	for(; it != it_end; ++it) {
-		// assume PATH does not contains entries ending with '/'
+		/* assume PATH does not contains entries ending with '/' */
 		(*it) += '/';
 		(*it) += fname;
 		sptr = (*it).c_str();
 
-		if(file_exists(sptr)) {
-			if(!check_link) 
-				return (*it);
-			else if((lstat(sptr, &s) == 0) && !S_ISLNK(s.st_mode)) {
-				return (*it);
-			}
+		if(skip_link == false && file_test(sptr, FILE_TEST_IS_REGULAR | FILE_TEST_IS_EXECUTABLE))
+			return *it;
+
+		if(skip_link == true && 
+				file_test(sptr, FILE_TEST_IS_REGULAR | FILE_TEST_IS_EXECUTABLE) && 
+				file_test(sptr, FILE_TEST_IS_SYMLINK) == false)
+		{
+			return *it;
 		}
 	}
 

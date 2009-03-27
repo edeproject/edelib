@@ -207,27 +207,31 @@ public:
 /** 
  * Check if file exists and is regular file 
  * \related File
+ * \deprecated with file_test()
  */
-EDELIB_API bool file_exists(const char* name);
+EDELIB_API bool file_exists(const char* name) EDELIB_DEPRECATED;
 
 /** 
  * Check if file is readable 
  * \related File
+ * \deprecated with file_test()
  */
-EDELIB_API bool file_readable(const char* name);
+EDELIB_API bool file_readable(const char* name) EDELIB_DEPRECATED;
 
 /** 
  * Check if file is writeable 
  * \related File
+ * \deprecated with file_test()
  */
-EDELIB_API bool file_writeable(const char* name);
+EDELIB_API bool file_writeable(const char* name) EDELIB_DEPRECATED;
 
 
 /**
  * Check if file is executable
  * \related File
+ * \deprecated with file_test()
  */
-EDELIB_API bool file_executable(const char* name);
+EDELIB_API bool file_executable(const char* name) EDELIB_DEPRECATED;
 
 /**
  * Remove file at given path. It will call system's unlink()
@@ -280,14 +284,14 @@ EDELIB_API bool file_rename(const char* from, const char* to);
  * it's link is (often) in <em>/usr/bin</em>. If PATH contains something like 
  * <em>/usr/local/bin:/usr/bin:/bin</em>, <em>/usr/bin/mv</em> will be returned.
  *
- * For this casses, setting <em>check_link</em> to true will return <em>/bin/mv</em>.
+ * For this casses, setting <em>skip_link</em> to true will return <em>/bin/mv</em>.
  *
  * \related File
  * \return full path if file exists or empty string as noted above
  * \param fname file to look for
- * \param check_link it true symbolic links are ignored
+ * \param skip_link if true symbolic links are ignored
  */
-EDELIB_API String file_path(const char* fname, bool check_link = false);
+EDELIB_API String file_path(const char* fname, bool skip_link = false);
 
 EDELIB_NS_END
 #endif // __FILE_H__

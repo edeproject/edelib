@@ -51,11 +51,11 @@ typedef enum {
  * wan't to see if target object is file and is executable, you will use FILE_TEST_IS_REGULAR | FILE_TEST_IS_EXECUTABLE.
  *
  * Care must be taken when combine certain flags. For example, since file can be readable, writeable and executable,
- * combination like FILE_TEST_IS_READABLE | FILE_TEST_IS_WRITEABLE | FILE_TEST_IS_EXECUABLE | FILE_TEST_IS_REGULAR is
+ * combination like FILE_TEST_IS_READABLE | FILE_TEST_IS_WRITEABLE | FILE_TEST_IS_EXECUTABLE | FILE_TEST_IS_REGULAR is
  * perfectly valid. On other hand, FILE_TEST_IS_DIR | FILE_TEST_IS_REGULAR makes no sense, so only first bits
  * will be considered (FILE_TEST_IS_DIR only), and these flags will yield false from file_test().
  */
-EDELIB_API bool file_test(const char* path, int flags);
+EDELIB_API bool file_test(const char* path, unsigned int flags);
 
 EDELIB_NS_END
 

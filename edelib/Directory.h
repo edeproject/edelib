@@ -31,18 +31,21 @@ EDELIB_NS_BEGIN
 
 /** 
  * Check if directory exists 
+ * \deprecated with file_test()
  */ 
-EDELIB_API bool dir_exists(const char* name);
+EDELIB_API bool dir_exists(const char* name) EDELIB_DEPRECATED;
 
 /** 
  * Check if directory is readable 
+ * \deprecated with file_test()
  */
-EDELIB_API bool dir_readable(const char* name);
+EDELIB_API bool dir_readable(const char* name) EDELIB_DEPRECATED;
 
 /** 
  * Check if directory is writeable 
+ * \deprecated with file_test()
  */
-EDELIB_API bool dir_writeable(const char* name);
+EDELIB_API bool dir_writeable(const char* name) EDELIB_DEPRECATED;
 
 /**
  * Creates directory calling system's mkdir() with apropriate

@@ -232,9 +232,6 @@ void IconChooser::load(const char* dir) {
 	path->value(dir);
 	start = dir;
 
-	if(!dir_exists(dir))
-		return;
-
 	list<String> lst;
 	if(!dir_list(dir, lst, true))
 		return;

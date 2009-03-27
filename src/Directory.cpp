@@ -113,15 +113,12 @@ bool dir_create_with_parents(const char* name, int perm) {
 			*p = '\0';
 
 		/*
-		 * If directory does not exists, it will be created.
-		 * If any other object with the name of directory exists,
+		 * If directory does not exists, it will be created. If any other object with the name of directory exists,
 		 * dir_create() will fail
 		 */
-		if(!dir_exists(fn)) {
-			if(!dir_create(fn, perm)) {
-				free(fn);
-				return false;
-			}
+		if(!dir_create(fn, perm)) {
+			free(fn);
+			return false;
 		}
 
 		if(p) {
@@ -140,28 +137,14 @@ bool dir_create_with_parents(const char* name, int perm) {
 bool dir_remove(const char* name) {
 	E_ASSERT(name != NULL);
 
-	if(dir_exists(name)) {
-		int ret = rmdir(name);
-		if(ret == 0)
-			return true;
-		else
-			return false;
-	}
-
-	return false;
+	return (rmdir(name) == 0);
 }
 
 bool dir_rename(const char* from, const char* to) {
 	E_ASSERT(from != NULL);
 	E_ASSERT(to != NULL);
 
-	if(!dir_exists(from))
-		return false;
-
-	int ret = rename(from, to);
-	if(ret == 0)
-		return true;
-	return false;
+	return (rename(from, to) == 0);
 }
 
 // stolen from coreutils (cp,mv) package
@@ -179,9 +162,6 @@ static struct dirent* readdir_ignoring_dots(DIR* dirp) {
 
 bool dir_empty(const char* name) {
 	E_ASSERT(name != NULL);
-
-	if(!dir_exists(name))
-		return false;
 
 	DIR* dirp = opendir(name);
 	if(dirp == NULL)
@@ -244,9 +224,6 @@ String dir_current(void) {
 }
 
 bool dir_list(const char* dir, list<String>& lst, bool full_path, bool show_hidden, bool show_dots) {
-	if(!dir_readable(dir))
-		return false;
-
 	DIR* dirp = opendir(dir);
 	if(!dirp)
 		return false;

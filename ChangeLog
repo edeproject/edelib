@@ -5,6 +5,10 @@
 	* edelib/FileTest.h:
 	* src/FileTest.cpp:
 	* test/file_test.cpp: added file_test() function with tests
+	* src/FileTest.cpp: use lstat() for links
+	* all: updated code to use file_test(); deprecated dir_*() and file_*()
+	functions that do the same job; removing unneeded checks before
+	file/directory open operations
 
 2009-03-25  Sanel <karijes@users.sourceforge.net>
 

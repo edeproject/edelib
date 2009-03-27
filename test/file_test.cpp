@@ -21,4 +21,7 @@ UT_FUNC(FileTest, "file_test()")
 
 	UT_VERIFY( file_test("this-does-not-exists", FILE_TEST_EXISTS) == false );
 	UT_VERIFY( file_test("this-does-not-exists", FILE_TEST_IS_SOCKET) == false );
+
+	UT_VERIFY( file_test("/usr/bin/mkdir", FILE_TEST_IS_SYMLINK) == true );
+	UT_VERIFY( file_test(".", FILE_TEST_IS_SYMLINK) == false );
 }
