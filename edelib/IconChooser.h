@@ -44,6 +44,8 @@ EDELIB_NS_BEGIN
  *
  * \return full path to choosed icon, or empty string if directory is inaccessible, or pressed Cancel
  * \param dir a path to directory that contains icons
+ *
+ * \todo icon_chooser() pretty sucks; writte better one
  */
 EDELIB_API String icon_chooser(const char* dir);
 

@@ -18,7 +18,7 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <FL/Fl_Window.H>
+#include <FL/Fl_Double_Window.H>
 #include <FL/Fl.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Input.H>
@@ -81,7 +81,7 @@ void IconBox::set_icon_path(const String& s) {
 
 	iconpth.assign(s);
 
-	// get basename without extension
+	/* get basename without extension */
 	ptr = strrchr(s.c_str(), E_DIR_SEPARATOR);
 	if(ptr) {
 		ptr += 1;
@@ -98,11 +98,11 @@ void IconBox::set_icon_path(const String& s) {
 	fl_measure(iconname, W, H);
 
 	if(W > w() && len > 10) {
-		// copy as label so we can modify it
+		/* copy as label so we can modify it */
 		copy_label(iconname);
 		ptr = (char*)(label() + 10);
 
-		// end label string with '...'
+		/* end label string with '...' */
 		*ptr = '\0';
 		*(ptr - 1) = '.';
 		*(ptr - 2) = '.';
@@ -116,10 +116,8 @@ void IconBox::set_icon_path(const String& s) {
 }
 
 /*
- * FIXME: icon will loose focus if is selected
- * then press OK, which will take focus from it.
- * In this case, nothing will be returned; double-click
- * works as expected.
+ * FIXME: icon will loose focus if is selected then press OK, which will take focus from it.
+ * In this case, nothing will be returned; double-click works as expected.
  */
 int IconBox::handle(int event) {
 	switch(event) {
@@ -148,7 +146,7 @@ int IconBox::handle(int event) {
 	return 1;
 }
 
-class IconChooser : public Fl_Window {
+class IconChooser : public Fl_Double_Window {
 private:
 	String ret;
 	String start;
@@ -184,6 +182,7 @@ static void ok_cb(Fl_Widget*, void* w) {
 
 static void browse_cb(Fl_Widget*, void* w) {
 	IconChooser* ic = (IconChooser*)w;
+
 	const char* dd = fl_dir_chooser(_("Choose icon directory..."), ic->get_start().c_str(), false);
 	if(!dd)
 		return;
@@ -191,23 +190,21 @@ static void browse_cb(Fl_Widget*, void* w) {
 }
 
 /*
- * This callback is called when is double-clicked on
- * icon box inside icon list; since all childs when
- * are double-clicked get focus automatically, this
- * forwarding to ok_cb(), who checks what child is
+ * This callback is called when is double-clicked on icon box inside icon list; since all childs when
+ * are double-clicked get focus automatically, this forwarding to ok_cb(), who checks what child is
  * focused, is valid
  */
 void iconbox_cb(Fl_Widget*, void* w) {
 	ok_cb(NULL, w);
 }
 
-IconChooser::IconChooser() : Fl_Window(355, 305, _("Choose icon...")), ret("") {
+IconChooser::IconChooser() : Fl_Double_Window(355, 305, _("Choose icon...")), ret("") {
 	begin();
 	path = new Fl_Input(10, 10, 240, 25);
 	bbrowse = new Fl_Button(255, 10, 90, 25, _("&Browse..."));
 	bbrowse->callback(browse_cb, this);
 
-	// invisible resizable box
+	/* invisible resizable box */
 	Fl_Box* ibox = new Fl_Box(15, 160, 115, 95);
 	resizable(ibox);
 
@@ -231,13 +228,9 @@ IconChooser::IconChooser() : Fl_Window(355, 305, _("Choose icon...")), ret("") {
 IconChooser::~IconChooser() { }
 
 void IconChooser::load(const char* dir) {
-	E_ASSERT(dir != NULL);
-	/*
-	 * copy directory name to input box and internal String 
-	 * so it can be reused later
-	 */
+	/* copy directory name to input box and internal String so it can be reused later */
 	path->value(dir);
-	start.assign(dir);
+	start = dir;
 
 	if(!dir_exists(dir))
 		return;
@@ -253,12 +246,6 @@ void IconChooser::load_from_list(list<String>& lst) {
 	if(lst.empty())
 		return;
 
-	/*
-	 * TODO: replace this this with
-	 * something better
-	 */
-	fl_register_images();
-
 	Fl_Shared_Image* img = NULL;
 	int imax_w = 0;
 	int imax_h = 0;
@@ -269,8 +256,7 @@ void IconChooser::load_from_list(list<String>& lst) {
 
 	/*
 	 * lst_info contains coresponding indexes with list<String> so we can deduce what
-	 * files to skip (not readable image or dimensions greater than allowed); skippable
-	 * are marked as 0
+	 * files to skip (not readable image or dimensions greater than allowed); skippable are marked as 0
 	 */
 	int* lst_info = new int[lst.size()];
 	for(int i = 0; it != it_end; ++it, i++){
@@ -294,7 +280,7 @@ void IconChooser::load_from_list(list<String>& lst) {
 		lst_info[i] = 1; 
 	}
 
-	// clear potential content of ExpandableGroup
+	/* clear potential content of ExpandableGroup */
 	if(icongrp->children())
 		icongrp->clear();
 
@@ -319,9 +305,8 @@ void IconChooser::load_from_list(list<String>& lst) {
 	imax_h += 5;
 
 	/*
-	 * focus_index() is only valid on childs before we show them 
-	 * and that is what we need so other childs don't mess it when
-	 * they are added
+	 * focus_index() is only valid on childs before we show them and that is what we need 
+	 * so other childs don't mess it when they are added
 	 */
 	//icongrp->focus(child(0));
 	icongrp->set_visible_focus();
@@ -334,7 +319,8 @@ void IconChooser::load_from_list(list<String>& lst) {
 		if(img && lst_info[i] == 1) {
 			preview = new IconBox(0, 0, imax_w, imax_h);
 			preview->set_icon_path((*it));
-			// use background/selection from ExpandableGroup
+
+			/* use background/selection from ExpandableGroup */
 			preview->color(icongrp->color());
 			preview->selection_color(icongrp->color());
 
@@ -367,6 +353,8 @@ bool IconChooser::find_focused(void) {
 }
 
 String icon_chooser(const char* dir) {
+	E_ASSERT(dir != NULL);
+
 	IconChooser ic;
 	ic.load(dir);
 

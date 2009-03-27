@@ -1,3 +1,8 @@
+2009-03-27  Sanel <karijes@users.sourceforge.net>
+
+	* src/IconChooser.cpp: some refactoring, use Fl_Double_Window
+	* edelib/IconChooser.h: todo how it needs to be rewritten
+
 2009-03-25  Sanel <karijes@users.sourceforge.net>
 
 	* src/IconLoader.cpp: let get() check fallback icon too; some sanity
