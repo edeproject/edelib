@@ -2,6 +2,9 @@
 
 	* src/IconChooser.cpp: some refactoring, use Fl_Double_Window
 	* edelib/IconChooser.h: todo how it needs to be rewritten
+	* edelib/FileTest.h:
+	* src/FileTest.cpp:
+	* test/file_test.cpp: added file_test() function with tests
 
 2009-03-25  Sanel <karijes@users.sourceforge.net>
 

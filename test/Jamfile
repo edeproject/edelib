@@ -30,6 +30,7 @@ TEST_FILES =
 	missing.cpp
 	strutil.cpp 
 	file.cpp
+	file_test.cpp
 	directory.cpp
 	datetime.cpp
 	conf.cpp
