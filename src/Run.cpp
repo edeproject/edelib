@@ -147,7 +147,7 @@ static bool read_ints(int fd, int* buf, int bufsz, int* int_read) {
 static void exec_cmd_via_shell(char* program, char** args, int count) {
 	char** new_args = (char**)malloc(sizeof(char*) * count + 2);
 
-	new_args[0] = "/bin/sh";
+	new_args[0] = (char*)"/bin/sh";
 	new_args[1] = program;
 
 	int i, j;
@@ -200,7 +200,7 @@ static void exec_cmd(const char* cmd, int child_err_report_fd) {
 		path = getenv("PATH");
 		if(!path) {
 			/* in glib was stated that '.' is put last for security so I'm using that here too */
-			path = "/bin:/usr/bin:.";
+			path = (char*)"/bin:/usr/bin:.";
 		}
 
 		path_copy = strdup(path);

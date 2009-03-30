@@ -256,11 +256,11 @@ void IconChooser::load_from_list(list<String>& lst) {
 	 * files to skip (not readable image or dimensions greater than allowed); skippable are marked as 0
 	 */
 	int* lst_info = new int[lst.size()];
-	for(int i = 0; it != it_end; ++it, i++){
+	for(int n = 0; it != it_end; ++it, n++){
 		img = Fl_Shared_Image::get((*it).c_str());
 
 		if(!img) {
-			lst_info[i] = 0;
+			lst_info[n] = 0;
 			continue;
 		}
 
@@ -268,13 +268,13 @@ void IconChooser::load_from_list(list<String>& lst) {
 		ih = img->h();
 
 		if(iw > MAX_ICON_W || ih > MAX_ICON_H) {
-			lst_info[i] = 0;
+			lst_info[n] = 0;
 			continue;
 		}
 
 		imax_w = MAX(imax_w, iw);
 		imax_h = MAX(imax_h, ih);
-		lst_info[i] = 1; 
+		lst_info[n] = 1; 
 	}
 
 	/* clear potential content of ExpandableGroup */
@@ -310,10 +310,11 @@ void IconChooser::load_from_list(list<String>& lst) {
 
 	IconBox* preview;
 	it = lst.begin();
-	for(int i = 0; it != it_end; ++it, i++) {
+
+	for(int n = 0; it != it_end; ++it, n++) {
 		img = Fl_Shared_Image::get((*it).c_str());
 
-		if(img && lst_info[i] == 1) {
+		if(img && lst_info[n] == 1) {
 			preview = new IconBox(0, 0, imax_w, imax_h);
 			preview->set_icon_path((*it));
 
@@ -322,7 +323,7 @@ void IconChooser::load_from_list(list<String>& lst) {
 			preview->selection_color(icongrp->color());
 
 			if(show_progress)
-				progress->value(int((i*100)/int(progress->maximum())));
+				progress->value(int((n * 100) / int(progress->maximum())));
 
 			preview->image(img);
 			preview->callback(iconbox_cb, this);
@@ -338,8 +339,8 @@ void IconChooser::load_from_list(list<String>& lst) {
 
 bool IconChooser::find_focused(void) {
 	IconBox* ib;
-	for(int i = 0; i < icongrp->children(); i++) {
-		ib = (IconBox*)icongrp->child(i);
+	for(int n = 0; n < icongrp->children(); n++) {
+		ib = (IconBox*)icongrp->child(n);
 
 		if(ib->selected()) {
 			ret.assign(ib->icon_path());

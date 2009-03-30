@@ -213,9 +213,9 @@ public:
 
 	/**
 	 * Set message text
-	 * \param txt is message text
+	 * \param t is message text
 	 */
-	void set_text(const char* txt);
+	void set_text(const char* t);
 
 	/**
 	 * Set icon giving absolute path

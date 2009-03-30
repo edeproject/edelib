@@ -26,6 +26,11 @@
 
 typedef char byte_t;
 
+/* Sun compiler does not have this type */
+#ifdef __SUNPRO_CC
+typedef long long int int64_t;
+#endif
+
 EDELIB_NS_BEGIN
 
 /**

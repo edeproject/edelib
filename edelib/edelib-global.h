@@ -21,10 +21,7 @@
 #ifndef __EDELIB_GLOBAL_H__
 #define __EDELIB_GLOBAL_H__
 
-/*
- * Needed so we don't have to include
- * necessary libraries.
- */
+/* Needed so we don't have to include necessary libraries.  */
 #ifndef NULL
 	#ifndef __cplusplus
 		#define NULL ((void*)0)

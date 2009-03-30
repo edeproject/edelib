@@ -178,9 +178,8 @@ void MessageBox::fix_sizes(void) {
 	gr->size(w() + xdiff + step, h() + ydiff);
 	size(w() + xdiff + step, h() + ydiff);
 
-	for(int i = 0; i < nbuttons; i++)
-		buttons[i]->position(buttons[i]->x() + xdiff + step, buttons[i]->y() + ydiff);
-
+	for(int n = 0; n < nbuttons; n++)
+		buttons[n]->position(buttons[n]->x() + xdiff + step, buttons[n]->y() + ydiff);
 }
 
 void MessageBox::run_plain(bool center) {
@@ -225,9 +224,9 @@ int MessageBox::run(bool center) {
 			ret = -1;
 			goto dialog_end;
 		} else {
-			for(int i = 0; i < nbuttons; i++) {
-				if(buttons[i] == widget) {
-					ret = i;
+			for(int n = 0; n < nbuttons; n++) {
+				if(buttons[n] == widget) {
+					ret = n;
 					goto dialog_end;
 				}
 			}
@@ -244,11 +243,11 @@ void MessageBox::set_text(const char* t) {
 }
 
 bool MessageBox::set_icon(const char* path) {
-	Fl_Image* i = Fl_Shared_Image::get(path);
-	if(!i)
+	Fl_Image* ii = Fl_Shared_Image::get(path);
+	if(!ii)
 		return false;
 
-	img->image(i);
+	img->image(ii);
 	return true;
 }
 
@@ -274,9 +273,9 @@ const char* MessageBox::get_input(void) {
 	return inpt->value();
 }
 
-void MessageBox::set_input(const char* txt) {
+void MessageBox::set_input(const char* t) {
 	if(inpt)
-		inpt->value(txt);
+		inpt->value(t);
 }
 
 void MessageBox::focus_button(int b) {

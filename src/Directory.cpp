@@ -33,6 +33,7 @@
 #include <edelib/Debug.h>
 #include <edelib/StrUtil.h>
 #include <edelib/File.h>
+#include <edelib/FileTest.h>
 
 #ifndef PATH_MAX
 	#define PATH_MAX 256
@@ -69,17 +70,7 @@ bool dir_writeable(const char* name) {
 
 bool dir_create(const char* name, int perm) {
 	E_ASSERT(name != NULL);
-
-	/*
-	 * Checks are not done (line in dir_remove() case since
-	 * mkdir() can fail if any system object with given path/name
-	 * exists. We will rely here on mkdir() return codes.
-	 */
-	int ret = mkdir(name, perm);
-	if(ret == 0)
-		return true;
-
-	return false;
+	return (mkdir(name, perm) == 0);
 }
 
 /*
@@ -112,11 +103,8 @@ bool dir_create_with_parents(const char* name, int perm) {
 		else
 			*p = '\0';
 
-		/*
-		 * If directory does not exists, it will be created. If any other object with the name of directory exists,
-		 * dir_create() will fail
-		 */
-		if(!dir_create(fn, perm)) {
+		/* FIXME: file_test() is needed here; can it be removed? */
+		if(!file_test(fn, FILE_TEST_IS_DIR) && !dir_create(fn, perm)) {
 			free(fn);
 			return false;
 		}

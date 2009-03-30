@@ -47,8 +47,10 @@ typedef enum {
  * file_test() is generic checker for target file type on the system, where file type could be directory, regular file
  * socket and etc. This function, besides deducing type, can also check for file's existance and it's access flags.
  *
- * <em>flags</em> (\see FileTestFlags) should be set to specify what to test. These values can be OR-ed, so if you
+ * <em>flags</em> should be set to specify what to test. These values can be OR-ed, so if you
  * wan't to see if target object is file and is executable, you will use FILE_TEST_IS_REGULAR | FILE_TEST_IS_EXECUTABLE.
+ *
+ * \see FileTestFlags for possible flags
  *
  * Care must be taken when combine certain flags. For example, since file can be readable, writeable and executable,
  * combination like FILE_TEST_IS_READABLE | FILE_TEST_IS_WRITEABLE | FILE_TEST_IS_EXECUTABLE | FILE_TEST_IS_REGULAR is

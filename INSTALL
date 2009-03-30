@@ -35,3 +35,26 @@ To build edelib, run:
  3. Run 'jam' or './jam' if you placed jam's binary in edelib root path
 
 When jam finished, run 'jam install' to install library and needed files.
+
+
+Compiling under SunStudio compiler
+==================================
+
+To build under SunStudio compiler, set the following environment variables before running 
+configure script, like:
+
+ declare -x CC="[path]/sunstudioXX/bin/cc"
+ declare -x CXX="[path]/sunstudioXX/bin/CC"
+ declare -x LDLIBS="-L[path]/lib -lCrun -lCstd"
+ declare -x STDLIB="$LDLIBS"
+
+This is an example how to set variables in bash; your shell maybe uses different methods.
+
+[path] is path to your local SunStudio installation and sunstudioXX is subdirectory SunStudio
+version number. Of course, paths can be different in which case you should find 'cc', 'CC' programs 
+and 'libCrun.so' and 'libCstd.so' libraries.
+
+NOTE: you have to compile FLTK with SunStudio too or linking would fail!!!
+
+edelib configure script provides '--with-fltk-path' for this purpose so you can use alternative
+FLTK installation, assuming you already have FLTK compiled with gcc.

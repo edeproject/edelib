@@ -1,3 +1,19 @@
+2009-03-30  Sanel <karijes@users.sourceforge.net>
+
+	* INSTALL: small clarifications
+	* Jamrules: removed some vars used for playgrounds
+
+2009-03-28  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/EdbusData.h: fix error on sun compiler
+	* edelib/MessageBox.h:
+	* src/MessageBox.cpp:
+	* src/Run.cpp: fix warnings on sun compiler
+	* INSTALL: compiling on SunStudio
+	* edelib/FileTest.h: small changes in the doc
+	* src/Directory.cpp: dir_create_with_parents() needs file_test()
+	* edelib/*: documented macros
+
 2009-03-27  Sanel <karijes@users.sourceforge.net>
 
 	* src/IconChooser.cpp: some refactoring, use Fl_Double_Window

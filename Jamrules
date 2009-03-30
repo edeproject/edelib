@@ -45,10 +45,8 @@ RMDIR   = "rm -R" ;
 COPYDIR = "cp -R" ;
 LINKCMD = "ln -s" ;
 
-# standard C++ library we link with; for now is gcc's default
+# standard C++ library we link with; for now is gcc's default, but user can override it from shell
 STDLIB ?= -lstdc++ ;
-#STDLIB ?= -L/opt/sun/lib/rtlibs -lCstd -lCrun -lsupc++ -lgcc_s ;
-#STDLIB ?= -L/opt/sun/lib/rtlibs -lCstd -lCrun ;
 
 # variables used by jam directly
 # OPTIM is cleared so it don't collide with FLAGS

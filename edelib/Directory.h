@@ -24,7 +24,20 @@
 #include "String.h"
 #include "List.h"
 
+/**
+ * \ingroup macros
+ * \def E_DIR_SEPARATOR
+ *
+ * Platfom specific directory separator as single character
+ */
 #define E_DIR_SEPARATOR '/'
+
+/**
+ * \ingroup macros
+ * \def E_DIR_SEPARATOR_STR
+ *
+ * Platfom specific directory separator as static string
+ */
 #define E_DIR_SEPARATOR_STR "/"
 
 EDELIB_NS_BEGIN
