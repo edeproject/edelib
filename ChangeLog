@@ -1,3 +1,10 @@
+2009-04-02  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Color.h:
+	* src/Color.cpp: 
+	* test/color.cpp: color_html_to_rgb() and color_rgb_to_html() added with
+	tests
+
 2009-03-30  Sanel <karijes@users.sourceforge.net>
 
 	* INSTALL: small clarifications

@@ -119,3 +119,53 @@ UT_FUNC(ColorTest2, "Test color conversions2")
 	UT_VERIFY( g == 0 );
 	UT_VERIFY( b == 255 );
 }
+
+UT_FUNC(ColorTest4, "Test rgb to html")
+{
+	char buf[8];
+
+	color_rgb_to_html(0, 0, 0, buf);
+	UT_VERIFY( STR_EQUAL(buf, "#000000") );
+
+	color_rgb_to_html(255, 255, 255, buf);
+	UT_VERIFY( STR_EQUAL(buf, "#ffffff") );
+
+	color_rgb_to_html(124, 81, 81, buf);
+	UT_VERIFY( STR_EQUAL(buf, "#7c5151") );
+
+	color_rgb_to_html(131, 61, 29, buf);
+	UT_VERIFY( STR_EQUAL(buf, "#833d1d") );
+
+	color_rgb_to_html(159, 159, 159, buf);
+	UT_VERIFY( STR_EQUAL(buf, "#9f9f9f") );
+}
+
+UT_FUNC(ColorTest5, "Test html to rgb")
+{
+	unsigned char r, g, b;
+
+	color_html_to_rgb("#000000", r, g, b);
+	UT_VERIFY( r == 0 );
+	UT_VERIFY( g == 0 );
+	UT_VERIFY( b == 0 );
+
+	color_html_to_rgb("#ffffff", r, g, b);
+	UT_VERIFY( r == 255 );
+	UT_VERIFY( g == 255 );
+	UT_VERIFY( b == 255 );
+
+	color_html_to_rgb("#7c5151", r, g, b);
+	UT_VERIFY( r == 124 );
+	UT_VERIFY( g == 81 );
+	UT_VERIFY( b == 81 );
+
+	color_html_to_rgb("#833d1d", r, g, b);
+	UT_VERIFY( r == 131 );
+	UT_VERIFY( g == 61 );
+	UT_VERIFY( b == 29 );
+
+	color_html_to_rgb("#9f9f9f", r, g, b);
+	UT_VERIFY( r == 159 );
+	UT_VERIFY( g == 159 );
+	UT_VERIFY( b == 159 );
+}
