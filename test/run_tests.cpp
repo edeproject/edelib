@@ -6,6 +6,5 @@ int main(int argc, char** argv) {
 	if(argc == 2 && (strcmp(argv[1], "--cdash") == 0))
 		cdash_output = 1;
 
-	UnitTestSuite::global().run(1, cdash_output);
-	return 0;
+	return UnitTestSuite::global().run(1, cdash_output);
 }

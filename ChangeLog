@@ -1,3 +1,10 @@
+2009-04-07  Sanel <karijes@users.sourceforge.net>
+
+	* test/UnitTest.h:
+	* test/UnitTest.cpp:
+	* test/run_tests.cpp: return 1 if tests failed or 0 if opposite
+	* run-tests.sh: added
+
 2009-04-02  Sanel <karijes@users.sourceforge.net>
 
 	* edelib/Color.h:

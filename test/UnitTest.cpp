@@ -168,9 +168,9 @@ void UnitTestSuite::add(UnitTest* t, bool alloc) {
 	ntests++;
 }
 
-void UnitTestSuite::run(bool verbose, bool cdash_output) {
+int UnitTestSuite::run(bool verbose, bool cdash_output) {
 	if (!ntests)
-		return;
+		return 1;
 
 	unsigned int i = 1;
 	int passed = 0;
@@ -225,4 +225,6 @@ void UnitTestSuite::run(bool verbose, bool cdash_output) {
 		printf("\n-------------------------------------------------------\n");
 		printf("Tests: %i    Passed: %i    Failed: %i    (time: %g)\n", ntests, passed, failed, total_elapsed);
 	}
+
+	return (failed > 0);
 }

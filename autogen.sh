@@ -1,6 +1,5 @@
 #!/bin/sh
 
-# to save me from typing :P
 if [ "$1" = "--compile" ]; then
 	compile=1
 fi
