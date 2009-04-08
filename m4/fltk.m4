@@ -20,7 +20,7 @@ AC_DEFUN([EDELIB_FLTK], [
 	AC_ARG_WITH(fltk_path, [  --with-fltk-path=[DIR]    alternative directory where FLTK is installed])
 
 	if test "x$with_fltk_path" = "x"; then
-		AC_PATH_PROG(FLTK_CONFIG, fltk-config,)
+		AC_PATH_PROG(FLTK_CONFIG, fltk-config)
 	else
 		AC_PATH_PROG(FLTK_CONFIG, fltk-config,, $with_fltk_path/bin)
 	fi

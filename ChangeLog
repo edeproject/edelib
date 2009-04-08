@@ -1,6 +1,7 @@
 2009-04-08  Sanel <karijes@users.sourceforge.net>
 
 	* INSTALL: corrected environment variables
+	* m4/fltk.m4: remove unneeded comma
 
 2009-04-07  Sanel <karijes@users.sourceforge.net>
 
