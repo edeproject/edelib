@@ -2,6 +2,7 @@
 
 	* INSTALL: corrected environment variables
 	* m4/fltk.m4: remove unneeded comma
+	* src/Run.cpp: include needed headers for BSD systems
 
 2009-04-07  Sanel <karijes@users.sourceforge.net>
 

@@ -30,6 +30,11 @@
 #include <stdio.h>
 #include <string.h>
 
+#ifdef BSD
+#include <limits.h>      // PATH_MAX
+#include <sys/signal.h>  // SIGPIPE, SIG_DFL
+#endif
+
 #include <edelib/Run.h>
 #include <edelib/Missing.h>
 #include <edelib/Debug.h>
