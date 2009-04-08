@@ -45,8 +45,9 @@ configure script, like:
 
  declare -x CC="[path]/sunstudioXX/bin/cc"
  declare -x CXX="[path]/sunstudioXX/bin/CC"
- declare -x LDLIBS="-L[path]/lib -lCrun -lCstd"
- declare -x STDLIB="$LDLIBS"
+ declare -x LDFLAGS="-L[path]/lib -lCrun -lCstd"
+ declare -x LIBS="-lCrun -lCstd"
+ declare -x STDLIB="$LDFLAGS $LIBS"
 
 This is an example how to set variables in bash; your shell maybe uses different methods.
 
