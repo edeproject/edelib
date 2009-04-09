@@ -1,6 +1,7 @@
 2009-04-09  Sanel <karijes@users.sourceforge.net>
 
 	* src/Run.cpp: BSD's keeps BSD definition in sys/param.h
+	* run-tests.sh: removed
 
 2009-04-08  Sanel <karijes@users.sourceforge.net>
 
