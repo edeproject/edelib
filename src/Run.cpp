@@ -19,16 +19,18 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <sys/types.h> // fork
+#include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
-#include <unistd.h>    // fork, open, close, dup
-#include <stdlib.h>    // getenv
+#include <unistd.h>
+#include <stdlib.h>
 #include <fcntl.h>
 #include <errno.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
+
+#include <sys/param.h> // BSD's keeps BSD specific macro (for #ifdef) in this file
 
 #ifdef BSD
 #include <limits.h>      // PATH_MAX

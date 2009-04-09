@@ -1,3 +1,7 @@
+2009-04-09  Sanel <karijes@users.sourceforge.net>
+
+	* src/Run.cpp: BSD's keeps BSD definition in sys/param.h
+
 2009-04-08  Sanel <karijes@users.sourceforge.net>
 
 	* INSTALL: corrected environment variables
