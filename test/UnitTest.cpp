@@ -14,35 +14,39 @@ static char output_buf[1024];
 
 void pretty_output(FILE* out, int num, UnitTest* t, double elapsed) {
 	int len;
+	bool is_failed = t->failed();
 
 	snprintf(output_buf, sizeof(output_buf), "Test %2i: %s [%s]", num, t->name(), t->description());
 	len = strlen(output_buf);
 
-	fprintf(out, output_buf);
+	if (is_failed)
+		fputc('\n', out);
+
+	fputs(output_buf, out);
 
 	while (len < 90) {
-		putc(' ', out);
+		fputc(' ', out);
 		++len;
 	}
 
-	if (!t->failed()) {
+	if (!is_failed) {
 		fprintf(out, " OK (%g)\n", elapsed);
 	} else {
 		fprintf(out, " FAILED!\n");
+
 		/* display reasons */
 		if (t->msglist_size()) {
 			for (const UTMsgList* ml = t->msglist(); ml; ml = ml->next) {
 				if (ml->file)
-					fprintf(out, "   '%s' : %s(%lu)\n", ml->msg, ml->file, ml->line);
+					fprintf(out, "*** '%s' : %s(%lu)\n", ml->msg, ml->file, ml->line);
 				else
-					fprintf(out, "   %s\n", ml->msg);
+					fprintf(out, "*** %s\n", ml->msg);
 			}
 		}
 
-		fprintf(out, "\n");
+		fputc('\n', out);
 	}
 
-	/* must be done or external tools won't catch correctly stdin/stderr combination */
 	fflush(out);
 }
 
@@ -198,8 +202,9 @@ int UnitTestSuite::run(bool verbose) {
 	}
 
 	if (verbose) {
-		printf("\n-------------------------------------------------------\n");
-		printf("Tests: %i    Passed: %i    Failed: %i    (time: %g)\n", ntests, passed, failed, total_elapsed);
+		fprintf(stdout, "\nTotal tests: %i executed in %g sec.\n", ntests, total_elapsed);
+		fprintf(stdout, "Passed: %i\n", passed);
+		fprintf(stdout, "Failed: %i\n", failed);
 	}
 
 	return (failed > 0);
