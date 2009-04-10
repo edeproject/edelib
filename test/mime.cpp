@@ -14,7 +14,7 @@ UT_FUNC(MimeTypeTest, "Test MimeType")
 	UT_VERIFY( mt.comment() == "C++ source code" );
 	UT_VERIFY( mt.icon_name() == "text-x-c++src" );
 
-	// unrecognized
+	/* unrecognized */
 	mt.set("Jamfile");
 	UT_VERIFY( mt.type() == "application/octet-stream" );
 	UT_VERIFY( mt.comment() == "unknown" );
@@ -22,31 +22,29 @@ UT_FUNC(MimeTypeTest, "Test MimeType")
 
 	mt.set("mime.o");
 	UT_VERIFY( mt.type() == "application/x-object" );
-	UT_VERIFY( mt.comment() == "object code" );
 	UT_VERIFY( mt.icon_name() == "application-x-object" );
+
+	/* duplicate, should not reload comment */
+	UT_VERIFY( mt.comment() == "object code" );
+	UT_VERIFY( mt.comment() == "object code" );
+	UT_VERIFY( mt.comment() == "object code" );
 
 	mt.set("perf/asciidoc.html");
 	UT_VERIFY( mt.type() == "text/html" );
 	UT_VERIFY( mt.icon_name() == "text-html" );
 
-	// duplicate, should not run tokenizer
+	/* duplicate, should not run tokenizer */
 	UT_VERIFY( mt.icon_name() == "text-html" );
 	UT_VERIFY( mt.icon_name() == "text-html" );
 	UT_VERIFY( mt.icon_name() == "text-html" );
 
-	// duplicate, should not reload comment
-	UT_VERIFY( mt.comment() == "HTML document" );
-	UT_VERIFY( mt.comment() == "HTML document" );
-	UT_VERIFY( mt.comment() == "HTML document" );
-	UT_VERIFY( mt.comment() == "HTML document" );
-
-	// empty mime, do nothing
+	/* empty mime, do nothing */
 	MimeType mt2;
 	UT_VERIFY( mt2.type() == "" );
 	UT_VERIFY( mt2.comment() == "" );
 	UT_VERIFY( mt2.icon_name() == "" );
 
-	// folder;
+	/* folder */
 	mt.set("/");
 
 	UT_VERIFY( mt.type() == "inode/directory" );
