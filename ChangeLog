@@ -8,6 +8,9 @@
 	formatting
 	* Jamrules: let 'jam tests' run unit tests
 	* src/Debug.cpp: use fputs()
+	* configure.in: check if env EDELIB_USE_LOCALDIR was set; if true, see
+	local directory as install destination so .pc files can be called pointing
+	to this directory
 
 2009-04-09  Sanel <karijes@users.sourceforge.net>
 

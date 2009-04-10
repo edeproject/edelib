@@ -117,6 +117,11 @@ else
 	CXXFLAGS="$CXXFLAGS $DEBUG_FLAGS"
 fi
 
+dnl this is issued from buildbot so edelib can be used from local directory
+if test -n "$EDELIB_USE_LOCALDIR"; then
+	prefix=`pwd`
+fi
+
 EDELIB_INIT_JAM
 
 AC_SUBST(EDELIB_MAJOR_VERSION)
