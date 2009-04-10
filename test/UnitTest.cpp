@@ -41,6 +41,9 @@ void pretty_output(FILE* out, int num, UnitTest* t, double elapsed) {
 
 		fprintf(out, "\n");
 	}
+
+	/* must be done or external tools won't catch correctly stdin/stderr combination */
+	fflush(out);
 }
 
 UnitTest::UnitTest(const char* name, const char* descr) {
