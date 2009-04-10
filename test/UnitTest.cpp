@@ -18,17 +18,17 @@ void pretty_output(FILE* out, int num, UnitTest* t, double elapsed) {
 	snprintf(output_buf, sizeof(output_buf), "Test %2i: %s [%s]", num, t->name(), t->description());
 	len = strlen(output_buf);
 
-	printf(output_buf);
+	fprintf(out, output_buf);
 
 	while (len < 90) {
-		putchar(' ');
+		putc(' ', out);
 		++len;
 	}
 
 	if (!t->failed()) {
-		printf(" OK (%g)\n", elapsed);
+		fprintf(out, " OK (%g)\n", elapsed);
 	} else {
-		puts(" FAILED!");
+		fprintf(out, " FAILED!\n");
 		/* display reasons */
 		if (t->msglist_size()) {
 			for (const UTMsgList* ml = t->msglist(); ml; ml = ml->next) {
