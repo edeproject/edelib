@@ -1,3 +1,14 @@
+2009-04-10  Sanel <karijes@users.sourceforge.net>
+
+	* test/UnitTest.h:
+	* test/UnitTest.cpp:
+	* test/run_tests.cpp: removed CDash output; added '--silent' command line
+	option
+	* test/UnitTest.cpp: failed tests will be sent to stderr; better output
+	formatting
+	* Jamrules: let 'jam tests' run unit tests
+	* src/Debug.cpp: use fputs()
+
 2009-04-09  Sanel <karijes@users.sourceforge.net>
 
 	* src/Run.cpp: BSD's keeps BSD definition in sys/param.h

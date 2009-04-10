@@ -23,7 +23,7 @@
 #include <stdarg.h>
 #include <edelib/Debug.h>
 
-#define ERROR_BUFFLEN 256
+#define ERROR_BUFLEN 256
 
 /* in case namespace was changed or disabled */
 EDELIB_NS_USE
@@ -51,29 +51,29 @@ static void __dump_stack(int fd) {
 #endif
 
 void _edelib_debug(const char* fmt, ...) {
-	char buf[ERROR_BUFFLEN];
+	char buf[ERROR_BUFLEN];
 	va_list ap;
 	va_start(ap, fmt);
-	vsnprintf(buf, ERROR_BUFFLEN, fmt, ap);
+	vsnprintf(buf, ERROR_BUFLEN, fmt, ap);
 	va_end(ap);
 
 	if(default_msg_handler)
 		default_msg_handler(ERROR_MESSAGE_DEBUG, buf);
 	else
-		fprintf(stderr, "%s", buf);
+		fputs(buf, stderr);
 }
 
 void _edelib_warning(const char* fmt, ...) {
-	char buf[ERROR_BUFFLEN];
+	char buf[ERROR_BUFLEN];
 	va_list ap;
 	va_start(ap, fmt);
-	vsnprintf(buf, ERROR_BUFFLEN, fmt, ap);
+	vsnprintf(buf, ERROR_BUFLEN, fmt, ap);
 	va_end(ap);
 
 	if(default_msg_handler)
 		default_msg_handler(ERROR_MESSAGE_WARNING, buf);
 	else
-		fprintf(stderr, "%s", buf);
+		fputs(buf, stderr);
 }
 
 void _edelib_assert(int cond, const char* cond_text, const char* file, int line, const char* func) {
@@ -82,16 +82,16 @@ void _edelib_assert(int cond, const char* cond_text, const char* file, int line,
 }
 
 void _edelib_fatal(const char* fmt, ...) {
-	char buf[ERROR_BUFFLEN];
+	char buf[ERROR_BUFLEN];
 	va_list ap;
 	va_start(ap, fmt);
-	vsnprintf(buf, ERROR_BUFFLEN, fmt, ap);
+	vsnprintf(buf, ERROR_BUFLEN, fmt, ap);
 	va_end(ap);
 
 	if(default_msg_handler)
 		default_msg_handler(ERROR_MESSAGE_FATAL, buf);
 	else {
-		fprintf(stderr, "%s", buf);
+		fputs(buf, stderr);
 		/*
 		 * glibc redefined stderr pointing it to internal IO struct, so here is used 
 		 * good-old-defalut-normal-every_one_use_it alias for it. Yuck!

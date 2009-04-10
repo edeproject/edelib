@@ -2,9 +2,10 @@
 #include "UnitTest.h"
 
 int main(int argc, char** argv) {
-	bool cdash_output = 0;
-	if(argc == 2 && (strcmp(argv[1], "--cdash") == 0))
-		cdash_output = 1;
+	bool verbose = true;
 
-	return UnitTestSuite::global().run(1, cdash_output);
+	if(argv[1] && strcmp(argv[1], "--silent") == 0)
+		verbose = false;
+
+	return UnitTestSuite::global().run(verbose);
 }

@@ -454,6 +454,15 @@ EOF
 
 NotFile install ;
 
+actions quietly RunTests
+{
+	cd test; ./run_tests
+}
+
+RunTests tests ;
+NotFile tests ;
+Always tests ;
+
 # a generated junk
 LocalClean distclean : 
 	$(TOP)/configure 

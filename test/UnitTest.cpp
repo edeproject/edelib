@@ -1,6 +1,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdarg.h>
 #include <time.h>
 #include <assert.h>
 
@@ -9,40 +10,37 @@
 #define SAFE_FREE(obj)    if(obj) { free(obj); obj = NULL; }
 #define SAFE_DELETE(obj)  if(obj) { delete obj; obj = NULL; }
 
-static void cdash_dump_test_list(const UTList* lst) {
-	puts("   <TestList>");
+static char output_buf[1024];
 
-	for(UTList* t = lst->first; t; t = t->next) {
-		printf("     <Test>%s</Test>", t->test->name());
-		if(t) 
-			puts("");
+void pretty_output(FILE* out, int num, UnitTest* t, double elapsed) {
+	int len;
+
+	snprintf(output_buf, sizeof(output_buf), "Test %2i: %s [%s]", num, t->name(), t->description());
+	len = strlen(output_buf);
+
+	printf(output_buf);
+
+	while (len < 90) {
+		putchar(' ');
+		++len;
 	}
 
-	puts("   </TestList>");
-}
+	if (!t->failed()) {
+		printf(" OK (%g)\n", elapsed);
+	} else {
+		puts(" FAILED!");
+		/* display reasons */
+		if (t->msglist_size()) {
+			for (const UTMsgList* ml = t->msglist(); ml; ml = ml->next) {
+				if (ml->file)
+					fprintf(out, "   '%s' : %s(%lu)\n", ml->msg, ml->file, ml->line);
+				else
+					fprintf(out, "   %s\n", ml->msg);
+			}
+		}
 
-static void cdash_dump_test_status(UnitTest* test, double time_elapsed) {
-	const char* st = NULL;
-
-	if(test->failed())
-		st = "failed";
-	else
-		st = "passed";
-
-	printf("     <Test Status=\"%s\">\n", st);
-	printf("      <Name>%s</Name>\n", test->name());
-	printf("      <Path>.</Path>\n");
-	printf("      <FullName>%s</FullName>\n", test->name());
-	printf("      <FullCommandLine>./run_tests</FullCommandLine>\n");
-	printf("      <Results>\n");
-	printf("       <NamedMeasurement type=\"numeric/double\" name=\"Execution Time\"><Value>%f</Value></NamedMeasurement>\n", time_elapsed);
-	printf("       <NamedMeasurement type=\"text/string\" name=\"Completion Status\"><Value>Completed</Value></NamedMeasurement>\n");
-	printf("       <NamedMeasurement type=\"text/string\" name=\"Command Line\"><Value>run_tests</Value></NamedMeasurement>\n");
-	printf("       <Measurement>\n");
-	printf("        <Value></Value>\n");
-	printf("       </Measurement>\n");
-	printf("      </Results>\n");
-	printf("     </Test>\n");
+		fprintf(out, "\n");
+	}
 }
 
 UnitTest::UnitTest(const char* name, const char* descr) {
@@ -143,7 +141,7 @@ UnitTestSuite::~UnitTestSuite() {
 		ntests--;
 	} while (tlist);
 
-	// sanity checks
+	/* sanity checks */
 	assert(ntests == 0);
 }
 
@@ -168,7 +166,7 @@ void UnitTestSuite::add(UnitTest* t, bool alloc) {
 	ntests++;
 }
 
-int UnitTestSuite::run(bool verbose, bool cdash_output) {
+int UnitTestSuite::run(bool verbose) {
 	if (!ntests)
 		return 1;
 
@@ -179,49 +177,24 @@ int UnitTestSuite::run(bool verbose, bool cdash_output) {
 	clock_t start_time;
 	double  elapsed = 0, total_elapsed = 0;
 
-	if(cdash_output)
-		cdash_dump_test_list(tlist);
-
 	for (UTList* t = tlist->first; t; t = t->next, i++) {
 		start_time = clock();
 		t->test->execute();
 		elapsed = double(clock() - start_time) / CLOCKS_PER_SEC;
 		total_elapsed += elapsed;
 
-		if (cdash_output)
-			cdash_dump_test_status(t->test, elapsed);
-
 		if (t->test->failed()) {
 			failed++;
-
-			if (!cdash_output) {
-				printf("Test %2i: %20s (%-30s): %30s (%g)\n", 
-						i, t->test->name(), t->test->description(), "FAILED!", elapsed);
-			}
-
-			if (t->test->msglist_size() && !cdash_output) {
-				for (const UTMsgList* ml = t->test->msglist(); ml; ml = ml->next) {
-					if (ml->file)
-						printf("   '%s' : %s(%lu)\n", ml->msg, ml->file, ml->line);
-					else
-						printf("   %s\n", ml->msg);
-				}
-			}
-
-			if (!cdash_output)
-				printf("\n");
-
+			pretty_output(stderr, i, t->test, elapsed);
 		} else {
 			passed++;
 
-			if (verbose && !cdash_output) {
-				printf("Test %2i: %20s (%-30s): %30s (%g)\n", 
-						i, t->test->name(), t->test->description(), "Success", elapsed);
-			}
+			if (verbose)
+				pretty_output(stdout, i, t->test, elapsed);
 		}
 	}
 
-	if (verbose && !cdash_output) {
+	if (verbose) {
 		printf("\n-------------------------------------------------------\n");
 		printf("Tests: %i    Passed: %i    Failed: %i    (time: %g)\n", ntests, passed, failed, total_elapsed);
 	}
