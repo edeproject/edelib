@@ -278,8 +278,7 @@ bool Date::system_set(void) {
 // static
 bool Date::is_valid(unsigned short y, unsigned char m, unsigned char d) {
 	/*
-	 * Checks for d == 0 || y == 0 are not done since
-	 * YearNow == 0 and DayNow == 0.
+	 * Checks for d == 0 || y == 0 are not done since YearNow == 0 and DayNow == 0.
 	 * FIXME: Resolve this better ?
 	 */
 	if (m == 0)
@@ -292,7 +291,7 @@ bool Date::is_valid(unsigned short y, unsigned char m, unsigned char d) {
 
 // static
 bool Date::leap_year(unsigned short y) {
-	return ((y & 3) == 0 && (y % 100 != 0) || (y % 400 == 0));
+	return (((y & 3) == 0 && (y % 100 != 0)) || (y % 400 == 0));
 }
 
 // static

@@ -1,5 +1,5 @@
 /* XPM */
-static char * critical_xpm[] = {
+static const char * critical_xpm[] = {
 "32 32 203 2",
 "  	c None",
 ". 	c #C60000",

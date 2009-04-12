@@ -36,11 +36,10 @@
 #include <edelib/FileTest.h>
 
 #ifndef PATH_MAX
-	#define PATH_MAX 256
+#define PATH_MAX 256
 #endif
 
-#define DOT_OR_DOTDOT(base) \
-	(base[0] == '.' && (base[1] == '\0' || base[1] == '.' && base[2] == '\0'))
+#define DOT_OR_DOTDOT(base) (base[0] == '.' && (base[1] == '\0' || (base[1] == '.' && base[2] == '\0')))
 
 EDELIB_NS_BEGIN
 

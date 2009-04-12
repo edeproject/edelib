@@ -15,7 +15,8 @@ XSettingsClient* xs_client;
 Fl_Box* test_box = NULL;
 
 void xsettings_cb(const char* name, XSettingsAction action, XSettingsSetting* setting, void* data) {
-	char* action_str;
+	const char* action_str;
+
 	switch(action) {
 		case XSETTINGS_ACTION_NEW:
 			action_str = "new";

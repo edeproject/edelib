@@ -1,5 +1,5 @@
 /* XPM */
-static char * warning_xpm[] = {
+static const char * warning_xpm[] = {
 "32 32 247 2",
 "  	c None",
 ". 	c #BA0000",

@@ -322,7 +322,7 @@ void Window::show(void) {
 		// Don't set background pixel for double-buffered windows...
 		int background_pixel = -1;
 
-		if(type() == FL_WINDOW && ((box() == 1) || (box() & 2) && (box() <= 15))) {
+		if(type() == FL_WINDOW && ((box() == 1) || ((box() & 2) && (box() <= 15)))) {
 			background_pixel = int(fl_xpixel(color()));
 		}
 

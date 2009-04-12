@@ -289,7 +289,7 @@ int File::getch(void) {
 
 int File::putch(int c) {
 	E_ASSERT(opened != false && "File stream not opened");
-	E_ASSERT(have_flag(FIO_WRITE, fmode)||have_flag(FIO_APPEND, fmode) && "File stream not in write mode");
+	E_ASSERT((have_flag(FIO_WRITE, fmode) || have_flag(FIO_APPEND, fmode)) && "File stream not in write mode");
 
 	return fputc(c, fobj);
 }
@@ -328,7 +328,7 @@ int File::readline(char* buff, int buffsz) {
 
 int File::write(const void* buff, int typesz, int buffsz) {
 	E_ASSERT(opened != false && "File stream not opened or not opened in write mode");
-	E_ASSERT(have_flag(FIO_WRITE, fmode)||have_flag(FIO_APPEND, fmode) && "File stream not in write mode");
+	E_ASSERT((have_flag(FIO_WRITE, fmode) || have_flag(FIO_APPEND, fmode)) && "File stream not in write mode");
 
 	return fwrite(buff, typesz, buffsz, fobj);
 }
@@ -346,7 +346,7 @@ int File::write(const char* buff) {
 
 int File::printf(const char* fmt, ...) {
 	E_ASSERT(opened != false && "File stream not opened or not opened in write mode");
-	E_ASSERT(have_flag(FIO_WRITE, fmode)||have_flag(FIO_APPEND, fmode) && "File stream not in write mode");
+	E_ASSERT((have_flag(FIO_WRITE, fmode) || have_flag(FIO_APPEND, fmode)) && "File stream not in write mode");
 	E_ASSERT(fmt != NULL);
 
 	va_list ap;

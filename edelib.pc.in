@@ -7,7 +7,6 @@ edelibdocdir=${prefix}/share/doc/edelib-@EDELIB_API_VERSION@
 Name: edelib
 Description: EDE C++ library
 Version: @EDELIB_API_VERSION@
-URL: http://equinox-project.org
 Requires:
 Libs: -L${libdir} -ledelib
 Cflags: -I${includedir}

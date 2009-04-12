@@ -6,7 +6,6 @@ includedir=${prefix}/include
 Name: edelib-dbus
 Description: EDE D-BUS library
 Version: @EDELIB_API_VERSION@
-URL: http://equinox-project.org
 Requires: edelib dbus-1
 Libs: -L${libdir} -ledelib_dbus
 Cflags: -I${includedir}

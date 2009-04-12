@@ -455,14 +455,14 @@ inline bool operator==(const Time& t1, const Time& t2) {
 
 inline bool operator>(const Time& t1, const Time& t2) {
 	return (t1.hour() > t2.hour() ||
-			t1.hour() == t2.hour() && t1.second() > t2.second() ||
-			t1.second() == t2.second());
+		(t1.hour() == t2.hour() && t1.second() > t2.second()) ||
+		t1.second() == t2.second());
 }
 
 inline bool operator<(const Time& t1, const Time& t2) {
 	return (t1.hour() < t2.hour() ||
-			t1.hour() == t2.hour() && t1.second() < t2.second() ||
-			t1.second() == t2.second());
+		(t1.hour() == t2.hour() && t1.second() < t2.second()) ||
+		t1.second() == t2.second());
 }
 
 inline bool operator!=(const Time& t1, const Time& t2) { return !(t1 == t2); }
