@@ -16,8 +16,7 @@ dnl
 dnl You should have received a copy of the GNU Lesser General Public License
 dnl along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-dnl Check do we have jam installed and try to determine version
-dnl where is minimal supported 2.3
+dnl Check do we have jam installed and try to determine version where is minimal supported 2.3
 AC_DEFUN([EDELIB_PROG_JAM], [
 	AC_PATH_PROG(JAM, jam)
 
@@ -37,5 +36,29 @@ AC_DEFUN([EDELIB_PROG_JAM], [
 		fi
 	else
 		AC_MSG_ERROR(Jam is missing! You can download it from our repository)
+	fi
+
+	dnl older jam's does not handle 'return' statement
+	AC_MSG_CHECKING([if your jam is broken])
+
+	cat >conftest.jam <<_ACEOF
+rule TestRule {
+	if \$(<) = 1 {
+		return 2 ;
+	}
+
+	return 3 ;
+}
+
+Echo [[ TestRule 1 ]] ;
+_ACEOF
+	
+	ret=`$JAM -f conftest.jam | head -1`
+	rm -f conftest.jam
+
+	if test "$ret" -eq 2; then
+		AC_MSG_RESULT(it is fine)
+	else
+		AC_MSG_ERROR(You have old and broken jam version. Please download newer version from our repository")
 	fi
 ])
