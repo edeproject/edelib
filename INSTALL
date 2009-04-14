@@ -45,7 +45,7 @@ configure script, like:
 
  declare -x CC="[path]/sunstudioXX/bin/cc"
  declare -x CXX="[path]/sunstudioXX/bin/CC"
- declare -x LDFLAGS="-L[path]/lib -lCrun -lCstd"
+ declare -x LDFLAGS="-L[path]/lib"
  declare -x LIBS="-lCrun -lCstd"
  declare -x STDLIB="$LDFLAGS $LIBS"
 
