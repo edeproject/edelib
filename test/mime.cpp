@@ -22,8 +22,6 @@ UT_FUNC(MimeTypeTest, "Test MimeType")
 
 	mt.set("mime.o");
 	UT_VERIFY( mt.type() == "application/x-object" );
-
-	printf("==> %s\n", mt.icon_name().c_str());
 	UT_VERIFY( mt.icon_name() == "application-x-object" );
 
 	/* duplicate, should not reload comment */
