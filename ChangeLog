@@ -3,6 +3,7 @@
 	* edelib/Config.h:
 	* src/Config.cpp:
 	* test/conf.cpp: removed usage of File class
+	* m4/pkg.m4: ksh hack
 
 2009-04-13  Sanel <karijes@users.sourceforge.net>
 
