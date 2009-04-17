@@ -18,15 +18,14 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>   // snprintf
+#include <stdio.h>
 #include <ctype.h>
-#include <string.h>  // strchr, strncpy, strlen
-#include <stdlib.h>  // free, atoi, atol, atof, getenv
+#include <string.h>
+#include <stdlib.h>
 
 #include <edelib/Config.h>
 #include <edelib/Debug.h>
 #include <edelib/StrUtil.h>
-#include <edelib/File.h>
 #include <edelib/Nls.h>
 
 // max section len
@@ -41,7 +40,7 @@
 #define SECT_CLOSE ']'
 #define KV_DELIM   '='
 
-#define EAT_SPACES(ptr) while(isspace(*ptr) && *ptr) ptr++
+#define EAT_SPACES(ptr) while(*ptr && isspace(*ptr)) ptr++
 
 EDELIB_NS_BEGIN
 
@@ -86,11 +85,11 @@ public:
  * to the glibc getline(), allocated data must be cleared with delete[],
  * not free().
  */
-int config_getline(char** buff, int* len, FILE* f) {
-	if(!buff || !len)
+int config_getline(char** buf, int* len, FILE* f) {
+	if(!buf || !len)
 		return -1;
 
-	if(!*buff) *len = 0;
+	if(!*buf) *len = 0;
 
 	int i = 0;
 	int c;
@@ -101,20 +100,20 @@ int config_getline(char** buff, int* len, FILE* f) {
 			// do not multiply since *len can be 0
 			int tmp = *len + 100;
 
-			char* new_buff = new char[tmp];
-			strncpy(new_buff, *buff, *len);
+			char* new_buf = new char[tmp];
+			strncpy(new_buf, *buf, *len);
 
-			if(*buff) delete [] *buff;
-			*buff = new_buff;
+			if(*buf) delete [] *buf;
+			*buf = new_buf;
 			*len = tmp;
 		}
 
 		if(c == EOF) {
-			(*buff)[i] = '\0';
+			(*buf)[i] = '\0';
 			return -1;
 		}
 
-		(*buff)[i] = c;
+		(*buf)[i] = c;
 		/*
 		 * counter is increased here so getline() is fully emulated;
 		 * if this is done in for loop, '\n' chars would not be recorded
@@ -126,46 +125,7 @@ int config_getline(char** buff, int* len, FILE* f) {
 			break;
 	}
 
-	(*buff)[i] = '\0';
-	return i;
-}
-
-// edelib::File version
-int config_getline(char** buff, int* len, File* f) {
-	if(!buff || !len)
-		return -1;
-
-	if(!*buff) *len = 0;
-
-	int i = 0;
-	int c;
-
-	while(1) {
-		c = f->getch();
-		if(i >= *len) {
-			int tmp = *len + 100;
-
-			char* new_buff = new char[tmp];
-			strncpy(new_buff, *buff, *len);
-
-			if(*buff) delete [] *buff;
-			*buff = new_buff;
-			*len = tmp;
-		}
-
-		if(c == EOF) {
-			(*buff)[i] = '\0';
-			return -1;
-		}
-
-		(*buff)[i] = c;
-		i++;
-
-		if(c == '\n')
-			break;
-	}
-
-	(*buff)[i] = '\0';
+	(*buf)[i] = '\0';
 	return i;
 }
 
@@ -196,22 +156,24 @@ static unsigned int do_hash(const char* key, int keylen) {
  * scan section in [section]
  * returned value is terminated with '\0'
  */
-static bool scan_section(char* line, char* buff, int buffsz) {
-	char* buffp = buff;
+static bool scan_section(char* line, char* buf, int bufsz) {
+	char* bufp = buf;
 	bool status = false;
 
 	str_trimleft(line);
 
-	for (; *line && buffsz > 0; line++) {
-		if (*line == SECT_CLOSE) {
+	for(; *line && bufsz > 0; line++) {
+		if(*line == SECT_CLOSE) {
 			status = true;
 			break;
 		}
-		*buffp++ = *line;
-		buffsz--;
+
+		*bufp++ = *line;
+		bufsz--;
 	}
-	*buffp = '\0';
-	str_trimright(buff);
+
+	*bufp = '\0';
+	str_trimright(buf);
 	return status;
 }
 
@@ -352,19 +314,11 @@ bool Config::load(const char* fname) {
 
 	clear();
 
-#ifdef CONFIG_USE_STDIO
 	FILE *f = fopen(fname, "r");
 	if (!f) {
 		errcode = CONF_ERR_FILE;
 		return false;
 	}
-#else
-	File f;
-	if (!f.open(fname)) {
-		errcode = CONF_ERR_FILE;
-		return false;
-	}
-#endif
 
 	// set default return values
 	errcode = CONF_SUCCESS;
@@ -375,41 +329,34 @@ bool Config::load(const char* fname) {
 
 	// use fixed sizes for sections and keys
 	char section[ESECT_MAX];
-	char keybuff[EKEY_MAX];
+	char keybuf[EKEY_MAX];
 
 	// line and value can grow
-	int bufflen = ELINE_SIZE_START;
-	char* buff = new char[bufflen];
+	int buflen = ELINE_SIZE_START;
+	char* buf = new char[buflen];
 
 	// use the same size as for line
-	int valbufflen = bufflen;
-	char* valbuff = new char[valbufflen];
+	int valbuflen = buflen;
+	char* valbuf = new char[valbuflen];
 
-	char *buffp;
+	char *bufp;
 	ConfigSection* tsect = NULL;
 
-#if CONFIG_USE_STDIO
-	// FILE version
-	while(config_getline(&buff, &bufflen, f) != -1) 
-#else
-	// edelib::File version
-	while(config_getline(&buff, &bufflen, &f) != -1) 
-#endif
-	{
+	while(config_getline(&buf, &buflen, f) != -1) {
 		++linenum;
 
-		buffp = buff;
+		bufp = buf;
+		EAT_SPACES(bufp);
 
-		EAT_SPACES(buffp);
 		// comment or empty line
-		if (*buffp == COMMENT || *buffp == '\0')
+		if (*bufp == COMMENT || *bufp == '\0')
 			continue;
 
 		// we found an section
-		if (*buffp == SECT_OPEN) {
+		if (*bufp == SECT_OPEN) {
 			sect_found = true;
-			buffp++;
-			if (!scan_section(buffp, section, sizeof(section))) {
+			bufp++;
+			if (!scan_section(bufp, section, sizeof(section))) {
 				errcode = CONF_ERR_BAD;
 				status = false;
 				break;
@@ -436,33 +383,31 @@ bool Config::load(const char* fname) {
 			}
 
 			/*
-			 * check if size of valbuff is less than bufflen;
-			 * in that case make it size as bufflen (better would be to use 
-			 * bufflen - EKEY_MAX - '=' - <spaces>, but that would complicate thing,
+			 * check if size of valbuf is less than buflen;
+			 * in that case make it size as buflen (better would be to use 
+			 * buflen - EKEY_MAX - '=' - <spaces>, but that would complicate thing,
 			 * also more size does not hurts :P)
 			 */
-			if(valbufflen < bufflen) {
-				valbufflen = bufflen;
-				delete [] valbuff;
-				valbuff = new char[valbufflen];
+			if(valbuflen < buflen) {
+				valbuflen = buflen;
+				delete [] valbuf;
+				valbuf = new char[valbuflen];
 			}
 
-			if (!scan_keyvalues(buffp, keybuff, valbuff, bufflen, EKEY_MAX, valbufflen)) {
+			if (!scan_keyvalues(bufp, keybuf, valbuf, buflen, EKEY_MAX, valbuflen)) {
 				errcode = CONF_ERR_BAD;
 				status = false;
 				break;
 			}
 
 			E_ASSERT(tsect != NULL && "Entry without a section ?!");
-			tsect->add_entry(keybuff, valbuff);
+			tsect->add_entry(keybuf, valbuf);
 		}
 	}
-#ifdef CONFIG_USE_STDIO
-	fclose(f);
-#endif
 
-	delete [] buff;
-	delete [] valbuff;
+	fclose(f);
+	delete [] buf;
+	delete [] valbuf;
 
 	return status;
 }
@@ -470,25 +415,16 @@ bool Config::load(const char* fname) {
 bool Config::save(const char* fname) {
 	E_ASSERT(fname != NULL);
 
-#ifdef CONFIG_USE_STDIO
 	FILE* f = fopen(fname, "w");
 	if (!f) {
 		errcode = CONF_ERR_FILE;
 		return false;
 	}
-#else
-	File f;
-	if (!f.open(fname, FIO_WRITE)) {
-		errcode = CONF_ERR_FILE;
-		return false;
-	}
-#endif
 
 	SectionListIter sit = section_list.begin(), sit_end = section_list.end();
 	unsigned int sz = section_list.size();
 	EntryListIter eit;
 
-#ifdef CONFIG_USE_STDIO
 	for (; sit != sit_end; ++sit, --sz) {
 		fprintf(f, "[%s]\n", (*sit)->sname);
 
@@ -499,19 +435,8 @@ bool Config::save(const char* fname) {
 		if(sz != 1)
 			fprintf(f, "\n");
 	}
+
 	fclose(f);
-#else
-	for (; sit != sit_end; ++sit, --sz) {
-		f.printf("[%s]\n", (*sit)->sname);
-
-		for (eit = (*sit)->entry_list.begin(); eit != (*sit)->entry_list.end(); ++eit)
-			f.printf("%s=%s\n", (*eit)->key, (*eit)->value);
-
-		// prevent unneeded newline at the end of file
-		if(sz != 1)
-			f.printf("\n");
-	}
-#endif
 	return true;
 }
 
@@ -731,18 +656,18 @@ bool Config::get_localized(const char* section, const char* key, char* ret, unsi
 		return false;
 	}
 
-	char key_buff[128];
+	char key_buf[128];
 
 	/*
 	 * Config class can accept Name[xxx] names as
 	 * keys, so we use it here; first construct
 	 * a key name, and try to find it
 	 */
-	snprintf(key_buff, sizeof(key_buff), "%s[%s]", key, lang);
+	snprintf(key_buf, sizeof(key_buf), "%s[%s]", key, lang);
 	bool found = false;
 
 	// first try to find it with full data
-	ConfigEntry* ce = cs->find_entry(key_buff);
+	ConfigEntry* ce = cs->find_entry(key_buf);
 	if (ce)
 		found = true;
 	else {
@@ -765,10 +690,10 @@ bool Config::get_localized(const char* section, const char* key, char* ret, unsi
 				// damint strncpy does not add this
 				code[sz] = '\0';
 
-				snprintf(key_buff, sizeof(key_buff), "%s[%s]", key, code);
+				snprintf(key_buf, sizeof(key_buf), "%s[%s]", key, code);
 				delete [] code;
 
-				ce = cs->find_entry(key_buff);
+				ce = cs->find_entry(key_buf);
 				if (ce) {
 					found = true;
 					break;
@@ -851,9 +776,9 @@ void Config::set_localized(const char* section, const char* key, const char* val
 		return;
 	}
 
-	char key_buff[128];
-	snprintf(key_buff, sizeof(key_buff), "%s[%s]", key, lang_val);
-	set(section, key_buff, val);
+	char key_buf[128];
+	snprintf(key_buf, sizeof(key_buf), "%s[%s]", key, lang_val);
+	set(section, key_buf, val);
 }
 
 void Config::set_localized(const char* section, const char* key, char* val) {

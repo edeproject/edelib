@@ -1,3 +1,9 @@
+2009-04-17  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Config.h:
+	* src/Config.cpp:
+	* test/conf.cpp: removed usage of File class
+
 2009-04-13  Sanel <karijes@users.sourceforge.net>
 
 	* m4/jam.m4: check if we have broken jam's that does not correctly use

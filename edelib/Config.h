@@ -422,15 +422,9 @@ public:
 	const char* strerror(int code);
 };
 
-/*
- * These functions are for unit test only.
- * They should not be used in application code.
- */
 #ifndef SKIP_DOCS
-class File;
-
+/* This function is for unit test only and should not be used in application code */
 EDELIB_API int config_getline(char** buff, int* len, FILE* f);
-EDELIB_API int config_getline(char** buff, int* len, File* f);
 #endif
 
 EDELIB_NS_END
