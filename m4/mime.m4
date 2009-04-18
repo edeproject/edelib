@@ -29,7 +29,7 @@ AC_DEFUN([EDELIB_MIME], [
 	fi
 
 	if test "x$xdg_data_dirs" = "x"; then
-		xdg_data_dirs="/usr/local/share:/usr/share"
+		xdg_data_dirs="/usr/local/share:/usr/share:/usr/pkg/share"
 	fi
 
 	saved_ifs=$IFS
@@ -47,17 +47,12 @@ AC_DEFUN([EDELIB_MIME], [
 		done
 	done
 
+	dnl restore it as soon as possible since AC_MSG_RESULT depends on it
+	IFS="$saved_ifs"
+
 	if test "x$found_mime_path" = "x"; then
 		AC_MSG_RESULT(no)
-		dnl watch to quote ',' character inside AC_MSG_NOTICE or message will not be displayed
-		AC_MSG_NOTICE(********************************************************************************************)
-		AC_MSG_NOTICE(* Looks like you are missing MIME database. Please install appropriate package for your OS *)
-		AC_MSG_NOTICE(* (usually named as shared-mime-info) or download archive from http://freedesktop.org.     *)
-		AC_MSG_NOTICE(* edelib can be used without MIME database[,] but MIME types will not be recognized.         *)
-		AC_MSG_NOTICE(********************************************************************************************)
 	else
 		AC_MSG_RESULT(yes)
 	fi
-
-	IFS="$saved_ifs"
 ])
