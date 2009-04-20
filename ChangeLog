@@ -3,6 +3,8 @@
 	* src/StrUtil.cpp: some valgrind warning fixup
 	* src/rx/regex.h: __restrict_arr makes a lot of problems on NetBSD's gcc
 	4.1.2 so this part is replaced with updated code found somewere on the net
+	* test/mime.cpp: quick hack to prevent crashes on NetBSD, although better
+	solution should be find
 
 2009-04-18  Sanel <karijes@users.sourceforge.net>
 

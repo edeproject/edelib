@@ -44,8 +44,9 @@ UT_FUNC(MimeTypeTest, "Test MimeType")
 	UT_VERIFY( mt2.comment() == "" );
 	UT_VERIFY( mt2.icon_name() == "" );
 
-	/* folder */
-	mt.set("/");
+	/* folder 
+	 * FIXME: '/usr/' would crash on NetBSD's buildbot. Cause is deep inside xdgmime library */
+	mt.set("/usr");
 
 	UT_VERIFY( mt.type() == "inode/directory" );
 	UT_VERIFY( mt.icon_name() == "folder" );
