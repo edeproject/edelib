@@ -26,7 +26,7 @@
 EDELIB_NS_BEGIN
 
 char* str_trimleft(char* str) {
-	EASSERT(str != NULL);
+	E_ASSERT(str != NULL);
 
 	char* ptr;
 	for(ptr = str; *ptr && isspace(*ptr); ptr++)
@@ -36,18 +36,30 @@ char* str_trimleft(char* str) {
 }
 
 char* str_trimright(char* str) {
-	EASSERT(str != NULL);
+	E_ASSERT(str != NULL);
 
 	int len = strlen(str);
 	if(!len)
 		return str;
 
+#if 0
 	char* p = str + len;
 	p--; // go to '\0' - 1
 	for(; len >= 0 && isspace(*p); p--, len--)
 		;
 	// preserve last char
 	*(++p) = '\0';
+#endif
+
+	/* 
+	 * valgrind somehow reports for above code invalid writing 1 character that
+	 * corrupts other part of the program (goes beyond 1 character)
+	 */
+	int i;
+	for(i = len - 1; i >= 0 && isspace(str[i]); i--)
+		;
+
+	str[i+1] = 0;
 	return str;
 }
 
@@ -56,7 +68,7 @@ char* str_trim(char* str) {
 }
 
 unsigned char* str_tolower(unsigned char* str) {
-	EASSERT(str != NULL);
+	E_ASSERT(str != NULL);
 
 	unsigned char* ptr = str;
 	while(*ptr)
@@ -68,7 +80,7 @@ unsigned char* str_tolower(unsigned char* str) {
 }
 
 unsigned char* str_toupper(unsigned char* str) {
-	EASSERT(str != NULL);
+	E_ASSERT(str != NULL);
 
 	unsigned char* ptr = str;
 	while(*ptr)
@@ -80,8 +92,8 @@ unsigned char* str_toupper(unsigned char* str) {
 }
 
 bool str_ends(const char* str, const char* test) {
-	EASSERT(str != NULL);
-	EASSERT(test != NULL);
+	E_ASSERT(str != NULL);
+	E_ASSERT(test != NULL);
 
 	int len = strlen(str);
 	int tlen = strlen(test);
