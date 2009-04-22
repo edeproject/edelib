@@ -1,3 +1,7 @@
+2009-04-22  Sanel <karijes@users.sourceforge.net>
+
+	* === Released 2.0 alpha ===
+
 2009-04-20  Sanel <karijes@users.sourceforge.net>
 
 	* src/StrUtil.cpp: some valgrind warning fixup
