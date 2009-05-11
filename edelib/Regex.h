@@ -2,7 +2,7 @@
  * $Id$
  *
  * Regex class
- * Copyright (c) 2005-2007 edelib authors
+ * Copyright (c) 2007-2009 edelib authors
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,38 +27,29 @@
 EDELIB_NS_BEGIN
 
 /**
+ * \related Regex
  * \enum RegexMode
- * \brief Flags used for matching pattern
+ * \brief Flags used for compile()
  */
 enum RegexMode {
-	RX_BASIC    = (1<<1), ///< basic regex mode (or posix mode)
-	RX_EXTENDED = (1<<2), ///< extended mode
-	RX_ICASE    = (1<<3), ///< ignore cases
-	RX_NEWLINE  = (1<<4)  ///< see newline as start/end (for '^' and '$' characters)
+	RX_EXTENDED       = (1 << 1), ///< extended features
+	RX_CASELESS       = (1 << 2), ///< ignore cases
+	RX_DOLLAR_ENDONLY = (1 << 3), ///< $ not to match newline at end
+	RX_DOTALL         = (1 << 4), ///< . matches anything including newline
+	RX_MULTILINE      = (1 << 5), ///< ^ and $ match newlines within data
+	RX_UNGREEDY       = (1 << 6)  ///< invert greediness of quantifiers
 };
 
 /**
- * \enum RegexErrors
- * \brief Error codes from Regex class
+ * \related Regex
+ * \enum RegexMatchMode
+ * \brief Flags used for match()
  */
-enum RegexErrors {
-	RX_SUCCESS = 0,   ///< successfull compilation
-	RX_EMPTY,         ///< pattern not compiled
-	RX_ERR_BADBR,     ///< invalid use of back reference operator
-	RX_ERR_BADPAT,    ///< invalid use of pattern operators like group
-	RX_ERR_BADRPT,    ///< invalid use of repetition operators such as '*'
-	RX_ERR_EBRACE,    ///< un-matched brace
-	RX_ERR_EBRACK,    ///< un-mached bracket
-	RX_ERR_ECOLLATE,  ///< invalid collating element
-	RX_ERR_ECTYPE,    ///< unknown character
-	RX_ERR_EESCAPE,   ///< trailing backslash
-	RX_ERR_EPAREN,    ///< un-matched parenthesis
-	RX_ERR_ERANGE,    ///< invalid use of range operator
-	RX_ERR_ESPACE,    ///< out of memory
-	RX_ERR_ESUBREG,   ///< invalid backreference to subexpression
-	RX_ERR_EEND,      ///< non specific error
-	RX_ERR_SEARCH,    ///< re_search internal error
-	RX_ERR_UNKNOWN    ///< unknown error
+enum RegexMatchMode {
+	RX_MATCH_ANCHORED = (1 << 1), ///< Match only at the first position
+	RX_MATCH_NOTBOL   = (1 << 2), ///< Subject is not the beginning of a line
+	RX_MATCH_NOTEOL   = (1 << 3), ///< Subject is not the end of a line
+	RX_MATCH_NOTEMPTY = (1 << 4)  ///< An empty string is not a valid match
 };
 
 #ifndef SKIP_DOCS
@@ -66,125 +57,55 @@ struct RegexData;
 #endif
 
 /**
+ * \class RegexMatch
+ * \brief RegexMatch class
+ *
+ * Data for matched subpatterns. Used in Regex::split().
+ */
+struct RegexMatch {
+	/** position where matched string starts */
+	int offset;
+	/** length of matched string */
+	int length;
+};
+
+/**
  * \class Regex
- * \brief Regular expression class
+ * \brief Regex class
  *
- * Regex is pattern matching (aka. regular expression) class used
- * to search certain substrings inside line or text. This class
- * use POSIX compatible expressions, either basic or extended one.
+ * Regex is pattern matching (aka. regular expression) class used to search certain substrings inside 
+ * line or text. This class use Perl compatible expressions thanks to PCRE backend.
  *
- * Regex class supports matching and searching. Matching is testing
- * is compiled pattern is present inside data via match(). It will return
- * true if does or false if not. On other hand, searching (via search())
- * is locating sub-data, returning position where sub-data starts and
- * it's length.
+ * Before doing some matching, you must compile pattern first buy using compile() member.
  *
- * Before doing actual matching/searching, you <b>must</b> compile (via compile())
- * searching pattern or calls to match()/search() will yield assertion.
- *
- * This is short sample how to use match():
- * \code
- *   const char* sample = "this is sample text";
- *   Regex r;
- *   if(!r.compile("[a-zA-Z]+"))
- *      // quit...
- *   if(r.match(sample))
- *      puts("Given string found");
- * \endcode
- *
- * And this is how to use search():
+ * Matching is done via match() member. It will return the number of matched substrings and (if given) 
+ * set RegexMatch list with offsets. If fails, -1 will be returned. Here is the sample:
+ * that explains it:
  * \code
  *   Regex r;
- *   r.compile("[0-9]+");
- *   int len = 0;
- *   int start = r.search("abc 123 456", len);
+ *   Regex::MatchVec mv;
  *
- *   // Note: returned position is counted from 0
- *   // so start == 4 and len == 3. 
- *   // Why len is 3? It is because pattern "[0-9]+" does
- *   // not include space character and counting is stopped
- *   // at first characted that is not number.
- *   if(start >= 0)
- *      printf("Located at %i with len %i\n", start, len);
- *   else
- *      printf("Not found\n");
+ *   r.compile("(de|br)mo");
+ *   r.match("some demo string", 0, &mv);
+ *
  * \endcode
  *
- * By default Regex use extended matching patterns.
- *
- * You can use few additional modifiers to adopt matching code depending on your needs.
- * For example, if you want to match or search text ignoring character cases, using
- * RX_ICASE will do that, like:
- * \code
- *   r.compile("[a-z]+", RX_EXTENDED | RX_ICASE);
- *   // of course always check if expression was compiled successfully
- *   r.match("fooBazFOObazFoo") // yield true
- * \endcode
- *
- * RX_NEWLINE will see newline character as starting/ending, like:
- * \code
- *   const char* sample = "foo\nbaz"
- *   // match() will return false since '\n' is not seen as endline
- *   r.compile("foo$");
- *   r.match(sample);
- *
- *   // match() will now return true
- *   r.compile("foo$", RX_NEWLINE);
- *   r.match(sample);
- * \endcode
- *
- * With Regex you can also split data using split() (obviously :-P). Splitted
- * data will match compiled pattern, not it's reverse values (like eg. python split()).
- * Let (in sample) extract only words with alphabetic characters:
- * \code
- *   r.compile("[a-z]+", RX_EXTENDED | RX_ICASE);
- *   list<String> data;
- *   list<String>::iterator i;
- *   r.split("this are 1234 SAMPLE 333 ###  words", data);
- *   i = data.begin();
- *   while(i != data.end()) {
- *     printf("%s\n", (*i).c_str());
- *     ++i;
- *   }
- *
- *   // output:
- *   // this
- *   // are
- *   // SAMPLE
- *   // words
- * \endcode
- *
- * If you want to achieve reverse effect where list will contain data not
- * found in pattern, you have to use regex negate ('^'). 
- * Here is simple tokeniser which will split text into words:
- * \code
- *   int tokenise(const char* txt, list<String> l) {
- *       Regex r;
- *       if(!r.compile("[ \t]+"))
- *          return 0;
- *
- *       return r.split(txt, l);
- *   }
- * \endcode
- *
- * Note that Regex will work only on 8-bit characters and UTF-8 (or else)
- * will fail. This will be addressed in the future.
- *
- * \todo port it to pcre backend
+ * Here, match() will return 2 and MatchVec list will have (5,4) and (5,2) values (where the first value
+ * is offset and the second substring length). This explains one important property inherited from PCRE:
+ * when grouped patterns are involved and they are found in string, MatchVec first element will be
+ * full matched string and substrings will follow.
  */
 class EDELIB_API Regex {
 private:
-	int errcode;
 	RegexData* data;
 
 	void clear(void);
-	void clear_regs(void);
-	void map_errcode(int ret);
-
 	Regex(const Regex&);
 	Regex& operator=(const Regex&);
-
 public:
+	/** Shortcut for the list of RegexMatch */
+	typedef list<RegexMatch> MatchVec;
+
 	/**
 	 * Empty constructor
 	 */
@@ -196,18 +117,16 @@ public:
 	~Regex();
 
 	/**
-	 * Compile pattern for matching. This <b>must</b> be called
-	 * before match().
+	 * Compile pattern for matching. This <b>must</b> be called before match/search functions.
 	 *
 	 * \return true if pattern compiled successfully, or false if not.
 	 * \param pattern is matching pattern
 	 * \param m is RegexMode type
 	 */
-	bool compile(const char* pattern, int m = RX_EXTENDED);
+	bool compile(const char* pattern, int m = 0);
 
 	/**
-	 * Validate was compile() was successfull. This is short way for compile()
-	 * returned value, like:
+	 * Validate if compile() was successfull. This is short way for checking compile() returned value, like:
 	 * \code
 	 *   Regex r;
 	 *   r.compile(...);
@@ -215,31 +134,28 @@ public:
 	 *      // die
 	 * \endcode
 	 */
-	operator bool(void) const   { return ((errcode == RX_SUCCESS) ? 1 : 0); }
+	operator bool(void) const;
 
 	/**
-	 * Returns true if given string matches compiled pattern (aka. pattern
-	 * is found inside string) or false if not.
-	 */
-	bool match(const char* str);
-
-	/**
-	 * Search compiled pattern in str with given size and return position
-	 * where matched data starts and it's length. If optional start is
-	 * given, searching will be started from that point.
+	 * Search compiled pattern in str and return number of grouped matches. If pattern wasn't
+	 * found or some error occured during search, returned value (depending on error) will be less than 0
+	 * (see PCRE documentation about returned values).
 	 *
-	 * \return position where searched data starts or -1 if not found or -2 in case of internal error
-	 * \param str is data to be searched
-	 * \param len is length of searched data
-	 * \param matchlen is returned length of matched data
-	 * \param start is position to start from
+	 * \return the number of grouped matches or value less than 0 in case of error
+	 * \param str is target string where compiled pattern is searched
+	 * \param match_mode is OR-ed RegexMatchMode value 
+	 * \param start is starting position on string
+	 * \param len is desired length where matching will occur; if given -1, full length will be searched
+	 * \param matches is list of matching objects
 	 */
-	int search(const char* str, int len, int& matchlen, int start);
+	int match(const char* str, int match_mode, int start, int len, MatchVec* matches);
 
 	/**
-	 * Same as search(str, strlen(str), matchlen, 0)
+	 * The same as above match(), but matching will start from the beginning and full string length
+	 * will be used
 	 */
-	int search(const char* str, int& matchlen, int start = 0);
+	int match(const char* str, int match_mode = 0, MatchVec* matches = 0) 
+	{ return match(str, match_mode, 0, -1, matches); }
 
 	/**
 	 * Split given str and put each of splitted items in list.
@@ -247,26 +163,16 @@ public:
 	 * \return 0 if pattern didn't find or size of the list
 	 * \param str is data to be splitted
 	 * \param ls is list where to put data
+	 * \param match_mode is OR-ed RegexMatchMode value
 	 */
-	int split(const char* str, list<String>& ls);
+	int split(const char* str, list<String>& ls, int match_mode = 0);
 
 	/**
-	 * Return current error code
+	 * Return error in string form. Returned value points to static data and <b>must not</b> be modified or cleared
 	 */
-	int error(void) { return errcode; }
-
-	/**
-	 * Interpret parameter and return associated error code. Returned
-	 * value points to static data and <b>must not</b> be modified or cleared.
-	 */
-	static const char* strerror(int code);
-
-	/**
-	 * Return error in string form. Returned
-	 * value points to static data and <b>must not</b> be modified or cleared.
-	 */
-	const char* strerror(void) { return Regex::strerror(errcode); }
+	const char* strerror(void) const;
 };
 
 EDELIB_NS_END
+
 #endif

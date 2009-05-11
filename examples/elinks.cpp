@@ -3,28 +3,14 @@
  * File/Regex/list/String usage
  */
 
-#include <edelib/File.h>
 #include <edelib/Regex.h>
 #include <stdio.h>
 
 EDELIB_NS_USE
 
 void help(void) {
-	puts("elinks [FILES...]");
-	puts("Extract html links from [FILES] and print them to stdout");
-}
-
-void dump_links(list<String>& ls) {
-	list<String>::iterator it, it_end;
-	it = ls.begin();
-	it_end = ls.end();
-
-	while(it != it_end) {
-		printf("%s\n", (*it).c_str());
-		++it;
-	}
-
-	ls.clear();
+	puts("elinks [FILE]");
+	puts("Extract html links from [FILE] and print them to stdout");
 }
 
 int main(int argc, char** argv) {
@@ -34,7 +20,10 @@ int main(int argc, char** argv) {
 	}
 
 	Regex r;
-	r.compile("<a[^>]+href=(\"[^\"]*\"|[^[:space:]]+)[^>]*>", RX_EXTENDED | RX_ICASE);
+	Regex::MatchVec mv;
+	Regex::MatchVec::iterator it;
+
+	r.compile("<a[^>]+href=(\"[^\"]*\"|[^[:space:]]+)[^>]*>", RX_EXTENDED | RX_CASELESS);
 	if(!r) {
 		printf("Pattern error: %s\n", r.strerror());
 		return 1;
@@ -43,28 +32,29 @@ int main(int argc, char** argv) {
 	String errstr;
 	list<String> errors, links;
 	list<String>::iterator eit;
-	char buff[8094];
-	File f;
+	int pos;
+	char buf[8094];
 
-	if(!f.open(argv[1])) {
+	FILE* f = fopen(argv[1], "r");
+	if(!f)
 		return 1;
-	}
 
-	for(int i = 1; i < argc; i++) {
-		if(!f.open(argv[i])) {
-			errstr = "Unable to open ";
-			errstr += argv[i];
-			errors.push_back(errstr);
+	while(fgets(buf, sizeof(buf), f)) {
+		pos = r.match(buf, 0, &mv);
+		if(pos < 1)
 			continue;
-		}
 
-		while(f.readline(buff, sizeof(buff)-1) >= 0) {
-			r.split(buff, links);
-			dump_links(links);
-		}
+		if(mv.size() == 0)
+			continue;
 
-		f.close();
+		for(it = mv.begin(); it != mv.end(); ++it) {
+			for(int i = (*it).offset; i < (*it).length + (*it).offset && i < (int)sizeof(buf); ++i)
+				putchar(buf[i]);
+			putchar('\n');
+		}
 	}
+
+	fclose(f);
 
 	if(!errors.empty()) {
 		eit = errors.begin();

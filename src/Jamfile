@@ -41,6 +41,8 @@ XDGMIME = xdgmime/$(XDGMIME_SRC) ;
 
 LibraryObjectCcFlags $(XDGMIME) : $(XDG_MIME_HAVE_MMAP) ;
 
+PCRE = pcre/pcre.c ;
+
 SOURCE = 
 	Missing.c
 	Config.cpp 
@@ -63,7 +65,7 @@ SOURCE =
 	TiXml.cpp
 	TiXmlParser.cpp 
 	MimeType.cpp
-	rx/regex.c
+	$(PCRE)
 	Regex.cpp
 	Pty.cpp
 	PtyProcess.cpp
