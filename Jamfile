@@ -20,6 +20,7 @@ SubDir TOP ;
 
 InstallDirectory [ FDirName $(includedir) ] : [ FDirName $(TOP) edelib ] ;
 InstallFile      [ FDirName $(libdir) pkgconfig ] : [ FFileName $(TOP) edelib.pc ] ;
+InstallFile      [ FDirName $(libdir) pkgconfig ] : [ FFileName $(TOP) edelib-gui.pc ] ;
 InstallFile      [ FDirName $(libdir) pkgconfig ] : [ FFileName $(TOP) edelib-dbus.pc ] ;
 
 SubInclude TOP src ;

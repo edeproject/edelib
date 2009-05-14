@@ -1,0 +1,11 @@
+prefix=@prefix@
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: edelib-gui
+Description: EDE GUI library
+Version: @EDELIB_API_VERSION@
+Requires: edelib
+Libs: -L${libdir} -ledelib_gui
+Cflags: -I${includedir}

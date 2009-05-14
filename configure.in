@@ -146,6 +146,7 @@ AC_OUTPUT([
  doc/Doxyfile
  Jamconfig
  edelib.pc
+ edelib-gui.pc
  edelib-dbus.pc
 ])
 
