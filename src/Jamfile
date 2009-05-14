@@ -95,16 +95,14 @@ SOURCE_DBUS =
 	EdbusMessage.cpp
 	EdbusObjectPath.cpp ;
 
-
-if $(FLTK_LIBS) {
-	LibraryObjectC++Flags $(SOURCE_GUI) : $(FLTK_CFLAGS) ;
-	SOURCE += $(SOURCE_GUI) ;
-} else {
-	Echo "...building without FLTK support..." ;
-}
-
 # libedelib
 MakeLibrary $(EDELIB_NAME) : $(SOURCE) ;
+
+# libedelib_gui
+if $(FLTK_LIBS) {
+	LibraryObjectC++Flags $(SOURCE_GUI) : $(FLTK_CFLAGS) ;
+	MakeLibrary $(EDELIB_GUI_NAME) : $(SOURCE_GUI) ;
+}
 
 # libedelib_dbus
 if $(DBUS_LIBS) {

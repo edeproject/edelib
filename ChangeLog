@@ -1,3 +1,7 @@
+2009-05-14  Sanel <karijes@users.sourceforge.net>
+
+	* all: split libedelib to libedelib and libedelib_gui
+
 2009-05-11  Sanel <karijes@users.sourceforge.net>
 
 	* edelib/Regex.h:

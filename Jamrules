@@ -64,6 +64,10 @@ EDELIB_LIBDIR     = lib ;
 # library names
 EDELIB           = edelib ;
 EDELIB_NAME      = libedelib ;
+
+EDELIB_GUI       = edelib_gui ;
+EDELIB_GUI_NAME  = libedelib_gui ;
+
 EDELIB_DBUS      = edelib_dbus ;
 EDELIB_DBUS_NAME = libedelib_dbus ;
 
@@ -261,12 +265,12 @@ rule MakeTest
 
 	if $(4) = "use-dbus" && $(DBUS_CFLAGS) {
 		if $(SHARED) = 1 { 
-			LinkAgainst $(1) : -L$(lpath) -l$(EDELIB_DBUS) -l$(EDELIB) $(DBUS_LIBS) ;
+			LinkAgainst $(1) : -L$(lpath) -l$(EDELIB_DBUS) -l$(EDELIB_GUI) -l$(EDELIB) $(DBUS_LIBS) ;
 		} else {
-			LinkAgainst $(1) : -L$(lpath) -l$(EDELIB_DBUS) -l$(EDELIB) ;
+			LinkAgainst $(1) : -L$(lpath) -l$(EDELIB_DBUS) -l$(EDELIB_GUI) -l$(EDELIB) ;
 		}
 	} else {
-		LinkAgainst $(1) : -L$(lpath) -l$(EDELIB) ;
+		LinkAgainst $(1) : -L$(lpath) -l$(EDELIB_GUI) -l$(EDELIB) ;
 	}
 
 	if $(3) {
