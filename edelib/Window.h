@@ -107,6 +107,11 @@ public:
 	virtual ~Window();
 
 	/**
+	 * Returns loaded parts given in WindowComponents
+	 */
+	int component(void) { return loaded_components; }
+
+	/**
 	 * Register callback for changes via XSETTINGS protocol. Optional, <em>data</em> parameter will
 	 * be passed to the callback.
 	 *

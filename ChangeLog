@@ -1,3 +1,8 @@
+2009-05-15  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Window.h:
+	* src/Window.cpp: do not load icon theme when WIN_INIT_NONE was given
+
 2009-05-14  Sanel <karijes@users.sourceforge.net>
 
 	* all: split libedelib to libedelib and libedelib_gui

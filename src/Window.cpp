@@ -210,7 +210,7 @@ static void xsettings_cb(const char* name, XSettingsAction action, XSettingsSett
 		 */
 		FL_NORMAL_SIZE = normal_size;
 		changed = true;
-	} else if(strcmp(name, "Net/IconThemeName") == 0) {
+	} else if(strcmp(name, "Net/IconThemeName") == 0 && win->component() & WIN_INIT_ICON_THEME) {
 		const char* th = NULL;
 
 		if(action == XSETTINGS_ACTION_DELETED || setting->type != XSETTINGS_TYPE_STRING)
@@ -228,7 +228,7 @@ static void xsettings_cb(const char* name, XSettingsAction action, XSettingsSett
 		win->redraw();
 }
 
-Window::Window(int X, int Y, int W, int H, const char* l, int component) : Fl_Double_Window(X, Y, W, H, l), 
+Window::Window(int X, int Y, int W, int H, const char* l, int c) : Fl_Double_Window(X, Y, W, H, l), 
 	sbuffer(false), loaded_components(0), 
 	xs(NULL),
 	xs_cb(NULL), xs_cb_old(NULL), xs_cb_data(NULL),
@@ -236,10 +236,10 @@ Window::Window(int X, int Y, int W, int H, const char* l, int component) : Fl_Do
 	wid(0)
 {
 	type(EDELIB_WINDOW);
-	init(component);
+	init(c);
 }
 
-Window::Window(int W, int H, const char* l, int component) : Fl_Double_Window(W, H, l),
+Window::Window(int W, int H, const char* l, int c) : Fl_Double_Window(W, H, l),
 	sbuffer(false), loaded_components(0), 
 	xs(NULL),
 	xs_cb(NULL), xs_cb_old(NULL), xs_cb_data(NULL), 
@@ -247,7 +247,7 @@ Window::Window(int W, int H, const char* l, int component) : Fl_Double_Window(W,
 	wid(0)
 {
 	type(EDELIB_WINDOW);
-	init(component);
+	init(c);
 }
 
 Window::~Window() {
@@ -260,13 +260,13 @@ Window::~Window() {
 	hide();
 }
 
-void Window::init(int component) {
-	if(component & WIN_INIT_IMAGES)
+void Window::init(int c) {
+	if(c & WIN_INIT_IMAGES)
 		fl_register_images();
 
 	fl_open_display();
 
-	if(component & WIN_INIT_ICON_THEME)
+	if(c & WIN_INIT_ICON_THEME)
 		icon_theme_load_once(IconTheme::default_theme_name());
 
 	/* setup icons for dialogs */
