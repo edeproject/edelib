@@ -2,6 +2,7 @@
 
 	* edelib/Window.h:
 	* src/Window.cpp: do not load icon theme when WIN_INIT_NONE was given
+	* src/IconTheme.cpp: removed some unneeded output
 
 2009-05-14  Sanel <karijes@users.sourceforge.net>
 

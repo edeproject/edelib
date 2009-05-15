@@ -133,7 +133,7 @@ static IconContext figure_context(const String& ctx) {
 	if(ctx == "Misc")
 		return ICON_CONTEXT_MISC;
 
-	E_WARNING(E_STRLOC ": Unknown icon context '%s', defaulting to the ICON_CONTEXT_ANY\n", ctx.c_str());
+	/* default */
 	return ICON_CONTEXT_ANY;
 }
 
