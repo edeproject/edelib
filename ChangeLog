@@ -1,3 +1,7 @@
+2009-06-08  Sanel <karijes@users.sourceforge.net>
+
+	* src/Window.cpp: added Fltk/Scheme key
+
 2009-05-15  Sanel <karijes@users.sourceforge.net>
 
 	* edelib/Window.h:

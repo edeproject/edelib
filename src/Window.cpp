@@ -210,6 +210,11 @@ static void xsettings_cb(const char* name, XSettingsAction action, XSettingsSett
 		 */
 		FL_NORMAL_SIZE = normal_size;
 		changed = true;
+	} else if(strcmp(name, "Fltk/Scheme") == 0) {
+		if(action != XSETTINGS_ACTION_DELETED && setting->type == XSETTINGS_TYPE_STRING && setting->data.v_string) {
+				/* reloading is not needed because Fl::scheme() will do that for us */
+				Fl::scheme(setting->data.v_string);
+		}
 	} else if(strcmp(name, "Net/IconThemeName") == 0 && win->component() & WIN_INIT_ICON_THEME) {
 		const char* th = NULL;
 
