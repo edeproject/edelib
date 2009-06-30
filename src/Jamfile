@@ -84,7 +84,13 @@ SOURCE_GUI =
 	FontChooser.cpp
 	MessageBox.cpp
 	SevenSeg.cpp
-	TableBase.cpp ;
+	TableBase.cpp 
+	MenuBar.cpp  
+	MenuBase.cpp  
+	MenuButton.cpp  
+	MenuItem.cpp
+	Menu_add.cpp  
+	Menu_global.cpp ;
 
 SOURCE_DBUS = 
 	EdbusConnection.cpp 
