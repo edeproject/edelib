@@ -3,6 +3,7 @@
 	* Forking FLTK menu due it's inability to be extended; names are changed
 	and edelib namespace is used
 	* examples/menu.cpp: small demo
+	* Jamrules: remove edelib-gui.pc when 'jam distclean' given
 
 2009-06-08  Sanel <karijes@users.sourceforge.net>
 

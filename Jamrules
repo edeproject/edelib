@@ -475,6 +475,7 @@ LocalClean distclean :
 	$(TOP)/edelib-config
 	$(TOP)/edelib.pc
 	$(TOP)/edelib-dbus.pc
+	$(TOP)/edelib-gui.pc
 	$(TOP)/config.log 
 	$(TOP)/config.status 
 	$(TOP)/doc/Doxyfile
