@@ -35,11 +35,16 @@
 
 EDELIB_NS_BEGIN
 
-//extern FL_EXPORT int fl_old_shortcut(const char*);
-
 class MenuBase;
 
+/**
+ * \class MenuItem
+ * \brief The item in menu list
+ *
+ * MenuItem is forked Fl_Menu_Item, so all FLTK documentation for Fl_Menu_Item applies here too.
+ */
 struct EDELIB_API MenuItem {
+#ifndef SKIP_DOCS
 	const char *text;	// label()
 	int shortcut_;
 	Fl_Callback *callback_;
@@ -132,6 +137,7 @@ struct EDELIB_API MenuItem {
 	int add(const char*, int shortcut, Fl_Callback*, void* =0, int = 0);
 	int add(const char*a, const char* b, Fl_Callback* c, void* d = 0, int e = 0) { return add(a,fl_old_shortcut(b),c,d,e); }
 	int size() const ;
+#endif
 };
 
 EDELIB_NS_END

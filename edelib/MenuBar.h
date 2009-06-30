@@ -27,12 +27,27 @@
 
 EDELIB_NS_BEGIN
 
+/**
+ * \class MenuBar
+ * \brief Menu bar
+ *
+ * MenuBar is forked Fl_Menu_Bar, so all FLTK documentation for Fl_Menu_Bar applies here too.
+ */
 class EDELIB_API MenuBar : public MenuBase {
 protected:
+#ifndef SKIP_DOCS
 	void draw();
+#endif
 public:
-	int handle(int);
+	/**
+	 * Constructor
+	 */
 	MenuBar(int X, int Y, int W, int H,const char *l=0) : MenuBase(X,Y,W,H,l) {}
+
+	/**
+	 * Handle events
+	 */
+	int handle(int);
 };
 
 EDELIB_NS_END

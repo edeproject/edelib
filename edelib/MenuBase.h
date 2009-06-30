@@ -30,17 +30,28 @@
 
 EDELIB_NS_BEGIN
 
+/**
+ * \class MenuBase
+ * \brief Menu base class
+ *
+ * MenuBase is forked Fl_Menu_, so all FLTK documentation for Fl_Menu_ applies here too.
+ */
 class EDELIB_API MenuBase : public Fl_Widget {
+private:
 	MenuItem *menu_;
 	const MenuItem *value_;
+
 protected:
+#ifndef SKIP_DOCS
 	uchar alloc;
 	uchar down_box_;
 	uchar textfont_;
 	uchar textsize_;
 	unsigned textcolor_;
+#endif
 
 public:
+#ifndef SKIP_DOCS
 	MenuBase(int,int,int,int,const char * =0);
 	~MenuBase();
 
@@ -87,6 +98,7 @@ public:
 	// back compatability:
 	Fl_Color down_color() const {return selection_color();}
 	void down_color(unsigned c) {selection_color(c);}
+#endif
 };
 
 EDELIB_NS_END

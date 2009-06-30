@@ -27,15 +27,37 @@
 
 EDELIB_NS_BEGIN
 
+/**
+ * \class MenuButton
+ * \brief Button with attached menu
+ *
+ * MenuButton is forked Fl_Menu_Button, so all FLTK documentation for Fl_Menu_Button applies here too.
+ */
 class EDELIB_API MenuButton : public MenuBase {
 protected:
+#ifndef SKIP_DOCS
 	void draw();
+#endif
 public:
-	// values for type:
-	enum {POPUP1 = 1, POPUP2, POPUP12, POPUP3, POPUP13, POPUP23, POPUP123};
-	int handle(int);
-	const MenuItem* popup();
+	/**
+	 * Constructor
+	 */
 	MenuButton(int,int,int,int,const char * =0);
+
+	/**
+	 * Values for type()
+	 */
+	enum {POPUP1 = 1, POPUP2, POPUP12, POPUP3, POPUP13, POPUP23, POPUP123};
+
+	/**
+	 * Handle events
+	 */
+	int handle(int);
+
+	/**
+	 * Popup menu and return the menu item or NULL if the user dismisses the menu
+	 */
+	const MenuItem* popup();
 };
 
 EDELIB_NS_END
