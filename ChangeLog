@@ -1,3 +1,8 @@
+2009-06-02  Sanel <karijes@users.sourceforge.net>
+
+	* examples/Jamfile: let menu.cpp gets FLTK include paths during
+	compilation
+
 2009-06-30  Sanel <karijes@users.sourceforge.net>
 
 	* Forking FLTK menu due it's inability to be extended; names are changed

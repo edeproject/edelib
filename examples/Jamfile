@@ -35,6 +35,7 @@ if $(FLTK_LIBS) {
 					list_view.cpp
 					xsettings_setter.cpp
 					xsettings_client.cpp
+					menu.cpp
 					: $(FLTK_CFLAGS) ;
 
 	MakeTest egroup : egroup.cpp : $(FLTK_LIBS) $(ADDONLIB) ;
