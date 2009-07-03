@@ -3,6 +3,7 @@
 	* edelib/MenuItem.h:
 	* src/MenuItem.cpp: changes to allow images in menu items
 	* examples/menu.cpp: added some icons to test against
+	* examples/menu.cpp: extended a little bit
 
 2009-06-02  Sanel <karijes@users.sourceforge.net>
 
