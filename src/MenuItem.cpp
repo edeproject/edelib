@@ -92,7 +92,7 @@ public:
 // each vertical menu has one of these:
 class menuwindow : public Fl_Menu_Window {
   void draw();
-  void drawentry(const MenuItem*, int i, int erase);
+  void drawentry(const MenuItem*, int i, int erase, int label_gap);
 public:
   menutitle* title;
   int handle(int);
@@ -104,6 +104,11 @@ public:
   int selected;
   int drawn_selected;	// last redraw has this selected
   const MenuItem* menu;
+
+  // Sanel: label gap from the left window edge due image(s) in the same
+  // menu group so labels of entries without images can be nicely aligned
+  int label_start_gap;
+
   menuwindow(const MenuItem* m, int X, int Y, int W, int H,
 	     const MenuItem* picked, const MenuItem* title,
 	     int menubar = 0, int menubar_title = 0, int right_edge = 0);
@@ -118,7 +123,7 @@ public:
 
 #define LEADING 4 // extra vertical leading
 
-// width of label, including effect of & characters:
+// width of label, including effect of & characters and image if given
 int MenuItem::measure(int* hp, const MenuBase* m) const {
   Fl_Label l;
   l.value   = text;
@@ -133,10 +138,20 @@ int MenuItem::measure(int* hp, const MenuBase* m) const {
   l.measure(w, hp ? *hp : h);
   fl_draw_shortcut = 0;
   if (flags & (FL_MENU_TOGGLE|FL_MENU_RADIO)) w += 14;
+
+  // Sanel
+  if (image() && (!(flags & (FL_MENU_TOGGLE|FL_MENU_RADIO)))) {
+    w += image()->w() + 3;
+
+    if (hp && (image()->h() > *hp))
+      *hp = image()->h();
+  }
+
   return w;
 }
 
-void MenuItem::draw(int x, int y, int w, int h, const MenuBase* m, int selected) const {
+#include <stdio.h>
+void MenuItem::draw(int x, int y, int w, int h, const MenuBase* m, int selected, int label_gap) const {
   Fl_Label l;
   l.value   = text;
   l.image   = 0;
@@ -247,6 +262,25 @@ void MenuItem::draw(int x, int y, int w, int h, const MenuBase* m, int selected)
     w -= W + 3;
   }
 
+  // Sanel
+  if (image() && (!(flags & (FL_MENU_TOGGLE|FL_MENU_RADIO)))) {
+    // place image at the middle of the item
+    int midy = (y + h) - h / 2;
+    midy -= image()->h() / 2;
+
+    x += 3;
+    image()->draw(x, midy);
+
+    // label_gap can be larger than the current image (label_gap is largest menu image anyway)
+    // so it should be checked to properly align menu label
+    x += (label_gap > image()->w()) ? label_gap : image()->w();
+    x += 3;
+  } else if (label_gap) {
+    // label_gap can be 0, meaning we have menu title
+    x += label_gap;
+    x += 6;
+  }
+
   if (!fl_draw_shortcut) fl_draw_shortcut = 1;
   l.draw(x+3, y, w>6 ? w-6 : 0, h, FL_ALIGN_LEFT);
   fl_draw_shortcut = 0;
@@ -266,8 +300,11 @@ menuwindow::menuwindow(const MenuItem* m, int X, int Y, int Wp, int Hp,
 		       int menubar, int menubar_title, int right_edge)
   : Fl_Menu_Window(X, Y, Wp, Hp, 0)
 {
+
   int scr_x, scr_y, scr_w, scr_h;
   int tx = X, ty = Y;
+
+  label_start_gap = 0;
 
   Fl::screen_xywh(scr_x, scr_y, scr_w, scr_h);
   if (!right_edge || right_edge > scr_x+scr_w) right_edge = scr_x+scr_w;
@@ -286,15 +323,29 @@ menuwindow::menuwindow(const MenuItem* m, int X, int Y, int Wp, int Hp,
   }
   color(button && !Fl::scheme() ? button->color() : FL_GRAY);
   selected = -1;
-  {int j = 0;
-  if (m) for (const MenuItem* m1=m; ; m1 = m1->next(), j++) {
-    if (picked) {
-      if (m1 == picked) {selected = j; picked = 0;}
-      else if (m1 > picked) {selected = j-1; picked = 0; Wp = Hp = 0;}
+
+  int j = 0;
+  if (m) {
+    for (const MenuItem* m1=m; ; m1 = m1->next(), j++) {
+       // Sanel: find the largest image width to determine gap
+       if (m1->image() && m1->image()->w() > label_start_gap)
+         label_start_gap = m1->image()->w();
+
+       if (picked) {
+	  if (m1 == picked) {
+	    selected = j; 
+	    picked = 0;
+	  } else if (m1 > picked) {
+	    selected = j-1; 
+	    picked = 0; 
+	    Wp = Hp = 0;
+	  }
+       }
+
+       if (!m1->text) break;
     }
-    if (!m1->text) break;
   }
-  numitems = j;}
+  numitems = j;
 
   if (menubar) {
     itemheight = 0;
@@ -393,8 +444,7 @@ void menuwindow::autoscroll(int n) {
 }
 
 ////////////////////////////////////////////////////////////////
-
-void menuwindow::drawentry(const MenuItem* m, int n, int eraseit) {
+void menuwindow::drawentry(const MenuItem* m, int n, int eraseit, int label_gap) {
   if (!m) return; // this happens if -1 is selected item and redrawn
 
   int BW = Fl::box_dx(box());
@@ -410,7 +460,7 @@ void menuwindow::drawentry(const MenuItem* m, int n, int eraseit) {
     fl_pop_clip();
   }
 
-  m->draw(xx, yy, ww, hh, button, n==selected);
+  m->draw(xx, yy, ww, hh, button, n==selected, label_gap);
 
   // the shortcuts and arrows assumme fl_color() was left set by draw():
   if (m->submenu()) {
@@ -443,12 +493,13 @@ void menuwindow::draw() {
     fl_draw_box(box(), 0, 0, w(), h(), button ? button->color() : color());
     if (menu) {
       const MenuItem* m; int j;
-      for (m=menu->first(), j=0; m->text; j++, m = m->next()) drawentry(m, j, 0);
+      for (m=menu->first(), j=0; m->text; j++, m = m->next()) 
+         drawentry(m, j, 0, label_start_gap);
     }
   } else {
     if (damage() & FL_DAMAGE_CHILD && selected!=drawn_selected) { // change selection
-      drawentry(menu->next(drawn_selected), drawn_selected, 1);
-      drawentry(menu->next(selected), selected, 1);
+      drawentry(menu->next(drawn_selected), drawn_selected, 1, label_start_gap);
+      drawentry(menu->next(selected), selected, 1, label_start_gap);
     }
   }	    
   drawn_selected = selected;

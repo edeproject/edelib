@@ -55,6 +55,10 @@ struct EDELIB_API MenuItem {
 	uchar labelsize_;
 	unsigned labelcolor_;
 
+	// image used menu entries; ignored if entry is title
+	// additional field can be used in struct generated from FLUID
+	Fl_Image *image_;
+
 	// advance N items, skipping submenus:
 	const MenuItem *next(int=1) const;
 	MenuItem *next(int i=1) { return (MenuItem*)(((const MenuItem*)this)->next(i)); }
@@ -99,15 +103,14 @@ struct EDELIB_API MenuItem {
 	void deactivate() {flags |= FL_MENU_INACTIVE;}
 	int activevisible() const {return !(flags&0x11);}
 
-	// compatibility for FLUID so it can set the image of a menu item...
-#if 0
-	void image(Fl_Image* a) {a->label(this);}
-	void image(Fl_Image& a) {a.label(this);}
-#endif
+	// different from original Fl_Menu_Item
+	void image(Fl_Image* a) { image_ = a; }
+	void image(Fl_Image& a) { image_ = &a; }
+	Fl_Image* image() const { return image_; }
 
 	// used by menubar:
 	int measure(int* h, const MenuBase*) const;
-	void draw(int x, int y, int w, int h, const MenuBase*, int t=0) const;
+	void draw(int x, int y, int w, int h, const MenuBase*, int t=0, int label_gap=0) const;
 
 	// popup menus without using an MenuBase widget:
 	const MenuItem* popup(

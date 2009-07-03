@@ -26,6 +26,19 @@ Function {} {open
           label {Third item}
           xywh {20 20 30 20} labelsize 12 divider
         }
+        Submenu {} {
+          label Submenu open
+          xywh {0 0 63 20} labelsize 12
+        } {
+          MenuItem {} {
+            label item1
+            xywh {0 0 30 20} labelsize 12
+          }
+          MenuItem {} {
+            label item2
+            xywh {10 10 30 20} labelsize 12
+          }
+        }
         MenuItem {} {
           label {&Quit}
           xywh {30 30 30 20} shortcut 0x40071 labelsize 12

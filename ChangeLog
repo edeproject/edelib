@@ -1,3 +1,9 @@
+2009-06-03  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/MenuItem.h:
+	* src/MenuItem.cpp: changes to allow images in menu items
+	* examples/menu.cpp: added some icons to test against
+
 2009-06-02  Sanel <karijes@users.sourceforge.net>
 
 	* examples/Jamfile: let menu.cpp gets FLTK include paths during
