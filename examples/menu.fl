@@ -7,7 +7,7 @@ Function {} {open
   Fl_Window {} {open
     xywh {462 329 215 144} type Double visible
   } {
-    Fl_Menu_Bar {} {open selected
+    Fl_Menu_Bar {} {open
       xywh {0 0 215 25} labelsize 14 textsize 14
     } {
       Submenu {} {
@@ -52,6 +52,23 @@ Function {} {open
           label {&Help}
           xywh {0 0 30 20} labelsize 12
         }
+      }
+    }
+    Fl_Menu_Button {} {
+      label menu open selected
+      xywh {65 80 90 25}
+    } {
+      MenuItem {} {
+        label {Some long item without meaning}
+        xywh {0 0 30 20} labelsize 12
+      }
+      MenuItem {} {
+        label {Item 2}
+        xywh {10 10 30 20} type Toggle labelsize 12
+      }
+      MenuItem {} {
+        label {Even longer menu item used only for testing}
+        xywh {0 0 30 20} labelsize 12
       }
     }
   }

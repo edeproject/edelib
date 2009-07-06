@@ -26,7 +26,6 @@
 // methods for bringing up popup menu hierarchies without using the
 // MenuBase widget.
 
-#include <stdio.h>
 #include <string.h>
 
 #include <FL/Fl.H>
@@ -123,6 +122,7 @@ public:
 
 #define LEADING 4 // extra vertical leading
 
+#include <stdio.h>
 // width of label, including effect of & characters and image if given
 int MenuItem::measure(int* hp, const MenuBase* m) const {
   Fl_Label l;
@@ -139,18 +139,9 @@ int MenuItem::measure(int* hp, const MenuBase* m) const {
   fl_draw_shortcut = 0;
   if (flags & (FL_MENU_TOGGLE|FL_MENU_RADIO)) w += 14;
 
-  // Sanel
-  if (image() && (!(flags & (FL_MENU_TOGGLE|FL_MENU_RADIO)))) {
-    w += image()->w() + 3;
-
-    if (hp && (image()->h() > *hp))
-      *hp = image()->h();
-  }
-
   return w;
 }
 
-#include <stdio.h>
 void MenuItem::draw(int x, int y, int w, int h, const MenuBase* m, int selected, int label_gap) const {
   Fl_Label l;
   l.value   = text;
@@ -258,8 +249,17 @@ void MenuItem::draw(int x, int y, int w, int h, const MenuBase* m, int selected,
 	}
       }
     }
+
+#if 0
     x += W + 3;
     w -= W + 3;
+#endif
+
+    // Sanel: make spaces only if we do not have icons at all or icon is too small
+    if (!label_gap || label_gap < W + 3) {
+      x += W + 3;
+      w -= W + 3;
+	}
   }
 
   // Sanel
@@ -271,15 +271,12 @@ void MenuItem::draw(int x, int y, int w, int h, const MenuBase* m, int selected,
     x += 3;
     image()->draw(x, midy);
 
-    // label_gap can be larger than the current image (label_gap is largest menu image anyway)
-    // so it should be checked to properly align menu label
-    x += (label_gap > image()->w()) ? label_gap : image()->w();
-    x += 3;
-  } else if (label_gap) {
-    // label_gap can be 0, meaning we have menu title
-    x += label_gap;
-    x += 6;
+    // decrease so labels without icons does not have smaller gap
+    label_gap -= 3;
   }
+
+  // Sanel
+  x += label_gap;
 
   if (!fl_draw_shortcut) fl_draw_shortcut = 1;
   l.draw(x+3, y, w>6 ? w-6 : 0, h, FL_ALIGN_LEFT);
@@ -345,6 +342,11 @@ menuwindow::menuwindow(const MenuItem* m, int X, int Y, int Wp, int Hp,
        if (!m1->text) break;
     }
   }
+
+  // Sanel: so labels could be nicely separated from images
+  if (label_start_gap)
+    label_start_gap += 6;
+
   numitems = j;
 
   if (menubar) {
@@ -360,8 +362,15 @@ menuwindow::menuwindow(const MenuItem* m, int X, int Y, int Wp, int Hp,
   int Htitle = 0;
   if (t) Wtitle = t->measure(&Htitle, button) + 12;
   int W = 0;
+
   if (m) for (; m->text; m = m->next()) {
     int hh; int w1 = m->measure(&hh, button);
+
+    // Sanel: fix the sizes if necessary 
+    w1 += label_start_gap;
+    if (m->image() && hh < m->image()->h())
+      hh = m->image()->h();
+
     if (hh+LEADING>itemheight) itemheight = hh+LEADING;
     if (m->flags&(FL_SUBMENU|FL_SUBMENU_POINTER)) w1 += 14;
     if (w1 > W) W = w1;
@@ -371,6 +380,7 @@ menuwindow::menuwindow(const MenuItem* m, int X, int Y, int Wp, int Hp,
     }
     if (m->labelcolor_ || Fl::scheme() || m->labeltype_ > FL_NO_LABEL) clear_overlay();
   }
+
   if (selected >= 0 && !Wp) X -= W/2;
   int BW = Fl::box_dx(box());
   W += hotKeysw+2*BW+7;
@@ -379,6 +389,7 @@ menuwindow::menuwindow(const MenuItem* m, int X, int Y, int Wp, int Hp,
 
   if (X < scr_x) X = scr_x; if (X > scr_x+scr_w-W) X= scr_x+scr_w-W;
   x(X); w(W);
+
   h((numitems ? itemheight*numitems-LEADING : 0)+2*BW+3);
   if (selected >= 0)
     Y = Y+(Hp-itemheight)/2-selected*itemheight-BW;

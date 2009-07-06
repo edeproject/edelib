@@ -1,3 +1,11 @@
+2009-06-06  Sanel <karijes@users.sourceforge.net>
+
+	* src/MenuItem.cpp: better way to determine icon and label positions; also
+	fixes issue when the label is too large so menu window could not correctly
+	recalculate own width
+	* examples/menu.cpp:
+	* examples/menu.fl: extending examples for corner cases
+
 2009-06-03  Sanel <karijes@users.sourceforge.net>
 
 	* edelib/MenuItem.h:
