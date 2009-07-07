@@ -26,6 +26,11 @@
 // methods for bringing up popup menu hierarchies without using the
 // MenuBase widget.
 
+// Sun Studio wants this header
+#ifdef __SUNPRO_CC
+# include <stdio.h>
+#endif
+
 #include <string.h>
 
 #include <FL/Fl.H>

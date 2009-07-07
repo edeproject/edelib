@@ -1,3 +1,7 @@
+2009-06-07  Sanel <karijes@users.sourceforge.net>
+
+	* src/MenuItem.cpp: some Sun Studio quirks
+
 2009-06-06  Sanel <karijes@users.sourceforge.net>
 
 	* src/MenuItem.cpp: better way to determine icon and label positions; also
