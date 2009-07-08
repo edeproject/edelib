@@ -1,3 +1,9 @@
+2009-06-08  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/TempFile.h:
+	* src/TempFile.cpp:
+	* test/temp_file.cpp: added class for unique temporary files
+
 2009-06-07  Sanel <karijes@users.sourceforge.net>
 
 	* src/MenuItem.cpp: some Sun Studio quirks

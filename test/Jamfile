@@ -42,6 +42,7 @@ TEST_FILES =
 	color.cpp
 	xml.cpp
 	mime.cpp
+	temp_file.cpp
 	run.cpp
 	run_tests.cpp ;
 

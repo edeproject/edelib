@@ -69,6 +69,7 @@ SOURCE =
 	Regex.cpp
 	Pty.cpp
 	PtyProcess.cpp
+	TempFile.cpp
 	$(XDGMIME) ;
 
 SOURCE_GUI = 
