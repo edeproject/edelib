@@ -68,7 +68,7 @@ public:
 	bool create(const char* prefix, int mode = 0600);
 
 	/**
-	 * 
+	 * Check if create() was successfull
 	 */
 	operator bool(void) const { return (errno_err == 0); }
 
