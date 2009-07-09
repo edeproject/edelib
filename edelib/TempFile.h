@@ -44,6 +44,7 @@ private:
 	int     errno_err;
 	FILE   *stream;
 	bool    auto_del;
+	bool    no_close;
 	String  filename;
 	
 	TempFile(const TempFile&);
@@ -83,9 +84,14 @@ public:
 	bool close(void);
 
 	/**
-	 * If set to true, file will be deleted when TempFile descrutor was called
+	 * If set to true, the file will be deleted when TempFile destructor was called. Default is false
 	 */
 	void set_auto_delete(bool v) { auto_del = v; }
+
+	/**
+	 * If set to true, the file descriptors will not be closed when destructor was called. Default is false
+	 */
+	void set_no_close(bool n) { no_close = n; }
 
 	/**
 	 * Return FILE object or NULL if create() failed

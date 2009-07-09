@@ -32,11 +32,12 @@
 
 EDELIB_NS_BEGIN
 
-TempFile::TempFile() : fd(-1), errno_err(0), stream(0), auto_del(false)
+TempFile::TempFile() : fd(-1), errno_err(0), stream(0), auto_del(false), no_close(false)
 { }
 
 TempFile::~TempFile() {
-	TempFile::close();
+	if(!no_close)
+		TempFile::close();
 
 	if(auto_del)
 		unlink();

@@ -3,6 +3,9 @@
 	* edelib/TempFile.h:
 	* src/TempFile.cpp:
 	* test/temp_file.cpp: added class for unique temporary files
+	* edelib/TempFile.h:
+	* src/TempFile.cpp: added set_no_close() member; if set, destructor will
+	not close descriptors
 
 2009-06-07  Sanel <karijes@users.sourceforge.net>
 
