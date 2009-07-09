@@ -1,3 +1,9 @@
+2009-06-09  Sanel <karijes@users.sourceforge.net>
+
+	* src/IconLoader.cpp: lookup cache not only by icon name, but by size too;
+	this prevent issue where seen icon name (with random size) would be
+	returned for different requested sizes
+
 2009-06-08  Sanel <karijes@users.sourceforge.net>
 
 	* edelib/TempFile.h:

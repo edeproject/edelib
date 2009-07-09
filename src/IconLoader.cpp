@@ -47,11 +47,11 @@ struct IconLoaderItem {
 typedef list<IconLoaderItem*>           Items;
 typedef list<IconLoaderItem*>::iterator ItemsIter;
 
-static IconLoaderItem* find_item(Items& items, const char* icon_name) {
+static IconLoaderItem* find_item(Items& items, const char* icon_name, IconSizes sz) {
 	ItemsIter it = items.begin(), it_end = items.end();
 
 	for(; it != it_end; ++it) {
-		if((*it)->name == icon_name)
+		if((*it)->name == icon_name && (*it)->size == sz)
 			return (*it);
 	}
 
@@ -59,10 +59,13 @@ static IconLoaderItem* find_item(Items& items, const char* icon_name) {
 }
 
 static IconLoaderItem* get_or_create_item(Items& items, 
-		const char* name, IconSizes sz, IconContext ctx, 
-		IconTheme* theme, Fl_Widget* widg) 
+										  const char* name, 
+										  IconSizes sz, 
+										  IconContext ctx, 
+										  IconTheme* theme, 
+										  Fl_Widget* widg) 
 {
-	IconLoaderItem* item = find_item(items, name);
+	IconLoaderItem* item = find_item(items, name, sz);
 	if(!item) {
 		item = new IconLoaderItem;
 		item->name = name;
