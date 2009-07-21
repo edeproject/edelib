@@ -2,6 +2,9 @@
 
 	* src/FontChooser.cpp: cosmetic changes
 	* doc/Doxyfile.in: examples directory is part of EXAMPLES_PATH
+	* edelib/edelib-global.h: added EDELIB_NS_USING_AS() and documented the
+	rest macros
+	* examples/menu.cpp: addopted to use EDELIB_NS_* macros
 
 2009-06-09  Sanel <karijes@users.sourceforge.net>
 

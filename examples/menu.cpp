@@ -6,7 +6,15 @@
 #include <edelib/Window.h>
 #include <edelib/IconLoader.h>
 
-edelib::MenuItem menu_[] = {
+EDELIB_NS_USING(MenuItem)
+EDELIB_NS_USING(MenuButton)
+EDELIB_NS_USING(MenuBar)
+EDELIB_NS_USING(IconLoader)
+EDELIB_NS_USING(ICON_SIZE_TINY)
+EDELIB_NS_USING(ICON_SIZE_SMALL)
+EDELIB_NS_USING_AS(Window, AppWindow)
+
+MenuItem menu_[] = {
  {"&File", 0,  0, 0, 64, FL_NORMAL_LABEL, 0, 12, 0},
  {"F&irst item", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 12, 0},
  {"S&econd item", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 12, 0},
@@ -23,7 +31,7 @@ edelib::MenuItem menu_[] = {
  {0,0,0,0,0,0,0,0,0}
 };
 
-edelib::MenuItem menu_menu[] = {
+MenuItem menu_menu[] = {
  {"Some long item without meaning", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 12, 0},
  {"Item 2", 0,  0, 0, 2, FL_NORMAL_LABEL, 0, 12, 0},
  {"Even longer menu item used only for testing aaaa ffff", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 12, 0},
@@ -32,23 +40,23 @@ edelib::MenuItem menu_menu[] = {
 
 
 int main(int argc, char **argv) {
-	edelib::Window * win = new edelib::Window(215, 144);
+	AppWindow* win = new AppWindow(215, 144);
 	win->begin();
-		edelib::MenuBar* o = new edelib::MenuBar(0, 0, 215, 25);
+		MenuBar* o = new MenuBar(0, 0, 215, 25);
 		o->menu(menu_);
 
-		Fl_Image* img1 = (Fl_Image*)edelib::IconLoader::get("document-new", edelib::ICON_SIZE_TINY);
-		Fl_Image* img2 = (Fl_Image*)edelib::IconLoader::get("document-save", edelib::ICON_SIZE_SMALL);
-		Fl_Image* img3 = (Fl_Image*)edelib::IconLoader::get("system-log-out", edelib::ICON_SIZE_TINY);
+		Fl_Image* img1 = (Fl_Image*)IconLoader::get("document-new", ICON_SIZE_TINY);
+		Fl_Image* img2 = (Fl_Image*)IconLoader::get("document-save", ICON_SIZE_SMALL);
+		Fl_Image* img3 = (Fl_Image*)IconLoader::get("system-log-out", ICON_SIZE_TINY);
 
 		menu_[1].image(img1);
 		menu_[2].image(img2);
 		menu_[8].image(img3);
 
-		edelib::MenuButton* b = new edelib::MenuButton(65, 80, 90, 25, "menu");
+		MenuButton* b = new MenuButton(65, 80, 90, 25, "menu");
 		b->menu(menu_menu);
 
-		Fl_Image* img4 = (Fl_Image*)edelib::IconLoader::get("folder", edelib::ICON_SIZE_TINY);
+		Fl_Image* img4 = (Fl_Image*)IconLoader::get("folder", ICON_SIZE_TINY);
 		menu_menu[0].image(img4);
 	win->end();
 	win->show(argc, argv);
