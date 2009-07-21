@@ -56,10 +56,10 @@ static int picked_font;
 static int picked_style;
 
 struct FontDetails {
-	const char* name;   // points to FLTK internal name (not allocated)
-	int* sizes;         // allocated list of sizes
-	int num_sizes;      // number of items in above list
-	int fltk_font;      // FLTK font
+	const char* name;   /* points to FLTK internal name (not allocated) */
+	int* sizes;         /* allocated list of sizes */
+	int num_sizes;      /* number of items in above list */
+	int fltk_font;      /* FLTK font */
 };
 
 struct FontFamily {
@@ -70,7 +70,7 @@ struct FontFamily {
 };
 
 static FontFamily* font_family;
-static int font_family_size;
+static int         font_family_size;
 
 static FontDetails* curr_font_details;
 
@@ -138,7 +138,7 @@ static void size_input_cb(Fl_Widget*, void*) {
 	if(!typed)
 		return;
 
-	// only scan inside [1, 64]
+	/* only scan inside [1, 64] */
 	int typed_int = atoi(typed);
 	if(typed_int < 1 || typed_int > 64)
 		return;
@@ -146,7 +146,7 @@ static void size_input_cb(Fl_Widget*, void*) {
 	int val;
 	for(int i = 1; i <= size_browser->size(); i++) {
 		val = atoi(size_browser->text(i));
-		// found it; store it globaly and redraw
+		/* found it; store it globaly and redraw */
 		if(val == typed_int) {
 			picked_size = val;
 			size_browser->value(i);
@@ -166,7 +166,7 @@ static void style_cb(Fl_Widget*, long) {
 
 	const char* style_name = style_browser->text(fs);
 
-	// get what was selected in font browser
+	/* get what was selected in font browser */
 	int sel_font = font_browser->value();
 	sel_font--;
 
@@ -187,18 +187,18 @@ static void style_cb(Fl_Widget*, long) {
 		E_ASSERT(font_family[sel_font].bold_italic != 0 && "Font marked as bold-italic but not allocated");
 		fd = font_family[sel_font].bold_italic;
 	} else {
-		// never reached
+		/* never reached */
 		E_ASSERT(0 && "Unknown font name");
 	}
 
 	curr_font_details = fd;
 
-	// now fill size browser
+	/* now fill size browser */
 	size_browser->clear();
 
 	char num[6];
 	for(int i = 0; i < fd->num_sizes; i++) {
-		// FLTK for some fonts can set 0 size, skip it
+		/* FLTK for some fonts can set 0 size, skip it */
 		if(fd->sizes[i] == 0)
 			continue;
 
@@ -206,7 +206,7 @@ static void style_cb(Fl_Widget*, long) {
 		size_browser->add(num);
 	}
 
-	// let size_cb find matching font size, select it and perform preview
+	/* let size_cb find matching font size, select it and perform preview */
 	size_cb(0, 0);
 }
 
@@ -217,7 +217,7 @@ static void font_cb(Fl_Widget*, long) {
 		fn = 1;
 	}
 
-	// Fl_Browser starts from 1
+	/* Fl_Browser starts from 1 */
 	fn--;
 
 	E_ASSERT(fn <= font_family_size && "List item out of bounds");
@@ -233,15 +233,15 @@ static void font_cb(Fl_Widget*, long) {
 	if(font_family[fn].bold_italic)
 		style_browser->add("Bold Italic");
 
-	// always select the first one
+	/* always select the first one */
 	style_browser->value(1);
 
-	// let style_cb handle the rest
+	/* let style_cb handle the rest */ 
 	style_cb(0, 0);
 }
 
-static void clean_font_details(FontDetails* fd) {
-	// we can accept NULL (due not found regular/bold/... structs) so check this
+static void clear_font_details(FontDetails* fd) {
+	/* we can accept NULL (due not found regular/bold/... structs) so check this */
 	if(!fd)
 		return;
 
@@ -276,16 +276,16 @@ static void load_fonts(const char* family) {
 		fs = Fl::get_font_sizes((Fl_Font)i, s);
 
 		if(!fs) {
-			// no sizes; skip this font
+			/* no sizes; skip this font */
 			continue;
 		} else if(s[0] == 0) {
-			// many sizes, use range (0, 64] then
+			/* many sizes, use range (0, 64] then */
 			fs = 64;
 			sizes = new int[fs];
 			for(int j = 0; j < fs; j++)
 				sizes[j] = j + 1;
 		} else {
-			// regular copy sizes
+			/* regular copy sizes */
 			sizes = new int[fs];
 			for(int j = 0; j < fs; j++)
 				sizes[j] = s[j];
@@ -312,10 +312,7 @@ static void load_fonts(const char* family) {
 		 * family; if type already exists just skip it. This will probably miss some fonts...
 		 */
 		if(ftype == 0) {
-			/*
-			 * already have 'regular', but steped to another one, consider it
-			 * as a new family
-			 */
+			/* already have 'regular', but steped to another one, consider it as a new family */
 			if(font_family[font_family_size].regular) {
 				font_family_size++;
 				new_family_found = true;
@@ -327,7 +324,7 @@ static void load_fonts(const char* family) {
 				E_DEBUG(E_STRLOC ": duplicate for: '%s' (previous was: '%s')\n",
 						fd->name, font_family[font_family_size].bold->name);
 
-				clean_font_details(fd);
+				clear_font_details(fd);
 			} else 
 				font_family[font_family_size].bold = fd;
 
@@ -336,7 +333,7 @@ static void load_fonts(const char* family) {
 				E_DEBUG(E_STRLOC ": duplicate for: '%s' (previous was: '%s')\n",
 						fd->name, font_family[font_family_size].italic->name);
 
-				clean_font_details(fd);
+				clear_font_details(fd);
 			} else
 				font_family[font_family_size].italic = fd;
 
@@ -345,12 +342,12 @@ static void load_fonts(const char* family) {
 				E_DEBUG(E_STRLOC ": duplicate for: '%s' (previous was: '%s')\n",
 						fd->name, font_family[font_family_size].bold_italic->name);
 
-				clean_font_details(fd);
+				clear_font_details(fd);
 			} else
 				font_family[font_family_size].bold_italic = fd;
 		}
 
-		// sanity checks; should never happen
+		/* sanity checks; should never happen */
 		E_ASSERT(font_family_size < nfonts && "font_family_size bigger than the sum of all fonts!!!");
 
 		/*
@@ -370,7 +367,7 @@ int font_chooser(const char* name, const char* family, int& retsize, const char*
 	win = new Fl_Window(450, 320, name);
 	win->size_range(450, 320);
 	win->begin();
-		// invisible resizable box
+		/* invisible resizable box */
 		Fl_Box* rbox = new Fl_Box(20, 56, 30, 24);
 		win->resizable(rbox);
 
@@ -408,7 +405,7 @@ int font_chooser(const char* name, const char* family, int& retsize, const char*
 	size_browser->value(DEFAULT_SIZE);
 	size_input->value(DEFAULT_SIZE_STR);
 	
-	// now update widgets
+	/* now update the widgets */
 	font_cb(0, 0);
 
 	win->show();
@@ -416,10 +413,10 @@ int font_chooser(const char* name, const char* family, int& retsize, const char*
 		Fl::wait();
 
 	for(int i = 0; i <= font_family_size; i++) {
-		clean_font_details(font_family[i].regular);
-		clean_font_details(font_family[i].bold);
-		clean_font_details(font_family[i].italic);
-		clean_font_details(font_family[i].bold_italic);
+		clear_font_details(font_family[i].regular);
+		clear_font_details(font_family[i].bold);
+		clear_font_details(font_family[i].italic);
+		clear_font_details(font_family[i].bold_italic);
 	}
 
 	if(retsize)
