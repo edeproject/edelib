@@ -1,7 +1,5 @@
 // vim: ft=doxygen
 /** \page todo Todo List
 
-- split libedelib (without D-BUS) on libedelib and libedelib_gui for easier
-  linking in case of shared libraries
 - add local snprintf/vsnprintf/scandir/dirent(???)
 */
