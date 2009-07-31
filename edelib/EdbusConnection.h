@@ -35,8 +35,8 @@ EDELIB_NS_BEGIN
  * \brief Represents connection either to system or session bus
  */
 enum EdbusConnectionType {
-	EDBUS_SYSTEM,
-	EDBUS_SESSION
+	EDBUS_SYSTEM,   ///< System bus
+	EDBUS_SESSION   ///< Session bus
 };
 
 /**
@@ -91,22 +91,76 @@ struct EdbusConnImpl;
  * done indirectly via dbus-daemon).
  *
  * When you issue connection to the daemon, you will use one of two connection types:
- * - system bus - communicate with services running on system level
- * - session bus - communicate with services and applications started after you logged in. This is
- *   a common way of communication in desktop environments
+ * - system bus
+ * - session bus
  *
- * Since D-Bus is a binary protocol, all data is marshalled into binary form, and unmarshalled when 
- * receiver get it. With this bindinding, this is done transparently.
+ * Since D-Bus is a binary protocol, all data is marshalled into binary form and unmarshalled when 
+ * receiver get it. With this binding, this is done transparently.
  *
  * Contrary to the other IPC mechanisms and protocols, D-Bus is relatively simple one, but flexible. As you
- * can see from EdbusData, D-Bus allows various types to be send: a basic ones, like int or char and
- * complex ones, like arrays, structures or variants. With this, you can send almost any type.
+ * can see from EdbusData, D-Bus allows various types to be send: a basic ones, like <i>int</i> or <i>char</i> and
+ * complex ones like arrays, structures or variants. With this, theoretically, you can send almost any type.
  *
- * \section dbussyntax Syntax convention
+ * \section dbusconcepts Concepts
  *
- * D-Bus brings some common terms from other IPC systems and introduce more. They are following:
+ * D-Bus introduces some terms and concepts. Some of them are known from other IPC systems and some of them
+ * are D-Bus related only.
+ *
+ * \subsection dbusbus Buses
+ * 
+ * The daemon runs actual <i>bus</i>, a kind of <i>street</i> that messages are transported over, and to which 
+ * any number of processes may be connected at any given time.
+ *
+ * You can have multiple buses on a single system and D-Bus already introduces two, <i>system bus</i> and
+ * <i>session bus</i>. System bus is meant for system notifications and messages (e.g. when hardware was hooked up
+ * or similar) and session bus is used localy, by desktop environment session and communication between related
+ * applications and services.
  *
  * \subsection dbusservice Services
+ *
+ * When application is going receive some messages, it must obtain a <i>service name</i>. Service name is a kind
+ * of readable address on which clients connects (much the same as concept of IP adresses and hostnames). During
+ * message exchange, daemon will use this name to send messages.
+ *
+ * Service names are very similar to hostnames, e.g. here is already provided name by D-Bus library:
+ * <pre>
+ *  org.freedesktop.DBus
+ * </pre>
+ *
+ * Listener can request service name to be assigned to the only one listener so when another listener is try
+ * to acquire it, library will signal it and this application can decide what to do next. This is useful for
+ * cases when only one running application is allowed, like daemons. \see EdbusConnection::request_name()
+ *
+ * \subsection dbusobject Objects and object paths
+ *
+ * D-Bus introduces objects, to add a kind of object-oriented approach. 
+ *
+ * Every bus have at least one object, representing bus itself. When application is communicating with 
+ * the listener, application sends messages to one of the objects (or in D-Bus terms: <i>calls a method</i>), 
+ * where listener can reply (in D-Bus parlance: <i> where object replies</i>).
+ *
+ * Listener can create multiple objects.
+ *
+ * Object paths are much like filesystem paths, e.g.:
+ * <pre>
+ *  /root/some/path
+ * </pre>
+ *
+ * Convention is to use service name as base for object path. For example, for <i>org.equinoxproject.Test</i>, 
+ * object path could be:
+ * <pre>
+ *  /org/equinoxproject/Test
+ * </pre>
+ *
+ * Object paths must start with slash and must not ends with it. \see EdbusObjectPath
+ *
+ * \subsection dbusinterface Interfaces
+ *
+ * D-Bus interfaces can be seen as the set of declarations and are very similar to Java interfaces. They are useful
+ * for the cases when listener wants to implement two methods with the same name, but different behaviour. 
+ * D-Bus will not allow such cases except methods are put in different interfaces.
+ *
+ * EdbusConnection and EdbusMessage provides details with the samples.
  */
 
 /**
@@ -114,7 +168,80 @@ struct EdbusConnImpl;
  * \class EdbusConnection
  * \brief D-Bus connection and data sender
  *
- * \todo Finish docs for EdbusConnection
+ * This is the main class representing connection to the D-Bus daemon. Besides doing actual connection,
+ * this class is used also to send and receive messages.
+ *
+ * EdbusConnection implements <i>message loop</i>; it will wait until message arrived or until message was 
+ * send. Because of this, EdbusConnection implements two way of looping:
+ *  - ordinary loop
+ *  - loop via FLTK
+ *
+ * Ordinary loop is recomended only in non-gui applications; it will block until connection was closed or
+ * object was destroyed in different way. \see EdbusConnection::setup_listener()
+ *
+ * Looping via FLTK (relying on <i>Fl::run()</i> or <i>Fl::wait()</i>) will be used for gui applications;
+ * gui components will receive own events and callbacks, but in the same time EdbusConnection will also
+ * be able to listen and send messages. \see EdbusConnection::setup_listener_with_fltk()
+ *
+ * To connect to the bus, connect() must be called first with one of EdbusConnectionType values. All messages 
+ * will be sent to that bus type until disconnect() was called or object were destroyed.
+ *
+ * In case you want to listen for calls, you would acquire name via EdbusConnection::request_name(), on what
+ * clients will connect. You would also register object via EdbusConnection::register_object().
+ *
+ * With EdbusConnection you can send two types of messages:
+ *  - signals
+ *  - methods
+ *
+ * Messages are recived via callbacks. Edbus splits callbacks on:
+ *  - signal callbacks (EdbusConnection::signal_callback())
+ *  - method callbacks (EdbusConnection::method_callback())
+ *
+ * Here is the example of one application that will listen "Foo" signal:
+ * \code
+ *  int sig_cb(const EdbusMessage* m, void*) {
+ *    printf("Got signal: %s : %s : %s\n", m->path(), m->interface(), m->member());
+ *    
+ *    // this means signal were processed so dbus can discard it
+ *    return 1;
+ *  }
+ *
+ *  int main() {
+ *    EdbusConnection conn;
+ *    if(!conn.connect(EDBUS_SESSION))
+ *      // fail
+ *
+ *    if(!conn.request_name("org.test.Server"))
+ *      // fail
+ *
+ *    srv.register_object("/org/test/Server/Foo");
+ *    srv.signal_callback(sig_cb, 0);
+ *
+ *    // looping stuff
+ *    srv.setup_listener()
+ *    while(srv.wait(1000))
+ *      ;
+ *
+ *    return 0;
+ *  }
+ * \endcode
+ *
+ * Here is application that will send "Foo" signal:
+ * \code
+ *  int main() {
+ *    EdbusConnection conn;
+ *    if(!conn.connect(EDBUS_SESSION))
+ *      // fail
+ *
+ *    // create empty signal message without any parameters
+ *    EdbusMessage msg;
+ *    msg.create_signal("/org/test/Server/Foo", "org.test.Signal", "Foo");
+ *
+ *    // send it
+ *    conn.send(msg);
+ *    return 0;
+ *  }
+ * \endcode
  */
 class EDELIB_API EdbusConnection {
 private:
@@ -127,17 +254,17 @@ private:
 public:
 	/**
 	 * Creates empty object. You can't do anything usefull with
-	 * it unless call connect() after
+	 * it unless call connect() after.
 	 */
 	EdbusConnection();
 
 	/**
-	 * Destroys object. Also disconnect from bus if connection is alive
+	 * Destroys object. Also disconnect from bus if connection is alive.
 	 */
 	~EdbusConnection();
 
 	/**
-	 * Connects to either session or system bus
+	 * Connects to either session or system bus.
 	 *
 	 * \return true if connected, otherwise false
 	 * \param ctype says what connection is requested
@@ -154,7 +281,7 @@ public:
 	bool disconnect(void);
 
 	/**
-	 * Sends a message
+	 * Sends a message.
 	 *
 	 * \return true if sending was succesfull
 	 * \param content is message to be send
@@ -163,7 +290,7 @@ public:
 
 	/**
 	 * Call remote method and wait for reply. It will block untill reply is arrived
-	 * or timer exceeded
+	 * or timer exceeded.
 	 *
 	 * \return true if succesfully got reply
 	 * \param content is message to be send
@@ -200,13 +327,13 @@ public:
 	bool request_name(const char* name, int mode = EDBUS_NAME_NO_REPLACE);
 
 	/**
-	 * Get unique name for this connection. Returned value have sense only for D-BUS
+	 * Get unique name for this connection. Returned value have sense only for D-BUS.
 	 */
 	const char* unique_name(void);
 
 	/**
 	 * Register callback for signal arrival. When signal is arrived, it will be passed
-	 * to the callback as EdbusMessage where you can extract content via it's members
+	 * to the callback as EdbusMessage where you can extract content via it's members.
 	 *
 	 * \param cb is callback
 	 * \param data is optional data that will be passed to the callback
@@ -235,27 +362,27 @@ public:
 	void signal_callback_table(EdbusCallbackItem* table, unsigned int sz);
 
 	/**
-	 * Set opional data to item in signal table. This data will be send to callback function
+	 * Set opional data to item in signal table. This data will be send to callback function.
 	 */
 	void signal_callback_table_data(unsigned int pos, void* data);
 
 	/**
-	 * Removes registered table
+	 * Removes registered table.
 	 */
 	void remove_signal_callback_table(void) { signal_callback_table(NULL, 0); }
 
 	/**
-	 * Register callback table for method calls. The same rules applies as for signal_callback_table()
+	 * Register callback table for method calls. The same rules applies as for signal_callback_table().
 	 */
 	void method_callback_table(EdbusCallbackItem* table, unsigned int sz);
 
 	/**
-	 * Set opional data to item in method call table. This data will be send to callback function
+	 * Set opional data to item in method call table. This data will be send to callback function.
 	 */
 	void method_callback_table_data(unsigned int pos, void* data);
 
 	/**
-	 * Removes registered table
+	 * Removes registered table.
 	 */
 	void remove_method_callback_table(void) { method_callback_table(NULL, 0); }
 
@@ -293,7 +420,7 @@ public:
 	void register_object(const char* path);
 
 	/**
-	 * Unregister already registered object
+	 * Unregister already registered object.
 	 * \todo remove it?
 	 */
 	void unregister_object(const char* path);
@@ -302,7 +429,7 @@ public:
 	 * Setup listening stuff. After this, EdbusConnection object will be ready to accept
 	 * requests.
 	 *
-	 * \note You want to call wait() after this so listener can await requests in loop
+	 * \note You want to call wait() after this so listener can await requests in the loop.
 	 */
 	void setup_listener(void);
 
