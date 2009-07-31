@@ -2,6 +2,7 @@
 
 	* edelib/EdbusConnection.h: completed documentation
 	* doc/todo.dox: removed one TODO
+	* edelib/List.h: made size_type public
 
 2009-07-21  Sanel <karijes@users.sourceforge.net>
 

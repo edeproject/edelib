@@ -146,9 +146,12 @@ struct ListConstIterator {
  */
 template <typename T>
 class list {
+public:
+#ifndef SKIP_DOCS
+	typedef unsigned int size_type;
+#endif
 private:
 	typedef ListNode Node;
-	typedef unsigned int size_type;
 	typedef bool (SortCmp)(const T& val1, const T& val2);
 
 	size_type sz;
