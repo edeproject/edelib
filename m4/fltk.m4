@@ -31,8 +31,11 @@ AC_DEFUN([EDELIB_FLTK], [
 
 		AC_MSG_CHECKING([for FLTK version >= 1.1.7])
 		case "$fltk_version" in ["1.1."[789]])
-			dnl Display 'yes' for fltk version check
 			AC_MSG_RESULT(yes)
+			;;
+			dnl check for FLTK 1.3.x branch
+			["1.3."[01]])
+			AC_MSG_RESULT([yes... Looks like you have unstable FLTK branch ($fltk_version). edelib is not well tested with these FLTK versions])
 			;;
 			*)
 			AC_MSG_ERROR([Looks like you have an older FLTK version ($fltk_version). Required is >= 1.1.7])
