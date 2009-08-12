@@ -227,6 +227,7 @@ void IconLoader::repoll_icons(void) {
 	}
 }
 
+/* static */
 void IconLoader::init(const char* theme) {
 	if(!IconLoader::pinstance)
 		IconLoader::pinstance = new IconLoader();
@@ -234,49 +235,91 @@ void IconLoader::init(const char* theme) {
 	IconLoader::pinstance->load_theme(theme);
 }
 
+/* static */
 void IconLoader::shutdown(void) {
 	delete IconLoader::pinstance;
 	IconLoader::pinstance = NULL;
 }
 
+/* static */
 bool IconLoader::inited(void) {
 	return (IconLoader::pinstance != NULL);
 }
 
+/* static */
 void IconLoader::reload(const char* theme) {
 	IconLoader::pinstance->load_theme(theme);
 	IconLoader::pinstance->reload_icons();
 }
 
+/* static */
 IconLoader* IconLoader::instance() {
 	E_ASSERT(IconLoader::pinstance != NULL && "Did you run IconLoader::init() first?");
 	return IconLoader::pinstance;
 }
 
+/* static */
 Fl_Shared_Image* IconLoader::get(const char* name, IconSizes sz, IconContext ctx, bool allow_absolute_path) {
 	return IconLoader::instance()->get_icon(name, sz, ctx, allow_absolute_path);
 }
 
+/* static */
 String IconLoader::get_path(const char* name, IconSizes sz, IconContext ctx) {
 	return IconLoader::instance()->get_icon_path(name, sz, ctx);
 }
 
+/* static */
 bool IconLoader::set(Fl_Widget* widget, const char* name, IconSizes sz, IconContext ctx, 
 		bool allow_absolute_path, bool redraw_widget) 
 {
 	return IconLoader::instance()->set_icon(name, widget, sz, ctx, allow_absolute_path, redraw_widget);
 }
 
+/* static */
 const IconTheme* IconLoader::theme(void) {
 	return IconLoader::instance()->current_theme();
 }
 
+/* static */
 void IconLoader::set_fallback_icon(const char* name) {
 	fallback_icon = name;
 }
 
+/* static */
 const char* IconLoader::get_fallback_icon(void) {
 	return fallback_icon;
+}
+
+/* static */
+char** IconLoader::get_builtin_xpm_icon(IconSizes sz) {
+#include "icons/unknown-16.xpm"
+#include "icons/unknown-22.xpm"
+#include "icons/unknown-32.xpm"
+#include "icons/unknown-48.xpm"
+#include "icons/unknown-64.xpm"
+#include "icons/unknown-128.xpm"
+
+	switch(sz) {
+		case ICON_SIZE_TINY:
+			return unknown_16_xpm;
+		case ICON_SIZE_SMALL:
+			return unknown_22_xpm;
+		case ICON_SIZE_MEDIUM:
+			return unknown_32_xpm;
+		case ICON_SIZE_LARGE:
+			return unknown_48_xpm;
+		case ICON_SIZE_HUGE:
+			return unknown_64_xpm;
+		case ICON_SIZE_ENORMOUS:
+			return unknown_128_xpm;
+		default:
+			E_ASSERT(0 && "Bad IconSizes value");
+			/* not reached */
+			return 0;
+	}
+
+	/* not reached */
+	return 0;
 }
 
 EDELIB_NS_END

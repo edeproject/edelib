@@ -62,6 +62,19 @@ enum MessageBoxButtonType {
 
 /**
  * \ingroup widgets
+ * \enum MessageBoxIconType
+ * \brief Type of the icon in message box
+ */
+enum MessageBoxIconType {
+	MSGBOX_ICON_TYPE_INFO = 0,    ///< Info-like icon
+	MSGBOX_ICON_TYPE_ALERT,       ///< Alert-like icon
+	MSGBOX_ICON_TYPE_QUESTION,    ///< Question-like icon
+	MSGBOX_ICON_TYPE_INPUT,       ///< Input-like icon
+	MSGBOX_ICON_TYPE_PASSWORD     ///< Password-like icon
+};
+
+/**
+ * \ingroup widgets
  * \class MessageBox
  * \brief Standard dialog
  *
@@ -236,6 +249,12 @@ public:
 	 * Set XPM icon. Parameter should be pointer to XPM array.
 	 */
 	void set_xpm_icon(const char* const* arr);
+
+	/**
+	 * Set icon using one of MessageBoxIconType values. By default it will use icons
+	 * from current icon theme and if not found, it will fallback to internal ones.
+	 */
+	void set_icon_from_type(MessageBoxIconType type);
 
 	/**
 	 * Returns value from input field. Returned pointer points to internal storage

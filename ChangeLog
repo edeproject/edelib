@@ -1,3 +1,17 @@
+2009-08-11  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Directory.h: some documentation typo fix
+	* edelib/IconLoader.h:
+	* src/IconLoader.cpp: added builtin xpm icons and implemented
+	get_builtin_xpm_icon()
+
+2009-08-09  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/MessageBox.h:
+	* src/MessageBox.cpp: added set_icon_by_type() so icons could be set via
+	already known MessageBoxIconType values; it will use icon theme by default
+	and as fallback will use edelib internal ones
+
 2009-08-04  Sanel <karijes@users.sourceforge.net>
 
 	* m4/fltk.m4: allow checks for FLTK 1.3.x to be passed

@@ -170,22 +170,28 @@ public:
 			bool allow_absolute_path = true, bool redraw_widget = true);
 
 	/**
-	 * Returns IconTheme object
+	 * Returns IconTheme object.
 	 */
 	static const IconTheme* theme(void);
 
 	/**
-	 * Set fallback icon name. This name will be used to search alternative icon when target one wasn't found.
-	 * Defauly fallback icon is <em>empty</em>.
+	 * Set fallback icon name. This name will be used to search alternative icon in icon theme when the target 
+	 * one wasn't found. Defauly fallback icon is <em>empty</em>.
 	 *
 	 * \note icon name will not be copied so make sure to have given string in static memory
 	 */
 	static void set_fallback_icon(const char* name);
 
 	/**
-	 * Return the name of fallback icon. Default is <em>empty</em>
+	 * Return the name of fallback icon. Default is <em>empty</em>.
 	 */
 	static const char* get_fallback_icon(void);
+
+	/**
+	 * Returns XPM icon with given size. These icons are always present in edelib and should be used in
+	 * cases when icon is not present in icon theme, or give icon theme wasn't installed at all.
+	 */
+	static char** get_builtin_xpm_icon(IconSizes sz);
 };
 
 EDELIB_NS_END

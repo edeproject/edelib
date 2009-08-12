@@ -101,7 +101,7 @@ EDELIB_API bool dir_rename(const char* from, const char* to);
  *   dlist.empty() == true;
  * \endcode
  *
- * since is much faster.
+ * but is much faster.
  */
 EDELIB_API bool dir_empty(const char* name);
 

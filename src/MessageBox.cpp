@@ -45,6 +45,16 @@
 
 EDELIB_NS_BEGIN
 
+#define BUF_LEN 256
+static char internal_buf[BUF_LEN];
+static char internal_ret_buf[BUF_LEN];
+
+static char msg_icon[BUF_LEN]    = {0};
+static char alert_icon[BUF_LEN]  = {0};
+static char ask_icon[BUF_LEN]    = {0};
+static char input_icon[BUF_LEN]  = {0};
+static char passwd_icon[BUF_LEN] = {0};
+
 MessageBox::MessageBox(MessageBoxType t) : Fl_Window(WIN_W, WIN_H),
 	img(0), txt(0), inpt(0), pix(0), mbt(t), nbuttons(0) {
 	begin();
@@ -268,6 +278,46 @@ void MessageBox::set_xpm_icon(const char* const* arr) {
 	img->image(pix);
 }
 
+
+void MessageBox::set_icon_from_type(MessageBoxIconType type) {
+	switch(type) {
+		case MSGBOX_ICON_TYPE_ALERT:
+			if(alert_icon[0] != 0)
+				set_theme_icon(alert_icon);
+			else
+				set_xpm_icon(critical_xpm);
+			return;
+
+		case MSGBOX_ICON_TYPE_QUESTION:
+			if(ask_icon[0] != 0)
+				set_theme_icon(ask_icon);
+			else
+				set_xpm_icon(question_xpm);
+			return;
+
+		case MSGBOX_ICON_TYPE_INPUT:
+			if(input_icon[0] != 0)
+				set_theme_icon(input_icon);
+			else
+				set_xpm_icon(question_xpm);
+			return;
+
+		case MSGBOX_ICON_TYPE_PASSWORD:
+			if(passwd_icon[0] != 0)
+				set_theme_icon(passwd_icon);
+			else
+				set_xpm_icon(question_xpm);
+			return;
+
+		default:
+			if(msg_icon[0] != 0)
+				set_theme_icon(msg_icon);
+			else
+				set_xpm_icon(info_xpm);
+			return;
+	}
+}
+
 const char* MessageBox::get_input(void) {
 	E_RETURN_VAL_IF_FAIL(inpt != NULL, NULL);
 	return inpt->value();
@@ -283,16 +333,7 @@ void MessageBox::focus_button(int b) {
 		buttons[b]->take_focus();
 }
 
-#define BUF_LEN 256
-static char internal_buf[BUF_LEN];
-static char internal_ret_buf[BUF_LEN];
-
-static char msg_icon[BUF_LEN]    = {0};
-static char alert_icon[BUF_LEN]  = {0};
-static char ask_icon[BUF_LEN]    = {0};
-static char input_icon[BUF_LEN]  = {0};
-static char passwd_icon[BUF_LEN] = {0};
-
+/* static */
 void MessageBox::set_themed_icons(const char* msg, const char* alert, const char* ask, 
 			const char* input, const char* password) 
 {
@@ -303,6 +344,7 @@ void MessageBox::set_themed_icons(const char* msg, const char* alert, const char
 	edelib_strlcpy(passwd_icon, password, BUF_LEN);
 }
 
+/* static */
 void MessageBox::clear_themed_icons(void) {
 	msg_icon[0]   = 0;
 	alert_icon[0] = 0;
@@ -329,11 +371,7 @@ void message(const char *fmt, ...) {
 	mb.set_text(internal_buf);
 	mb.add_button(_("&Close"));
 
-	if(msg_icon[0] != 0)
-		mb.set_theme_icon(msg_icon);
-	else
-		mb.set_xpm_icon(info_xpm);
-
+	mb.set_icon_from_type(MSGBOX_ICON_TYPE_INFO);
 	mb.run();
 }
 
@@ -347,11 +385,7 @@ void alert(const char *fmt, ...) {
 	mb.set_text(internal_buf);
 	mb.add_button(_("&Close"));
 
-	if(alert_icon[0] != 0)
-		mb.set_theme_icon(alert_icon);
-	else
-		mb.set_xpm_icon(critical_xpm);
-
+	mb.set_icon_from_type(MSGBOX_ICON_TYPE_ALERT);
 	mb.set_modal();
 	mb.run();
 }
@@ -369,11 +403,7 @@ int ask(const char *fmt, ...) {
 	mb.add_button(_("&No"));
 	mb.add_button(_("&Yes"));
 
-	if(ask_icon[0] != 0)
-		mb.set_theme_icon(ask_icon);
-	else
-		mb.set_xpm_icon(question_xpm);
-
+	mb.set_icon_from_type(MSGBOX_ICON_TYPE_QUESTION);
 	mb.set_modal();
 	int ret = mb.run();
 	return (ret > 0 ? ret : 0);
@@ -394,11 +424,7 @@ const char* input(const char *fmt, const char *deflt, ...) {
 	mb.add_button(_("&Cancel"));
 	mb.add_button(_("&OK"));
 
-	if(input_icon[0] != 0)
-		mb.set_theme_icon(input_icon);
-	else
-		mb.set_xpm_icon(question_xpm);
-	
+	mb.set_icon_from_type(MSGBOX_ICON_TYPE_INPUT);
 	mb.set_modal();
 	int ret = mb.run();
 
@@ -428,11 +454,7 @@ const char* password(const char *fmt, const char *deflt, ...) {
 	mb.add_button(_("&Cancel"));
 	mb.add_button(_("&OK"));
 
-	if(passwd_icon[0] != 0)
-		mb.set_theme_icon(passwd_icon);
-	else
-		mb.set_xpm_icon(question_xpm);
-
+	mb.set_icon_from_type(MSGBOX_ICON_TYPE_PASSWORD);
 	mb.set_modal();
 	int ret = mb.run();
 
@@ -447,10 +469,10 @@ const char* password(const char *fmt, const char *deflt, ...) {
 	return internal_ret_buf;
 }
 
-// FLTK compatibility
-void (*fl_message)(const char* fmt, ...) = message;
-void (*fl_alert)(const char* fmt, ...)   = alert;
-int  (*fl_ask)(const char* fmt, ...)     = ask;
+/* FLTK compatibility */
+void        (*fl_message)(const char* fmt, ...)                     = message;
+void        (*fl_alert)(const char* fmt, ...)                       = alert;
+int         (*fl_ask)(const char* fmt, ...)                         = ask;
 const char* (*fl_input)(const char* fmt, const char* deflt, ...)    = input;
 const char* (*fl_password)(const char* fmt, const char* deflt, ...) = password;
 
