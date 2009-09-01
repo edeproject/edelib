@@ -5,7 +5,7 @@ This is the reference for developing with the EDE Library (%edelib).
 
 %edelib is set of classes and functions for easier EDE development.
 As EDE uses FLTK (http://www.fltk.org) as main GUI library (and FLTK is
-primarly GUI library), %edelib extends it with additional widgets and functionality.
+primarily GUI library), %edelib extends it with additional widgets and functionality.
 
 In short, %edelib provides:
 - <a href="group__widgets.html">FLTK GUI extension</a>

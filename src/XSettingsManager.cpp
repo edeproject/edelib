@@ -57,12 +57,6 @@ Time get_server_time(Display* dpy, Window win) {
 	return xev.xproperty.time;
 }
 
-XSettingsManager::XSettingsManager() : manager_data(NULL) { }
-
-XSettingsManager::~XSettingsManager() {
-	clear();
-}
-
 bool XSettingsManager::init(Display* dpy, int screen) {
 	if(manager_data)
 		return true;

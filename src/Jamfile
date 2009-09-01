@@ -18,15 +18,6 @@
 
 SubDir TOP src ;
 
-XDGMIME_SRC_OLD = 
-	xdgmime.c 
-	xdgmimeglob.c 
-	xdgmimeint.c 
-	xdgmimemagic.c 
-	xdgmimealias.c 
-	xdgmimeparent.c 
-	xdgmimecache.c ;
-
 XDGMIME_SRC = 
 	xdgmime.c
 	xdgmimealias.c
@@ -43,55 +34,59 @@ LibraryObjectCcFlags $(XDGMIME) : $(XDG_MIME_HAVE_MMAP) ;
 
 PCRE = pcre/pcre.c ;
 
+TINYSCHEME = tinyscheme/scheme.c ;
+
 SOURCE = 
 	Missing.c
+	Color.cpp 
 	Config.cpp 
-	Resource.cpp
+	DateTime.cpp
+	Debug.cpp 
 	DesktopFile.cpp
-	StrUtil.cpp
-	Util.cpp
-	Nls.cpp
-	String.cpp
+	Directory.cpp
 	File.cpp
 	FileTest.cpp
-	DateTime.cpp
-	Directory.cpp
-	Debug.cpp 
 	IconTheme.cpp 
-	Color.cpp 
-	Run.cpp 
 	Listener.cpp
-	Sipc.cpp
-	TiXml.cpp
-	TiXmlParser.cpp 
 	MimeType.cpp
-	$(PCRE)
-	Regex.cpp
+	Nls.cpp
 	Pty.cpp
 	PtyProcess.cpp
+	$(PCRE)
+	Regex.cpp
+	Resource.cpp
+	Run.cpp 
+	Sipc.cpp
+	StrUtil.cpp
+	String.cpp
 	TempFile.cpp
+	TiXml.cpp
+	TiXmlParser.cpp 
+	Util.cpp
 	$(XDGMIME) ;
 
 SOURCE_GUI = 
 	DirWatch.cpp
-	XSettingsCommon.cpp
-	XSettingsClient.cpp
-	XSettingsManager.cpp
-	Window.cpp
-	WindowXid.cpp
 	ExpandableGroup.cpp
-	IconLoader.cpp
-	IconChooser.cpp 
 	FontChooser.cpp
-	MessageBox.cpp
-	SevenSeg.cpp
-	TableBase.cpp 
+	IconChooser.cpp 
+	IconLoader.cpp
 	MenuBar.cpp  
 	MenuBase.cpp  
 	MenuButton.cpp  
 	MenuItem.cpp
 	Menu_add.cpp  
-	Menu_global.cpp ;
+	Menu_global.cpp
+	MessageBox.cpp
+	SevenSeg.cpp
+	TableBase.cpp 
+	$(TINYSCHEME)
+	Theme.cpp
+	Window.cpp
+	WindowXid.cpp
+	XSettingsClient.cpp
+	XSettingsCommon.cpp
+	XSettingsManager.cpp ;
 
 SOURCE_DBUS = 
 	EdbusConnection.cpp 

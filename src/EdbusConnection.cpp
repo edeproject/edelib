@@ -124,7 +124,7 @@ static DBusHandlerResult edbus_signal_filter(DBusConnection* connection, DBusMes
 
 			if(dc->signal_table) {
 				/* signal table has precedence over plain signal callback */
-				EdbusCallbackItem* item = scan_callback_table(dc->signal_table, dc->signal_table_sz, msg);
+				EdbusCallbackItem* item = scan_callback_table(dc->signal_table, dc->signal_table_sz, m);
 				if(item) {
 					ret = (item->callback)(&m, item->data);
 					goto out;
@@ -143,7 +143,7 @@ static DBusHandlerResult edbus_signal_filter(DBusConnection* connection, DBusMes
 
 			if(dc->method_table) {
 				/* method table has precedence over plain method callback */
-				EdbusCallbackItem* item = scan_callback_table(dc->method_table, dc->method_table_sz, msg);
+				EdbusCallbackItem* item = scan_callback_table(dc->method_table, dc->method_table_sz, m);
 				if(item) {
 					ret = (item->callback)(&m, item->data);
 					goto out;

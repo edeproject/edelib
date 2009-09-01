@@ -40,9 +40,7 @@ private:
 	int ptyfd;
 	char *ptyname, *ttyname;
 
-	PTY(const PTY&);
-	PTY& operator=(const PTY&);
-
+	E_DISABLE_CLASS_COPY(PTY)
 public:
 	/**
 	 * Construct a PTY object

@@ -9,6 +9,12 @@
 #include <edelib/String.h>
 #include <edelib/FileTest.h>
 
+EDELIB_NS_USING(String)
+EDELIB_NS_USING_AS(Window, EWindow)
+EDELIB_NS_USING(file_test)
+EDELIB_NS_USING(icon_chooser)
+EDELIB_NS_USING(FILE_TEST_IS_DIR)
+
 Fl_Box* image_box;
 
 void close_cb(Fl_Widget*, void* w) {
@@ -19,10 +25,10 @@ void close_cb(Fl_Widget*, void* w) {
 void run_cb(Fl_Widget*, void*) {
 	/* const char* dd = "/opt/kde/share/icons/default.kde/48x48/apps/"; */
 	const char* dd = "/home/sanel/.icons/edeneu/16x16/apps/";
-	if(!edelib::file_test(dd, edelib::FILE_TEST_IS_DIR))
+	if(!file_test(dd, FILE_TEST_IS_DIR))
 		printf("Directory %s does not exists, continuing...\n", dd);
 
-	edelib::String r = edelib::icon_chooser(dd);
+	String r = icon_chooser(dd);
 
 	if(!r.empty()) {
 		image_box->image(Fl_Shared_Image::get(r.c_str()));
@@ -31,7 +37,7 @@ void run_cb(Fl_Widget*, void*) {
 }
 
 int main() {
-	edelib::Window* win = new edelib::Window(290, 180, "Icon chooser test");
+	EWindow* win = new EWindow(290, 180, "Icon chooser test");
 	win->begin();
 	Fl_Box* ibox = image_box = new Fl_Box(80, 10, 135, 110);
 	ibox->box(FL_THIN_DOWN_BOX);

@@ -55,9 +55,7 @@ private:
 	String mcmt;
 	String micon;
 
-	MimeType(const MimeType&);
-	MimeType& operator=(const MimeType&);
-
+	E_DISABLE_CLASS_COPY(MimeType)
 public:
 	/** Empty constructor */
 	MimeType();

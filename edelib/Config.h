@@ -121,9 +121,7 @@ private:
 	ConfigSection* add_section(const char* section);
 	ConfigSection* find_section(const char* section);
 
-	Config(const Config&);
-	Config& operator=(Config&);
-
+	E_DISABLE_CLASS_COPY(Config)
 public:
 	/** Constructor */
 	Config();

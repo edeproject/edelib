@@ -275,6 +275,7 @@ UT_FUNC(StringComparison, "Test std::string comparison")
 	UT_VERIFY( s.substr(6) == stmp );
 
 	std::string s2;
+#if 0
 	s1.clear();
 	s2.clear();
 	String ss;
@@ -300,6 +301,7 @@ UT_FUNC(StringComparison, "Test std::string comparison")
 
 	s1.clear();
 	s2.clear();
+#endif
 
 	s1.assign("Sample string", 5);
 	s2.assign("Sample string", 5);

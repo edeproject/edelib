@@ -145,8 +145,7 @@ private:
 	Config* sys_conf;
 	Config* user_conf;
 
-	Resource(const Resource&);
-	Resource& operator=(const Resource&);
+	E_DISABLE_CLASS_COPY(Resource)
 public:
 	/**
 	 * Empty constructor

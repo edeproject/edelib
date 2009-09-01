@@ -115,9 +115,7 @@ private:
 	void check_manager_window(void);
 	void read_settings(void);
 
-	XSettingsClient(const XSettingsClient&);
-	XSettingsClient& operator=(const XSettingsClient&);
-
+	E_DISABLE_CLASS_COPY(XSettingsClient)
 public:
 	/**
 	 * Empty constructor

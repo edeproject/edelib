@@ -273,6 +273,7 @@ UT_FUNC(ListTestPtrSort, "Test pointer list sort")
 	}
 }
 
+#if 0
 #include <list>
 UT_FUNC(ListComparison, "Test std::list comparison")
 {
@@ -370,3 +371,4 @@ UT_FUNC(ListComparison, "Test std::list comparison")
 	for(unsigned int i = 0; i < els.size(); i++, ++eit, ++sit)
 		UT_VERIFY( *eit == *sit );
 }
+#endif

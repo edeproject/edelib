@@ -157,8 +157,7 @@ private:
 	size_type sz;
 	Node* tail;
 
-	list(const list&);
-	list& operator=(const list&);
+	E_DISABLE_CLASS_COPY(list)
 
 	static bool default_sort_cmp(const T& val1, const T& val2) { return val1 < val2; }
 

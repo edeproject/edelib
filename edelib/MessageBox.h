@@ -324,10 +324,7 @@ public:
 	static void set_themed_icons(const char* msg, const char* alert = 0, const char* ask = 0, 
 			const char* input = 0, const char* password = 0);
 
-	/**
-	 * \ingroup widgets
-	 * Clear icon names used by IconTheme.
-	 */
+	/** Clear icon names used by IconTheme. */
 	static void clear_themed_icons(void);
 };
 

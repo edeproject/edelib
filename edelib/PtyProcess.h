@@ -50,9 +50,7 @@ private:
 	class PtyProcessPrivate;
 	PtyProcessPrivate *d;
 
-	PtyProcess(const PtyProcess&);
-	PtyProcess& operator=(const PtyProcess&);
-
+	E_DISABLE_CLASS_COPY(PtyProcess)
 protected:
 #ifndef SKIP_DOCS
 	char **environment() const;

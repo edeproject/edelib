@@ -1,18 +1,18 @@
-#include <edelib/ExpandableGroup.h>
-#include <edelib/Color.h>
-#include <edelib/Window.h>
 #include <FL/Fl.H>
 #include <FL/Fl_Button.H>
+#include <edelib/ExpandableGroup.h>
+#include <edelib/Window.h>
+
+EDELIB_NS_USING(ExpandableGroup)
+EDELIB_NS_USING_AS(Window, EWindow)
 
 int main()
 {
-	edelib::Window* win = new edelib::Window(480, 345, "Sample with 10 childs");
+	EWindow* win = new EWindow(480, 345, "Sample with 10 childs");
 	win->begin();
-	edelib::ExpandableGroup* eg = new edelib::ExpandableGroup(15, 15, 455, 315);
+	ExpandableGroup* eg = new ExpandableGroup(15, 15, 455, 315);
 	eg->box(FL_DOWN_BOX);
 	eg->color(FL_WHITE);
-	//eg->color(edelib::color_html_to_fltk("#abc"));
-	//eg->color(edelib::color_rgb_to_fltk(255, 255, 255));
 	eg->begin();
 		new Fl_Button(0, 0, 45, 45, "ch1");
 		new Fl_Button(0, 0, 45, 45, "ch2");

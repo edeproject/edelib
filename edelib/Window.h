@@ -117,7 +117,7 @@ public:
 	 *
 	 * If callback function returns <em>true</em>, window will be redrawn.
 	 */
-	void xsettings_callback(WindowXSettingsCallback& cb, void* data = NULL) { xs_cb = cb; xs_cb_data = data; }
+	void xsettings_callback(WindowXSettingsCallback cb, void* data = NULL) { xs_cb = cb; xs_cb_data = data; }
 
 	/**
 	 * Returns callback used for XSETTINGS protocol

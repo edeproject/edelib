@@ -185,16 +185,8 @@ private:
 	DirWatchNotifier backend_notifier;
 
 	bool init_backend(void);
-	/*
-	DirWatchEntry* scan(int fd);
 
-	const char* figure_changed(DirWatchEntry* e);
-	void fill_content(DirWatchEntry* e);
-	*/
-
-	DirWatch(const DirWatch&);
-	DirWatch& operator=(DirWatch&);
-
+	E_DISABLE_CLASS_COPY(DirWatch)
 public:
 	/**
 	 * Empty constructor

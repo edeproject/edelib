@@ -44,7 +44,7 @@ distribution.
 	#define TIXML_STRING		std::string
 #else
 	#include "String.h"
-	#define TIXML_STRING		edelib::String
+	#define TIXML_STRING		EDELIB_NS_PREPEND(String)
 #endif
 
 // Deprecated library function hell. Compilers want to use the

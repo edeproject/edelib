@@ -27,6 +27,17 @@
  * \defgroup macros edelib macros
  */
 
+/**
+ * \def E_LOG_DOMAIN
+ * \ingroup macros
+ *
+ * This macro should be set during compilation phase. It will name logging domain showing to
+ * whom log output belongs.
+ */
+#ifndef E_LOG_DOMAIN
+	#define E_LOG_DOMAIN ((char*)0)
+#endif
+
 /* these functions are not in the namespace so we don't get * strange output with the preprocessor */
 EDELIB_API void _edelib_debug(const char* fmt, ...);
 EDELIB_API void _edelib_warning(const char* fmt, ...);
@@ -44,19 +55,19 @@ EDELIB_API void _edelib_fatal(const char* fmt, ...);
  * \ingroup macros
  *
  * Check if expression evaluates to false, in which case it will abort program, outputing offending
- * expression, file name and line number. If platform supports, it will try to output short stack content
+ * expression, file name and line number. If platform supports, it will try to output short stack content.
  */
-#ifdef _DEBUG
-	#define E_ASSERT(expr) _edelib_assert((expr) != 0, #expr, __FILE__, __LINE__, _E_FUNCTION_NAME)
-#else
+#ifdef NDEBUG
 	#define E_ASSERT(expr)
+#else
+	#define E_ASSERT(expr) _edelib_assert((expr) != 0, #expr, __FILE__, __LINE__, _E_FUNCTION_NAME)
 #endif
 
 /**
  * \def E_DEBUG
  * \ingroup macros
  *
- * Should be used for output debug information in stderr
+ * Should be used for output debug information in stderr.
  */
 #define E_DEBUG   _edelib_debug
 
@@ -64,7 +75,7 @@ EDELIB_API void _edelib_fatal(const char* fmt, ...);
  * \def E_WARNING
  * \ingroup macros
  *
- * Should be use for output warnings in stderr
+ * Should be use for output warnings in stderr.
  */
 #define E_WARNING _edelib_warning
 
@@ -72,7 +83,7 @@ EDELIB_API void _edelib_fatal(const char* fmt, ...);
  * \def E_FATAL
  * \ingroup macros
  *
- * Display error and call abort()
+ * Display error and call abort().
  */
 #define E_FATAL   _edelib_fatal
 
@@ -83,7 +94,7 @@ EDELIB_API void _edelib_fatal(const char* fmt, ...);
  * \def E_STRLOC
  * \ingroup macros
  *
- * Stringify current location with file name and line number
+ * Stringify current location with file name and line number.
  */
 #define E_STRLOC __FILE__ ":" _E_STRLOC_STRINGIFY(__LINE__)
 
@@ -94,7 +105,7 @@ EDELIB_API void _edelib_fatal(const char* fmt, ...);
  * E_LIKELY and E_UNLIKELY macros give a hint to compiler about expected results. 
  * Gcc can use these information for optimizations. These macros are inspired with G_LIKELY and G_UNLIKELY from glib.
  *
- * \note E_LIKELY(expr) is _not_ the same as !E_UNLIKELY(expr)
+ * \note E_LIKELY(expr) is _not_ the same as !E_UNLIKELY(expr).
  */
 
 /**
@@ -127,7 +138,7 @@ EDELIB_API void _edelib_fatal(const char* fmt, ...);
  * 
  * E_RETURN_IF_FAIL is used for precondition and postcondition checks. When given
  * expression fails, macro will return from current function, outputting information
- * how condition failed
+ * how condition failed.
  */
 #define E_RETURN_IF_FAIL(expr)                                      \
 	do {                                                            \
@@ -143,7 +154,7 @@ EDELIB_API void _edelib_fatal(const char* fmt, ...);
  * \ingroup macros
  *
  * Check if expression evaluates to the true (same as E_RETURN_IF_FAIL), but return
- * user specified value if expression fails
+ * user specified value if expression fails.
  */
 #define E_RETURN_VAL_IF_FAIL(expr, val)                             \
 	do {                                                            \
@@ -169,9 +180,9 @@ EDELIB_NS_BEGIN
  * \brief Type of messages received in error message handler
  */
 enum ErrorMessageType {
-	ERROR_MESSAGE_DEBUG,
-	ERROR_MESSAGE_WARNING,
-	ERROR_MESSAGE_FATAL
+	ERROR_MESSAGE_DEBUG,      ///< Debug message
+	ERROR_MESSAGE_WARNING,    ///< Warning message
+	ERROR_MESSAGE_FATAL       ///< Fatal message
 };
 
 /** 

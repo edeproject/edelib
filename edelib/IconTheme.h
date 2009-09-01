@@ -81,12 +81,10 @@ class EDELIB_API IconTheme {
 private:
 	IconThemePrivate* priv;
 
-	IconTheme(const IconTheme&);
-	IconTheme& operator=(const IconTheme&);
-
 	void load_theme(const char* name);
 	void read_inherits(const char* buf);
 
+	E_DISABLE_CLASS_COPY(IconTheme)
 public:
 	/**
 	 * Empty constructor

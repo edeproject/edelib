@@ -111,9 +111,7 @@ private:
 	void from_dbus_message(DBusMessage* m);
 	DBusMessage* to_dbus_message(void) const;
 
-	EdbusMessage(const EdbusMessage&);
-	EdbusMessage& operator=(const EdbusMessage&);
-
+	E_DISABLE_CLASS_COPY(EdbusMessage)
 public:
 	/**
 	 * Declare EdbusMessage iterator

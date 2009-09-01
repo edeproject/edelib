@@ -47,9 +47,7 @@ private:
 	bool    no_close;
 	String  filename;
 	
-	TempFile(const TempFile&);
-	TempFile& operator=(const TempFile&);
-
+	E_DISABLE_CLASS_COPY(TempFile)
 public:
 	/**
 	 * Constructor. Does nothing, except setting internal values to invalid state

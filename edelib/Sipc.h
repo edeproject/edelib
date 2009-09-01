@@ -83,9 +83,7 @@ typedef void (*SipcCallback)(const char*, void*);
 class EDELIB_API SipcServer {
 private:
 	SipcServerPrivate* priv;
-
-	SipcServer(const SipcServer&);
-	SipcServer& operator=(const SipcServer&);
+	E_DISABLE_CLASS_COPY(SipcServer)
 public:
 	/**
 	 * Constructor; prepares internal data
@@ -135,9 +133,7 @@ public:
 class EDELIB_API SipcClient {
 private:
 	SipcClientPrivate* priv;
-
-	SipcClient(const SipcClient&);
-	SipcClient& operator=(const SipcClient&);
+	E_DISABLE_CLASS_COPY(SipcClient)
 public:
 	/**
 	 * Constructor; prepares internal data

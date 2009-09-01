@@ -100,8 +100,7 @@ private:
 	RegexData* data;
 
 	void clear(void);
-	Regex(const Regex&);
-	Regex& operator=(const Regex&);
+	E_DISABLE_CLASS_COPY(Regex)
 public:
 	/** Shortcut for the list of RegexMatch */
 	typedef list<RegexMatch> MatchVec;

@@ -1,3 +1,37 @@
+2009-08-29  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/EdbusConnection.h:
+	* doc/DBus.dox: moving D-BUS info documentation in separate file
+	* edelib/edelib-global.h: E_SIGLETON_CLASS_* replaced with
+	E_CLASS_GLOBAL_*
+
+2009-08-28  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/edelib-global.h: added E_DISABLE_CLASS_COPY and changed *.h files
+	to use it
+	* edelib/Theme.h:
+	* src/Theme.cpp:
+	* src/tinyscheme/*: added theming stuff
+	* edelib/edelib-global.h: E_SIGLETON_CLASS_* macros added
+
+2009-08-18  Sanel <karijes@users.sourceforge.net>
+
+	* src/EdbusConnection.cpp: fixed implicit EdbusMessage creating; detected
+	by gcc-2.95.3 :)
+	* edelib/MessageBox.h: dumped wrongly placed doxygen tag
+	* edelib/edelib-global.h: added EDELIB_NS_PREPEND; redefine namespace if
+	external EDELIB_NS name was given
+	* src/Window.cpp:
+	* edelib/TiXml.h: use EDELIB_NS_PREPEND
+	* examples/egroup.cpp:
+	* examples/egroup2.cpp:
+	* examples/dirwatch.cpp:
+	* examples/icon_chooser.cpp: removed explicit namespace name usage
+
+2009-08-15  Sanel <karijes@users.sourceforge.net>
+
+	* test/abicheck.sh: added for the future for easier ABI changes tracking
+
 2009-08-11  Sanel <karijes@users.sourceforge.net>
 
 	* edelib/Directory.h: some documentation typo fix

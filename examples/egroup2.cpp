@@ -1,8 +1,9 @@
-#include <edelib/ExpandableGroup.h>
-
 #include <FL/Fl_Window.H>
 #include <FL/Fl.H>
 #include <FL/Fl_Button.H>
+#include <edelib/ExpandableGroup.h>
+
+EDELIB_NS_USE
 
 int main()
 {	

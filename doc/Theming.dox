@@ -1,0 +1,177 @@
+// vim: ft=doxygen
+/** \page themedoc Themes and theming details
+
+Table of contents:
+ - \subpage themeintro
+ - \subpage themelayout
+ - \subpage themelanguage
+*/
+
+
+/** \page themeintro Introduction and concepts
+
+\section themeintro_intro Introduction
+%edelib theming facility allows theming widgets, their behavior and theming full applications.  It also can 
+behave as container for other themes, like sound theme or icon theme.
+
+At first this sounds pretty abstract and that is true: theming facility is abstracted as much as possible.
+
+Today, themed can be everything: widget look, behavior, sound events, icons and wallpapers, fonts and etc.
+Some toolkits and environments provides something so called <em>metatheme</em>, a theme that has a bunch
+of other, unrelated themes like themes for icons or GUI look. %edelib theming implementation behaves 
+(at some point) as metatheme too.
+
+To allow this, edelib::Theme implements a Scheme-like language to load, parse and eventually transform
+theme code. Actually, edelib::Theme provides a full Scheme language (based on 
+<a href="http://tinyscheme.sourceforge.net">TinyScheme</a> engine), but you will often see only the small
+parts of it.
+
+\section themeintro_concepts Concepts
+Theme introduces a few terms, known from other toolkits and environments. Some have pretty the same
+meaning, some have a different one.
+
+\subsection themeintro_style Style
+%Theme style is a set of elements with values. Elements can be anything, like font size or background color.
+When application is querying certain preferences (e.g. font size), it do that from certain style.
+
+Each styles in the same theme must have a unique name. In the case of duplicate names, first found style
+will be used.
+
+\subsection themeintro_scheme Scheme
+Scheme is engine for painting widgets. Scheme is term from FLTK (see Fl::scheme() in FLTK documentation)
+and, for God sake, do not confuse it with Scheme language :)
+
+To simplify the things, scheme is for FLTK as <em>engines</em> for GTK+. Schemes are implemented in C++
+and uses FLTK low level drawing facility to paint widget elements.
+
+Currently schemes can't be extended and theme loader uses a few of them already built in FLTK code.
+
+\subsection themeintro_item Style item
+Style item is entry in one style. Style item can be e.g. font color or anything that some application
+see as value for theming.
+
+\subsection themeintro_themefile Theme file
+Theme file is the file with one or bunch of styles. First file loaded from every theme is <em>main.ewt</em>
+(ewt here means Ede Widget Theme). Here is an example how <em>main.ewt</em> can look like:
+\code
+;; this is a comment
+; a comment too
+
+(theme.name   "Sample Theme")
+(theme.author "John Foo <john@foo.com>")
+(theme.sample "img.jpg")
+
+(theme.style "ede" 
+[
+  (scheme             "gtk+")
+  (background_color   "#ffffff")
+  (background_color2  "#043456")
+  (foreground_color   "#fff")
+  (font_normal        "-schumacher-*-medium-*-*-*-12-*-*-*-*-*-*-*")
+  (icon_theme         "edeneu")
+])
+\endcode
+*/
+
+
+
+/** \page themelayout Theme layout and search locations
+
+\section themelayout_layout Theme layout
+Theme is directory with a bunch of <em>Theme files</em> and files used by theme, like images or sound files.
+Knowing this, you can conclude how theme name is a name of this directory and when Theme engine start to
+look for named theme, it will try to find a directory with this name.
+
+For example, here is an example layout for a <em>Foo</em> theme:
+\code
+Foo/
+    main.ewt
+    application1.ewt
+    application2.ewt
+
+    sounds/
+        on-click.ogg
+        window-close.ogg
+        window-hide.ogg
+
+    images/
+        img1.png
+        img2.png
+\endcode
+
+Here, <em>main.ewt</em> will include (via <em>(include)</em> directive) <em>application1.ewt</em> and
+<em>application2.ewt</em> files, like:
+\code
+;; main.ewt
+
+;; theme information
+(theme.name   "Foo")
+(theme.author "John Foo <john@foo.com>")
+(theme.sample "img.jpg")
+
+;; styles
+(theme.style "ede" 
+[
+  (background_color   "#ffffff")
+  (background_color2  "#043456")
+  (icon_theme         "edeneu")
+])
+
+;; include the rest
+(include "application1.ewt")
+(include "application2.ewt")
+\endcode
+
+Or, <em>main.ewt</em> does not have to have any style code; it can only serve as loader for a bunch of 
+styles separated in a special file. Combinations are limitless.
+
+\section themedefault Default theme and default locations
+Default theme that will be loaded is <em>default</em>. This name can be either a directory or symbolic
+link to desired theme. Knowing this, changing theme is simply creating symbolic link on target theme.
+
+Themes will be searched in <em>$XDG_DATA_DIRS/themes</em> directories. If Theme class has a prefix (default is "ede"),
+themes will be searched in <em>$XDG_DATA_DIRS/themes/prefix</em>.
+*/
+
+/** \page themelanguage Theme language
+First of all, you don't have to know Scheme language to create theme files. This files use simplified
+statements to declare variables and set their values.
+
+One statement you already seen is:
+\code
+(theme.name "Foo")
+\endcode
+
+This will, as you guess, set theme name. Here, <em>theme</em> is a namespace and <em>name</em> is expression
+that sets internal theme name. Every public Theme expressions has a <em>theme</em> prefix, like <em>(theme.print)</em>
+or <em>(theme.style)</em>.
+
+You also learned how to assign some value. In common languages (or configuration files), you often would
+assign variable like this:
+\code
+var = value
+\endcode
+
+in Theme language it will be like this:
+\code
+(var value)
+\endcode
+
+But, beware! You can't use this assignment syntax all over .ewt files; it is valid only in <em>(theme.style)</em> block.
+
+...which brings us to <em>(theme.style)</em> syntax... Each <em>(theme.style)</em> must have a style name and block
+with a list of variables and their values. For example:
+\code
+(theme.style "demo-style"
+[
+ (var1 "value1")
+ (var2 "value2")
+])
+\endcode
+
+implements <em>var1</em> and <em>var2</em> in "demo-style" style. Each style block begins with <b>[</b> and ends
+with <b>]</b>. Actually it ends with <b>])</b> because "theme.style" starts with <b>(</b>. This is very similar
+to syntax used to assign values.
+
+\todo Finish
+*/

@@ -36,6 +36,9 @@ EDELIB_NS_BEGIN
  * Final applications should not use this class except manager is not provided.
  */
 class EDELIB_API XSettingsManager {
+private:
+	E_DISABLE_CLASS_COPY(XSettingsManager)
+
 protected:
 	/** Data used by manager class */
 	XSettingsData* manager_data;
@@ -44,12 +47,12 @@ public:
 	/**
 	 * Empty constructor
 	 */
-	XSettingsManager();
+	XSettingsManager() : manager_data(NULL) { }
 
 	/**
 	 * Clears internal data
 	 */
-	~XSettingsManager();
+	~XSettingsManager() { clear(); }
 
 	/**
 	 * Init needed communication parts.

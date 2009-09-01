@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Multi_Browser.H>
@@ -5,10 +6,9 @@
 #include <FL/Fl_Text_Buffer.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_File_Chooser.H>
-
 #include <edelib/DirWatch.h>
 
-#include <stdio.h>
+EDELIB_NS_USE
 
 Fl_Window* win = 0;
 Fl_Multi_Browser* dirlist = 0;
@@ -22,7 +22,7 @@ void add_cb(Fl_Widget*, void*) {
 		dirlist->add(n);
 		snprintf(write_buff, 256, "Added %s to be watched\n", n);
 		tlog->append(write_buff);
-		edelib::DirWatch::add(n, edelib::DW_CREATE|edelib::DW_DELETE|edelib::DW_ATTRIB|edelib::DW_RENAME|edelib::DW_MODIFY);
+		DirWatch::add(n, DW_CREATE|DW_DELETE|DW_ATTRIB|DW_RENAME|DW_MODIFY);
 	}
 }
 
@@ -33,7 +33,7 @@ void remove_cb(Fl_Widget*, void*) {
 	const char* txt = dirlist->text(ln);
 	if(!txt)
 		return;
-	if(edelib::DirWatch::remove(txt)) {
+	if(DirWatch::remove(txt)) {
 		snprintf(write_buff, 256, "Removed %s\n", txt);
 		dirlist->remove(ln);
 	}
@@ -53,11 +53,11 @@ void notify_cb(const char* dir, const char* wh, int flag, void* l) {
 		snprintf(write_buff, 256, "In %s, %s was ", dir, wh);
 		tl->append(write_buff);
 
-		if(flag == edelib::DW_REPORT_CREATE)
+		if(flag == DW_REPORT_CREATE)
 			tl->append("created\n");
-		else if(flag == edelib::DW_REPORT_DELETE)
+		else if(flag == DW_REPORT_DELETE)
 			tl->append("deleted\n");
-		else if(flag == edelib::DW_REPORT_MODIFY)
+		else if(flag == DW_REPORT_MODIFY)
 			tl->append("modified\n");
 		else
 			tl->append("unknown\n");
@@ -69,7 +69,7 @@ void notify_cb(const char* dir, const char* wh, int flag, void* l) {
 }
 
 int main() {
-	edelib::DirWatch::init();
+	DirWatch::init();
 
 	win = new Fl_Window(380, 360, "Directory watch test");
 	win->begin();
@@ -80,9 +80,9 @@ int main() {
 		tlog = new Fl_Text_Buffer();
 		td->buffer(tlog);
 
-		if(edelib::DirWatch::notifier() == edelib::DW_FAM)
+		if(DirWatch::notifier() == DW_FAM)
 			tlog->append("Loaded with FAM\n");
-		else if(edelib::DirWatch::notifier() == edelib::DW_INOTIFY)
+		else if(DirWatch::notifier() == DW_INOTIFY)
 			tlog->append("Loaded with inotify\n");
 		else
 			tlog->append("Loaded with none notifier\n");
@@ -98,10 +98,10 @@ int main() {
 	win->end();
 	win->show();
 
-	edelib::DirWatch::callback(notify_cb, tlog);
+	DirWatch::callback(notify_cb, tlog);
 
 	Fl::run();
-	edelib::DirWatch::shutdown();
+	DirWatch::shutdown();
 
 	return 0;
 }

@@ -1,0 +1,84 @@
+// vim:ft=doxygen
+/** \page dbusdoc A short info about D-Bus
+
+\section dbusintro Introduction
+
+D-Bus is an IPC (Inter Process Communication) protocol with low overhead. It is designed
+to unify communication between various applications, desktop environments and system properties.
+
+D-Bus is a peer-to-peer and client-server protocol; this means you can communicate directly either with
+main daemon (<em>dbus-daemon</em>) or with some application that represents a service (then is
+done indirectly via dbus-daemon).
+
+When you issue connection to the daemon, you will use one of two connection types:
+ - system bus
+ - session bus
+
+Since D-Bus is a binary protocol, all data is marshalled into binary form and unmarshalled when 
+receiver get it. With this binding, this is done transparently.
+
+Contrary to the other IPC mechanisms and protocols, D-Bus is relatively simple one, but flexible. As you
+can see from edelib::EdbusData, D-Bus allows various types to be send: a basic ones, like <i>int</i> or <i>char</i> and
+complex ones like arrays, structures or variants. With this, theoretically, you can send almost any type.
+
+\section dbusconcepts Concepts
+
+D-Bus introduces some terms and concepts. Some of them are known from other IPC systems and some of them
+are D-Bus related only.
+
+\subsection dbusbus Buses
+
+The daemon runs actual <i>bus</i>, a kind of <i>street</i> that messages are transported over, and to which 
+any number of processes may be connected at any given time.
+
+You can have multiple buses on a single system and D-Bus already introduces two, <i>system bus</i> and
+<i>session bus</i>. System bus is meant for system notifications and messages (e.g. when hardware was hooked up
+or similar) and session bus is used locally, by desktop environment session and communication between related
+applications and services.
+
+\subsection dbusservice Services
+
+When application is going receive some messages, it must obtain a <i>service name</i>. Service name is a kind
+of readable address on which clients connects (much the same as concept of IP addresses and hostnames). During
+message exchange, daemon will use this name to send messages.
+
+Service names are very similar to hostnames, e.g. here is already provided name by D-Bus library:
+<pre>
+ org.freedesktop.DBus
+</pre>
+
+Listener can request service name to be assigned to the only one listener so when another listener is try
+to acquire it, library will signal it and this application can decide what to do next. This is useful for
+cases when only one running application is allowed, like daemons. \see edelib::EdbusConnection::request_name()
+
+\subsection dbusobject Objects and object paths
+
+D-Bus introduces objects, to add a kind of object-oriented approach. 
+
+Every bus have at least one object, representing bus itself. When application is communicating with 
+the listener, application sends messages to one of the objects (or in D-Bus terms: <i>calls a method</i>), 
+where listener can reply (in D-Bus parlance: <i> where object replies</i>).
+
+Listener can create multiple objects.
+
+Object paths are much like filesystem paths, e.g.:
+<pre>
+ /root/some/path
+</pre>
+
+Convention is to use service name as base for object path. For example, for <i>org.equinoxproject.Test</i>, 
+object path could be:
+<pre>
+ /org/equinoxproject/Test
+</pre>
+
+Object paths must start with slash and must not ends with it. \see edelib::EdbusObjectPath
+
+\subsection dbusinterface Interfaces
+
+D-Bus interfaces can be seen as the set of declarations and are very similar to Java interfaces. They are useful
+for the cases when listener wants to implement two methods with the same name, but different behavior. 
+D-Bus will not allow such cases except methods are put in different interfaces.
+
+edelib::EdbusConnection and edelib::EdbusMessage provides details with the samples.
+*/

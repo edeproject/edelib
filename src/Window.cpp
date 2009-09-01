@@ -130,7 +130,7 @@ static void process_xevent_for_foreign_callback(const XEvent* xev) {
 	 */
 	for(Fl_Window* win = Fl::first_window(); win; win = Fl::next_window(win)) {
 		if(win->type() >= EDELIB_WINDOW) {
-			edelib::Window* ewin = (edelib::Window*)win;
+			EDELIB_NS_PREPEND(Window)* ewin = (EDELIB_NS_PREPEND(Window)*)win;
 			unsigned int id = (unsigned int)xev->xclient.data.l[0];
 
 			/* ID's matches (or global, 0, ID received), call callback */
