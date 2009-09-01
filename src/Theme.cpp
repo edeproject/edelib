@@ -163,26 +163,13 @@ Theme::~Theme() {
 	delete priv;
 }
 
-void Theme::clear(void) {
-	if(!priv)
-		return;
-
-	if(priv->sc) {
-		scheme_deinit(priv->sc);
-		free(priv->sc);
-	}
-
-	delete priv->storage;
-	theme_p_init(priv);
-}
-
 bool Theme::load(const char *name, const char *prefix) {
 	return false;
 }
 
 bool Theme::load_from_file(const char *f) {
 	E_RETURN_VAL_IF_FAIL(f != NULL, false);
-	/* do not allow loading if claer() wasn't called before */
+	/* do not allow loading if clear() wasn't called before */
 	E_RETURN_VAL_IF_FAIL(priv->sc == NULL, false);
 
 	scheme *ss = scheme_init_new();
@@ -256,10 +243,24 @@ bool Theme::load_from_file(const char *f) {
 	return true;
 }
 
-bool Theme::loaded(void) const {
-	E_RETURN_VAL_IF_FAIL(priv->sc != NULL, false);
-	scheme *ss = priv->sc;
+void Theme::clear(void) {
+	if(!priv)
+		return;
 
+	if(priv->sc) {
+		scheme_deinit(priv->sc);
+		free(priv->sc);
+	}
+
+	delete priv->storage;
+	theme_p_init(priv);
+}
+
+bool Theme::loaded(void) const {
+	if(priv->sc == NULL)
+		return false;
+
+	scheme *ss = priv->sc;
 	return (!ss->no_memory && (ss->retcode == 0));
 }
 
@@ -301,7 +302,7 @@ bool Theme::get_item(const char *style_name, const char *item_name, char *ret, u
 				val = scheme_eval(ss, val);
 #endif
 			/* if it is not string, simply continue until find item with the string value */
-			if(ss->vptr->string_value(val)) {
+			if(ss->vptr->is_string(val)) {
 				ret_str = ss->vptr->string_value(val);
 				break;
 			}

@@ -44,7 +44,6 @@ class Theme_P;
 class Theme {
 private:
 	Theme_P *priv;
-	void clear(void);
 
 	E_DISABLE_CLASS_COPY(Theme)
 public:
@@ -63,6 +62,11 @@ public:
 	 * Load theme from given file. If fails returns false.
 	 */
 	bool load_from_file(const char *f);
+
+	/**
+	 * Deinitialize interpreter and clears internal data.
+	 */
+	void clear(void);
 
 	/**
 	 * Return true if theme loaded successfully.

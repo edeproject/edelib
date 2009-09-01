@@ -1,3 +1,10 @@
+2009-09-01  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Theme.h:
+	* src/Theme.cpp: clear() made public; small fix with string type
+	recognition
+	* test/theme.cpp: added tests for theme
+
 2009-08-29  Sanel <karijes@users.sourceforge.net>
 
 	* edelib/EdbusConnection.h:
