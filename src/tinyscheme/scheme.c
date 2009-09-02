@@ -3716,6 +3716,7 @@ static pointer opexe_5(scheme *sc, enum scheme_opcodes op) {
                     s_return(sc,x);
                }
           default:
+               sc->retcode = -1;
                Error_0(sc,"syntax error: illegal token");
           }
           break;

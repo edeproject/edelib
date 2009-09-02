@@ -43,7 +43,6 @@ TEST_FILES =
 	xml.cpp
 	mime.cpp
 	temp_file.cpp
-	theme.cpp
 	run.cpp
 	run_tests.cpp ;
 
@@ -55,6 +54,9 @@ if $(DBUS_LIBS) {
 if $(FLTK_LIBS_FULL) {
 	TEST_FILES += xsettings.cpp ;
 	ObjectC++Flags xsettings.cpp : $(FLTK_CFLAGS) ;
+
+	TEST_FILES += theme.cpp ;
+	ObjectC++Flags theme.cpp : $(FLTK_CFLAGS) ;
 
 	if ! $(SHARED) {
 		ADDONLIB = $(FLTK_LIBS_FULL) ;

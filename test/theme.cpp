@@ -8,7 +8,7 @@
 
 EDELIB_NS_USE
 
-UT_FUNC(ThemeTest, "Test Theme reader")
+UT_FUNC(ThemeTestReader, "Test Theme reader")
 {
 	Theme t;
 	UT_VERIFY( t.load_from_file("theme.et") == true );
@@ -46,4 +46,16 @@ UT_FUNC(ThemeTest, "Test Theme reader")
 
 	UT_VERIFY( t.get_item("test_style2", "item1", buf, sizeof(buf)) );
 	UT_VERIFY( STR_EQUAL(buf, "you should get this") );
+}
+
+UT_FUNC(ThemeTestBad, "Test bad Theme file")
+{
+	/* tinyscheme should have been modified for this */
+	Theme t;
+
+	UT_VERIFY( t.load_from_file("theme-bad.et") == false );
+	UT_VERIFY( t.loaded() == false );
+
+	long lval;
+	UT_VERIFY( t.get_item("test style", "item1", lval, 0) == false );
 }

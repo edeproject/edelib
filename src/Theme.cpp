@@ -24,11 +24,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <FL/Fl.H>
+#include <FL/Fl.h>
 #include <edelib/Debug.h>
 #include <edelib/Directory.h>
 #include <edelib/Color.h>
-#include <edelib/Resource.h>
 #include <edelib/IconLoader.h>
 
 #include "tinyscheme/scheme.h"
@@ -95,6 +94,9 @@ struct Theme_P {
 	pointer cached_ret;
 
 	StyleStorage *storage;
+
+	/* to make sure the script was loaded */
+	bool is_loaded;
 };
 
 /*
@@ -119,6 +121,7 @@ static void theme_p_init(Theme_P *t) {
 	t->author = t->name = t->sample = NULL;
 	t->cached_ret = NULL;
 	t->storage = NULL;
+	t->is_loaded = false;
 }
 
 static StyleStorage *theme_p_get_storage(Theme_P *t) {
@@ -163,14 +166,12 @@ Theme::~Theme() {
 	delete priv;
 }
 
-bool Theme::load(const char *name, const char *prefix) {
-	return false;
-}
-
 bool Theme::load_from_file(const char *f) {
 	E_RETURN_VAL_IF_FAIL(f != NULL, false);
 	/* do not allow loading if clear() wasn't called before */
 	E_RETURN_VAL_IF_FAIL(priv->sc == NULL, false);
+
+	priv->is_loaded = false;
 
 	scheme *ss = scheme_init_new();
 	if(!ss)
@@ -240,6 +241,8 @@ bool Theme::load_from_file(const char *f) {
 	priv->name   = get_string_var(ss, "private:theme.name");
 	priv->author = get_string_var(ss, "private:theme.author");
 	priv->sample = get_string_var(ss, "private:theme.sample");
+
+	priv->is_loaded = true;
 	return true;
 }
 
@@ -256,16 +259,12 @@ void Theme::clear(void) {
 	theme_p_init(priv);
 }
 
-bool Theme::loaded(void) const {
-	if(priv->sc == NULL)
-		return false;
-
-	scheme *ss = priv->sc;
-	return (!ss->no_memory && (ss->retcode == 0));
+bool Theme::loaded(void) const { 
+	return priv->is_loaded; 
 }
 
 bool Theme::get_item(const char *style_name, const char *item_name, char *ret, unsigned int sz) {
-	E_RETURN_VAL_IF_FAIL(priv->sc != NULL, false);
+	E_RETURN_VAL_IF_FAIL(priv->is_loaded == true, false);
 	E_RETURN_VAL_IF_FAIL(style_name != NULL, false);
 	E_RETURN_VAL_IF_FAIL(item_name != NULL, false);
 	E_RETURN_VAL_IF_FAIL(ret!= NULL, false);
@@ -321,7 +320,7 @@ bool Theme::get_item(const char *style_name, const char *item_name, char *ret, u
 }
 
 bool Theme::get_item(const char *style_name, const char *item_name, long &ret, long fallback) {
-	E_RETURN_VAL_IF_FAIL(priv->sc != NULL, false);
+	E_RETURN_VAL_IF_FAIL(priv->is_loaded == true, false);
 	E_RETURN_VAL_IF_FAIL(style_name != NULL, false);
 	E_RETURN_VAL_IF_FAIL(item_name != NULL, false);
 
@@ -378,7 +377,7 @@ const char* Theme::sample_image(void) const {
 }
 
 void Theme::apply_common_gui_elements(void) {
-	E_RETURN_IF_FAIL(priv->sc != NULL);
+	E_RETURN_IF_FAIL(priv->is_loaded == true);
 
 	char buf[128];
 	unsigned char r, g, b;
