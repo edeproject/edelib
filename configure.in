@@ -121,6 +121,9 @@ dnl this is issued from buildbot so edelib can be used from local directory
 if test -n "$EDELIB_USE_LOCALDIR"; then
 	prefix=`pwd`
 	ln -s . include
+
+	dnl so tests can be run in case edelib was compiled as shared library
+	export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$prefix/lib"
 fi
 
 EDELIB_INIT_JAM

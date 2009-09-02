@@ -8,6 +8,8 @@
 	modified
 	* src/tinyscheme/scheme.h: disable math facility
 	* src/tinyscheme/scheme.c: do not call malloc.h; FreeBSD does not like it
+	* configure.in: make libraries visible if edelib was compiled as shared
+	library when EDELIB_USE_LOCALDIR was set
 
 2009-09-01  Sanel <karijes@users.sourceforge.net>
 
