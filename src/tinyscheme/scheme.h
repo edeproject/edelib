@@ -60,7 +60,7 @@ extern "C" {
 #define USE_INTERFACE 1
 
 #ifndef USE_MATH         /* If math support is needed */
-# define USE_MATH 1
+# define USE_MATH 0
 #endif
 
 #ifndef USE_CHAR_CLASSIFIERS  /* If char classifiers are needed */

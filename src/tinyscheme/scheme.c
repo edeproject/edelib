@@ -62,9 +62,8 @@
 
 #include <string.h>
 #include <stdlib.h>
-#ifndef __APPLE__
-# include <malloc.h>
-#else
+
+#ifdef __APPLE__
 static int stricmp(const char *s1, const char *s2)
 {
   unsigned char c1, c2;

@@ -6,6 +6,8 @@
 	* test/theme.cpp:
 	* test/theme-bad.et: test for special case where tinyscheme code had to be
 	modified
+	* src/tinyscheme/scheme.h: disable math facility
+	* src/tinyscheme/scheme.c: do not call malloc.h; FreeBSD does not like it
 
 2009-09-01  Sanel <karijes@users.sourceforge.net>
 
