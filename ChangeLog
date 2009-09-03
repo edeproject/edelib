@@ -1,3 +1,17 @@
+2009-09-03  Sanel <karijes@users.sourceforge.net>
+
+	* configure.in: removed last change in this file 
+	* Jamrules: 'jam tests' will do necessary stuff to allow running tests
+	when edelib was compiled as shared library
+	* INSTALL:
+	* README: update, fixed some typos
+	* src/tinyscheme/init.scm: dumping IO code
+	* src/tinyscheme/init.scm.orig: orginal file that came with tinyscheme
+	* edelib/Resource.h:
+	* src/Resource.cpp: 
+	* test/resource.cpp: allow find_data() to have default prefix, as
+	find_config() too
+
 2009-09-02  Sanel <karijes@users.sourceforge.net>
 
 	* src/Theme.cpp: better code for checking if scheme stuff is loaded

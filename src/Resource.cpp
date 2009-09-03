@@ -100,11 +100,14 @@ static String locate_resource(const char* name, ResourceType r, bool is_config) 
 	return ret;
 }
 
-static void construct_name_from_domain(const char* domain, const char* prefix, String& ret) {
+static void construct_name_from_domain(const char* domain, const char* prefix, bool is_config, String& ret) {
+	/* TODO: build_filename() here */
 	ret = prefix;
 	ret += E_DIR_SEPARATOR;
 	ret += domain;
-	ret += CONFIG_FILE_SUFFIX;
+
+	if(is_config)
+		ret += CONFIG_FILE_SUFFIX;
 }
 
 Resource::Resource() : sys_conf(NULL), user_conf(NULL) {
@@ -121,7 +124,7 @@ bool Resource::load(const char* domain, const char* prefix) {
 	clear();
 
 	String path, file;
-	construct_name_from_domain(domain, prefix, file);
+	construct_name_from_domain(domain, prefix, true, file);
 
 	/* check first in system directories */
 	if(locate_resource_sys(file.c_str(), path, true)) {
@@ -154,7 +157,7 @@ bool Resource::save(const char* domain, const char* prefix) {
 	E_RETURN_VAL_IF_FAIL(user_conf != NULL, false);
 
 	String path, file;
-	construct_name_from_domain(domain, prefix, file);
+	construct_name_from_domain(domain, prefix, true, file);
 
 	path = user_config_dir();
 	path += E_DIR_SEPARATOR;
@@ -334,20 +337,19 @@ String Resource::find_config(const char* domain, ResourceType r, const char* pre
 	E_ASSERT(prefix != NULL);
 
 	String n;
-	construct_name_from_domain(domain, prefix, n);
+	construct_name_from_domain(domain, prefix, true, n);
 
 	String ret = locate_resource(n.c_str(), r, true);
-
-	/* FIXME: really need this here? */
-	bool exists = file_test(ret.c_str(), FILE_TEST_IS_REGULAR);
-	E_RETURN_VAL_IF_FAIL(exists, "");
-
 	return ret;
 }
 
-String Resource::find_data(const char* name, ResourceType r) {
+String Resource::find_data(const char* name, ResourceType r, const char* prefix) {
 	E_ASSERT(name != NULL);
-	String ret = locate_resource(name, r, false);
+
+	String n;
+	construct_name_from_domain(name, prefix, false, n);
+
+	String ret = locate_resource(n.c_str(), r, false);
 	return ret;
 }
 

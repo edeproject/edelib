@@ -434,8 +434,9 @@ public:
 	 * \return path if directory was found or empty string if failed
 	 * \param name is directory name
 	 * \param rt is ResourceType variable
+	 * \param prefix same as from load()
 	 */
-	static String find_data(const char* name, ResourceType rt = RES_USER_FIRST);
+	static String find_data(const char* name, ResourceType rt = RES_USER_FIRST, const char* prefix = "ede");
 };
 
 EDELIB_NS_END

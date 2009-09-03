@@ -29,6 +29,8 @@
 #include <edelib/Directory.h>
 #include <edelib/Color.h>
 #include <edelib/IconLoader.h>
+#include <edelib/Resource.h>
+#include <edelib/Util.h>
 
 #include "tinyscheme/scheme.h"
 #include "tinyscheme/scheme-private.h"
@@ -164,6 +166,21 @@ Theme::Theme() : priv(NULL) {
 Theme::~Theme() {
 	clear();
 	delete priv;
+}
+
+bool Theme::load(const char *theme, const char *prefix) {
+	/* 
+	 * 'themes' is the main directory where we keep our themes. It is also
+	 * compatible with other desktops
+	 */
+	String n = build_filename("themes", theme);
+
+	String path = Resource::find_data(n.c_str(), RES_SYS_ONLY, prefix);
+	if(path.empty())
+		return false;
+
+	path = build_filename(path.c_str(), "main.et");
+	return load_from_file(path.c_str());
 }
 
 bool Theme::load_from_file(const char *f) {

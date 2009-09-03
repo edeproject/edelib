@@ -364,8 +364,11 @@ UT_FUNC(ResourceTestFindData, "Test resource data find")
 	dir_create(SAMPLE_SYS_DIR);
 	dir_create(SAMPLE_USER_DIR);
 
-	dir_create(SAMPLE_USER_DIR"/baz");
-	dir_create(SAMPLE_SYS_DIR"/taz");
+	dir_create(SAMPLE_SYS_DIR"/ede");
+	dir_create(SAMPLE_USER_DIR"/ede");
+
+	dir_create(SAMPLE_USER_DIR"/ede/baz");
+	dir_create(SAMPLE_SYS_DIR"/ede/taz");
 
 	// save previous values
 	char* p;
@@ -383,19 +386,22 @@ UT_FUNC(ResourceTestFindData, "Test resource data find")
 	edelib_setenv(DATA_DIRS_ENV, SAMPLE_SYS_DIR, 1);
 
 	// check it's location
-	UT_VERIFY( Resource::find_data("baz") == SAMPLE_USER_DIR"/baz");
-	UT_VERIFY( Resource::find_data("baz", RES_USER_FIRST) == SAMPLE_USER_DIR"/baz");
-	UT_VERIFY( Resource::find_data("baz", RES_USER_ONLY) == SAMPLE_USER_DIR"/baz");
+	UT_VERIFY( Resource::find_data("baz") == SAMPLE_USER_DIR"/ede/baz");
+	UT_VERIFY( Resource::find_data("baz", RES_USER_FIRST) == SAMPLE_USER_DIR"/ede/baz");
+	UT_VERIFY( Resource::find_data("baz", RES_USER_ONLY) == SAMPLE_USER_DIR"/ede/baz");
 
-	UT_VERIFY( Resource::find_data("taz", RES_SYS_FIRST) == SAMPLE_SYS_DIR"/taz");
-	UT_VERIFY( Resource::find_data("taz", RES_SYS_ONLY) == SAMPLE_SYS_DIR"/taz");
+	UT_VERIFY( Resource::find_data("taz", RES_SYS_FIRST) == SAMPLE_SYS_DIR"/ede/taz");
+	UT_VERIFY( Resource::find_data("taz", RES_SYS_ONLY) == SAMPLE_SYS_DIR"/ede/taz");
 
 	// restore env vars and delete files
 	edelib_setenv(DATA_HOME_ENV, data_home_saved.c_str(), 1);
 	edelib_setenv(DATA_DIRS_ENV, data_dirs_saved.c_str(), 1);
 
-	dir_remove(SAMPLE_USER_DIR"/baz");
-	dir_remove(SAMPLE_SYS_DIR"/taz");
+	dir_remove(SAMPLE_USER_DIR"/ede/baz");
+	dir_remove(SAMPLE_SYS_DIR"/ede/taz");
+
+	dir_remove(SAMPLE_USER_DIR"/ede");
+	dir_remove(SAMPLE_SYS_DIR"/ede");
 
 	dir_remove(SAMPLE_SYS_DIR);
 	dir_remove(SAMPLE_USER_DIR);

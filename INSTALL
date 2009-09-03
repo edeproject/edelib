@@ -25,16 +25,16 @@ is to keep current code buildable on other jam versions, so it will work also on
 For manual building a Jam tool, please look at the Jam's documentation. After you got the binary,
 you can either install it at the usual paths or copy it in edelib root directory.
 
-To build edelib, run:
- 1. If you downloaded source from our repository, firstly you have to type './autogen.sh'.
-    If not, just skip this step.
+To build edelib, do:
 
- 2. Run'./configure'. You can tune building options via parameters passed to the configure
-    script, and to see available just run './configure --help'.
+ 1. If you downloaded source from our repository, run './autogen.sh' first.
 
- 3. Run 'jam' or './jam' if you placed jam's binary in edelib root path
+ 2. Run'./configure'. You can tune building options via parameters given to configure
+    script. To see available parameters, run './configure --help'.
 
-When jam finished, run 'jam install' to install library and needed files.
+ 3. Run 'jam' to compile the code.
+
+ 4. 'jam install' will install library and needed files.
 
 
 Compiling under SunStudio compiler
@@ -51,11 +51,11 @@ configure script, like:
 
 This is an example how to set variables in bash; your shell maybe uses different methods.
 
-[path] is path to your local SunStudio installation and sunstudioXX is subdirectory SunStudio
-version number. Of course, paths can be different in which case you should find 'cc', 'CC' programs 
-and 'libCrun.so' and 'libCstd.so' libraries.
+[path] is the path to your local SunStudio installation; sunstudioXX is subdirectory containing
+version number (e.g. sunstudio12). Of course, paths can be different, so you should locate 
+'cc', 'CC' programs and 'libCrun.so' and 'libCstd.so' libraries.
 
-NOTE: you have to compile FLTK with SunStudio too or linking would fail!!!
+NOTE: you have to compile FLTK with SunStudio too or linking would fail!
 
-edelib configure script provides '--with-fltk-path' for this purpose so you can use alternative
-FLTK installation, assuming you already have FLTK compiled with gcc.
+edelib configure script provides '--with-fltk-path' for this purpose so you can specify
+alternative FLTK installation path.

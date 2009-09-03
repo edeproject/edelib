@@ -43,7 +43,7 @@ class Theme_P;
  */
 class Theme {
 private:
-	Theme_P *priv;
+	Theme_P         *priv;
 
 	E_DISABLE_CLASS_COPY(Theme)
 public:
@@ -54,9 +54,12 @@ public:
 	~Theme();
 
 	/**
-	 * Load theme. Theme will be searched in $XDG_DATA_DIRS/<em>prefix/themes</em> paths.
+	 * Load theme. Theme will be searched in <em>$XDG_DATA_DIRS/prefix/themes</em> paths if
+	 * <em>prefix</em> was set (by default it is <em>ede</em>).
+	 *
+	 * Default theme has <em>default</em> name and will be searched for if nothing was given.
 	 */
-	bool load(const char *name, const char *prefix = "ede");
+	bool load(const char *name = "default", const char *prefix = "ede");
 
 	/**
 	 * Load theme from given file. If fails returns false.
