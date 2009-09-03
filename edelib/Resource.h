@@ -175,6 +175,8 @@ public:
 	 *
 	 *   // or load straight from /etc/xdg and /opt/etc directories
 	 *   r.load("foo", "");
+	 *
+	 * When prefix is NULL, it will not be appended to domain name.
 	 * \endcode
 	 */
 	bool load(const char* domain, const char* prefix = "ede");
@@ -426,13 +428,25 @@ public:
 	 * \param prefix same as from load()
 	 */
 	static String find_config(const char* name, ResourceType rt = RES_USER_FIRST, const char* prefix = "ede");
+
+	/**
+	 * Locate data in XDG_CONFIG_HOME and XDG_CONFIG_DIRS paths. The difference between this function and
+	 * find_config() is that find_config() will search only configuration files in this directories.
+	 * find_in_config_dir() will try to search anything, like subdirectories or links.
+	 *
+	 * \return path if data was found or empty string if failed
+	 * \param name is data name
+	 * \param rt is ResourceType variable
+	 * \param prefix same as from load()
+	 */
+	static String find_in_config_dir(const char* name, ResourceType rt = RES_USER_FIRST, const char* prefix = "ede");
 	
 	/**
 	 * Locate data in XDG_DATA_HOME and XDG_DATA_DIRS paths. Data can be anything,
 	 * like file, directory, link, etc.
 	 *
 	 * \return path if directory was found or empty string if failed
-	 * \param name is directory name
+	 * \param name is data name
 	 * \param rt is ResourceType variable
 	 * \param prefix same as from load()
 	 */

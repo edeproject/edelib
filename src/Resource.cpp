@@ -100,16 +100,6 @@ static String locate_resource(const char* name, ResourceType r, bool is_config) 
 	return ret;
 }
 
-static void construct_name_from_domain(const char* domain, const char* prefix, bool is_config, String& ret) {
-	/* TODO: build_filename() here */
-	ret = prefix;
-	ret += E_DIR_SEPARATOR;
-	ret += domain;
-
-	if(is_config)
-		ret += CONFIG_FILE_SUFFIX;
-}
-
 Resource::Resource() : sys_conf(NULL), user_conf(NULL) {
 }
 
@@ -119,12 +109,21 @@ Resource::~Resource() {
 
 bool Resource::load(const char* domain, const char* prefix) {
 	E_ASSERT(domain != NULL);
-	E_ASSERT(prefix != NULL);
 
 	clear();
 
 	String path, file;
-	construct_name_from_domain(domain, prefix, true, file);
+
+	/* allow prefix to be NULL */
+	if(prefix) {
+		file = prefix;
+		file += E_DIR_SEPARATOR;
+		file += domain;
+	} else {
+		file = domain;
+	}
+
+	file += CONFIG_FILE_SUFFIX;
 
 	/* check first in system directories */
 	if(locate_resource_sys(file.c_str(), path, true)) {
@@ -153,11 +152,19 @@ bool Resource::load(const char* domain, const char* prefix) {
 
 bool Resource::save(const char* domain, const char* prefix) {
 	E_ASSERT(domain != NULL);
-	E_ASSERT(prefix != NULL);
 	E_RETURN_VAL_IF_FAIL(user_conf != NULL, false);
 
 	String path, file;
-	construct_name_from_domain(domain, prefix, true, file);
+
+	if(prefix) {
+		file = prefix;
+		file += E_DIR_SEPARATOR;
+		file += domain;
+	} else {
+		file = domain;
+	}
+
+	file += CONFIG_FILE_SUFFIX;
 
 	path = user_config_dir();
 	path += E_DIR_SEPARATOR;
@@ -334,23 +341,41 @@ void Resource::set(const char* section, const char* key, double val) {
 		
 String Resource::find_config(const char* domain, ResourceType r, const char* prefix) {
 	E_ASSERT(domain != NULL);
-	E_ASSERT(prefix != NULL);
+
+	String n = domain;
+	n += CONFIG_FILE_SUFFIX;
+
+	return find_in_config_dir(n.c_str(), r, prefix);
+}
+
+String Resource::find_in_config_dir(const char* name, ResourceType r, const char* prefix) {
+	E_ASSERT(name != NULL);
 
 	String n;
-	construct_name_from_domain(domain, prefix, true, n);
+	if(prefix) {
+		n = prefix;
+		n += E_DIR_SEPARATOR;
+		n += name;
+	} else {
+		n = name;
+	}
 
-	String ret = locate_resource(n.c_str(), r, true);
-	return ret;
+	return locate_resource(n.c_str(), r, true);
 }
 
 String Resource::find_data(const char* name, ResourceType r, const char* prefix) {
 	E_ASSERT(name != NULL);
 
 	String n;
-	construct_name_from_domain(name, prefix, false, n);
+	if(prefix) {
+		n = prefix;
+		n += E_DIR_SEPARATOR;
+		n += name;
+	} else {
+		n = name;
+	}
 
-	String ret = locate_resource(n.c_str(), r, false);
-	return ret;
+	return locate_resource(n.c_str(), r, false);
 }
 
 EDELIB_NS_END

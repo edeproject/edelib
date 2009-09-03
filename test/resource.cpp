@@ -357,6 +357,64 @@ user_altered_value = 5\n\
 	dir_remove(SAMPLE_RES_DIR);
 }
 
+UT_FUNC(ResourceTestFindConfNull, "Test resource config find when prefix is NULL")
+{
+	dir_create(SAMPLE_RES_DIR);
+	dir_create(SAMPLE_SYS_DIR);
+	dir_create(SAMPLE_USER_DIR);
+
+	const char* sys_conf = "\
+[global]          \n\
+int_value = 3     \n\
+";
+
+	const char* user_conf = "\
+[global]              \n\
+int_value = 4         \n\
+user_altered_value = 5\n\
+";
+
+	File f;
+	f.open(SAMPLE_SYS_DIR"/foo.conf", FIO_WRITE);
+	f.write(sys_conf);
+	f.close();
+
+	f.open(SAMPLE_USER_DIR"/foo.conf", FIO_WRITE);
+	f.write(user_conf);
+	f.close();
+
+	// save previous values
+	char* p;
+	String config_home_saved;
+	String config_dirs_saved;
+
+	p = getenv(CONFIG_HOME_ENV);
+	if(p)
+		config_home_saved = p;
+	p = getenv(CONFIG_DIRS_ENV);
+	if(p)
+		config_dirs_saved = p;
+
+	edelib_setenv(CONFIG_HOME_ENV, SAMPLE_USER_DIR, 1);
+	edelib_setenv(CONFIG_DIRS_ENV, SAMPLE_SYS_DIR, 1);
+
+	// check it's location
+	UT_VERIFY( Resource::find_config("foo", RES_USER_FIRST, NULL) == SAMPLE_USER_DIR"/foo.conf");
+	UT_VERIFY( Resource::find_config("foo", RES_USER_ONLY, NULL) == SAMPLE_USER_DIR"/foo.conf");
+
+	UT_VERIFY( Resource::find_config("foo", RES_SYS_FIRST, NULL) == SAMPLE_SYS_DIR"/foo.conf");
+	UT_VERIFY( Resource::find_config("foo", RES_SYS_ONLY, NULL) == SAMPLE_SYS_DIR"/foo.conf");
+
+	// restore env vars and delete files
+	edelib_setenv(CONFIG_HOME_ENV, config_home_saved.c_str(), 1);
+	edelib_setenv(CONFIG_DIRS_ENV, config_dirs_saved.c_str(), 1);
+
+	file_remove(SAMPLE_USER_DIR"/foo.conf");
+	file_remove(SAMPLE_SYS_DIR"/foo.conf");
+	dir_remove(SAMPLE_SYS_DIR);
+	dir_remove(SAMPLE_USER_DIR);
+	dir_remove(SAMPLE_RES_DIR);
+}
 
 UT_FUNC(ResourceTestFindData, "Test resource data find")
 {

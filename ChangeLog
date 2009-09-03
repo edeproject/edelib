@@ -10,7 +10,8 @@
 	* edelib/Resource.h:
 	* src/Resource.cpp: 
 	* test/resource.cpp: allow find_data() to have default prefix, as
-	find_config() too
+	find_config() too; added find_in_config_dir(); allow prefix to
+	have NULL value, so it can be ignored
 
 2009-09-02  Sanel <karijes@users.sourceforge.net>
 
