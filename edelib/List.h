@@ -308,11 +308,6 @@ public:
 	 * \param it is element to be removed
 	 */
 	iterator erase(iterator it) {
-		if(sz <= 1) {
-			clear();
-			return 0;
-		}
-
 		// do not allow erase(l.end())
 		E_ASSERT(it.node != tail && "Bad code! erase() on end()!!!");
 

@@ -1,3 +1,9 @@
+2009-09-08  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/List.h: fix a bug when erase() would be called in the loop with
+	already assigned end() value
+	* test/list.cpp: test for above bug
+
 2009-09-07  Sanel <karijes@users.sourceforge.net>
 
 	* Jamrules: fix error value propagation to the shell

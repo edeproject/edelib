@@ -149,6 +149,31 @@ UT_FUNC(ListTestErase, "Test list erase")
 	UT_VERIFY( (*it) == 3 );
 }
 
+UT_FUNC(ListTestEraseLoop, "Test list erase loop")
+{
+	int n_loop = 0, n_items = 0;
+
+	list<int*> ls;
+	ls.push_back(new int(1));
+	ls.push_back(new int(2));
+	ls.push_back(new int(3));
+	ls.push_back(new int(4));
+	ls.push_back(new int(5));
+	ls.push_back(new int(6));
+	ls.push_back(new int(7));
+
+	n_items = ls.size();
+
+	list<int*>::iterator it = ls.begin(), it_end = ls.end();
+	while(it != it_end) {
+		n_loop++;
+		delete *it;
+		it = ls.erase(it);
+	}
+
+	UT_VERIFY( n_loop == n_items );
+}
+
 UT_FUNC(ListTestEqual, "Test list equality operators")
 {
 	list<int> l1, l2;
@@ -273,7 +298,6 @@ UT_FUNC(ListTestPtrSort, "Test pointer list sort")
 	}
 }
 
-#if 0
 #include <list>
 UT_FUNC(ListComparison, "Test std::list comparison")
 {
@@ -371,4 +395,3 @@ UT_FUNC(ListComparison, "Test std::list comparison")
 	for(unsigned int i = 0; i < els.size(); i++, ++eit, ++sit)
 		UT_VERIFY( *eit == *sit );
 }
-#endif
