@@ -1,3 +1,9 @@
+2009-09-17  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/IconLoader.h:
+	* src/IconLoader.cpp: by default, return icon size as requested, even if
+	we are need to scale it
+
 2009-09-08  Sanel <karijes@users.sourceforge.net>
 
 	* edelib/List.h: fix a bug when erase() would be called in the loop with
