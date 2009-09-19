@@ -32,6 +32,8 @@
 
 EDELIB_NS_BEGIN
 
+#define NOT_SET(var, key) (!((var) & (key)))
+
 static const char* fallback_icon  = "empty";
 IconLoader* IconLoader::pinstance = NULL;
 
@@ -119,18 +121,17 @@ const char* IconLoader::get_icon_path(const char* name, IconSizes sz, IconContex
 Fl_Shared_Image* IconLoader::get_icon(const char* name, 
 									  IconSizes sz, 
 									  IconContext ctx, 
-									  bool allow_absolute_path, 
-									  bool resize_icon) 
+									  unsigned long options)
 {
-	Fl_Shared_Image* img = NULL;
 	const char* path;
-
+	Fl_Shared_Image* img = NULL;
 	/* Fl_Shared_Image::get(xxx, 0, 0) will not resize image */
 	int sz_wh = 0;
-	if(resize_icon)
+
+	if(NOT_SET(options, ICON_LOADER_OPTION_NO_ICON_SCALE))
 		sz_wh = (int)sz;
 
-	if(allow_absolute_path) {
+	if(NOT_SET(options, ICON_LOADER_OPTION_NO_ABSOLUTE_PATH)) {
 		/* try to directly open it */
 		img = Fl_Shared_Image::get(name, sz_wh, sz_wh);
 		if(img)
@@ -138,7 +139,7 @@ Fl_Shared_Image* IconLoader::get_icon(const char* name,
 	}
 
 	path = get_icon_path(name, sz, ctx);
-	img = Fl_Shared_Image::get(path, sz_wh, sz_wh);
+	img  = Fl_Shared_Image::get(path, sz_wh, sz_wh);
 
 	/* no image, try fallback then */
 	if(!img && fallback_icon) {
@@ -153,19 +154,17 @@ bool IconLoader::set_icon(const char* name,
 						  Fl_Widget* widget, 
 						  IconSizes sz, 
 						  IconContext ctx, 
-						  bool allow_absolute_path, 
-						  bool redraw_widget,
-						  bool resize_icon)
+						  unsigned long options)
 {
 	Fl_Shared_Image* img = NULL;
 	IconLoaderItem* item;
 	int sz_wh = 0;
 
-	if(resize_icon)
+	if(NOT_SET(options, ICON_LOADER_OPTION_NO_ICON_SCALE))
 		sz_wh = (int)sz;
 
 	/* try to directly open it */
-	if(allow_absolute_path)
+	if(NOT_SET(options, ICON_LOADER_OPTION_NO_ABSOLUTE_PATH))
 		img = Fl_Shared_Image::get(name, sz_wh, sz_wh);
 	
 	/* then go inside icon theme */
@@ -186,7 +185,7 @@ bool IconLoader::set_icon(const char* name,
 
 	widget->image(img);
 
-	if(redraw_widget)
+	if(NOT_SET(options, ICON_LOADER_OPTION_NO_WIDGET_REDRAW))
 		widget->redraw();
 
 	return true;
@@ -235,17 +234,20 @@ void IconLoader::reload_icons(void) {
 
 void IconLoader::repoll_icons(void) {
 	Fl_Shared_Image* img;
+	IconLoaderItem* item;
 	ItemsIter it = items.begin(), it_end = items.end();
 
 	while(it != it_end) {
+		item = *it;
+
 		/* 
 		 * when widget get's destroyed, it's image goes too; this is good since we can
 		 * check that with Fl_Shared_Image::find() because it will not exists in Fl_Shared_Image cache
 		 */
-		img = Fl_Shared_Image::find((*it)->path.c_str(), (*it)->size_wh, (*it)->size_wh);
+		img = Fl_Shared_Image::find(item->path.c_str(), item->size_wh, item->size_wh);
 		if(!img) {
 			/* if not exists, then it was deleted; remove it from our list then */
-			delete *it;
+			delete item;
 			it = items.erase(it);
 		} else {
 			++it;
@@ -288,10 +290,9 @@ IconLoader* IconLoader::instance() {
 Fl_Shared_Image* IconLoader::get(const char* name, 
 								 IconSizes sz, 	
 								 IconContext ctx, 
-								 bool allow_absolute_path, 
-								 bool resize_icon) 
+								 unsigned long options)
 {
-	return IconLoader::instance()->get_icon(name, sz, ctx, allow_absolute_path, resize_icon);
+	return IconLoader::instance()->get_icon(name, sz, ctx, options);
 }
 
 /* static */
@@ -304,11 +305,9 @@ bool IconLoader::set(Fl_Widget* widget,
 					 const char* name, 
 					 IconSizes sz, 
 					 IconContext ctx, 
-					 bool allow_absolute_path, 
-					 bool redraw_widget, 
-					 bool resize_icon) 
+					 unsigned long options)
 {
-	return IconLoader::instance()->set_icon(name, widget, sz, ctx, allow_absolute_path, redraw_widget, resize_icon);
+	return IconLoader::instance()->set_icon(name, widget, sz, ctx, options);
 }
 
 /* static */

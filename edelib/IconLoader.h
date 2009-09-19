@@ -31,6 +31,18 @@ EDELIB_NS_BEGIN
 class IconLoaderItem;
 
 /**
+ * \enum IconLoaderOptions
+ * \brief Settable options for IconLoader functions
+ *
+ * \todo Explain these better in IconLoader class, with some examples
+ */
+enum IconLoaderOptions {
+	ICON_LOADER_OPTION_NO_ABSOLUTE_PATH = (1 << 1),  ///< do not see given the path as absolute icon path
+	ICON_LOADER_OPTION_NO_WIDGET_REDRAW = (1 << 2),  ///< do not redraw widget
+	ICON_LOADER_OPTION_NO_ICON_SCALE    = (1 << 3)   ///< do not scale icon
+};
+
+/**
  * \class IconLoader
  * \brief Loads icons with IconTheme
  *
@@ -85,10 +97,8 @@ private:
 public:
 #ifndef SKIP_DOCS
 	const char* get_icon_path(const char* name, IconSizes sz, IconContext ctx);
-	Fl_Shared_Image* get_icon(const char* name, IconSizes sz, IconContext ctx, 
-			bool allow_absolute_path, bool resize_icon);
-	bool set_icon(const char* name, Fl_Widget* widget, IconSizes sz, IconContext ctx, 
-			bool allow_absolute_path, bool redraw_widget, bool resize_icon);
+	Fl_Shared_Image* get_icon(const char* name, IconSizes sz, IconContext ctx, unsigned long options);
+	bool set_icon(const char* name, Fl_Widget* widget, IconSizes sz, IconContext ctx, unsigned long options);
 	void load_theme(const char* name);
 	void reload_icons(void);
 	void repoll_icons(void);
@@ -142,20 +152,22 @@ public:
 
 	/**
 	 * Returns image object by searching icon that matches name, size and context. First, it will check
-	 * if <em>name</em> is absolute path to the icon (when <em>allow_absolute_path</em> was true, which is 
-	 * default) and will try to load it. If fails, it will consult icon theme.
+	 * if <em>name</em> is absolute path to the icon (unless <em>ICON_LOADER_OPTION_NO_ABSOLUTE_PATH</em> 
+	 * was used in <em>options</em>) and will try to load it. If fails, it will consult icon theme.
 	 *
 	 * Returned icon will match <em>sz</em> size; if it is larger or smaller than the loaded, it will be scalled
-	 * to the given size. If <em>resize_icon</em> is false, scaling will not be done.
+	 * to the given size. If <em>ICON_LOADER_OPTION_NO_ICON_SCALE</em> was set, scaling will not be done.
 	 *
 	 * If icon wasn't found, fallback icon will be loaded. If fails, NULL will be returned. For further members 
 	 * of Fl_Shared_Image, see FLTK documentation.
+	 *
+	 * <em>options</em> is used to OR IconLoaderOptions values.
 	 */
 	static Fl_Shared_Image* get(const char* name, IconSizes sz, IconContext ctx = ICON_CONTEXT_ANY, 
-			bool allow_absolute_path = true, bool resize_icon = true);
+			unsigned long options = 0);
 
 	/**
-	 * Returns full path to given icon name. If icon wasn't found, returned string will be empty
+	 * Returns full path to given icon name. If icon wasn't found, returned string will be empty.
 	 */
 	static String get_path(const char* name, IconSizes sz, IconContext ctx = ICON_CONTEXT_ANY);
 
@@ -166,12 +178,13 @@ public:
 	 *
 	 * It will try to load icon the sam way as get() does: first it will check if <em>name</em> is
 	 * absolute path then will go in icon theme. If this fails, it will try to load fallback icon and if 
-	 * succeeded (in one of the cases), it will redraw the widget (if <em>redraw_widget</em> is set to true).
+	 * succeeded (in one of the cases), it will redraw the widget (unless <em>ICON_LOADER_OPTION_NO_WIDGET_REDRAW</em> 
+	 * was OR-ed in <em>options</em>).
 	 *
 	 * To retrieve the image object of set image, you can use image() function from given widget object.
 	 */
 	static bool set(Fl_Widget* widget, const char* name, IconSizes sz, IconContext ctx = ICON_CONTEXT_ANY,
-			bool allow_absolute_path = true, bool redraw_widget = true, bool resize_icon = true);
+			unsigned long options = 0);
 
 	/**
 	 * Returns IconTheme object.

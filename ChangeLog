@@ -1,3 +1,9 @@
+2009-09-18  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/IconLoader.h:
+	* src/IconLoader.cpp: use OR-ing to store settable options; much more
+	convinient and verbose
+
 2009-09-17  Sanel <karijes@users.sourceforge.net>
 
 	* edelib/IconLoader.h:
