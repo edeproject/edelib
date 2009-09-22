@@ -40,8 +40,11 @@
 #include <edelib/MenuBase.h>
 
 #ifdef __APPLE__
-#  include <Carbon/Carbon.h>
+# include <Carbon/Carbon.h>
 #endif
+
+/* do not allow arrows to stretch; looks bad */
+#define FLTK_FIXED_ARROW_SIZE 1
 
 /* in FLTK */
 extern char fl_draw_shortcut;
@@ -127,7 +130,6 @@ public:
 
 #define LEADING 4 // extra vertical leading
 
-#include <stdio.h>
 // width of label, including effect of & characters and image if given
 int MenuItem::measure(int* hp, const MenuBase* m) const {
   Fl_Label l;
@@ -460,6 +462,7 @@ void menuwindow::autoscroll(int n) {
 }
 
 ////////////////////////////////////////////////////////////////
+#include <stdio.h>
 void menuwindow::drawentry(const MenuItem* m, int n, int eraseit, int label_gap) {
   if (!m) return; // this happens if -1 is selected item and redrawn
 
@@ -481,6 +484,11 @@ void menuwindow::drawentry(const MenuItem* m, int n, int eraseit, int label_gap)
   // the shortcuts and arrows assumme fl_color() was left set by draw():
   if (m->submenu()) {
     int sz = (hh-7)&-2;
+    // Sanel: add fixed arrow size
+#ifdef FLTK_FIXED_ARROW_SIZE
+    if (sz > 8) sz = 8;
+#endif
+
     int y1 = yy+(hh-sz)/2;
     int x1 = xx+ww-sz-3;
     fl_polygon(x1+2, y1, x1+2, y1+sz, x1+sz/2+2, y1+sz/2);

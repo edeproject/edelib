@@ -1,3 +1,8 @@
+2009-09-21  Sanel <karijes@users.sourceforge.net>
+
+	* src/MenuItem.cpp: removed included stdio.h header; made submenu arrows
+	fixed size: looks much "normally"
+
 2009-09-18  Sanel <karijes@users.sourceforge.net>
 
 	* edelib/IconLoader.h:
