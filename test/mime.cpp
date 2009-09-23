@@ -18,7 +18,6 @@ UT_FUNC(MimeTypeTest, "Test MimeType")
 	mt.set("Jamfile");
 	UT_VERIFY( mt.type() == "application/octet-stream" );
 	UT_VERIFY( mt.comment() == "unknown" );
-	UT_VERIFY( mt.icon_name() == "application-octet-stream" );
 
 	mt.set("mime.o");
 	UT_VERIFY( mt.type() == "application/x-object" );
@@ -44,8 +43,6 @@ UT_FUNC(MimeTypeTest, "Test MimeType")
 	UT_VERIFY( mt2.comment() == "" );
 	UT_VERIFY( mt2.icon_name() == "" );
 
-	/* folder 
-	 * FIXME: '/usr/' would crash on NetBSD's buildbot. Cause is deep inside xdgmime library */
 	mt.set("/usr");
 
 	UT_VERIFY( mt.type() == "inode/directory" );
@@ -71,4 +68,8 @@ UT_FUNC(MimeTypeTestCaveat, "Test MimeType caveats")
 	UT_VERIFY( mt.icon_name() == "folder") ;
 
 	dir_remove(".emacs.d");
+
+	/* this would crash previous xdgmime changes on NetBSD (Bug 155) */
+	mt.set("/");
+	UT_VERIFY( mt.type() == "inode/directory" );
 }

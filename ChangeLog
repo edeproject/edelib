@@ -5,6 +5,8 @@
 	* src/xdgmime/xdgmime.c: added xdg_mime_get_mime_type_for_file2() that
 	will always do stat() on target file; xdg_mime_get_mime_type_for_file()
 	code was reverted to original implementation
+	* test/mime.cpp: test for known crash on NetBSD, for previous xdgmime
+	changes (Bug 155); dumped icon name test against object file
 
 2009-09-21  Sanel <karijes@users.sourceforge.net>
 
