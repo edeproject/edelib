@@ -18,10 +18,10 @@ UT_FUNC(MimeTypeTest, "Test MimeType")
 	mt.set("Jamfile");
 	UT_VERIFY( mt.type() == "application/octet-stream" );
 	UT_VERIFY( mt.comment() == "unknown" );
+	UT_VERIFY( mt.icon_name() == "application-octet-stream");
 
 	mt.set("mime.o");
 	UT_VERIFY( mt.type() == "application/x-object" );
-	UT_VERIFY( mt.icon_name() == "application-x-object" );
 
 	/* duplicate, should not reload comment */
 	UT_VERIFY( mt.comment() == "object code" );
