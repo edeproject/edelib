@@ -1,3 +1,11 @@
+2009-09-23  Sanel <karijes@users.sourceforge.net>
+
+	* src/MimeType.cpp:
+	* src/xdgmime/xdgmime.h:
+	* src/xdgmime/xdgmime.c: added xdg_mime_get_mime_type_for_file2() that
+	will always do stat() on target file; xdg_mime_get_mime_type_for_file()
+	code was reverted to original implementation
+
 2009-09-21  Sanel <karijes@users.sourceforge.net>
 
 	* src/MenuItem.cpp: removed included stdio.h header; made submenu arrows

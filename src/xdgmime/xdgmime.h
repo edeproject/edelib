@@ -70,6 +70,8 @@ typedef void (*XdgMimeDestroy)  (void *user_data);
 #define xdg_mime_type_unknown                 XDG_ENTRY(type_unknown)
 #define xdg_mime_get_icon                     XDG_ENTRY(get_icon)
 #define xdg_mime_get_generic_icon             XDG_ENTRY(get_generic_icon)
+
+#define xdg_mime_get_mime_type_for_file2      XDG_ENTRY(get_mime_type_for_file2)
 #define xdg_mime_find_data                    XDG_ENTRY(find_data)
 
 #define _xdg_mime_mime_type_equal             XDG_RESERVED_ENTRY(mime_type_equal)
@@ -129,6 +131,11 @@ const char  *_xdg_mime_unalias_mime_type           (const char *mime);
  */
 const char  *xdg_mime_find_data                    (const char *name);
 
+
+/* Sanel: added
+ * Apply stat() on file always, so directories with 'extension (e.g. 'emacs.d') are not seen as files.
+ */
+const char  *xdg_mime_get_mime_type_for_file2      (const char *file_name);
 
 #ifdef __cplusplus
 }

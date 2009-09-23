@@ -55,7 +55,7 @@ bool MimeType::set(const char* filename) {
 
 	mcmt.clear(); mtype.clear(); micon.clear();
 
-	const char* res = xdg_mime_get_mime_type_for_file(filename, NULL);
+	const char* res = xdg_mime_get_mime_type_for_file2(filename);
 
 	if(!res) {
 		status = 0;
