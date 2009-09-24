@@ -31,9 +31,15 @@ AC_DEFUN([EDELIB_DBUS], [
 
 			dnl newer dbus versions deprecate dbus_watch_get_fd() with dbus_watch_get_unix_fd()
 			AC_MSG_CHECKING([for dbus_watch_get_unix_fd()])
+			CFLAGS_saved=$CFLAGS
+			LIBS_saved=$LIBS
+
+			CFLAGS="$CFLAGS $DBUS_CFLAGS"
+			LIBS="$LIBS $DBUS_LIBS"
+
 			AC_LANG_SAVE
 			AC_LANG_C
-			AC_TRY_COMPILE([
+			AC_TRY_LINK([
 				#include <dbus/dbus.h>
 			],[
 				DBusWatch *ww;
@@ -47,6 +53,9 @@ AC_DEFUN([EDELIB_DBUS], [
 			else
 				AC_MSG_RESULT(no)
 			fi
+
+			CFLAGS=$CFLAGS_saved
+			LIBS=$LIBS_saved
 		else
 			AC_MSG_RESULT(no)
 			AC_MSG_ERROR([D-Bus libraries not found! Please install them first])

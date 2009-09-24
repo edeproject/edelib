@@ -1,3 +1,9 @@
+2009-09-24  Sanel <karijes@users.sourceforge.net>
+
+	* m4/dbus.m4:
+	* src/EdbusConnection.cpp: dbus_watch_get_unix_fd() is marked as
+	deprecated in newer dbus versions
+
 2009-09-23  Sanel <karijes@users.sourceforge.net>
 
 	* src/MimeType.cpp:
