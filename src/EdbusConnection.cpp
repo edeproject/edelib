@@ -28,6 +28,11 @@
 #include <edelib/EdbusConnection.h>
 #include <edelib/EdbusObjectPath.h>
 
+/* newer dbus versions deprecate dbus_watch_get_fd */
+#ifdef HAVE_DBUS_WATCH_GET_UNIX_FD
+# define dbus_watch_get_fd dbus_watch_get_unix_fd
+#endif
+
 EDELIB_NS_BEGIN
 
 typedef list<DBusWatch*> WatchList;

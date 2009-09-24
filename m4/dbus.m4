@@ -28,6 +28,25 @@ AC_DEFUN([EDELIB_DBUS], [
 			if test "$GCC" = yes; then
 				DBUS_CFLAGS="-Wno-long-long $DBUS_CFLAGS"
 			fi
+
+			dnl newer dbus versions deprecate dbus_watch_get_fd() with dbus_watch_get_unix_fd()
+			AC_MSG_CHECKING([for dbus_watch_get_unix_fd()])
+			AC_LANG_SAVE
+			AC_LANG_C
+			AC_TRY_COMPILE([
+				#include <dbus/dbus.h>
+			],[
+				DBusWatch *ww;
+				dbus_watch_get_unix_fd(ww);
+			],[have_dbus_watch_get_unix_fd=yes],[have_dbus_watch_get_unix_fd=no])
+			AC_LANG_RESTORE
+
+			if test "$have_dbus_watch_get_unix_fd" = yes; then
+				AC_DEFINE(HAVE_DBUS_WATCH_GET_UNIX_FD, 1, [Define to 1 if you have dbus_watch_get_unix_fd()])
+				AC_MSG_RESULT(yes)
+			else
+				AC_MSG_RESULT(no)
+			fi
 		else
 			AC_MSG_RESULT(no)
 			AC_MSG_ERROR([D-Bus libraries not found! Please install them first])
