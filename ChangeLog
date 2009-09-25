@@ -3,6 +3,8 @@
 	* Jamconfig.in:
 	* Jamrules: LIBS from configure should be used, not LDLIBS
 	* m4/various.m4: use only gcc specific flags for gcc
+	* Jamrules.in:
+	* Jamrules: moving STDLIB to Jamrules; some warning flags for SunStudio
 
 2009-09-24  Sanel <karijes@users.sourceforge.net>
 
