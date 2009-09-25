@@ -20,15 +20,19 @@ dnl --enable-debug and --enable-profile options
 AC_DEFUN([EDELIB_DEVELOPMENT], [
 	AC_ARG_ENABLE(debug, [  --enable-debug          enable debug],,enable_debug=no)
 	if test "$enable_debug" = yes; then
-		DEBUG_FLAGS="$DEBUG_FLAGS -g3"
-		dnl clear all optimization flags
-		OPTIM_FLAGS=""
+		if test "$ac_compiler_gnu" = yes; then
+			DEBUG_FLAGS="$DEBUG_FLAGS -g3"
+			dnl clear all optimization flags
+			OPTIM_FLAGS=""
+		fi
 	fi
 
 	AC_ARG_ENABLE(profile, [  --enable-profile        enable profile],,enable_profile=no)
 	if test "$enable_profile" = yes; then
-		DEBUG_FLAGS="$DEBUG_FLAGS -pg"
-		dnl clear all optimization flags
-		OPTIM_FLAGS=""
+		if test "$ac_compiler_gnu" = yes; then
+			DEBUG_FLAGS="$DEBUG_FLAGS -pg"
+			dnl clear all optimization flags
+			OPTIM_FLAGS=""
+		fi
 	fi
 ])

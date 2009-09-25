@@ -2,6 +2,7 @@
 
 	* Jamconfig.in:
 	* Jamrules: LIBS from configure should be used, not LDLIBS
+	* m4/various.m4: use only gcc specific flags for gcc
 
 2009-09-24  Sanel <karijes@users.sourceforge.net>
 
