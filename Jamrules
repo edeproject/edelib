@@ -54,7 +54,7 @@ OPTIM     = ;
 CCFLAGS   = $(CFLAGS) -I$(TOP) ;
 C++FLAGS  = $(CXXFLAGS) -I$(TOP) ;
 LINKFLAGS = $(LDFLAGS) ;
-LINKLIBS  = $(LDLIBS) ;
+LINKLIBS  = $(LIBS) ;
 
 # directories used to place final library and 
 # by tests to construct correct paths

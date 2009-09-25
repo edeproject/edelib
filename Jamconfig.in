@@ -40,10 +40,10 @@ MSGFMT   = "@MSGFMT@" ;
 SED      = "@SED@" ;
 
 # general flags and libraries
-CCFLAGS      ?= "@CFLAGS@" ;
-CXXFLAGS    ?= "@CXXFLAGS@" ;
-LDFLAGS     ?= "@LDFLAGS@" ;
-LDLIBS      ?= "@LDLIBS@" ;
+CCFLAGS  ?= "@CFLAGS@" ;
+CXXFLAGS ?= "@CXXFLAGS@" ;
+LDFLAGS  ?= "@LDFLAGS@" ;
+LIBS     ?= "@LIBS@" ;
 
 # for fltk and X11
 FLTK_CFLAGS    ?= "@FLTK_CFLAGS@" ;

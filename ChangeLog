@@ -1,3 +1,8 @@
+2009-09-25  Sanel <karijes@users.sourceforge.net>
+
+	* Jamconfig.in:
+	* Jamrules: LIBS from configure should be used, not LDLIBS
+
 2009-09-24  Sanel <karijes@users.sourceforge.net>
 
 	* m4/dbus.m4:
