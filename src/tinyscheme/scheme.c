@@ -1067,8 +1067,9 @@ static pointer mk_atom(scheme *sc, char *q) {
 
 /* make constant */
 static pointer mk_sharp_const(scheme *sc, char *name) {
-     long    x;
-     char    tmp[256];
+     long           x = 0;
+	 unsigned long ux = 0;
+     char          tmp[256];
 
      if (!strcmp(name, "t"))
           return (sc->T);
@@ -1076,15 +1077,15 @@ static pointer mk_sharp_const(scheme *sc, char *name) {
           return (sc->F);
      else if (*name == 'o') {/* #o (octal) */
           snprintf(tmp, sizeof(tmp), "0%s", name+1);
-          sscanf(tmp, "%lo", &x);
-          return (mk_integer(sc, x));
+          sscanf(tmp, "%lo", &ux);
+          return (mk_integer(sc, ux));
      } else if (*name == 'd') {    /* #d (decimal) */
           sscanf(name+1, "%ld", &x);
           return (mk_integer(sc, x));
      } else if (*name == 'x') {    /* #x (hex) */
           snprintf(tmp, sizeof(tmp), "0x%s", name+1);
-          sscanf(tmp, "%lx", &x);
-          return (mk_integer(sc, x));
+          sscanf(tmp, "%lx", &ux);
+          return (mk_integer(sc, ux));
      } else if (*name == 'b') {    /* #b (binary) */
           x = binary_decode(name+1);
           return (mk_integer(sc, x));
@@ -1098,13 +1099,13 @@ static pointer mk_sharp_const(scheme *sc, char *name) {
                c='\r';
           } else if(stricmp(name+1,"tab")==0) {
                c='\t';
-     } else if(name[1]=='x' && name[2]!=0) {
-          int c1=0;
-          if(sscanf(name+2,"%x",&c1)==1 && c1<256) {
-               c=c1;
-          } else {
-               return sc->NIL;
-     }
+          } else if(name[1]=='x' && name[2]!=0) {
+               unsigned int c1=0;
+               if(sscanf(name+2,"%x",&c1)==1 && c1<256) {
+                    c=c1;
+               } else {
+                    return sc->NIL;
+               }
 #if USE_ASCII_NAMES
           } else if(is_ascii_name(name+1,&c)) {
                /* nothing */
@@ -1151,7 +1152,7 @@ E2:  setmark(p);
           p = q;
           goto E2;
      }
- E5:  q = cdr(p); /* down cdr */
+E5:  q = cdr(p); /* down cdr */
      if (q && !is_mark(q)) {
           cdr(p) = t;
           t = p;
@@ -1201,6 +1202,7 @@ static void gc(scheme *sc, pointer a, pointer b) {
   mark(sc->loadport);
 
   /* Sanel: added from the latest cvs code */
+  mark(car(sc->sink));
   mark(sc->c_nest);
 
   /* mark variables a, b */
@@ -3269,6 +3271,7 @@ static pointer opexe_3(scheme *sc, enum scheme_opcodes op) {
                case OP_GRE:   comp_func=num_gt; break;
                case OP_LEQ:   comp_func=num_le; break;
                case OP_GEQ:   comp_func=num_ge; break;
+               default: break;
           }
           x=sc->args;
           v=nvalue(car(x));
@@ -3521,6 +3524,7 @@ static pointer opexe_4(scheme *sc, enum scheme_opcodes op) {
                case OP_OPEN_INFILE:     prop=port_input; break;
                case OP_OPEN_OUTFILE:    prop=port_output; break;
                case OP_OPEN_INOUTFILE: prop=port_input|port_output; break;
+               default: break;
           }
           p=port_from_filename(sc,strvalue(car(sc->args)),prop);
           if(p==sc->NIL) {
@@ -3539,6 +3543,7 @@ static pointer opexe_4(scheme *sc, enum scheme_opcodes op) {
                case OP_OPEN_INSTRING:     prop=port_input; break;
                case OP_OPEN_OUTSTRING:    prop=port_output; break;
                case OP_OPEN_INOUTSTRING:  prop=port_input|port_output; break;
+               default: break;
           }
           p=port_from_string(sc, strvalue(car(sc->args)),
 	             strvalue(car(sc->args))+strlength(car(sc->args)), prop);
@@ -3563,6 +3568,8 @@ static pointer opexe_4(scheme *sc, enum scheme_opcodes op) {
      case OP_CURR_ENV: /* current-environment */
           s_return(sc,sc->envir);
 
+     default:
+          break;
      }
      return sc->T;
 }
@@ -4285,6 +4292,8 @@ int scheme_init_custom_alloc(scheme *sc, func_alloc malloc, func_dealloc free) {
   sc->global_env = sc->envir; 
 
   /* Sanel: added from the latest cvs code */
+  typeflag(sc->sink) = (T_PAIR | MARK);
+  car(sc->sink) = sc->NIL;
   sc->c_nest = sc->NIL;
 
   /* init else */

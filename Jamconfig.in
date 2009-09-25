@@ -40,14 +40,14 @@ MSGFMT   = "@MSGFMT@" ;
 SED      = "@SED@" ;
 
 # general flags and libraries
-CCFLAGS  ?= "@CFLAGS@" ;
+CFLAGS   ?= "@CFLAGS@" ;
 CXXFLAGS ?= "@CXXFLAGS@" ;
 LDFLAGS  ?= "@LDFLAGS@" ;
 LIBS     ?= "@LIBS@" ;
 
 # some warning flags for SunStudio
 if $(SUN_COMPILER) {
-	$(CCFLAGS)  += "+w2" ;
+	$(CFLAGS)   += "+w2" ;
 	$(CXXFLAGS) += "+w2" ;
 }
 

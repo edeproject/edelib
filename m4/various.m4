@@ -22,9 +22,11 @@ AC_DEFUN([EDELIB_DEVELOPMENT], [
 	if test "$enable_debug" = yes; then
 		if test "$ac_compiler_gnu" = yes; then
 			DEBUG_FLAGS="$DEBUG_FLAGS -g3"
-			dnl clear all optimization flags
-			OPTIM_FLAGS=""
+		else
+			DEBUG_FLAGS="$DEBUG_FLAGS -g"
 		fi
+		dnl clear all optimization flags
+		OPTIM_FLAGS=""
 	fi
 
 	AC_ARG_ENABLE(profile, [  --enable-profile        enable profile],,enable_profile=no)
