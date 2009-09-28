@@ -18,8 +18,8 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __FILE_H__
-#define __FILE_H__
+#ifndef __EDELIB_FILE_H__
+#define __EDELIB_FILE_H__
 
 #include <stdio.h>
 #include "String.h"
@@ -294,4 +294,4 @@ EDELIB_API bool file_rename(const char* from, const char* to);
 EDELIB_API String file_path(const char* fname, bool skip_link = false);
 
 EDELIB_NS_END
-#endif // __FILE_H__
+#endif

@@ -18,8 +18,8 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __CONFIG_H__
-#define __CONFIG_H__
+#ifndef __EDELIB_CONFIG_H__
+#define __EDELIB_CONFIG_H__
 
 #include <stdio.h>
 #include "List.h"
@@ -426,4 +426,4 @@ EDELIB_API int config_getline(char** buff, int* len, FILE* f);
 #endif
 
 EDELIB_NS_END
-#endif // __CONFIG_H__
+#endif

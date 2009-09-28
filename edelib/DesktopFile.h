@@ -18,8 +18,8 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __DESKTOPFILE_H__
-#define __DESKTOPFILE_H__
+#ifndef __EDELIB_DESKTOPFILE_H__
+#define __EDELIB_DESKTOPFILE_H__
 
 #include "Config.h"
 #include "String.h"
@@ -314,4 +314,4 @@ public:
 };
 
 EDELIB_NS_END
-#endif // __DESKTOPFILE_H__
+#endif

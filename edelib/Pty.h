@@ -21,8 +21,8 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __PTY_H__
-#define __PTY_H__
+#ifndef __EDELIB_PTY_H__
+#define __EDELIB_PTY_H__
 
 #include "edelib-global.h"
 
@@ -77,5 +77,4 @@ public:
 };
 
 EDELIB_NS_END
-
-#endif	// _edelib_PTY_h_
+#endif

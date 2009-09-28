@@ -18,8 +18,8 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LISTENER_H__
-#define __LISTENER_H__
+#ifndef __EDELIB_LISTENER_H__
+#define __EDELIB_LISTENER_H__
 
 #include "edelib-global.h"
 
@@ -95,5 +95,4 @@ EDELIB_API inline int listener_wait(void) {
 }
 
 EDELIB_NS_END
-
 #endif

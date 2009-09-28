@@ -49,6 +49,8 @@ AC_PATH_PROG(XGETTEXT, xgettext)
 AC_PATH_PROG(DOXYGEN, doxygen)
 EDELIB_PROG_JAM
 
+EDELIB_COMPILER_NAME
+
 if test "$ac_compiler_gnu" = "yes"; then
 	SANITY_FLAGS="-Wall -pedantic"
 	DEBUG_FLAGS="-D_DEBUG"

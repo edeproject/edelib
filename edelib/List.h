@@ -18,8 +18,8 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __LIST_H__
-#define __LIST_H__
+#ifndef __EDELIB_LIST_H__
+#define __EDELIB_LIST_H__
 
 #include "Debug.h"
 
@@ -533,5 +533,4 @@ public:
 #endif
 
 EDELIB_NS_END
-
 #endif

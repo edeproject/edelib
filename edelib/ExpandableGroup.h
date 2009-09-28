@@ -18,8 +18,8 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __EXPANDABLEGROUP_H__
-#define __EXPANDABLEGROUP_H__
+#ifndef __EDELIB_EXPANDABLEGROUP_H__
+#define __EDELIB_EXPANDABLEGROUP_H__
 
 #include "edelib-global.h"
 
@@ -87,4 +87,4 @@ public:
 };
 
 EDELIB_NS_END
-#endif // __EXPANDABLEGROUP_H__
+#endif

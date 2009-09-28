@@ -18,8 +18,8 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __EDBUSDICT_H__
-#define __EDBUSDICT_H__
+#ifndef __EDELIB_EDBUSDICT_H__
+#define __EDELIB_EDBUSDICT_H__
 
 #include "EdbusData.h"
 #include "EdbusContainer.h"
@@ -199,5 +199,4 @@ struct EDELIB_API EdbusDict : public EdbusContainer<EdbusDictEntry> {
 };	
 
 EDELIB_NS_END
-
 #endif

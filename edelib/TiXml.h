@@ -23,8 +23,8 @@ distribution.
 */
 
 
-#ifndef __TIXML_H__
-#define __TIXML_H__
+#ifndef __EDELIB_TIXML_H__
+#define __EDELIB_TIXML_H__
 
 #include <ctype.h>
 #include <stdio.h>
@@ -2048,4 +2048,3 @@ private:
 #endif
 
 #endif
-

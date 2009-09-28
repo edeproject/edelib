@@ -18,8 +18,8 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __MESSAGEBOX_H__
-#define __MESSAGEBOX_H__
+#ifndef __EDELIB_MESSAGEBOX_H__
+#define __EDELIB_MESSAGEBOX_H__
 
 #include "edelib-global.h"
 
@@ -397,5 +397,4 @@ extern const char* (*fl_password)(const char* fmt, const char* deflt, ...);
 #endif
 
 EDELIB_NS_END
-
 #endif

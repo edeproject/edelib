@@ -18,8 +18,8 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __ICONLOADER_H__
-#define __ICONLOADER_H__
+#ifndef __EDELIB_ICONLOADER_H__
+#define __EDELIB_ICONLOADER_H__
 
 #include "IconTheme.h"
 

@@ -18,8 +18,8 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __EDBUSLIST_H__
-#define __EDBUSLIST_H__
+#ifndef __EDELIB_EDBUSLIST_H__
+#define __EDELIB_EDBUSLIST_H__
 
 #include "EdbusData.h"
 #include "EdbusContainer.h"
@@ -222,5 +222,4 @@ inline EdbusList& operator<<(EdbusList& lst, const EdbusData& val) {
 }
 
 EDELIB_NS_END
-
 #endif

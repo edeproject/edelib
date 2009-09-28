@@ -18,8 +18,8 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __NLS_H__
-#define __NLS_H__
+#ifndef __EDELIB_NLS_H__
+#define __EDELIB_NLS_H__
 
 #include "edelib-global.h"
 
@@ -86,4 +86,4 @@ EDELIB_API void nls_locale_from_c(char* old);
 EDELIB_API void nls_support_init(const char* appname, const char* dir);
 
 EDELIB_NS_END
-#endif // __NLS_H__
+#endif

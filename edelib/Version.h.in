@@ -18,8 +18,8 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __VERSION_H__
-#define __VERSION_H__
+#ifndef __EDELIB_VERSION_H__
+#define __EDELIB_VERSION_H__
 
 #define EDELIB_MAJOR_VERSION	@EDELIB_MAJOR_VERSION@
 #define EDELIB_MINOR_VERSION	@EDELIB_MINOR_VERSION@

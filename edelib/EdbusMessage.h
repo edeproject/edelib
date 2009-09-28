@@ -18,8 +18,8 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __EDBUSMESSAGE_H__
-#define __EDBUSMESSAGE_H__
+#ifndef __EDELIB_EDBUSMESSAGE_H__
+#define __EDELIB_EDBUSMESSAGE_H__
 
 #include "List.h"
 #include "EdbusData.h"
@@ -334,5 +334,4 @@ inline EdbusMessage& operator<<(EdbusMessage& m, const EdbusData& val) {
 }
 
 EDELIB_NS_END
-
 #endif

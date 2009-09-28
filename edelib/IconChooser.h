@@ -18,8 +18,8 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __ICONCHOOSER_H__
-#define __ICONCHOOSER_H__
+#ifndef __EDELIB_ICONCHOOSER_H__
+#define __EDELIB_ICONCHOOSER_H__
 
 #include "String.h"
 #include "IconTheme.h"
@@ -64,4 +64,4 @@ EDELIB_API String icon_chooser(const char* dir);
 EDELIB_API String icon_chooser(IconSizes sz, IconContext ctx = ICON_CONTEXT_ANY);
 
 EDELIB_NS_END
-#endif // __ICONCHOOSER_H__
+#endif

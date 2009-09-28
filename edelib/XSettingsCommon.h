@@ -19,8 +19,8 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __XSETTINGSCOMMON_H__
-#define __XSETTINGSCOMMON_H__
+#ifndef __EDELIB_XSETTINGSCOMMON_H__
+#define __EDELIB_XSETTINGSCOMMON_H__
 
 #include "edelib-global.h"
 #include <X11/Xlib.h>

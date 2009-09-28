@@ -18,8 +18,8 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __TEMPFILE_H__
-#define __TEMPFILE_H__
+#ifndef __EDELIB_TEMPFILE_H__
+#define __EDELIB_TEMPFILE_H__
 
 #include <stdio.h>
 #include "String.h"

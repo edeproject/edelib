@@ -18,8 +18,8 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __UTIL_H__
-#define __UTIL_H__
+#ifndef __EDELIB_UTIL_H__
+#define __EDELIB_UTIL_H__
 
 #include "String.h"
 #include "List.h"
@@ -113,4 +113,4 @@ EDELIB_API int system_data_dirs(list<String>& lst);
 EDELIB_API String build_filename(const char* p1, const char* p2 = NULL, const char* p3 = NULL);
 
 EDELIB_NS_END
-#endif // __UTIL_H__
+#endif

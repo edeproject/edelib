@@ -18,8 +18,8 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __DATETIME_H__
-#define __DATETIME_H__
+#ifndef __EDELIB_DATETIME_H__
+#define __EDELIB_DATETIME_H__
 
 #include "edelib-global.h"
 
@@ -471,4 +471,4 @@ inline bool operator<=(const Time& t1, const Time& t2) { return (t1 == t2 || t1 
 #endif
 
 EDELIB_NS_END
-#endif // __DATETIME_H__
+#endif

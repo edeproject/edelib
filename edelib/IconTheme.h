@@ -18,8 +18,8 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __ICONTHEME_H__
-#define __ICONTHEME_H__
+#ifndef __EDELIB_ICONTHEME_H__
+#define __EDELIB_ICONTHEME_H__
 
 #include "String.h"
 #include "List.h"
@@ -149,4 +149,4 @@ public:
 };
 
 EDELIB_NS_END
-#endif // __ICONTHEME_H__
+#endif

@@ -18,8 +18,8 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __RUN_H__
-#define __RUN_H__
+#ifndef __EDELIB_RUN_H__
+#define __EDELIB_RUN_H__
 
 #include "edelib-global.h"
 
@@ -82,4 +82,4 @@ EDELIB_API int run_sync(const char* fmt, ...);
 EDELIB_API int run_async(const char* fmt, ...);
 
 EDELIB_NS_END
-#endif // __RUN_H__
+#endif

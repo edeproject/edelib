@@ -18,8 +18,8 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __DEBUG_H__
-#define __DEBUG_H__
+#ifndef __EDELIB_DEBUG_H__
+#define __EDELIB_DEBUG_H__
 
 #include "edelib-global.h"
 
@@ -191,4 +191,4 @@ enum ErrorMessageType {
 EDELIB_API void error_mesage_handler_install(void (*)(ErrorMessageType t, const char* msg));
 
 EDELIB_NS_END
-#endif // __DEBUG_H__
+#endif

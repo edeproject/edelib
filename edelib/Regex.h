@@ -18,8 +18,8 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __REGEX_H__
-#define __REGEX_H__
+#ifndef __EDELIB_REGEX_H__
+#define __EDELIB_REGEX_H__
 
 #include "List.h"
 #include "String.h"
@@ -173,5 +173,4 @@ public:
 };
 
 EDELIB_NS_END
-
 #endif

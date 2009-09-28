@@ -18,8 +18,8 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __WINDOW_H__
-#define __WINDOW_H__
+#ifndef __EDELIB_WINDOW_H__
+#define __EDELIB_WINDOW_H__
 
 #include "XSettingsClient.h"
 #include <FL/Fl_Double_Window.H>
@@ -272,5 +272,4 @@ public:
 };
 
 EDELIB_NS_END
-
 #endif

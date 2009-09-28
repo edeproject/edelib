@@ -26,8 +26,8 @@
 //	  o Keyboard navigation (up/down/left/right arrow)
 //
 
-#ifndef __TABLEBASE_H__
-#define __TABLEBASE_H__
+#ifndef __EDELIB_TABLEBASE_H__
+#define __EDELIB_TABLEBASE_H__
 
 #include "edelib-global.h"
 
@@ -700,5 +700,4 @@ public:
 };
 
 EDELIB_NS_END
-
-#endif /*_FL_TABLE_H*/
+#endif

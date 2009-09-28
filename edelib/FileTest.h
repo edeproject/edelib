@@ -18,8 +18,8 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __FILETEST_H__
-#define __FILETEST_H__
+#ifndef __EDELIB_FILETEST_H__
+#define __EDELIB_FILETEST_H__
 
 #include "edelib-global.h"
 
@@ -60,5 +60,4 @@ typedef enum {
 EDELIB_API bool file_test(const char* path, unsigned int flags);
 
 EDELIB_NS_END
-
 #endif

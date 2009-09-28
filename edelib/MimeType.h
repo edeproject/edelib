@@ -18,8 +18,8 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __MIMETYPE_H__
-#define __MIMETYPE_H__
+#ifndef __EDELIB_MIMETYPE_H__
+#define __EDELIB_MIMETYPE_H__
 
 #include "String.h"
 
@@ -113,4 +113,4 @@ public:
 }; 
 
 EDELIB_NS_END
-#endif // __MIMETYPE_H__
+#endif

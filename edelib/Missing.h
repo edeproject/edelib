@@ -18,8 +18,8 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __MISSING_H__
-#define __MISSING_H__
+#ifndef __EDELIB_MISSING_H__
+#define __EDELIB_MISSING_H__
 
 #include "edelib-global.h"
 

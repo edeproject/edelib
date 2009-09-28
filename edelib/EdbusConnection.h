@@ -18,8 +18,8 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __EDBUSCONNECTION_H__
-#define __EDBUSCONNECTION_H__
+#ifndef __EDELIB_EDBUSCONNECTION_H__
+#define __EDELIB_EDBUSCONNECTION_H__
 
 #include "EdbusMessage.h"
 
@@ -371,5 +371,4 @@ public:
 };
 
 EDELIB_NS_END
-
 #endif

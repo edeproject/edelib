@@ -19,8 +19,8 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __XSETTINGSMANAGER_H__
-#define __XSETTINGSMANAGER_H__
+#ifndef __EDELIB_XSETTINGSMANAGER_H__
+#define __EDELIB_XSETTINGSMANAGER_H__
 
 #include "XSettingsCommon.h"
 
@@ -114,5 +114,4 @@ public:
 };
 
 EDELIB_NS_END
-
 #endif

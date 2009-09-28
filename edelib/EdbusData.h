@@ -18,8 +18,8 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __EDBUSDATA_H__
-#define __EDBUSDATA_H__
+#ifndef __EDELIB_EDBUSDATA_H__
+#define __EDELIB_EDBUSDATA_H__
 
 #include <inttypes.h>
 #include "EdbusObjectPath.h"
@@ -493,5 +493,4 @@ struct EdbusVariant {
 };
 
 EDELIB_NS_END
-
 #endif

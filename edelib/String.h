@@ -18,8 +18,8 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __STRING_H__
-#define __STRING_H__
+#ifndef __EDELIB_STRING_H__
+#define __EDELIB_STRING_H__
 
 #include "edelib-global.h"
 #include <string.h>
@@ -456,4 +456,4 @@ inline bool operator<(const String& str1, const String& str2) { return (strcmp(s
 inline bool operator<=(const String& str1, const String& str2) { return (strcmp(str1.c_str(), str2.c_str()) <= 0); }
 
 EDELIB_NS_END
-#endif // __STRING_H__
+#endif

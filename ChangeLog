@@ -1,3 +1,10 @@
+2009-09-26  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/*.h: added EDELIB part to header protector 
+	* edelib/StrUtil.h: dumping isws() helper function; stringtok() will
+	now directly use strchr()
+	* m4/compiler-name.m4: macro for deducing compiler name
+
 2009-09-25  Sanel <karijes@users.sourceforge.net>
 
 	* Jamconfig.in:

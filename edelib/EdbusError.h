@@ -18,8 +18,8 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __EDBUSERROR_H__
-#define __EDBUSERROR_H__
+#ifndef __EDELIB_EDBUSERROR_H__
+#define __EDELIB_EDBUSERROR_H__
 
 #include "edelib-global.h"
 
@@ -122,5 +122,4 @@ public:
 };
 
 EDELIB_NS_END
-
 #endif

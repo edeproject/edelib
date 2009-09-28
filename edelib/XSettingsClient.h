@@ -19,8 +19,8 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __XSETTINGSCLIENT_H__
-#define __XSETTINGSCLIENT_H__
+#ifndef __EDELIB_XSETTINGSCLIENT_H__
+#define __EDELIB_XSETTINGSCLIENT_H__
 
 #include "XSettingsCommon.h"
 
@@ -194,5 +194,4 @@ public:
 };
 
 EDELIB_NS_END
-
 #endif

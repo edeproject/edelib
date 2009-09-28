@@ -18,8 +18,8 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __RESOURCE_H__
-#define __RESOURCE_H__
+#ifndef __EDELIB_RESOURCE_H__
+#define __EDELIB_RESOURCE_H__
 
 #include "String.h"
 
@@ -454,4 +454,4 @@ public:
 };
 
 EDELIB_NS_END
-#endif // __RESOURCE_H__
+#endif

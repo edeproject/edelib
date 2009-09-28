@@ -20,8 +20,8 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 
-#ifndef __MENUBASE_H__
-#define __MENUBASE_H__
+#ifndef __EDELIB_MENUBASE_H__
+#define __EDELIB_MENUBASE_H__
 
 #include "edelib-global.h"
 

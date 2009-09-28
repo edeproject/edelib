@@ -18,8 +18,8 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __WINDOWXID_H__
-#define __WINDOWXID_H__
+#ifndef __EDELIB_WINDOWXID_H__
+#define __EDELIB_WINDOWXID_H__
 
 #include "edelib-global.h"
 
@@ -44,5 +44,4 @@ EDELIB_NS_BEGIN
 void window_xid_create(Fl_Window* win, void (*before_map_func)(Fl_Window*) = NULL, int background_pixel = -1);
 
 EDELIB_NS_END
-
 #endif

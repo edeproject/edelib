@@ -18,8 +18,8 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __SIPC_H__
-#define __SIPC_H__
+#ifndef __EDELIB_SIPC_H__
+#define __EDELIB_SIPC_H__
 
 #include "edelib-global.h"
 
@@ -162,5 +162,4 @@ public:
 };
 
 EDELIB_NS_END
-
 #endif

@@ -18,8 +18,8 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __DIRECTORY_H__
-#define __DIRECTORY_H__
+#ifndef __EDELIB_DIRECTORY_H__
+#define __EDELIB_DIRECTORY_H__
 
 #include "String.h"
 #include "List.h"
@@ -135,6 +135,5 @@ EDELIB_API String dir_current(void);
 EDELIB_API bool dir_list(const char* dir, list<String>& lst, bool full_path = false, bool show_hidden = false,
 		bool show_dots = false);
 
-
 EDELIB_NS_END
-#endif // __DIRECTORY_H__
+#endif

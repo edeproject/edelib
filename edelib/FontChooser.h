@@ -18,6 +18,9 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef __EDELIB_FONTCHOOSER_H__
+#define __EDELIB_FONTCHOOSER_H__
+
 #include "edelib-global.h"
 
 EDELIB_NS_BEGIN
@@ -49,3 +52,4 @@ EDELIB_NS_BEGIN
 EDELIB_API int font_chooser(const char* name, const char* family, int& retsize, const char* default_name = 0, int default_size = 0);
 
 EDELIB_NS_END
+#endif

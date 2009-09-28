@@ -18,8 +18,8 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __SEVENSEG_H__
-#define __SEVENSEG_H__
+#ifndef __EDELIB_SEVENSEG_H__
+#define __EDELIB_SEVENSEG_H__
 
 #include "edelib-global.h"
 #include <FL/Fl_Widget.H>
@@ -93,4 +93,4 @@ public:
 };
 
 EDELIB_NS_END
-#endif // __SEVENSEG_H__
+#endif

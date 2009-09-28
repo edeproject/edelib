@@ -18,8 +18,8 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __EDBUSOBJECTPATH_H__
-#define __EDBUSOBJECTPATH_H__
+#ifndef __EDELIB_EDBUSOBJECTPATH_H__
+#define __EDELIB_EDBUSOBJECTPATH_H__
 
 #include "String.h"
 
@@ -154,5 +154,4 @@ inline EdbusObjectPath& operator<<(EdbusObjectPath& p, const char* el) {
 }
 
 EDELIB_NS_END
-
 #endif

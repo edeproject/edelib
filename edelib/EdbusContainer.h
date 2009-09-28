@@ -18,10 +18,9 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __EDBUSCONTAINER_H__
-#define __EDBUSCONTAINER_H__
+#ifndef __EDELIB_EDBUSCONTAINER_H__
+#define __EDELIB_EDBUSCONTAINER_H__
 
-#include "Debug.h"
 #include "List.h"
 
 EDELIB_NS_BEGIN
@@ -162,5 +161,4 @@ protected:
 };
 
 EDELIB_NS_END
-
 #endif

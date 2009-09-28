@@ -21,8 +21,8 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __PTYPROCESS_H__
-#define __PTYPROCESS_H__
+#ifndef __EDELIB_PTYPROCESS_H__
+#define __EDELIB_PTYPROCESS_H__
 
 #include "edelib-global.h"
 #include <sys/types.h>
@@ -193,5 +193,4 @@ public:
 };
 
 EDELIB_NS_END
-
 #endif
