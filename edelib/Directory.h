@@ -137,3 +137,4 @@ EDELIB_API bool dir_list(const char* dir, list<String>& lst, bool full_path = fa
 
 EDELIB_NS_END
 #endif
+
