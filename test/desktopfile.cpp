@@ -16,8 +16,8 @@ const char* desktop_sample = "\
    Hidden=False\n                      \
    Terminal=False\n                    \
    Icon=sample-icon\n                  \
-   Exec=sample-exec\n                  \
-   TryExec=sample-try-exec-must-fail\n \
+   Exec=sh --help --another-param\n    \
+   TryExec=sh\n                        \
    OnlyShowIn=EDE;gnome;\n";
 
 UT_FUNC(DesktopFileTest, "Test DesktopFile class")
@@ -66,6 +66,8 @@ UT_FUNC(DesktopFileTest2, "Test DesktopFile class (2)")
 	}
 
 	char buff[256];
+	bool found;
+
 	UT_VERIFY( desk.type() == DESK_FILE_TYPE_APPLICATION );
 	UT_VERIFY( desk.hidden() == false );
 	UT_VERIFY( desk.terminal() == false );
@@ -74,10 +76,10 @@ UT_FUNC(DesktopFileTest2, "Test DesktopFile class (2)")
 	UT_VERIFY( STR_EQUAL(buff, "sample-icon") );
 
 	UT_VERIFY( desk.exec(buff, 256) == true );
-	UT_VERIFY( STR_EQUAL(buff, "sample-exec") );
+	UT_VERIFY( STR_EQUAL(buff, "/bin/sh --help --another-param") );
 
-	// here try_exec() must fail since it checks if value actually exists on system
-	UT_VERIFY( desk.try_exec(buff, 256) == false );
+	UT_VERIFY( desk.try_exec(found) == true );
+	UT_VERIFY( found == true );
 
 	UT_VERIFY( desk.only_show_in(buff, 256) == true );
 	UT_VERIFY( STR_EQUAL(buff, "EDE;gnome;") );

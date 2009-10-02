@@ -25,8 +25,8 @@
 #include <edelib/Debug.h>
 #include <edelib/StrUtil.h>
 
-#define BUFF_SIZE   256
-#define DENTRY_KEY  "Desktop Entry"
+#define BUF_SIZE   256
+#define ENTRY_SECT  "Desktop Entry"
 
 EDELIB_NS_BEGIN
 
@@ -44,21 +44,22 @@ bool DesktopFile::load(const char* fname) {
 		return false;
 	}
 
-	// check Type key, if present, this is .desktop file, otherwise not
-	char buff[BUFF_SIZE];
-	if(!Config::get(DENTRY_KEY, "Type", buff, BUFF_SIZE)) {
+	char buf[BUF_SIZE];
+
+	/* check if Type key, if present, this is .desktop file, otherwise not */
+	if(!Config::get(ENTRY_SECT, "Type", buf, BUF_SIZE)) {
 		errcode = DESK_FILE_ERR_BAD;
 		return false;
 	}
 
-	if(strncmp(buff, "Application", 11) == 0)
+	if(strncmp(buf, "Application", 11) == 0)
 		dtype = DESK_FILE_TYPE_APPLICATION;
-	else if(strncmp(buff, "Link", 4) == 0)
+	else if(strncmp(buf, "Link", 4) == 0)
 		dtype = DESK_FILE_TYPE_LINK;
-	else if(strncmp(buff, "Directory", 9) == 0)
+	else if(strncmp(buf, "Directory", 9) == 0)
 		dtype = DESK_FILE_TYPE_DIRECTORY;
 	else {
-		// specs said that if none of above values are find, file is not .desktop file
+		/* specs said that if none of above values are find, file is not .desktop file */
 		dtype = DESK_FILE_TYPE_UNKNOWN;
 		errcode = DESK_FILE_ERR_BAD;
 		return false;
@@ -91,9 +92,9 @@ void DesktopFile::create_new(DesktopFileType t) {
 			E_ASSERT(0 && "Feeding me with invalid type value! Make sure type is application, link or directory");
 	}
 
-	Config::set(DENTRY_KEY, "Type", val);
+	Config::set(ENTRY_SECT, "Type", val);
 
-	// now mark it as valid
+	/* now mark it as valid */
 	errcode = DESK_FILE_SUCCESS;
 }
 
@@ -105,8 +106,8 @@ DesktopFileType DesktopFile::type(void) {
 bool DesktopFile::name(char* val, int len) {
 	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, false);
 
-	// TODO: Name key is required too; place it next to Type
-	if(!Config::get_localized(DENTRY_KEY, "Name", val, len))
+	/* TODO: Name key is required too; place it next to Type */
+	if(!Config::get_localized(ENTRY_SECT, "Name", val, len))
 		return false;
 	return true;
 }
@@ -114,7 +115,7 @@ bool DesktopFile::name(char* val, int len) {
 bool DesktopFile::generic_name(char* val, int len) {
 	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, false);
 
-	if(!Config::get_localized(DENTRY_KEY, "GenericName", val, len))
+	if(!Config::get_localized(ENTRY_SECT, "GenericName", val, len))
 		return false;
 	return true;
 }
@@ -122,7 +123,7 @@ bool DesktopFile::generic_name(char* val, int len) {
 bool DesktopFile::comment(char* val, int len) {
 	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, false);
 
-	if(!Config::get_localized(DENTRY_KEY, "Comment", val, len))
+	if(!Config::get_localized(ENTRY_SECT, "Comment", val, len))
 		return false;
 	return true;
 }
@@ -130,7 +131,7 @@ bool DesktopFile::comment(char* val, int len) {
 bool DesktopFile::icon(char* val, int len) {
 	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, false);
 
-	if(!Config::get_localized(DENTRY_KEY, "Icon", val, len))
+	if(!Config::get_localized(ENTRY_SECT, "Icon", val, len))
 		return false;
 	return true;
 }
@@ -138,30 +139,55 @@ bool DesktopFile::icon(char* val, int len) {
 bool DesktopFile::exec(char* val, int len) {
 	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, false);
 
-	if(!Config::get(DENTRY_KEY, "Exec", val, len))
+	char buf[BUF_SIZE];
+
+	if(!Config::get(ENTRY_SECT, "Exec", buf, BUF_SIZE))
 		return false;
+
+	char*  pos;
+	String path;
+
+	/* remove possible parameters so the path can be deduced correctly */
+	if((pos = strchr(buf, ' ')) || (pos = strchr(buf, '\t'))) {
+		String tmp;
+
+		tmp.assign(buf, pos - buf);
+		path = file_path(tmp.c_str());
+
+		/* the spec requries executable must not have '=' */
+		if(path.empty() || (path.find('=', 0) != String::npos))
+			return false;
+
+		/* append remaining parameters */
+		path += pos;
+	} else {
+		path = file_path(buf);
+
+		/* the spec requries executable must not have '=' */
+		if(path.empty() || (path.find('=', 0) != String::npos))
+			return false;
+	}
+
+	strncpy(val, path.c_str(), len);
+	val[len - 1] = '\0';
 	return true;
 }
 
-bool DesktopFile::try_exec(char* val, int len) {
+bool DesktopFile::try_exec(bool& program_found) {
 	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, false);
 
-	char* buff = new char[256];
+	char buf[BUF_SIZE];
 
-	if(!Config::get(DENTRY_KEY, "TryExec", buff, 256)) {
-		delete [] buff;
+	if(!Config::get(ENTRY_SECT, "TryExec", buf, BUF_SIZE))
 		return false;
-	}
 
-	String path = file_path(buff);
+	String path = file_path(buf);
 	if(path.empty()) {
-		delete [] buff;
-		return false;
+		program_found = false;
+		return true;
 	}
 
-	strncpy(val, buff, len);
-	val[len-1] = '\0';
-	delete [] buff;
+	program_found = true;
 	return true;
 }
 
@@ -169,7 +195,7 @@ bool DesktopFile::path(char* val, int len) {
 	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, false);
 	E_RETURN_VAL_IF_FAIL(dtype == DESK_FILE_TYPE_APPLICATION, false);
 
-	if(!Config::get(DENTRY_KEY, "Path", val, len))
+	if(!Config::get(ENTRY_SECT, "Path", val, len))
 		return false;
 	return true;
 }
@@ -178,7 +204,7 @@ bool DesktopFile::url(char* val, int len) {
 	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, false);
 	E_RETURN_VAL_IF_FAIL(dtype == DESK_FILE_TYPE_LINK, false);
 
-	if(!Config::get(DENTRY_KEY, "URL", val, len))
+	if(!Config::get(ENTRY_SECT, "URL", val, len))
 		return false;
 	return true;
 }
@@ -186,7 +212,7 @@ bool DesktopFile::url(char* val, int len) {
 bool DesktopFile::mime_type(char* val, int len) {
 	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, false);
 
-	if(!Config::get(DENTRY_KEY, "MimeType", val, len))
+	if(!Config::get(ENTRY_SECT, "MimeType", val, len))
 		return false;
 	return true;
 }
@@ -195,7 +221,7 @@ bool DesktopFile::no_display(void) {
 	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, false);
 
 	bool ret;
-	Config::get(DENTRY_KEY, "NoDisplay", ret, false);
+	Config::get(ENTRY_SECT, "NoDisplay", ret, false);
 	return ret;
 }
 
@@ -203,7 +229,7 @@ bool DesktopFile::hidden(void) {
 	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, false);
 
 	bool ret;
-	Config::get(DENTRY_KEY, "Hidden", ret, false);
+	Config::get(ENTRY_SECT, "Hidden", ret, false);
 	return ret;
 }
 
@@ -211,7 +237,7 @@ bool DesktopFile::terminal(void) {
 	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, false);
 
 	bool ret;
-	Config::get(DENTRY_KEY, "Terminal", ret, false);
+	Config::get(ENTRY_SECT, "Terminal", ret, false);
 	return ret;
 }
 
@@ -219,14 +245,14 @@ bool DesktopFile::startup_notify(void) {
 	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, false);
 
 	bool ret;
-	Config::get(DENTRY_KEY, "StartupNotify", ret, false);
+	Config::get(ENTRY_SECT, "StartupNotify", ret, false);
 	return ret;
 }
 
 bool DesktopFile::only_show_in(char* val, int len) {
 	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, false);
 
-	if(!Config::get(DENTRY_KEY, "OnlyShowIn", val, len))
+	if(!Config::get(ENTRY_SECT, "OnlyShowIn", val, len))
 		return false;
 	return true;
 }
@@ -235,7 +261,7 @@ bool DesktopFile::only_show_in(list<String>& lst) {
 	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, false);
 
 	char buff[256];
-	if(!Config::get(DENTRY_KEY, "OnlyShowIn", buff, sizeof(buff)-1))
+	if(!Config::get(ENTRY_SECT, "OnlyShowIn", buff, sizeof(buff)-1))
 		return false;
 
 	stringtok(lst, buff, ";");
@@ -245,7 +271,7 @@ bool DesktopFile::only_show_in(list<String>& lst) {
 bool DesktopFile::not_show_in(char* val, int len) {
 	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, false);
 
-	if(!Config::get(DENTRY_KEY, "NotShowIn", val, len))
+	if(!Config::get(ENTRY_SECT, "NotShowIn", val, len))
 		return false;
 	return true;
 }
@@ -254,7 +280,7 @@ bool DesktopFile::not_show_in(list<String>& lst) {
 	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, false);
 
 	char buff[256];
-	if(!Config::get(DENTRY_KEY, "NotShowIn", buff, sizeof(buff)-1))
+	if(!Config::get(ENTRY_SECT, "NotShowIn", buff, sizeof(buff)-1))
 		return false;
 
 	stringtok(lst, buff, ";");
@@ -280,12 +306,12 @@ void DesktopFile::set_type(DesktopFileType t) {
 			break;
 	}
 
-	Config::set(DENTRY_KEY, "Type", val);
+	Config::set(ENTRY_SECT, "Type", val);
 }
 
 #define SET_LOCALIZED(key, val) \
 	E_RETURN_IF_FAIL(errcode == DESK_FILE_SUCCESS || errcode == DESK_FILE_EMPTY); \
-	Config::set_localized(DENTRY_KEY, key, val)
+	Config::set_localized(ENTRY_SECT, key, val)
 
 void DesktopFile::set_name(const char* val) {
 	SET_LOCALIZED("Name", val);
@@ -305,7 +331,7 @@ void DesktopFile::set_icon(const char* val) {
 
 #define SET_KEY(key, val) \
 	E_RETURN_IF_FAIL(errcode == DESK_FILE_SUCCESS || errcode == DESK_FILE_EMPTY); \
-	Config::set(DENTRY_KEY, key, val)
+	Config::set(ENTRY_SECT, key, val)
 
 void DesktopFile::set_exec(const char* val) {
 	SET_KEY("Exec", val);
@@ -348,7 +374,7 @@ void DesktopFile::set_only_show_in(const list<String>& lst) {
 	 * Desktop entry specs requires only one of OnlyShowIn or NotShowIn
 	 * can exists in one section 
 	 */
-	if(Config::key_exist(DENTRY_KEY, "NotShowIn"))
+	if(Config::key_exist(ENTRY_SECT, "NotShowIn"))
 		return;
 
 	if(lst.empty())
@@ -366,7 +392,7 @@ void DesktopFile::set_only_show_in(const list<String>& lst) {
 		all += ';'; // intentionally since value must ends with ':'
 	}
 
-	Config::set(DENTRY_KEY, "OnlyShowIn", all.c_str());
+	Config::set(ENTRY_SECT, "OnlyShowIn", all.c_str());
 }
 
 void DesktopFile::set_not_show_in(const list<String>& lst) {
@@ -374,7 +400,7 @@ void DesktopFile::set_not_show_in(const list<String>& lst) {
 	 * Desktop entry specs requires only one of OnlyShowIn or NotShowIn
 	 * can exists in one section 
 	 */
-	if(Config::key_exist(DENTRY_KEY, "OnlyShowIn"))
+	if(Config::key_exist(ENTRY_SECT, "OnlyShowIn"))
 		return;
 
 	if(lst.empty())
@@ -392,7 +418,7 @@ void DesktopFile::set_not_show_in(const list<String>& lst) {
 		all += ';'; // intentionally since value must ends with ':'
 	}
 
-	Config::set(DENTRY_KEY, "NotShowIn", all.c_str());
+	Config::set(ENTRY_SECT, "NotShowIn", all.c_str());
 }
 
 EDELIB_NS_END

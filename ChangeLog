@@ -1,3 +1,13 @@
+2009-10-02  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/DesktopFile.h:
+	* src/DesktopFile.cpp:
+	* test/desktopfile.cpp: behaviour of exec() is now much more conformant to
+	The Desktop Entry Spec, returning full executable path without touching
+	the arguments (escaping and special variables are not implemented yet);
+	try_exec() now checks only if execuatable exists; tests updated
+	* src/File.cpp: used E_DIR_SEPARATOR
+
 2009-09-29  Sanel <karijes@users.sourceforge.net>
 
 	* edelib/Directory.h: newline at the end of the file or SunStudio 11 C++

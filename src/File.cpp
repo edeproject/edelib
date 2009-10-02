@@ -32,6 +32,7 @@
 #include <edelib/Debug.h>
 #include <edelib/StrUtil.h>
 #include <edelib/List.h>
+#include <edelib/Directory.h>
 
 EDELIB_NS_BEGIN
 
@@ -156,8 +157,8 @@ String file_path(const char* fname, bool skip_link) {
 
 	const char* sptr;
 	for(; it != it_end; ++it) {
-		/* assume PATH does not contains entries ending with '/' */
-		(*it) += '/';
+		/* assume PATH does not contains entries ending with E_DIR_SEPARATOR */
+		(*it) += E_DIR_SEPARATOR;
 		(*it) += fname;
 		sptr = (*it).c_str();
 

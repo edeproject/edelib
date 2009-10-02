@@ -157,17 +157,23 @@ public:
 	bool icon(char* val, int len);
 
 	/**
-	 * Get value from <em>Exec</em> key.
+	 * Get value from <em>Exec</em> key. The value should be an executable program optionally followed 
+	 * by one or more arguments. If executable program wasn't specified with its full path, the executable is
+	 * looked up in $PATH environment variable. If not found, this function will return false.
+	 *
 	 * \todo special variables and symbol escaping are not implemented yet
 	 */
 	bool exec(char* val, int len);
 
 	/**
-	 * Get value from <em>TryExec</em> key. If value is not empty, it will check does it
-	 * really exists on the system (inspecting $PATH variable). If does, it will return true
-	 * and fill destination. In other case will just return false.
+	 * Get value from <em>TryExec</em> key. <em>TryExec</em> key contains program executable name and this
+	 * function will try to determine if the program is actually installed. This will be done by looking
+	 * either if full path was given or in $PATH environment variable.
+	 *
+	 * \return false if <em>TryExec</em> is not present in the file
+	 * \param program_found will be true if program found; otherwise will be false
 	 */
-	bool try_exec(char* val, int len);
+	bool try_exec(bool& program_found);
 
 	/**
 	 * Get value from <em>Path</em> key. If value is not empty and type is DESK_FILE_TYPE_APPLICATION
