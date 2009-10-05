@@ -1,3 +1,8 @@
+2009-10-05  Sanel <karijes@users.sourceforge.net>
+
+	* m4/fltk.m4: remove possible optimization flags; on NetBSD fltk-config
+	uses -O2 (stupid)
+
 2009-10-02  Sanel <karijes@users.sourceforge.net>
 
 	* edelib/DesktopFile.h:
