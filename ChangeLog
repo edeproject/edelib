@@ -1,3 +1,9 @@
+2009-10-07  Sanel <karijes@users.sourceforge.net>
+
+	* m4/largefile.m4:
+	* configure.in: --enable-largefile added, so code can be compiled with
+	large file support
+
 2009-10-05  Sanel <karijes@users.sourceforge.net>
 
 	* m4/fltk.m4: remove possible optimization flags; on NetBSD fltk-config
