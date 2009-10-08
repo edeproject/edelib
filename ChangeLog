@@ -1,5 +1,9 @@
 2009-10-08  Sanel <karijes@users.sourceforge.net>
 
+	* === Released 2.0 beta ===
+
+2009-10-08  Sanel <karijes@users.sourceforge.net>
+
 	* m4/fltk.m4: pass checks for FLTK 1.1.10
 
 2009-10-07  Sanel <karijes@users.sourceforge.net>
