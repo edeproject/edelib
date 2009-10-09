@@ -1,3 +1,7 @@
+2009-10-09  Sanel <karijes@users.sourceforge.net>
+
+	* src/Run.cpp: silent a warning
+
 2009-10-08  Sanel <karijes@users.sourceforge.net>
 
 	* === Released 2.0 beta ===

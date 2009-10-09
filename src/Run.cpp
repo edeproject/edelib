@@ -260,7 +260,9 @@ static int fork_child_async(const char* cmd, int* child_pid) {
 	int child_pid_report_pipe[2] = {-1, -1};
 	int child_err_report_pipe[2] = {-1, -1};
 	int null_dev;
-	int ret;
+
+	/* by default is assumed how command wasn't found */
+	int ret = RUN_NOT_FOUND;
 
 	errno = 0;
 	if(pipe(child_pid_report_pipe) != 0) {
