@@ -1,3 +1,7 @@
+2009-10-13  Sanel <karijes@users.sourceforge.net>
+
+	* Jamrules: use DESTDIR if given (modified patch from José Romildo)
+
 2009-10-12  Sanel <karijes@users.sourceforge.net>
 
 	* edelib/EdbusConnection.h:

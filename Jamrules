@@ -281,7 +281,13 @@ rule MakeTest
 rule MakeInstallPrivate
 {
 	local i t s ;
-	local dir = $(1) ;
+	local dir ;
+
+	if $(DESTDIR) {
+		dir = $(DESTDIR)$(1) ;
+	} else {
+		dir = $(1) ;
+	}
 
 	MkDir $(dir) ;
 
@@ -331,7 +337,13 @@ rule InstallStaticLibrary
 rule InstallSharedLibrary
 {	
 	local i t s ;
-	local dir = $(1) ;
+	local dir ;
+
+	if $(DESTDIR) {
+		dir = $(DESTDIR)$(1) ;
+	} else {
+		dir = $(1) ;
+	}
 
 	MkDir $(dir) ;
 
@@ -385,7 +397,13 @@ rule InstallFile
 # InstallDirectory <location-dir> : <directory> ;
 rule InstallDirectory
 {
-	local dir = $(1) ;
+	local dir ;
+
+	if $(DESTDIR) {
+		dir = $(DESTDIR)$(1) ;
+	} else {
+		dir = $(1) ;
+	}
 
 	MkDir $(dir) ;
 
