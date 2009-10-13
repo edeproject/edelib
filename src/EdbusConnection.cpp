@@ -43,6 +43,7 @@ typedef list<const char*>::iterator ObjectPathListIter;
 
 struct EdbusConnImpl {
 	DBusConnection* conn;
+	EdbusError*     err;
 
 	EdbusCallback   signal_cb;
 	void*           signal_cb_data;
@@ -59,37 +60,15 @@ struct EdbusConnImpl {
 	WatchList*      watch_list;
 	DBusTimeout*    timeout;
 
-	/* signal and method tables */
-	EdbusCallbackItem* signal_table;
-	unsigned int       signal_table_sz;
-
-	EdbusCallbackItem* method_table;
-	unsigned int       method_table_sz;
-
-	/*
-	 * so we can know how many times 
-	 * add_signal_match()/add_method_match() was called 
-	 */
+	/* so we can know how many times  add_signal_match()/add_method_match() was called */
 	unsigned int       signal_matches;
 	unsigned int       method_matches;
 };
 
-static EdbusCallbackItem* scan_callback_table(EdbusCallbackItem* table, unsigned int sz, const EdbusMessage& msg) {
-	E_ASSERT(table != NULL);
-
-	for(unsigned int i = 0; i < sz; i++) {
-		if((strcmp(table[i].interface, msg.interface()) == 0) && (strcmp(table[i].name, msg.member()) == 0)) {
-			/* allow NULL in path */
-			if(!table[i].path)
-				return &table[i];
-
-			/* have path, scan it */
-			if(strcmp(table[i].path, msg.path()) == 0)
-				return &table[i];
-		}
-	}
-
-	return NULL;
+static void copy_error(DBusError* e, EdbusConnImpl* impl) {
+	if(impl->err)
+		delete impl->err;
+	impl->err = new EdbusError(e);
 }
 
 static bool have_registered_object(EdbusConnImpl* dc, const char* path) {
@@ -124,40 +103,20 @@ static DBusHandlerResult edbus_signal_filter(DBusConnection* connection, DBusMes
 		goto out;
 
 	if(mtype == DBUS_MESSAGE_TYPE_SIGNAL) {
-		if(dc->signal_table || dc->signal_cb) {
+		if(dc->signal_cb) {
 			EdbusMessage m(msg);
-
-			if(dc->signal_table) {
-				/* signal table has precedence over plain signal callback */
-				EdbusCallbackItem* item = scan_callback_table(dc->signal_table, dc->signal_table_sz, m);
-				if(item) {
-					ret = (item->callback)(&m, item->data);
-					goto out;
-				}
-			} else if(dc->signal_cb) {
-				/* call signal callback */
-				ret = (dc->signal_cb)(&m, dc->signal_cb_data);
-				goto out;
-			}
+			/* call signal callback */
+			ret = (dc->signal_cb)(&m, dc->signal_cb_data);
+			goto out;
 		}
-	} 
+	}
 	
 	if(mtype == DBUS_MESSAGE_TYPE_METHOD_CALL) {
-		if(dc->method_table || dc->method_call_cb) {
+		if(dc->method_call_cb) {
 			EdbusMessage m(msg);
-
-			if(dc->method_table) {
-				/* method table has precedence over plain method callback */
-				EdbusCallbackItem* item = scan_callback_table(dc->method_table, dc->method_table_sz, m);
-				if(item) {
-					ret = (item->callback)(&m, item->data);
-					goto out;
-				}
-			} else if(dc->method_call_cb) {
-				/* call method callback */
-				ret = (dc->method_call_cb)(&m, dc->method_call_cb_data);
-				goto out;
-			}
+			/* call method callback */
+			ret = (dc->method_call_cb)(&m, dc->method_call_cb_data);
+			goto out;
 		}
 	}
 
@@ -383,6 +342,7 @@ bool EdbusConnection::connect(EdbusConnectionType ctype) {
 	if(dc == NULL) {
 		dc = new EdbusConnImpl;
 		dc->conn = NULL;
+		dc->err = NULL;
 
 		dc->signal_cb = NULL;
 		dc->signal_cb_data = NULL;
@@ -392,12 +352,6 @@ bool EdbusConnection::connect(EdbusConnectionType ctype) {
 
 		dc->watch_list = NULL;
 		dc->timeout = NULL;
-
-		dc->signal_table = NULL;
-		dc->signal_table_sz = 0;
-
-		dc->method_table = NULL;
-		dc->method_table_sz = 0;
 
 		dc->signal_matches = dc->method_matches = 0;
 	}
@@ -420,6 +374,8 @@ bool EdbusConnection::connect(EdbusConnectionType ctype) {
 
 	if(dbus_error_is_set(&err)) {
 		E_WARNING(E_STRLOC ": Connection error: %s\n", err.message);
+
+		copy_error(&err, dc);
 		dbus_error_free(&err);
 	}
 
@@ -429,12 +385,17 @@ bool EdbusConnection::connect(EdbusConnectionType ctype) {
 	return true;
 }
 
-bool EdbusConnection::disconnect(void) {
+void EdbusConnection::disconnect(void) {
 	/* only non-shared connections are allowed to be closed */
 	if(dc->conn)
 		dbus_connection_unref(dc->conn);
 
 	dc->conn = NULL;
+
+	if(dc->err) {
+		delete dc->err;
+		dc->err = NULL;
+	}
 
 	/* TODO: does this needs to be nulled ? */
 	dc->signal_cb = NULL;
@@ -444,12 +405,6 @@ bool EdbusConnection::disconnect(void) {
 	dc->method_call_cb_data = NULL;
 
 	dc->object_list.clear();
-
-	dc->signal_table = NULL;
-	dc->signal_table_sz = 0;
-
-	dc->method_table = NULL;
-	dc->method_table_sz = 0;
 
 	dc->signal_matches = dc->method_matches = 0;
 
@@ -473,13 +428,11 @@ bool EdbusConnection::disconnect(void) {
 		Fl::remove_timeout(timeout_cb);
 		dc->timeout = NULL;
 	}
-
-	return true;
 }
 
 bool EdbusConnection::send(const EdbusMessage& content) {
-	if(!dc || !dc->conn)
-		return false;
+	E_RETURN_VAL_IF_FAIL(dc != NULL, false);
+	E_RETURN_VAL_IF_FAIL(dc->conn != NULL, false);
 
 	bool ret;
 	dbus_uint32_t serial;
@@ -501,8 +454,8 @@ bool EdbusConnection::send(const EdbusMessage& content) {
 }
 
 bool EdbusConnection::send_with_reply_and_block(const EdbusMessage& content, int timeout_ms, EdbusMessage& ret) {
-	if(!dc || !dc->conn)
-		return false;
+	E_RETURN_VAL_IF_FAIL(dc != NULL, false);
+	E_RETURN_VAL_IF_FAIL(dc->conn != NULL, false);
 
 	DBusMessage* reply, *msg;
 	DBusError err;
@@ -519,6 +472,8 @@ bool EdbusConnection::send_with_reply_and_block(const EdbusMessage& content, int
 
 	if(dbus_error_is_set(&err)) {
 		E_WARNING(E_STRLOC ": Sending error: %s, %s\n", err.name, err.message);
+
+		copy_error(&err, dc);
 		dbus_error_free(&err);
 		return false;
 	}
@@ -528,8 +483,8 @@ bool EdbusConnection::send_with_reply_and_block(const EdbusMessage& content, int
 }
 
 bool EdbusConnection::request_name(const char* name, int mode) {
-	if(!dc || !dc->conn)
-		return false;
+	E_RETURN_VAL_IF_FAIL(dc != NULL, false);
+	E_RETURN_VAL_IF_FAIL(dc->conn != NULL, false);
 
 	E_ASSERT(mode >= 0 && "Invalid 'mode' value");
 
@@ -558,6 +513,8 @@ bool EdbusConnection::request_name(const char* name, int mode) {
 
 	if(dbus_error_is_set(&err)) {
 		E_WARNING(E_STRLOC ": Name request error: %s, %s\n", err.name, err.message);
+
+		copy_error(&err, dc);
 		dbus_error_free(&err);
 		ret = false;
 	}
@@ -566,66 +523,29 @@ bool EdbusConnection::request_name(const char* name, int mode) {
 }
 
 const char* EdbusConnection::unique_name(void) {
-	if(!dc || !dc->conn)
-		return NULL;
+	E_RETURN_VAL_IF_FAIL(dc != NULL, NULL);
+	E_RETURN_VAL_IF_FAIL(dc->conn != NULL, NULL);
+
 	return dbus_bus_get_unique_name(dc->conn);
 }
 
 void EdbusConnection::signal_callback(EdbusCallback cb, void* data) {
-	if(!dc)
-		return;
+	E_RETURN_IF_FAIL(dc != NULL);
 
 	dc->signal_cb = cb;
 	dc->signal_cb_data = data;
 }
 
 void EdbusConnection::method_callback(EdbusCallback cb, void* data) {
-	if(!dc)
-		return;
+	E_RETURN_IF_FAIL(dc != NULL);
 
 	dc->method_call_cb = cb;
 	dc->method_call_cb_data = data;
 }
 
-void EdbusConnection::signal_callback_table(EdbusCallbackItem* table, unsigned int sz) {
-	if(!dc)
-		return;
-
-	dc->signal_table = table;
-	dc->signal_table_sz = sz;
-}
-
-void EdbusConnection::signal_callback_table_data(unsigned int pos, void* data) {
-	if(!dc)
-		return;
-
-	E_ASSERT(dc->signal_table != NULL && "You must first set table via signal_callback_table()");
-	E_ASSERT(dc->signal_table_sz > pos && "Table member out of bounds");
-
-	dc->signal_table[pos].data = data;
-}
-
-void EdbusConnection::method_callback_table(EdbusCallbackItem* table, unsigned int sz) {
-	if(!dc)
-		return;
-
-	dc->method_table = table;
-	dc->method_table_sz = sz;
-}
-
-void EdbusConnection::method_callback_table_data(unsigned int pos, void* data) {
-	if(!dc)
-		return;
-
-	E_ASSERT(dc->method_table != NULL && "You must first set table via method_callback_table()");
-	E_ASSERT(dc->method_table_sz > pos && "Table member out of bounds");
-
-	dc->method_table[pos].data = data;
-}
-
 void EdbusConnection::add_signal_match(const char* path, const char* interface, const char* name) {
-	if(!dc || !dc->conn)
-		return;
+	E_RETURN_IF_FAIL(dc != NULL);
+	E_RETURN_IF_FAIL(dc->conn != NULL);
 
 	DBusError err;
 	dbus_error_init(&err);
@@ -644,8 +564,8 @@ void EdbusConnection::add_signal_match(const char* path, const char* interface, 
 }
 
 void EdbusConnection::add_method_match(const char* path, const char* interface, const char* name) {
-	if(!dc || !dc->conn)
-		return;
+	E_RETURN_IF_FAIL(dc != NULL);
+	E_RETURN_IF_FAIL(dc->conn != NULL);
 
 	const char* u = unique_name();
 	if(!u)
@@ -669,8 +589,8 @@ void EdbusConnection::add_method_match(const char* path, const char* interface, 
 }
 
 void EdbusConnection::register_object(const char* path) {
-	if(!dc || !dc->conn)
-		return;
+	E_RETURN_IF_FAIL(dc != NULL);
+	E_RETURN_IF_FAIL(dc->conn != NULL);
 
 	E_ASSERT(path != NULL);
 	E_ASSERT(EdbusObjectPath::valid_path(path) && "Got invalid object path");
@@ -680,8 +600,8 @@ void EdbusConnection::register_object(const char* path) {
 }
 
 void EdbusConnection::unregister_object(const char* path) {
-	if(!dc || !dc->conn)
-		return;
+	E_RETURN_IF_FAIL(dc != NULL);
+	E_RETURN_IF_FAIL(dc->conn != NULL);
 
 	E_ASSERT(path != NULL);
 	E_ASSERT(EdbusObjectPath::valid_path(path) && "Got invalid object path");
@@ -699,8 +619,8 @@ void EdbusConnection::unregister_object(const char* path) {
 }
 
 void EdbusConnection::setup_listener_with_fltk(void) {
-	if(!dc || !dc->conn)
-		return;
+	E_RETURN_IF_FAIL(dc != NULL);
+	E_RETURN_IF_FAIL(dc->conn != NULL);
 
 	setup_filter();
 
@@ -714,17 +634,24 @@ void EdbusConnection::setup_listener_with_fltk(void) {
 }
 
 void EdbusConnection::setup_listener(void) {
-	if(!dc || !dc->conn)
-		return;
+	E_RETURN_IF_FAIL(dc != NULL);
+	E_RETURN_IF_FAIL(dc->conn != NULL);
 
 	setup_filter();
 }
 
 int EdbusConnection::wait(int timout_ms) {
-	if(!dc || !dc->conn)
-		return 0;
+	E_RETURN_VAL_IF_FAIL(dc != NULL, 0);
+	E_RETURN_VAL_IF_FAIL(dc->conn != NULL, 0);
 
 	return dbus_connection_read_write_dispatch(dc->conn, timout_ms);
+}
+
+EdbusError* EdbusConnection::error(void) {
+	E_RETURN_VAL_IF_FAIL(dc != NULL, NULL);
+	E_RETURN_VAL_IF_FAIL(dc->conn != NULL, NULL);
+
+	return dc->err;
 }
 
 EDELIB_NS_END

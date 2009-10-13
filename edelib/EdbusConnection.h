@@ -22,6 +22,7 @@
 #define __EDELIB_EDBUSCONNECTION_H__
 
 #include "EdbusMessage.h"
+#include "EdbusError.h"
 
 EDELIB_NS_BEGIN
 
@@ -55,24 +56,6 @@ enum EdbusNameMode {
  * A callback type for method and signal callbacks
  */
 typedef int (*EdbusCallback)(const EdbusMessage*, void*);
-
-/**
- * \ingroup dbus
- * \class EdbusCallbackItem
- * \brief An item for callback table
- */
-struct EdbusCallbackItem {
-	/** object path */
-	const char*   path;
-	/** interface name */
-	const char*   interface;
-	/** method or signal name */
-	const char*   name;
-	/** a callback executed on method or signal name match */
-	EdbusCallback callback;
-	/** optinal data passed to the callback */
-	void*         data;
-};
 
 #ifndef SKIP_DOCS
 struct EdbusConnImpl;
@@ -179,25 +162,23 @@ public:
 	/**
 	 * Connects to either session or system bus.
 	 *
-	 * \return true if connected, otherwise false
+	 * \return true if connected, otherwise false and EdbusError object will be set
 	 * \param ctype says what connection is requested
 	 */
 	bool connect(EdbusConnectionType ctype);
 
 	/**
-	 * Disconnects from bus. Also clears internal watchers so you can issue
-	 * connect() again.
-	 *
-	 * \todo returning here is obsolete
-	 * \return always true
+	 * Disconnects from bus. Also clears internal watchers so you can issue connect() again.
 	 */
-	bool disconnect(void);
+	void disconnect(void);
 
 	/**
 	 * Sends a message.
 	 *
-	 * \return true if sending was succesfull
+	 * \return true if succesfully got reply
 	 * \param content is message to be send
+	 *
+	 * \note if send() fails, EdbusError will not be set since D-BUS default send function does not set error
 	 */
 	bool send(const EdbusMessage& content);
 
@@ -205,7 +186,7 @@ public:
 	 * Call remote method and wait for reply. It will block untill reply is arrived
 	 * or timer exceeded.
 	 *
-	 * \return true if succesfully got reply
+	 * \return true if succesfully got reply or false if not and EdbusError object (get via error()) will be set
 	 * \param content is message to be send
 	 * \param timeout_ms is waiting time for arrival in milliseconds
 	 * \param ret will be filled with reply content if this function returns true
@@ -233,7 +214,7 @@ public:
 	 * first, but request_name() will not return false. OR-ing with EDBUS_NAME_NO_REPLACE have no much sense, 
 	 * and if is detected, it is considered as plain EDBUS_NAME_NO_REPLACE.
 	 *
-	 * \return true if got requested name
+	 * \return true if got requested name or false if not and EdbusError object (get via error()) will be set
 	 * \param name is name to be requested
 	 * \param mode is what to do when requested name already exists
 	 */
@@ -261,43 +242,6 @@ public:
 	 * \param data is optional data that will be passed to the callback
 	 */
 	void method_callback(EdbusCallback cb, void* data);
-
-	/**
-	 * Register callback table for signals. If arrived signal matches item in table,
-	 * it will call callback from it.
-	 *
-	 * It works on first match; an item that is found, it's callback will be called, no
-	 * matter if later another callback is defined.
-	 *
-	 * \note signal table have precedence over plain signal_callback(); this means if you
-	 * set a table, and later set signal callback via signal_callback(), later will be ignored
-	 */
-	void signal_callback_table(EdbusCallbackItem* table, unsigned int sz);
-
-	/**
-	 * Set opional data to item in signal table. This data will be send to callback function.
-	 */
-	void signal_callback_table_data(unsigned int pos, void* data);
-
-	/**
-	 * Removes registered table.
-	 */
-	void remove_signal_callback_table(void) { signal_callback_table(NULL, 0); }
-
-	/**
-	 * Register callback table for method calls. The same rules applies as for signal_callback_table().
-	 */
-	void method_callback_table(EdbusCallbackItem* table, unsigned int sz);
-
-	/**
-	 * Set opional data to item in method call table. This data will be send to callback function.
-	 */
-	void method_callback_table_data(unsigned int pos, void* data);
-
-	/**
-	 * Removes registered table.
-	 */
-	void remove_method_callback_table(void) { method_callback_table(NULL, 0); }
 
 	/**
 	 * Install matcher for received signals. All signals that matches to the given
@@ -368,6 +312,12 @@ public:
 	 * \param timeout_ms is time in milliseconds to wait for connections
 	 */
 	int wait(int timeout_ms);
+
+	/**
+	 * Return last error that happened; if error wasn't set, returned value will be NULL. Error can be
+	 * invalid, so it must be checked too. \see EdbusError::valid()
+	 */
+	EdbusError* error(void);
 };
 
 EDELIB_NS_END

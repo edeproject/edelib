@@ -1,3 +1,11 @@
+2009-10-12  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/EdbusConnection.h:
+	* src/EdbusConnection.cpp: dumping method and signal matching tables since
+	they are not used; removed unneeded return value from disconnect(); added
+	error() member that will return EdbusError object, filled with received
+	error message
+
 2009-10-09  Sanel <karijes@users.sourceforge.net>
 
 	* src/Run.cpp: silent a warning
