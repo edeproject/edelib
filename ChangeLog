@@ -1,3 +1,8 @@
+2009-10-16  Sanel <karijes@users.sourceforge.net>
+
+	* Jamconfig.in:
+	* Jamrules: add DESTDIR to prefix, instead modifying every install rule
+
 2009-10-13  Sanel <karijes@users.sourceforge.net>
 
 	* Jamrules: use DESTDIR if given (modified patch from José Romildo)
