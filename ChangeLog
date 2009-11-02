@@ -1,3 +1,7 @@
+2009-11-02  Sanel <karijes@users.sourceforge.net>
+
+	* src/Theme.cpp: use .H for FLTK headers; spotted by Ralf and adb
+
 2009-10-16  Sanel <karijes@users.sourceforge.net>
 
 	* Jamconfig.in:

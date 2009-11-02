@@ -24,7 +24,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <FL/Fl.h>
+#include <FL/Fl.H>
 #include <edelib/Debug.h>
 #include <edelib/Directory.h>
 #include <edelib/Color.h>
