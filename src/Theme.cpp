@@ -24,13 +24,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <FL/Fl.H>
 #include <edelib/Debug.h>
 #include <edelib/Directory.h>
-#include <edelib/Color.h>
-#include <edelib/IconLoader.h>
-#include <edelib/Resource.h>
-#include <edelib/Util.h>
 
 #include "tinyscheme/scheme.h"
 #include "tinyscheme/scheme-private.h"
@@ -95,8 +90,6 @@ struct Theme_P {
 	/* evaluate scheme function successfully only once */
 	pointer cached_ret;
 
-	StyleStorage *storage;
-
 	/* to make sure the script was loaded */
 	bool is_loaded;
 };
@@ -122,14 +115,7 @@ static void theme_p_init(Theme_P *t) {
 	t->sc = NULL;
 	t->author = t->name = t->sample = NULL;
 	t->cached_ret = NULL;
-	t->storage = NULL;
 	t->is_loaded = false;
-}
-
-static StyleStorage *theme_p_get_storage(Theme_P *t) {
-	if(!t->storage)
-		t->storage = new StyleStorage;
-	return t->storage;
 }
 
 static char *get_string_var(scheme *sc, const char *symbol) {
@@ -168,22 +154,7 @@ Theme::~Theme() {
 	delete priv;
 }
 
-bool Theme::load(const char *theme, const char *prefix) {
-	/* 
-	 * 'themes' is the main directory where we keep our themes. It is also
-	 * compatible with other desktops
-	 */
-	String n = build_filename("themes", theme);
-
-	String path = Resource::find_data(n.c_str(), RES_SYS_ONLY, prefix);
-	if(path.empty())
-		return false;
-
-	path = build_filename(path.c_str(), "main.et");
-	return load_from_file(path.c_str());
-}
-
-bool Theme::load_from_file(const char *f) {
+bool Theme::load(const char *f) {
 	E_RETURN_VAL_IF_FAIL(f != NULL, false);
 	/* do not allow loading if clear() wasn't called before */
 	E_RETURN_VAL_IF_FAIL(priv->sc == NULL, false);
@@ -272,7 +243,6 @@ void Theme::clear(void) {
 		free(priv->sc);
 	}
 
-	delete priv->storage;
 	theme_p_init(priv);
 }
 
@@ -392,65 +362,5 @@ const char* Theme::name(void) const {
 const char* Theme::sample_image(void) const {
 	return priv->sample;
 }
-
-void Theme::apply_common_gui_elements(void) {
-	E_RETURN_IF_FAIL(priv->is_loaded == true);
-
-	char buf[128];
-	unsigned char r, g, b;
-	long font_sz;
-
-	if(get_item("ede", "scheme", buf, sizeof(buf)))
-		Fl::scheme(buf);
-
-	if(get_item("ede", "background_color", buf, sizeof(buf))) {
-		color_html_to_rgb(buf, r, g, b);
-		Fl::background(r, g, b);
-	}
-
-	if(get_item("ede", "background_color2", buf, sizeof(buf))) {
-		color_html_to_rgb(buf, r, g, b);
-		Fl::background2(r, g, b);
-	}
-
-	if(get_item("ede", "foreground_color", buf, sizeof(buf))) {
-		color_html_to_rgb(buf, r, g, b);
-		Fl::foreground(r, g, b);
-	}
-
-	if(get_item("ede", "icon_theme", buf, sizeof(buf))) {
-		if(IconLoader::inited())
-			IconLoader::reload(buf);
-	}
-
-	/* TODO: document this: ignored if font_(normal|bold|italic) has given size */
-	if(get_item("ede", "font_size", font_sz, 0)) {
-		FL_NORMAL_SIZE = (int)font_sz;
-		Fl::redraw();
-	}
-
-	if(get_item("ede", "font_normal", buf, sizeof(buf))) {
-		StyleStorage *st = theme_p_get_storage(priv);
-		STORAGE_STR_SET(st->font_normal, buf);
-
-		Fl::set_font(FL_HELVETICA, st->font_normal);
-	}
-
-	if(get_item("ede", "font_bold", buf, sizeof(buf))) {
-		StyleStorage *st = theme_p_get_storage(priv);
-		STORAGE_STR_SET(st->font_bold, buf);
-
-		Fl::set_font(FL_HELVETICA_BOLD, st->font_bold);
-	}
-
-	if(get_item("ede", "font_italic", buf, sizeof(buf))) {
-		StyleStorage *st = theme_p_get_storage(priv);
-		STORAGE_STR_SET(st->font_italic, buf);
-
-		Fl::set_font(FL_HELVETICA_ITALIC, st->font_italic);
-	}
-}
-
-E_CLASS_GLOBAL_EXPLICIT_IMPLEMENT(Theme)
 
 EDELIB_NS_END

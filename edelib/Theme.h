@@ -31,20 +31,17 @@ class Theme_P;
  * \ingroup widgets
  *
  * \class Theme
- * \brief Theming for FLTK and edelib widgets
+ * \brief Theming engine for widgets
  *
- * Theme class implements abastract theming engine for FLTK and edelib widgets. It also loads
- * target theme from appropriate place. Theme also understainds commong GUI elements from already
- * known style and will apply them on widgets on demand \see apply_common_gui_elements().
+ * Theme class implements abastract theming engine suitable for FLTK and edelib widgets. Unlike Config or 
+ * Resource, theme engine implements full language to load and parse theme files giving huge flexibility
+ * to represent the final visual appearance and behaviour.
  *
- * Unlike Config or Resource, theme engine implements full language to load and parse theming files.
- *
- * For more details see \ref themedoc.
+ * This class should not be used directly to load themes; ThemeLoader should be used for that.
  */
 class Theme {
 private:
-	Theme_P         *priv;
-
+	Theme_P *priv;
 	E_DISABLE_CLASS_COPY(Theme)
 public:
 	/** Constructor. */
@@ -54,17 +51,9 @@ public:
 	~Theme();
 
 	/**
-	 * Load theme. Theme will be searched in <em>$XDG_DATA_DIRS/prefix/themes</em> paths if
-	 * <em>prefix</em> was set (by default it is <em>ede</em>).
-	 *
-	 * Default theme has <em>default</em> name and will be searched for if nothing was given.
+	 * Load and parse theme from given file. If fails returns false.
 	 */
-	bool load(const char *name = "default", const char *prefix = "ede");
-
-	/**
-	 * Load theme from given file. If fails returns false.
-	 */
-	bool load_from_file(const char *f);
+	bool load(const char *f);
 
 	/**
 	 * Deinitialize interpreter and clears internal data.
@@ -97,17 +86,8 @@ public:
 
 	/** Return name of theme example image. */
 	const char *sample_image(void) const;
-
-	/**
-	 * Apply common items to FLTK window tree and underlaying widgets. Style name it will look for 
-	 * will be <em>ede</em>. This affects edelib widgets, windows and icon theme.
-	 */
-	void apply_common_gui_elements(void);
-
-#ifndef SKIP_DOCS
-	E_CLASS_GLOBAL_EXPLICIT_DECLARE(Theme)
-#endif
 };
 
 EDELIB_NS_END
 #endif
+

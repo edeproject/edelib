@@ -82,6 +82,7 @@ SOURCE_GUI =
 	TableBase.cpp 
 	$(TINYSCHEME)
 	Theme.cpp
+	ThemeLoader.cpp
 	Window.cpp
 	WindowXid.cpp
 	XSettingsClient.cpp

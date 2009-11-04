@@ -1,3 +1,13 @@
+2009-11-04  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Theme.h:
+	* edelib/ThemeLoader.h:
+	* src/Theme.cpp:
+	* src/ThemeLoader.cpp:
+	* test/theme.cpp: theme loading using XDG paths is now in ThemeLoader
+	class, that will also load XSETTINGS code and apply commong theme elements
+	on FLTK tree. XSETTINGS code is not yet completed. Tests updated
+
 2009-11-02  Sanel <karijes@users.sourceforge.net>
 
 	* src/Theme.cpp: use .H for FLTK headers; spotted by Ralf and adb
