@@ -69,6 +69,7 @@ SOURCE_GUI =
 	DirWatch.cpp
 	ExpandableGroup.cpp
 	FontChooser.cpp
+	ForeignCallback.cpp
 	IconChooser.cpp 
 	IconLoader.cpp
 	MenuBar.cpp  
