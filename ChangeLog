@@ -1,3 +1,9 @@
+2009-11-10  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Window.h:
+	* src/Window.cpp: dump foreign callback code since separate implementation
+	was added
+
 2009-11-09  Sanel <karijes@users.sourceforge.net>
 
 	* edelib/ForeignCallback.h:

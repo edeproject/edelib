@@ -18,12 +18,8 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <string.h>
-#include <stdio.h>
 #include <stdlib.h>
-#include <ctype.h>
 
-#include <FL/Fl.H>
 #include <FL/x.H>
 #include <FL/Fl_Tooltip.H>
 #include <FL/Fl_Shared_Image.H>
@@ -40,16 +36,12 @@
 #include <X11/xpm.h>
 #endif
 
-#define EDELIB_WINDOW 0xF3
-
 #define DEFAULT_FONT_SIZE  12
-#define FOREIGN_CALLBACK_ATOM_NAME "_EDELIB_FOREIGN_CALLBACK"
 
 extern int FL_NORMAL_SIZE;
 
 EDELIB_NS_BEGIN
 
-static Atom             foregin_cb_atom  = 0;
 static char*            seen_theme = NULL;
 static XSettingsClient* xcli = NULL;
 
@@ -65,22 +57,6 @@ static bool icon_theme_load_once(const char* theme) {
 	else
 		IconLoader::init(theme);
 	return true;
-}
-
-static void send_client_message(::Window w, Atom a, unsigned int uid) {
-	XEvent xev;
-	long mask;
-
-	memset(&xev, 0, sizeof(xev));
-	xev.type = ClientMessage;
-	xev.xclient.window = w;
-	xev.xclient.message_type = a;
-	xev.xclient.format = 32;
-	xev.xclient.data.l[0] = uid;
-	xev.xclient.data.l[1] = CurrentTime;
-	mask = 0;
-
-	XSendEvent(fl_display, w, False, mask, &xev);
 }
 
 static void set_titlebar_icon(Fl_Window* ww) {
@@ -107,44 +83,9 @@ static void set_titlebar_icon(Fl_Window* ww) {
 #endif
 }
 
-static void process_xevent_for_foreign_callback(const XEvent* xev) {
-	if(xev->type != ClientMessage)
-		return;
-	
-	Atom msg_atom = xev->xclient.message_type;
-	char* msg_name = XGetAtomName(fl_display, msg_atom);
-
-	/* check if the names matches, so we don't load machinery for all received ClientMessage messages */
-	if(!msg_name || strcmp(msg_name, FOREIGN_CALLBACK_ATOM_NAME) != 0)
-		return;
-
-	/* XGetAtomName() returns string copy */
-	XFree(msg_name);
-
-	/* 
-	 * Use FLTK's list of known windows and via FLTK RTTI (nothing better, for now) find Window objects and
-	 * instances that matches requested ID, whose callbacks will be called.
-	 *
-	 * We can't use global Window object, because callbacks will be messed up due multiple Window instances
-	 * and only last created Window object will receive them.
-	 */
-	for(Fl_Window* win = Fl::first_window(); win; win = Fl::next_window(win)) {
-		if(win->type() >= EDELIB_WINDOW) {
-			EDELIB_NS_PREPEND(Window)* ewin = (EDELIB_NS_PREPEND(Window)*)win;
-			unsigned int id = (unsigned int)xev->xclient.data.l[0];
-
-			/* ID's matches (or global, 0, ID received), call callback */
-			if((id == 0 || ewin->window_id() == id) && ewin->foreign_callback())
-				(*ewin->foreign_callback())(ewin->foreign_callback_data());
-		}
-	}
-}
-
 static int xevent_handler(int id) {
 	if(xcli)
 		xcli->process_xevent(fl_xevent);
-
-	process_xevent_for_foreign_callback(fl_xevent);
 
 	/* allow event could be processed again if user installs own handler */
 	return 0;
@@ -237,10 +178,8 @@ Window::Window(int X, int Y, int W, int H, const char* l, int c) : Fl_Double_Win
 	sbuffer(false), loaded_components(0), 
 	xs(NULL),
 	xs_cb(NULL), xs_cb_old(NULL), xs_cb_data(NULL),
-	icon_pixmap(NULL),
-	wid(0)
+	icon_pixmap(NULL)
 {
-	type(EDELIB_WINDOW);
 	init(c);
 }
 
@@ -248,10 +187,8 @@ Window::Window(int W, int H, const char* l, int c) : Fl_Double_Window(W, H, l),
 	sbuffer(false), loaded_components(0), 
 	xs(NULL),
 	xs_cb(NULL), xs_cb_old(NULL), xs_cb_data(NULL), 
-	icon_pixmap(NULL),
-	wid(0)
+	icon_pixmap(NULL)
 {
-	type(EDELIB_WINDOW);
 	init(c);
 }
 
@@ -281,10 +218,6 @@ void Window::init(int c) {
 								 MSGBOX_ICON_QUESTION, 
 								 MSGBOX_ICON_PASSWORD);
 
-	/* foreign callback atom */
-	if(!foregin_cb_atom)
-		foregin_cb_atom = XInternAtom(fl_display, FOREIGN_CALLBACK_ATOM_NAME, False);
-
 	/* XSETTINGS stuff */
 	xs = new XSettingsClient();
 	if(!xs->init(fl_display, fl_screen, xsettings_cb, this)) {
@@ -304,8 +237,7 @@ void Window::init(int c) {
 	 * handler will be added again without checking if already exists. With that 
 	 * behaviour callback can be called multiple times even if only one window matches it.
 	 *
-	 * Removing (if exists) and re-adding again will assure we have only one callback
-	 * per Window object.
+	 * Removing (if exists) and re-adding again will assure we have only one callback per Window object.
 	 */
 	Fl::remove_handler(xevent_handler);
 	Fl::add_handler(xevent_handler);
@@ -335,32 +267,6 @@ void Window::show(void) {
 	} else {
 		XMapRaised(fl_display, fl_xid(this));
 	}
-}
-
-/* static */
-void Window::do_foreign_callback(unsigned int id) {
-	E_RETURN_IF_FAIL(fl_display != NULL);
-
-	if(!foregin_cb_atom)
-		foregin_cb_atom = XInternAtom(fl_display, FOREIGN_CALLBACK_ATOM_NAME, False);
-
-	/* XXX: not good; some better solution to get running windows should be find */
-
-	::Window dummy, root, *children = 0;
-	unsigned int nchildren;
-
-	root = RootWindow(fl_display, fl_screen);
-	XQueryTree(fl_display, root, &dummy, &dummy, &children, &nchildren);
-	if(!nchildren)
-		return;
-
-	for(unsigned int i = 0; i < nchildren; i++) {
-		if(children[i] != root)
-			send_client_message(children[i], foregin_cb_atom, id);
-	}
-
-	XFree(children);
-	XSync(fl_display, False);
 }
 
 EDELIB_NS_END

@@ -41,8 +41,6 @@ enum WindowComponents {
 #ifndef SKIP_DOCS
 typedef bool (WindowXSettingsCallback)(const char* name, XSettingsAction action, 
 		const XSettingsSetting* setting, void* data);
-
-typedef void (WindowForeignCallback)(void* data);
 #endif
 
 /**
@@ -84,10 +82,6 @@ private:
 	void*                    xs_cb_data;
 
 	const char* const*       icon_pixmap;
-
-	unsigned int             wid;
-	WindowForeignCallback*   foreign_cb;
-	void*                    foreign_cb_data;
 
 	void init(int component);
 public:
@@ -212,63 +206,6 @@ public:
 		else
 			Fl_Window::hide();
 	}
-
-	/**
-	 * Setup foreign callback. Foreign callbacks allows to call registered functions
-	 * in (or from) external programs, by using X messaging system. 
-	 *
-	 * To do so, window (it has to be Window class or inherited one), if wants to allow
-	 * external calls, has to register <em>window ID</em>. This should be unique, integer
-	 * number, known to the external caller.
-	 *
-	 * After setting ID and callback via foreign_callback(), external caller will use 
-	 * do_foreign_callback(ID) to call it.
-	 *
-	 * Foreign callbacks can be used to instruct application to re-read it's configuration
-	 * file, after that file was changed by different program.
-	 */
-	void foreign_callback(WindowForeignCallback* cb, void* data = NULL) { 
-		foreign_cb = cb; 
-		foreign_cb_data = data; 
-	}
-
-	/**
-	 * Setup data for foreign callback
-	 */
-	void foreign_callback_data(void* data) { foreign_cb_data = data; }
-
-	/**
-	 * Returns pointer to foreign callback function
-	 */
-	WindowForeignCallback* foreign_callback(void) { return foreign_cb; }
-
-	/**
-	 * Return additional data for foreign callback. If data wasn't set previously, returned
-	 * value will be NULL
-	 */
-	void* foreign_callback_data(void) { return foreign_cb_data; }
-
-	/**
-	 * Setup window ID (used by foreign callbacks)
-	 */
-	void window_id(unsigned int id) { wid = id; }
-
-	/**
-	 * Returns window ID (used by foreign callbacks)
-	 */
-	unsigned int window_id(void) { return wid; }
-
-	/**
-	 * Call registered foreign callback, by window id
-	 */
-	static void do_foreign_callback(unsigned int id);
-
-	/**
-	 * Call foreign callbacks of all windows, no matter what ID they set.
-	 * This is useful when all apps should call callbacks in the same time, due e.g. some 
-	 * global updates or similar
-	 */
-	static void do_foreign_callback_for_all(void) { do_foreign_callback(0); }
 };
 
 EDELIB_NS_END
