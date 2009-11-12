@@ -7,6 +7,7 @@
 	* src/Run.cpp:
 	* src/MenuItem.cpp: fixed warnings found on gcc 4.3.2 and error with
 	PATH_MAX and signal() on OpenSolaris
+	* src/MenuButton.cpp: make it compiles on FLTK 1.1.7
 
 2009-11-10  Sanel <karijes@users.sourceforge.net>
 

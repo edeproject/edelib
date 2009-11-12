@@ -48,17 +48,28 @@ const MenuItem* MenuButton::popup() {
   const MenuItem* m;
   pressed_menu_button_ = this;
   redraw();
+
+#if FL_PATCH_VERSION > 7
+  // added in 1.1.8 
   Fl_Widget *mb = this;
   Fl::watch_widget_pointer(mb);
+#endif
+
   if (!box() || type()) {
     m = menu()->popup(Fl::event_x(), Fl::event_y(), label(), mvalue(), this);
   } else {
     m = menu()->pulldown(x(), y(), w(), h(), 0, this);
   }
+
   picked(m);
   pressed_menu_button_ = 0;
+
+#if FL_PATCH_VERSION > 7
+  // added in 1.1.8
   if (mb) mb->redraw();
   Fl::release_widget_pointer(mb);
+#endif
+
   return m;
 }
 
