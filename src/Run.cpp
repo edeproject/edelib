@@ -30,11 +30,16 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <sys/param.h> // BSD's keeps BSD specific macro (for #ifdef) in this file
+#include <sys/param.h> /* BSD's keeps BSD specific macro (for #ifdef) in this file */
 
 #ifdef BSD
-#include <limits.h>      // PATH_MAX
-#include <sys/signal.h>  // SIGPIPE, SIG_DFL
+# include <limits.h>      /* PATH_MAX */
+# include <sys/signal.h>  /* SIGPIPE, SIG_DFL */
+#endif
+
+#if defined(sun) || defined(__sun)
+# include <limits.h>      /* PATH_MAX */
+# include <signal.h>      /* signal() */
 #endif
 
 #include <edelib/Run.h>

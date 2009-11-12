@@ -326,7 +326,7 @@ const char* IconLoader::get_fallback_icon(void) {
 }
 
 /* static */
-char** IconLoader::get_builtin_xpm_icon(IconSizes sz) {
+const char** IconLoader::get_builtin_xpm_icon(IconSizes sz) {
 #include "icons/unknown-16.xpm"
 #include "icons/unknown-22.xpm"
 #include "icons/unknown-32.xpm"

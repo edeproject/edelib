@@ -208,7 +208,7 @@ public:
 	 * Returns XPM icon with given size. These icons are always present in edelib and should be used in
 	 * cases when icon is not present in icon theme, or give icon theme wasn't installed at all.
 	 */
-	static char** get_builtin_xpm_icon(IconSizes sz);
+	static const char** get_builtin_xpm_icon(IconSizes sz);
 };
 
 EDELIB_NS_END
