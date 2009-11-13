@@ -24,13 +24,13 @@
 #include "edelib-global.h"
 
 #ifdef USE_NLS
-	#include <libintl.h>
-	#define _(s)  gettext(s)
+# include <libintl.h>
+# define _(s)  gettext(s)
 #else
-	#define textdomain(domain) ((const char*)domain)
-	#define bindtextdomain(domain, dir) ((const char*)dir)
-	#define bind_textdomain_codeset(domain, codeset) ((const char*)codeset)
-	#define _(s)  (s)
+# define textdomain(domain) ((const char*)domain)
+# define bindtextdomain(domain, dir) ((const char*)dir)
+# define bind_textdomain_codeset(domain, codeset) ((const char*)codeset)
+# define _(s)  (s)
 #endif
 
 #define N_(s) (s)

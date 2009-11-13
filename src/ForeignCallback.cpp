@@ -27,11 +27,12 @@
 
 EDELIB_NS_BEGIN
 
-typedef void (*ForeignCallback)(Fl_Window*);
+typedef void (*ForeignCallback)(Fl_Window*, void*);
 
 struct ForeignCallbackInfo {
 	unsigned int    hash_id;
 	ForeignCallback cb;
+	void            *data;
 };
 
 typedef list<ForeignCallbackInfo> CallbackList;
@@ -89,7 +90,7 @@ static void do_callback_by_id(Fl_Window *win, unsigned int id) {
 
 		/* call it */
 		if(id == info->hash_id && info->cb)
-			info->cb(win);
+			info->cb(win, info->data);
 	}
 }
 
@@ -112,7 +113,7 @@ done:
 	return 0;
 }
 
-void foreign_callback_add(Fl_Window *win, void (*cb)(Fl_Window *win), const char *id) {
+void foreign_callback_add(Fl_Window *win, const char *id, ForeignCallback cb, void *data) {
 	fl_open_display();
 
 	init_foreign_callback_atom_once();
@@ -123,6 +124,7 @@ void foreign_callback_add(Fl_Window *win, void (*cb)(Fl_Window *win), const char
 	ForeignCallbackInfo fc;
 	fc.hash_id = do_hash(id, strlen(id));
 	fc.cb = cb;
+	fc.data = data;
 
 	/* FIXME: lock this somehow */
 	callback_list.push_back(fc);
@@ -135,7 +137,7 @@ void foreign_callback_add(Fl_Window *win, void (*cb)(Fl_Window *win), const char
 	Fl::add_handler(xevent_handler);
 }
 
-void foreign_callback_remove(void (*cb)(Fl_Window *win)) {
+void foreign_callback_remove(ForeignCallback cb) {
 	if(callback_list.empty())
 		return;
 

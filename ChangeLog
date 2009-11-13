@@ -1,6 +1,13 @@
+2009-11-13  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/ForeignCallback.h:
+	* src/ForeignCallback.cpp: additional data parameter for
+	foreign_callback_add(); also the order of parameters was changed
+	* edelib/Nls.h: some macro code formatting
+
 2009-11-12  Sanel <karijes@users.sourceforge.net>
 
-	*  edelib/IconLoader.h:
+	* edelib/IconLoader.h:
 	* src/IconLoader.cpp:
 	* src/xdgmime/xdgmimemagic.c:
 	* src/icons/unknown-*.xpm

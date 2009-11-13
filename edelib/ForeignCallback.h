@@ -76,13 +76,13 @@ EDELIB_NS_BEGIN
  *
  * Because these functions depends on FLTK and X, they are part of libedelib_gui library.
  */
-void foreign_callback_add(Fl_Window *win, void (*cb)(Fl_Window *win), const char *id);
+void foreign_callback_add(Fl_Window *win, const char *id, void (*cb)(Fl_Window*, void*), void *data = 0);
 
 /**
  * \ingroup foreigncallback
  * Remove already registered callback if exists.
  */
-void foreign_callback_remove(void (*cb)(Fl_Window *win));
+void foreign_callback_remove(void (*cb)(Fl_Window*, void*));
 
 /**
  * \ingroup foreigncallback
