@@ -76,7 +76,13 @@ UT_FUNC(DesktopFileTest2, "Test DesktopFile class (2)")
 	UT_VERIFY( STR_EQUAL(buff, "sample-icon") );
 
 	UT_VERIFY( desk.exec(buff, 256) == true );
+
+#if defined(sun) || defined(__sun)
+	/* OpenSolaris gives higher priority to gnu tools in PATH */
+	UT_VERIFY( STR_EQUAL(buff, "/usr/gnu/bin/sh --help --another-param") );
+#else
 	UT_VERIFY( STR_EQUAL(buff, "/bin/sh --help --another-param") );
+#endif
 
 	UT_VERIFY( desk.try_exec(found) == true );
 	UT_VERIFY( found == true );

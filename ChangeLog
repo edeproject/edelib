@@ -1,3 +1,10 @@
+2009-11-16  Sanel <karijes@users.sourceforge.net>
+
+	* test/file.cpp:
+	* test/run.cpp:
+	* test/desktopfile.cpp: some #ifdef code to run pass tests on OpenSolaris
+	* test/file.cpp: removed commented code
+
 2009-11-13  Sanel <karijes@users.sourceforge.net>
 
 	* edelib/ForeignCallback.h:

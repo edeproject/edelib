@@ -20,8 +20,8 @@ UT_FUNC(RunSyncTest, "Test run_sync()")
 
 UT_FUNC(RunSyncStupidTar, "Test run_sync() + stupid tar")
 {
-#if BSD
-	/* *BSD's get it correctly */
+#if defined(BSD) || defined(sun) || defined(__sun)
+	/* BSD's and solaris get it correctly */
 	UT_VERIFY( run_sync("/usr/bin/tar") == 1 );
 	UT_VERIFY( run_sync("tar") == 1 );
 #else
