@@ -18,16 +18,15 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <sys/types.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include <errno.h>
 
 #include <edelib/Missing.h>
-
-#ifndef HAVE_SCANDIR
-# include <sys/types.h>
-#endif
 
 /* FreeBSD defines MAXNAMELEN, not sure about others */
 #ifndef MAXNAMELEN
@@ -294,5 +293,40 @@ int edelib_alphasort(struct dirent **n1, struct dirent **n2) {
 	return alphasort(n1, n2);
 #else
 	return strcmp((*n1)->d_name, (*n2)->d_name);
+#endif
+}
+
+int edelib_daemon(int nochdir, int noclose) {
+#ifdef HAVE_DAEMON
+	return daemon(nochdir, noclose);
+#else
+	pid_t pid = fork();
+
+	if(pid == -1) 
+		return -1; 
+	else if(pid != 0) 
+		_exit(0);
+
+	if(setsid() == -1)
+		return -1;
+
+	if(!nochdir)
+		chdir("/");
+
+	if(!noclose) {
+		int fd = open("/dev/null", O_RDWR);
+		if(fd == -1)
+			return -1;
+
+		dup2(fd, STDIN_FILENO);
+		dup2(fd, STDOUT_FILENO);
+		dup2(fd, STDERR_FILENO);
+
+		/* required */
+		if(fd > 2)
+			close(fd);
+	}
+
+	return 0;
 #endif
 }

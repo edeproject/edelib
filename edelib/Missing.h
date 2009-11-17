@@ -23,11 +23,6 @@
 
 #include "edelib-global.h"
 
-/*
- * These function have C linkage and are not part of
- * the main namespace.
- */
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -36,12 +31,18 @@ extern "C" {
 #include <dirent.h>
 
 /**
+ * \defgroup missing Missing function
+ */
+
+/**
+ * \ingroup missing
  * Implementation of setenv() function. Older libc implementations on various
  * UNIX-es does not provide it.
  */
 EDELIB_API int edelib_setenv(const char* name, const char* value, int overwrite);
 
 /**
+ * \ingroup missing
  * Implementation of unsetenv() function.
  */
 EDELIB_API int edelib_unsetenv(const char* name);
@@ -52,11 +53,13 @@ EDELIB_API int edelib_unsetenv(const char* name);
 EDELIB_API unsigned int edelib_strnlen(const char* str, unsigned int maxlen);
 
 /**
+ * \ingroup missing
  * Implementation of strndup() function.
  */
 EDELIB_API char* edelib_strndup(const char* str, unsigned int maxlen);
 
 /**
+ * \ingroup missing
  * Implementation of strlcpy() function. This function operates similar
  * to the strncpy() except it will always terminate string with '\\0' character,
  * unless sz == 0. Returns strlen(src).
@@ -64,6 +67,7 @@ EDELIB_API char* edelib_strndup(const char* str, unsigned int maxlen);
 EDELIB_API unsigned long edelib_strlcpy(char* dst, const char* src, unsigned long sz);
 
 /**
+ * \ingroup missing
  * Implementation of strlcat() function. This function operates similar
  * to the strncat() except it will always terminate string with '\\0' character,
  * unless sz == 0. At most sz-1 characters will be copied. Returns strlen(dst) + strlen(src).
@@ -71,16 +75,24 @@ EDELIB_API unsigned long edelib_strlcpy(char* dst, const char* src, unsigned lon
 EDELIB_API unsigned long edelib_strlcat(char* dst, const char* src, unsigned long sz);
 
 /**
- * scandir() implementation
+ * \ingroup missing
+ * scandir() implementation.
  */
 EDELIB_API int edelib_scandir(const char* dir, struct dirent*** namelist, 
 		int (*filter)(const struct dirent* name),
 		int (*compar)(struct dirent** n1, struct dirent** n2));
 
 /**
- * alphasort() implementation; a function that comes with scandir()
+ * \ingroup missing
+ * alphasort() implementation; a function that comes with scandir().
  */
 EDELIB_API int edelib_alphasort(struct dirent **n1, struct dirent **n2);
+
+/**
+ * \ingroup missing
+ * daemon() implementation.
+ */
+EDELIB_API int edelib_daemon(int nochdir, int noclose);
 
 #ifdef __cplusplus
 }

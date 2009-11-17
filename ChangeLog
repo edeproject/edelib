@@ -1,3 +1,11 @@
+2009-11-17  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Missing.h:
+	* src/Missing.cpp: edelib_daemon() added since Solaris family does not
+	provides it at all
+	* edelib/Missing.h: separate these functions to different documentation
+	module
+
 2009-11-16  Sanel <karijes@users.sourceforge.net>
 
 	* test/file.cpp:
