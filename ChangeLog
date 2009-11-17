@@ -5,6 +5,8 @@
 	provides it at all
 	* edelib/Missing.h: separate these functions to different documentation
 	module
+	* test/run.cpp: do not use 'tar' without path or GNU version will be
+	selected on default OpenSolaris installation
 
 2009-11-16  Sanel <karijes@users.sourceforge.net>
 

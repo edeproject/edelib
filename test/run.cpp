@@ -20,10 +20,13 @@ UT_FUNC(RunSyncTest, "Test run_sync()")
 
 UT_FUNC(RunSyncStupidTar, "Test run_sync() + stupid tar")
 {
-#if defined(BSD) || defined(sun) || defined(__sun)
-	/* BSD's and solaris get it correctly */
+#if defined(BSD)
+	/* BSD's get it correctly */
 	UT_VERIFY( run_sync("/usr/bin/tar") == 1 );
 	UT_VERIFY( run_sync("tar") == 1 );
+#elif defined(sun) || defined(__sun)
+	/* solaris get it correctly, except 'tar' without path, where GNU version will be preferred if installed */
+	UT_VERIFY( run_sync("/usr/bin/tar") == 1 );
 #else
 	/* tar returns '2' on linux if executed without parameters, which is interpreted as RUN_NOT_FOUND; stupid!!! */
 	UT_VERIFY( run_sync("/bin/tar") == RUN_NOT_FOUND );
