@@ -7,6 +7,7 @@
 	module
 	* test/run.cpp: do not use 'tar' without path or GNU version will be
 	selected on default OpenSolaris installation
+	* edelib/Missing.h: s/Missing function/Missing functions
 
 2009-11-16  Sanel <karijes@users.sourceforge.net>
 

@@ -31,7 +31,7 @@ extern "C" {
 #include <dirent.h>
 
 /**
- * \defgroup missing Missing function
+ * \defgroup missing Missing functions
  */
 
 /**
