@@ -2,6 +2,9 @@
 
 	* autogen.sh: emulate basic aclocal functionality so edelib does not
 	require whole automake package for this
+	* src/String.cpp:
+	* src/IconChooser.cpp: allow it to compile on gcc >= 4.4.1 due
+	introduction const safe C string function
 
 2009-11-17  Sanel <karijes@users.sourceforge.net>
 

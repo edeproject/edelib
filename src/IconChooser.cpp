@@ -82,7 +82,7 @@ void IconBox::set_icon_path(const String& s) {
 	iconpth.assign(s);
 
 	/* get basename without extension */
-	ptr = strrchr(s.c_str(), E_DIR_SEPARATOR);
+	ptr = (char*)strrchr(s.c_str(), E_DIR_SEPARATOR);
 	if(ptr) {
 		ptr += 1;
 		char* ptr2 = strrchr(ptr, '.');

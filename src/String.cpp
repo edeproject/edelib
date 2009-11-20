@@ -262,7 +262,7 @@ String::size_type String::find(const char* str, size_type offset) const {
 	if(offset >= length())
 		return npos;
 
-	char* p = strstr(data() + offset, str);
+	char* p = (char*)strstr(data() + offset, str);
 	if(!p)
 		return npos;
 	else
