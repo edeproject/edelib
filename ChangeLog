@@ -1,3 +1,8 @@
+2009-11-20  Sanel <karijes@users.sourceforge.net>
+
+	* autogen.sh: emulate basic aclocal functionality so edelib does not
+	require whole automake package for this
+
 2009-11-17  Sanel <karijes@users.sourceforge.net>
 
 	* edelib/Missing.h:
