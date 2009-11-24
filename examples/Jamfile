@@ -48,6 +48,7 @@ if $(FLTK_LIBS) {
 	MakeTest xsettings_setter : xsettings_setter.cpp : $(FLTK_LIBS) $(ADDONLIB) ;
 	MakeTest xsettings_client : xsettings_client.cpp : $(FLTK_LIBS) $(ADDONLIB) ;
 	MakeTest menu : menu.cpp : $(FLTK_LIBS) $(ADDONLIB) ;
+	MakeTest theme : theme.cpp : $(FLTK_LIBS) $(ADDONLIB) ;
 }
 
 if $(FLTK_LIBS) && $(SHARED) {

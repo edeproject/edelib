@@ -2,6 +2,8 @@
 
 	* src/tinyscheme/theme.scm: fix a typo in comment; additionally clarify
 	theme.style-get function
+	* examples/theme.cpp:
+	* examples/theme-sample: simple example of theming engine
 
 2009-11-20  Sanel <karijes@users.sourceforge.net>
 
