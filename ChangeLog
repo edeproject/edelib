@@ -1,3 +1,8 @@
+2009-11-24  Sanel <karijes@users.sourceforge.net>
+
+	* src/tinyscheme/theme.scm: fix a typo in comment; additionally clarify
+	theme.style-get function
+
 2009-11-20  Sanel <karijes@users.sourceforge.net>
 
 	* autogen.sh: emulate basic aclocal functionality so edelib does not

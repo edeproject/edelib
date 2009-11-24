@@ -1,6 +1,6 @@
 ;; vim:ft=scheme:expandtab
 ;; Theming stuff for edelib and ede. This file should be initialized after init.scm.
-;; NOTE: keep the comments at the begginning of the line, so gen-c-string.sh can easily strip them
+;; NOTE: keep the comments at the beginning of the line, so gen-c-string.sh can easily strip them
 
 ;; globals set by Theme class
 (define edelib-dir-separator      #f)
@@ -74,7 +74,7 @@
  `(set! private:theme.styles (cons (list ,name ',@body) private:theme.styles))
 )
 
-;; Find the given style and return it as list. Called from Theme class.
+;; Find the given style and return it as list (returning last found match). Called from Theme class.
 (define (theme.style-get name)
  (let ((ret '()))
   (for-each (lambda (x)
