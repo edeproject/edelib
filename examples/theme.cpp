@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
-#include <FL/Fl_Button.h>
+#include <FL/Fl_Button.H>
 #include <edelib/ThemeLoader.h>
 
 EDELIB_NS_USE

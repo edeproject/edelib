@@ -1,3 +1,8 @@
+2009-11-25  Sanel <karijes@users.sourceforge.net>
+
+	* examples/theme.cpp: s/Fl_Button.h/Fl_Button.H
+	* examples/Jamfile: let theme.cpp use FLTK_CFLAGS
+
 2009-11-24  Sanel <karijes@users.sourceforge.net>
 
 	* src/tinyscheme/theme.scm: fix a typo in comment; additionally clarify
