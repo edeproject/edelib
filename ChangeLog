@@ -2,6 +2,7 @@
 
 	* examples/theme.cpp: s/Fl_Button.h/Fl_Button.H
 	* examples/Jamfile: let theme.cpp use FLTK_CFLAGS
+	* edelib/ForeignCallback.h: fixed example to match function changes
 
 2009-11-24  Sanel <karijes@users.sourceforge.net>
 

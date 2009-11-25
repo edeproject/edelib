@@ -51,9 +51,9 @@ EDELIB_NS_BEGIN
  *   }
  *
  *   int main() {
- *     Fl_Window *win = ...
+ *     Fl_Window *win = new Fl_Window(300, 300, "Sample foreign callback");
  *     // initialization code and etc.
- *     foreign_callback_add(win, receive_cb, "my-cool-app");
+ *     foreign_callback_add(win, "my-cool-app", receive_cb);
  *     return Fl::run();
  *   }
  * \endcode
