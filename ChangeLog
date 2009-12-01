@@ -1,3 +1,8 @@
+2009-12-01  Sanel <karijes@users.sourceforge.net>
+
+	* src/tinyscheme/gen-c-string.sh: accept parameter and construct variable
+	name from parameter name
+
 2009-11-25  Sanel <karijes@users.sourceforge.net>
 
 	* examples/theme.cpp: s/Fl_Button.h/Fl_Button.H
