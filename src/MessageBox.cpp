@@ -279,8 +279,8 @@ void MessageBox::set_xpm_icon(const char* const* arr) {
 }
 
 
-void MessageBox::set_icon_from_type(MessageBoxIconType type) {
-	switch(type) {
+void MessageBox::set_icon_from_type(MessageBoxIconType t) {
+	switch(t) {
 		case MSGBOX_ICON_TYPE_ALERT:
 			if(alert_icon[0] != 0)
 				set_theme_icon(alert_icon);

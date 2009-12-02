@@ -145,30 +145,30 @@ bool DesktopFile::exec(char* val, int len) {
 		return false;
 
 	char*  pos;
-	String path;
+	String exec_path;
 
 	/* remove possible parameters so the path can be deduced correctly */
 	if((pos = strchr(buf, ' ')) || (pos = strchr(buf, '\t'))) {
 		String tmp;
 
 		tmp.assign(buf, pos - buf);
-		path = file_path(tmp.c_str());
+		exec_path = file_path(tmp.c_str());
 
 		/* the spec requries executable must not have '=' */
-		if(path.empty() || (path.find('=', 0) != String::npos))
+		if(exec_path.empty() || (exec_path.find('=', 0) != String::npos))
 			return false;
 
 		/* append remaining parameters */
-		path += pos;
+		exec_path += pos;
 	} else {
-		path = file_path(buf);
+		exec_path = file_path(buf);
 
 		/* the spec requries executable must not have '=' */
-		if(path.empty() || (path.find('=', 0) != String::npos))
+		if(exec_path.empty() || (exec_path.find('=', 0) != String::npos))
 			return false;
 	}
 
-	strncpy(val, path.c_str(), len);
+	strncpy(val, exec_path.c_str(), len);
 	val[len - 1] = '\0';
 	return true;
 }
@@ -181,8 +181,8 @@ bool DesktopFile::try_exec(bool& program_found) {
 	if(!Config::get(ENTRY_SECT, "TryExec", buf, BUF_SIZE))
 		return false;
 
-	String path = file_path(buf);
-	if(path.empty()) {
+	String exec_path = file_path(buf);
+	if(exec_path.empty()) {
 		program_found = false;
 		return true;
 	}

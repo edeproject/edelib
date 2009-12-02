@@ -53,7 +53,7 @@ public:
 	 * Set zone. Previously set zone (and it's data) will be cleared
 	 * replacing with the current one
 	 */
-	bool set(const char* zone);
+	bool set(const char* n);
 
 	/**
 	 * Return code from set zone

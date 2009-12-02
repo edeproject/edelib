@@ -655,14 +655,14 @@ DBusMessage* EdbusMessage::to_dbus_message(void) const {
 	return dm->msg;
 }
 
-void EdbusMessage::create_signal(const char* path, const char* interface, const char* name) {
+void EdbusMessage::create_signal(const char* pth, const char* iface, const char* n) {
 	CREATE_OR_CLEAR(dm);
-	dm->msg = dbus_message_new_signal(path, interface, name);
+	dm->msg = dbus_message_new_signal(pth, iface, n);
 }
 
-void EdbusMessage::create_method_call(const char* service, const char* path, const char* interface, const char* method) {
+void EdbusMessage::create_method_call(const char* service, const char* pth, const char* iface, const char* method) {
 	CREATE_OR_CLEAR(dm);
-	dm->msg = dbus_message_new_method_call(service, path, interface, method);
+	dm->msg = dbus_message_new_method_call(service, pth, iface, method);
 }
 
 void EdbusMessage::create_reply(const EdbusMessage& replying_to) {

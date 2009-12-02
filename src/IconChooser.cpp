@@ -63,7 +63,7 @@ public:
 	int handle(int event);
 };
 
-IconBox::IconBox(int x, int y, int w, int h, const char* l) : Fl_Button(x, y, w, h, l) {
+IconBox::IconBox(int X, int Y, int W, int H, const char* l) : Fl_Button(X, Y, W, H, l) {
 	box(FL_FLAT_BOX);
 	corig = color();
 	iconpth = "";

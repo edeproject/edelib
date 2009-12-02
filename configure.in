@@ -52,7 +52,7 @@ EDELIB_PROG_JAM
 EDELIB_COMPILER_NAME
 
 if test "$ac_compiler_gnu" = "yes"; then
-	SANITY_FLAGS="-Wall -pedantic"
+	SANITY_FLAGS="-Wall -pedantic -Wshadow"
 	DEBUG_FLAGS="-D_DEBUG"
 	OPTIM_FLAGS="-O2"
 else

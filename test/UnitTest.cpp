@@ -50,10 +50,10 @@ void pretty_output(FILE* out, int num, UnitTest* t, double elapsed) {
 	fflush(out);
 }
 
-UnitTest::UnitTest(const char* name, const char* descr) {
-	assert(name != NULL);
+UnitTest::UnitTest(const char* n, const char* descr) {
+	assert(n != NULL);
 	assert(descr != NULL);
-	tname = strdup(name);
+	tname = strdup(n);
 	tdescr = strdup(descr);
 	mlist = NULL;
 	mnumber = 0;

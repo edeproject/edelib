@@ -188,19 +188,17 @@ File::~File() {
 	close();
 }
 
-File::File(const char* name, int mode) {
-	// state flags are already set
-	open(name, mode);
+File::File(const char* n, int m) {
+	/* state flags are already set */
+	open(n, m);
 }
 
-/*
- * it will open file via C stdio facility
- */
-bool File::open(const char* name, int mode) {
-	E_ASSERT(name != NULL && "File name is NULL");
+/* it will open file via C stdio facility */
+bool File::open(const char* n, int m) {
+	E_ASSERT(n != NULL && "File name is NULL");
 
 	const char* flags;
-	switch(mode) {
+	switch(m) {
 		case FIO_READ:
 			flags = "r";
 			break;
@@ -241,11 +239,11 @@ bool File::open(const char* name, int mode) {
 			return false;
 	}
 
-	int sz = strlen(name);
+	int sz = strlen(n);
 	fname = new char[sz+1];
-	strncpy(fname, name, sz+1);
+	strncpy(fname, n, sz+1);
 
-	fmode = mode;
+	fmode = m;
 	alloc = true;
 	fobj = fopen(fname, flags);
 	if(!fobj) {

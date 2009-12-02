@@ -859,11 +859,11 @@ INTERFACE pointer mk_character(scheme *sc, int c) {
 }
 
 /* get number atom (integer) */
-INTERFACE pointer mk_integer(scheme *sc, long num) {
+INTERFACE pointer mk_integer(scheme *sc, long n) {
   pointer x = get_cell(sc,sc->NIL, sc->NIL);
 
   typeflag(x) = (T_NUMBER | T_ATOM);
-  ivalue_unchecked(x)= num;
+  ivalue_unchecked(x)= n;
   set_integer(x);
   return (x);
 }
@@ -937,8 +937,8 @@ INTERFACE static pointer mk_vector(scheme *sc, int len) {
 
 INTERFACE static void fill_vector(pointer vec, pointer obj) {
      int i;
-     int num=ivalue(vec)/2+ivalue(vec)%2;
-     for(i=0; i<num; i++) {
+     int n=ivalue(vec)/2+ivalue(vec)%2;
+     for(i=0; i<n; i++) {
           typeflag(vec+1+i) = T_PAIR;
           setimmutable(vec+1+i);
           car(vec+1+i)=obj;
@@ -1135,8 +1135,8 @@ static void mark(pointer a) {
 E2:  setmark(p);
      if(is_vector(p)) {
           int i;
-          int num=ivalue_unchecked(p)/2+ivalue_unchecked(p)%2;
-          for(i=0; i<num; i++) {
+          int n=ivalue_unchecked(p)/2+ivalue_unchecked(p)%2;
+          for(i=0; i<n; i++) {
                /* Vector cells will be treated like ordinary cells */
                mark(p+1+i);
           }
@@ -3081,37 +3081,36 @@ static pointer opexe_2(scheme *sc, enum scheme_opcodes op) {
 
      case OP_STRREF: { /* string-ref */
           char *str;
-          int index;
+          int i;
 
           str=strvalue(car(sc->args));
 
-          index=ivalue(cadr(sc->args));
+          i=ivalue(cadr(sc->args));
 
-          if(index>=strlength(car(sc->args))) {
+          if(i>=strlength(car(sc->args))) {
                Error_1(sc,"string-ref: out of bounds:",cadr(sc->args));
           }
 
-          s_return(sc,mk_character(sc,((unsigned char*)str)[index]));
+          s_return(sc,mk_character(sc,((unsigned char*)str)[i]));
      }
 
      case OP_STRSET: { /* string-set! */
           char *str;
-          int index;
-          int c;
+          int i, c;
 
           if(is_immutable(car(sc->args))) {
                Error_1(sc,"string-set!: unable to alter immutable string:",car(sc->args));
           }
           str=strvalue(car(sc->args));
 
-          index=ivalue(cadr(sc->args));
-          if(index>=strlength(car(sc->args))) {
+          i=ivalue(cadr(sc->args));
+          if(i>=strlength(car(sc->args))) {
                Error_1(sc,"string-set!: out of bounds:",cadr(sc->args));
           }
 
           c=charvalue(caddr(sc->args));
 
-          str[index]=(char)c;
+          str[i]=(char)c;
           s_return(sc,car(sc->args));
      }
 
@@ -3200,30 +3199,30 @@ static pointer opexe_2(scheme *sc, enum scheme_opcodes op) {
           s_return(sc,mk_integer(sc,ivalue(car(sc->args))));
 
      case OP_VECREF: { /* vector-ref */
-          int index;
+          int i;
 
-          index=ivalue(cadr(sc->args));
+          i=ivalue(cadr(sc->args));
 
-          if(index>=ivalue(car(sc->args))) {
+          if(i>=ivalue(car(sc->args))) {
                Error_1(sc,"vector-ref: out of bounds:",cadr(sc->args));
           }
 
-          s_return(sc,vector_elem(car(sc->args),index));
+          s_return(sc,vector_elem(car(sc->args),i));
      }
 
      case OP_VECSET: {   /* vector-set! */
-          int index;
+          int i;
 
           if(is_immutable(car(sc->args))) {
                Error_1(sc,"vector-set!: unable to alter immutable vector:",car(sc->args));
           }
 
-          index=ivalue(cadr(sc->args));
-          if(index>=ivalue(car(sc->args))) {
+          i=ivalue(cadr(sc->args));
+          if(i>=ivalue(car(sc->args))) {
                Error_1(sc,"vector-set!: out of bounds:",cadr(sc->args));
           }
 
-          set_vector_elem(car(sc->args),index,caddr(sc->args));
+          set_vector_elem(car(sc->args),i,caddr(sc->args));
           s_return(sc,car(sc->args));
      }
 
@@ -4222,9 +4221,9 @@ scheme *scheme_init_new() {
   }
 }
 
-scheme *scheme_init_new_custom_alloc(func_alloc malloc, func_dealloc free) {
-  scheme *sc=(scheme*)malloc(sizeof(scheme));
-  if(!scheme_init_custom_alloc(sc,malloc,free)) {
+scheme *scheme_init_new_custom_alloc(func_alloc my_malloc, func_dealloc my_free) {
+  scheme *sc=(scheme*)my_malloc(sizeof(scheme));
+  if(!scheme_init_custom_alloc(sc,my_malloc,my_free)) {
     free(sc);
     return 0;
   } else {
@@ -4237,7 +4236,7 @@ int scheme_init(scheme *sc) {
  return scheme_init_custom_alloc(sc,malloc,free);
 }
 
-int scheme_init_custom_alloc(scheme *sc, func_alloc malloc, func_dealloc free) {
+int scheme_init_custom_alloc(scheme *sc, func_alloc my_malloc, func_dealloc my_free) {
   int i, n=sizeof(dispatch_table)/sizeof(dispatch_table[0]);
   pointer x;
 
@@ -4250,8 +4249,8 @@ int scheme_init_custom_alloc(scheme *sc, func_alloc malloc, func_dealloc free) {
   sc->vptr=&vtbl;
 #endif
   sc->gensym_cnt=0;
-  sc->malloc=malloc;
-  sc->free=free;
+  sc->malloc=my_malloc;
+  sc->free=my_free;
   sc->last_cell_seg = -1;
   sc->sink = &sc->_sink;
   sc->NIL = &sc->_NIL;
@@ -4463,8 +4462,8 @@ void scheme_call(scheme *sc, pointer func, pointer args) {
 #endif
 
 /* Sanel: added from the latest cvs code */
-pointer scheme_apply0(scheme *sc, const char *procname)
-{ return scheme_eval(sc, cons(sc,mk_symbol(sc,procname),sc->NIL)); }
+pointer scheme_apply0(scheme *sc, const char *proc)
+{ return scheme_eval(sc, cons(sc,mk_symbol(sc,proc),sc->NIL)); }
 
 void save_from_C_call(scheme *sc)
 {

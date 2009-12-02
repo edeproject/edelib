@@ -1,3 +1,23 @@
+2009-12-02  Sanel <karijes@users.sourceforge.net>
+
+	* configure.in:
+	* edelib/DateTime.h:
+	* edelib/File.h:
+	* edelib/TableBase.h:
+	* src/DateTime.cpp:
+	* src/DesktopFile.cpp:
+	* src/EdbusMessage.cpp:
+	* src/File.cpp:
+	* src/IconChooser.cpp:
+	* src/IconTheme.cpp:
+	* src/MessageBox.cpp:
+	* src/PtyProcess.cpp:
+	* src/SevenSeg.cpp:
+	* src/TableBase.cpp:
+	* src/tinyscheme/scheme.c:
+	* test/UnitTest.cpp: added -Wshadow flag to prevent variable shadowing;
+	cleaned warnings
+
 2009-12-01  Sanel <karijes@users.sourceforge.net>
 
 	* src/tinyscheme/gen-c-string.sh: accept parameter and construct variable

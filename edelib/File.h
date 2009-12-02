@@ -92,10 +92,10 @@ public:
 	/**
 	 * Open stream for reading or writing
 	 *
-	 * \param fname file name to open
-	 * \param mode how to open file; default is read-only
+	 * \param n file name to open
+	 * \param m how to open file; default is read-only
 	 */
-	File(const char* fname, int mode);
+	File(const char* n, int m);
 
 	/**
 	 * Cleans reserved data, and closes

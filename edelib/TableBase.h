@@ -322,19 +322,19 @@ protected:
 
 	void damage_zone(int r1, int c1, int r2, int c2, int r3 = 0, int c3 = 0);
 
-	void redraw_range(int toprow, int botrow, int leftcol, int rightcol) {
+	void redraw_range(int trow, int brow, int lcol, int rcol) {
 		if ( _redraw_toprow == -1 ) {
 			// Initialize redraw range
-			_redraw_toprow = toprow;
-			_redraw_botrow = botrow;
-			_redraw_leftcol = leftcol;
-			_redraw_rightcol = rightcol;
+			_redraw_toprow = trow;
+			_redraw_botrow = brow;
+			_redraw_leftcol = lcol;
+			_redraw_rightcol = rcol;
 		} else {
 			// Extend redraw range
-			if ( toprow < _redraw_toprow ) _redraw_toprow = toprow;
-			if ( botrow > _redraw_botrow ) _redraw_botrow = botrow;
-			if ( leftcol < _redraw_leftcol ) _redraw_leftcol = leftcol;
-			if ( rightcol > _redraw_rightcol ) _redraw_rightcol = rightcol;
+			if ( trow < _redraw_toprow ) _redraw_toprow = trow;
+			if ( brow > _redraw_botrow ) _redraw_botrow = brow;
+			if ( lcol < _redraw_leftcol ) _redraw_leftcol = lcol;
+			if ( rcol > _redraw_rightcol ) _redraw_rightcol = rcol;
 		}
 
 		// Indicate partial redraw needed of some cells
@@ -619,27 +619,27 @@ public:
 	/**
 	 * Append widget to the table
 	 */
-	void add(Fl_Widget& w) { table->add(w); }
+	void add(Fl_Widget& widget) { table->add(widget); }
 
 	/**
 	 * Append widget to the table
 	 */
-	void add(Fl_Widget* w) { table->add(w); }
+	void add(Fl_Widget* widget) { table->add(widget); }
 
 	/**
 	 * Same as Fl_Group::insert()
 	 */
-	void insert(Fl_Widget& w, int n) { table->insert(w,n); }
+	void insert(Fl_Widget& widget, int n) { table->insert(widget,n); }
 
 	/**
 	 * Same as Fl_Group::insert()
 	 */
-	void insert(Fl_Widget& w, Fl_Widget* w2) { table->insert(w,w2); }
+	void insert(Fl_Widget& widget1, Fl_Widget* widget2) { table->insert(widget1,widget2); }
 
 	/**
 	 * Remove a widget from the table
 	 */
-	void remove(Fl_Widget& w) { table->remove(w); }
+	void remove(Fl_Widget& widget) { table->remove(widget); }
 
 	/**
 	 * Same as Fl_Group::begin()
@@ -667,8 +667,8 @@ public:
 	Fl_Widget * const *array() { return table->array(); }
 	Fl_Widget *child(int n) const { return table->child(n); }
 	int children() const { return table->children()-2; }	// -2: skip Fl_Scroll's h/v scrollbar widgets
-	int find(const Fl_Widget *w) const { return table->find(w); }
-	int find(const Fl_Widget &w) const { return table->find(w); }
+	int find(const Fl_Widget *widget) const { return table->find(widget); }
+	int find(const Fl_Widget &widget) const { return table->find(widget); }
 #endif
 
 	/**

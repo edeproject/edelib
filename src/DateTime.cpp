@@ -116,18 +116,14 @@ TimeZone::~TimeZone() {
 	clear();
 }
 
-bool TimeZone::load(const char* zone) {
-	if (!zone)
-		return false;
+bool TimeZone::load(const char* n) {
+	E_RETURN_VAL_IF_FAIL(n, false);
 
-	zoneval = strdup(zone);
+	zoneval = strdup(n);
 	/*
-	 * localtime() depends on TZ environment variable, and
-	 * setting it to desired zone, it will yield correct time
-	 * for that zone. 
-	 *
-	 * So, here is first backed up old TZ value (if exists)
-	 * set a new one, then old is returned. Stupid, I know :)
+	 * localtime() depends on TZ environment variable, and setting it to desired zone, it will yield correct time
+	 * for that zone. So, here is first backed up old TZ value (if exists) set a new one, then old is returned. 
+	 * Stupid, I know :)
 	 */
 	char* old = 0;
 	char* otz = getenv("TZ");
@@ -187,9 +183,9 @@ void TimeZone::clear(void) {
 	}
 }
 
-bool TimeZone::set(const char* zone) {
+bool TimeZone::set(const char* n) {
 	clear();
-	return load(zone);
+	return load(n);
 }
 
 

@@ -242,12 +242,13 @@ void IconTheme::load_theme(const char* name) {
 			theme_subdir_path += *it;
 
 			if(file_test(theme_subdir_path.c_str(), FILE_TEST_IS_DIR)) {
-				IconDirInfo dirinfo;
-				dirinfo.path = theme_subdir_path;
-				dirinfo.context = context;
-				dirinfo.size = size;
+				IconDirInfo inf;
 
-				priv->dirlist.push_back(dirinfo);
+				inf.path = theme_subdir_path;
+				inf.context = context;
+				inf.size = size;
+
+				priv->dirlist.push_back(inf);
 			}
 		}
 	}

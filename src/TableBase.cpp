@@ -559,33 +559,33 @@ void TableBase::recalc_dimensions()
 void TableBase::table_scrolled()
 {
 	// Top row
-	int y, row, voff = vscrollbar->value();
-	for ( row=y=0; row < _rows; row++ )
+	int ry, row, voff = vscrollbar->value();
+	for ( row=ry=0; row < _rows; row++ )
 	{
-		y += row_height(row);
-		if ( y >= voff ) { y -= row_height(row); break; }
+		ry += row_height(row);
+		if ( ry >= voff ) { ry -= row_height(row); break; }
 	}
 	_row_position = toprow = ( row >= _rows ) ? (row - 1) : row;
-	toprow_scrollpos = y;		// OPTIMIZATION: save for later use
+	toprow_scrollpos = ry;		// OPTIMIZATION: save for later use
 
 	// Bottom row
 	voff = vscrollbar->value() + tih;
 	for ( ; row < _rows; row++ )
 	{
-		y += row_height(row);
-		if ( y >= voff ) { break; }
+		ry += row_height(row);
+		if ( ry >= voff ) { break; }
 	}
 	botrow = ( row >= _rows ) ? (row - 1) : row;
 
 	// Left column
-	int x, col, hoff = hscrollbar->value();
-	for ( col=x=0; col < _cols; col++ )
+	int cx, col, hoff = hscrollbar->value();
+	for ( col=cx=0; col < _cols; col++ )
 	{
-		x += col_width(col);
-		if ( x >= hoff ) { x -= col_width(col); break; }
+		cx += col_width(col);
+		if ( cx >= hoff ) { cx -= col_width(col); break; }
 	}
 	_col_position = leftcol = ( col >= _cols ) ? (col - 1) : col;
-	leftcol_scrollpos = x;		// OPTIMIZATION: save for later use
+	leftcol_scrollpos = cx;		// OPTIMIZATION: save for later use
 
 	// Right column
 	//	  Work with data left over from leftcol calculation
@@ -593,8 +593,8 @@ void TableBase::table_scrolled()
 	hoff = hscrollbar->value() + tiw;
 	for ( ; col < _cols; col++ )
 	{
-		x += col_width(col);
-		if ( x >= hoff ) { break; }
+		cx += col_width(col);
+		if ( cx >= hoff ) { break; }
 	}
 	rightcol = ( col >= _cols ) ? (col - 1) : col;
 

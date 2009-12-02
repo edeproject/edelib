@@ -54,10 +54,10 @@ void SevenSeg::value(char c) {
 	value(v);
 }
 
-void SevenSeg::bar_width(int w) {
-	if(w < 2) w = 2;
-	if(w > 12) w = 12;
-	segwidth = w;
+void SevenSeg::bar_width(int W) {
+	if(W < 2) W = 2;
+	if(W > 12) W = 12;
+	segwidth = W;
 	if(active())
 		redraw();
 }

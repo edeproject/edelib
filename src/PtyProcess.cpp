@@ -488,12 +488,12 @@ int PtyProcess::wait_for_child(void) {
 }
 
 /*
- * Creates a new session. The filedescriptor "fd" should be
+ * Creates a new session. The filedescriptor "fde" should be
  * connected to the tty. It is closed after the tty is reopened to make it
  * our controlling terminal. This way the tty is always opened at least once
  * so we'll never get EIO when reading from it.
  */
-int PtyProcess::setup_tty(int fd)
+int PtyProcess::setup_tty(int fde)
 {
 	// Reset signal handlers
 	for(int sig = 1; sig < NSIG; sig++)
@@ -504,7 +504,7 @@ int PtyProcess::setup_tty(int fd)
 	struct rlimit rlp;
 	getrlimit(RLIMIT_NOFILE, &rlp);
 	for(int i = 0; i < (int)rlp.rlim_cur; i++) {
-		if (i != fd) 
+		if (i != fde) 
 			close(i);
 	}
 
@@ -518,7 +518,7 @@ int PtyProcess::setup_tty(int fd)
 		E_WARNING(E_STRLOC ": could not opent slave side ('%s')\n", strerror(errno));
 		return -1;
 	}
-	close(fd);
+	close(fde);
 
 #if defined(__SVR4) && defined(sun)
 	// Solaris STREAMS environment.
