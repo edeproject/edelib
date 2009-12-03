@@ -1624,11 +1624,9 @@ static int token(scheme *sc) {
           return (TOK_EOF);
      case '(':
      case '[':
-     case '{':
           return (TOK_LPAREN);
      case ')':
      case ']':
-     case '}':
           return (TOK_RPAREN);
      case '.':
           c=inchar(sc);
@@ -3697,7 +3695,7 @@ static pointer opexe_5(scheme *sc, enum scheme_opcodes op) {
                sc->tok = token(sc);
                s_goto(sc,OP_RDSEXPR);
           case TOK_ATOM:
-               s_return(sc,mk_atom(sc, readstr_upto(sc, "();\t\n\r ")));
+               s_return(sc,mk_atom(sc, readstr_upto(sc, "()[];\t\n\r ")));
           case TOK_DQUOTE:
                x=readstrexp(sc);
 	       if(x==sc->F) {
@@ -3715,7 +3713,7 @@ static pointer opexe_5(scheme *sc, enum scheme_opcodes op) {
                }
           }
           case TOK_SHARP_CONST:
-               if ((x = mk_sharp_const(sc, readstr_upto(sc, "();\t\n\r "))) == sc->NIL) {
+               if ((x = mk_sharp_const(sc, readstr_upto(sc, "()[];\t\n\r "))) == sc->NIL) {
                     Error_0(sc,"undefined sharp expression");
                } else {
                     s_return(sc,x);
