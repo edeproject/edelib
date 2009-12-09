@@ -79,6 +79,7 @@ SOURCE_GUI =
 	Menu_add.cpp  
 	Menu_global.cpp
 	MessageBox.cpp
+	Netwm.cpp
 	SevenSeg.cpp
 	TableBase.cpp 
 	$(TINYSCHEME)

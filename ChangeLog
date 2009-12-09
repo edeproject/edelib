@@ -1,3 +1,8 @@
+2009-12-09  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Netwm.h:
+	* src/Netwm.cpp: attempt to put common wm code in one place
+
 2009-12-03  Sanel <karijes@users.sourceforge.net>
 
 	* src/tinyscheme/scheme.c: dump {} tokens; fixed so [] tokens can be
