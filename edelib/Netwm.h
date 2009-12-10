@@ -149,6 +149,12 @@ void netwm_window_set_type(Window win, int t);
 
 /**
  * \ingroup wm
+ * Return window type by returning one of NETWM_WINDOW_TYPE_* codes. If fails, the function returns -1.
+ */
+int netwm_window_get_type(Window win);
+
+/**
+ * \ingroup wm
  * Resize area by setting offsets to each side. <em>win</em> will be outside that area.
  */
 void netwm_window_set_strut(Window win, int left, int right, int top, int bottom);

@@ -1,7 +1,7 @@
 2009-12-10  Sanel <karijes@users.sourceforge.net>
 
 	* edelib/Netwm.h:
-	* src/Netwm.cpp: some API refactoring
+	* src/Netwm.cpp: some API refactoring, added netwm_window_get_type()
 
 2009-12-09  Sanel <karijes@users.sourceforge.net>
 

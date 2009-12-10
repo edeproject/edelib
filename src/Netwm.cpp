@@ -365,6 +365,43 @@ void netwm_window_set_type(Window win, int t) {
 			(unsigned char*)&type, sizeof(Atom));
 }
 
+int netwm_window_get_type(Window win) {
+	init_atoms_once();
+
+	Atom real;
+	int format;
+	unsigned long n, extra;
+	unsigned char* prop = 0;
+
+	int status = XGetWindowProperty(fl_display, win, 
+			_XA_NET_WM_WINDOW_TYPE, 0L, sizeof(Atom), False, XA_ATOM, &real, &format, &n, &extra, 
+			(unsigned char**)&prop);
+
+	if(status != Success || !prop)
+		return -1;
+
+	Atom type = *(Atom*)prop;
+	XFree(prop);
+
+	if     (type == _XA_NET_WM_WINDOW_TYPE_DESKTOP)       return NETWM_WINDOW_TYPE_DESKTOP;
+	else if(type == _XA_NET_WM_WINDOW_TYPE_DOCK)          return NETWM_WINDOW_TYPE_DOCK;
+	else if(type == _XA_NET_WM_WINDOW_TYPE_TOOLBAR)       return NETWM_WINDOW_TYPE_TOOLBAR;
+	else if(type == _XA_NET_WM_WINDOW_TYPE_MENU)          return NETWM_WINDOW_TYPE_MENU;
+	else if(type == _XA_NET_WM_WINDOW_TYPE_UTILITY)       return NETWM_WINDOW_TYPE_UTILITY;
+	else if(type == _XA_NET_WM_WINDOW_TYPE_SPLASH)        return NETWM_WINDOW_TYPE_SPLASH;
+	else if(type == _XA_NET_WM_WINDOW_TYPE_DIALOG)        return NETWM_WINDOW_TYPE_DIALOG;
+
+	else if(type == _XA_NET_WM_WINDOW_TYPE_DROPDOWN_MENU) return NETWM_WINDOW_TYPE_DROPDOWN_MENU;
+	else if(type == _XA_NET_WM_WINDOW_TYPE_POPUP_MENU)    return NETWM_WINDOW_TYPE_POPUP_MENU;
+	else if(type == _XA_NET_WM_WINDOW_TYPE_TOOLTIP)       return NETWM_WINDOW_TYPE_TOOLTIP;
+	else if(type == _XA_NET_WM_WINDOW_TYPE_NOTIFICATION)  return NETWM_WINDOW_TYPE_NOTIFICATION;
+	else if(type == _XA_NET_WM_WINDOW_TYPE_COMBO)         return NETWM_WINDOW_TYPE_COMBO;
+	else if(type == _XA_NET_WM_WINDOW_TYPE_DND)           return NETWM_WINDOW_TYPE_DND;
+
+	/* assume it is normal */
+	return NETWM_WINDOW_TYPE_NORMAL;
+}
+
 void netwm_window_set_strut(Window win, int left, int right, int top, int bottom) {
 	init_atoms_once();
 
@@ -421,26 +458,16 @@ int netwm_window_get_workspace(Window win) {
 }
 
 int netwm_window_is_manageable(Window win) {
-	init_atoms_once();
+	int t = netwm_window_get_type(win);
+	if(t < 0)
+		return t;
 
-	Atom real;
-	int format;
-	unsigned long n, extra;
-	unsigned char* prop = 0;
+	if(t == NETWM_WINDOW_TYPE_NORMAL)
+		return 1;
 
-	int status = XGetWindowProperty(fl_display, win, 
-			_XA_NET_WM_WINDOW_TYPE, 0L, sizeof(Atom), False, XA_ATOM, &real, &format, &n, &extra, 
-			(unsigned char**)&prop);
-
-	if(status != Success || !prop)
-		return -1;
-
-	Atom type = *(Atom*)prop;
-	XFree(prop);
-
-	if(type == _XA_NET_WM_WINDOW_TYPE_DESKTOP || 
-	   type == _XA_NET_WM_WINDOW_TYPE_SPLASH  || 
-	   type == _XA_NET_WM_WINDOW_TYPE_DOCK)
+	if(t == NETWM_WINDOW_TYPE_DESKTOP || 
+	   t == NETWM_WINDOW_TYPE_SPLASH  || 
+	   t == NETWM_WINDOW_TYPE_DOCK)
 	{
 		return 0;
 	}
