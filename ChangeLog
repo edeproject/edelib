@@ -1,3 +1,8 @@
+2009-12-10  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Netwm.h:
+	* src/Netwm.cpp: some API refactoring
+
 2009-12-09  Sanel <karijes@users.sourceforge.net>
 
 	* edelib/Netwm.h:

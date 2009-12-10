@@ -48,8 +48,8 @@ enum {
 
 /**
  * \ingroup wm
- * Window type codes. Codes marked as <em>(part of 1.4)</em> are added in Window Manager Specification 1.4
- * and not all window managers support it. The rest of codes arer part of 1.3 specification version.
+ * %Window type codes. Codes marked as <em>(part of 1.4)</em> are added in %Window Manager Specification 1.4
+ * and not all window managers support it. The rest of codes are part of 1.3 specification version.
  */
 enum {
 	NETWM_WINDOW_TYPE_NORMAL,            ///< ordinary window
@@ -74,10 +74,10 @@ enum {
  * State of the window.
  */
 enum WmStateValue {
-	WM_STATE_NONE      = -1,   ///< window state couldn't be determined
-	WM_STATE_WITHDRAW  = 0,    ///< withdraw state
-	WM_STATE_NORMAL    = 1,    ///< window is visible
-	WM_STATE_ICONIC    = 3     ///< window is hidden
+	WM_WINDOW_STATE_NONE      = -1,   ///< window state couldn't be determined
+	WM_WINDOW_STATE_WITHDRAW  = 0,    ///< withdraw state
+	WM_WINDOW_STATE_NORMAL    = 1,    ///< window is visible
+	WM_WINDOW_STATE_ICONIC    = 3     ///< window is hidden
 };
 
 /**
@@ -88,8 +88,12 @@ typedef void (*NetwmCallback)(int action, Window xid, void *data);
 
 /**
  * \ingroup wm
- * Register callback for events related to windows and environment. This function will open display
- * by calling fl_open_display().
+ * Register callback for events related to windows and environment. This function will open display by 
+ * calling fl_open_display().
+ *
+ * When actions get reported, window id will be set to target id. If action wasn't figured, it will be set to -1.
+ *
+ * \note To get some events (e.g. NETWM_CHANGED_WINDOW_NAME) you will have to use XSelectInput() on source window.
  */
 void netwm_callback_add(NetwmCallback cb, void *data = 0);
 
@@ -101,114 +105,120 @@ void netwm_callback_remove(NetwmCallback cb);
 
 /**
  * \ingroup wm
- * Get current workaread set by window manager. Return false if fails.
+ * Get workarea set by window manager. Return false if fails.
  */
-bool netwm_get_workarea(int& x, int& y, int& w, int &h);
+bool netwm_workarea_get_size(int& x, int& y, int& w, int &h);
+
+/**
+ * \ingroup wm
+ * Return number of available workspaces. Returns -1 if failed to fetch workspaces count.
+ */
+int netwm_workspace_get_count(void);
+
+/**
+ * \ingroup wm
+ * Change current workspace.
+ */
+void netwm_workspace_change(int n);
+
+/** 
+ * \ingroup wm
+ * Currently visible workspace. Workspaces are starting from 0. Returns -1 if failed.
+ */
+int netwm_workspace_get_current(void);
+
+/**
+ * \ingroup wm
+ * Get array of workspace names. Function returns number of allocated items in array and should
+ * be freed with netwm_workspace_free_names().
+ */
+int netwm_workspace_get_names(char**& names);
+
+/**
+ * \ingroup wm
+ * Free allocated names array with netwm_workspace_get_names().
+ */
+void netwm_workspace_free_names(char** names);
 
 /**
  * \ingroup wm
  * Set window type by using one of NETWM_WINDOW_TYPE_* codes. Depending on window managers some types
  * will be applied correctly when window is showed and for some, application must be restarted.
  */
-void netwm_set_window_type(Window win, int t);
+void netwm_window_set_type(Window win, int t);
 
 /**
  * \ingroup wm
  * Resize area by setting offsets to each side. <em>win</em> will be outside that area.
  */
-void netwm_set_window_strut(Window win, int left, int right, int top, int bottom);
-
-/**
- * \ingroup wm
- * Return number of available workspaces. Returns -1 if failed to fetch workspaces count.
- */
-int netwm_get_workspace_count(void);
-
-/**
- * \ingroup wm
- * Change current workspace.
- */
-void netwm_change_workspace(int n);
-
-/** 
- * \ingroup wm
- * Currently visible workspace. Workspaces are starting from 0. Returns -1 if failed.
- */
-int netwm_get_current_workspace(void);
-
-/**
- * \ingroup wm
- * Get array of workspace names. Function returns number of allocated items in array and should
- * be freed with XFreeStringList(names).
- */
-int netwm_get_workspace_names(char**& names);
+void netwm_window_set_strut(Window win, int left, int right, int top, int bottom);
 
 /**
  * \ingroup wm
  * Get array of mapped windows. Returns array size or -1 if fails. Call XFree() to free allocation.
  */
-int netwm_get_mapped_windows(Window **windows);
+int netwm_window_get_all_mapped(Window **windows);
 
 /**
  * \ingroup wm
  * Get workspace given window resides. If fails returns -2 or return -1 if window is sticky (present on
  * all workspaces). */
-int netwm_get_window_workspace(Window win);
+int netwm_window_get_workspace(Window win);
 
 /** 
  * \ingroup wm
  * Return 1 if given window is manageable (window can be moved or closed) or 0 if not. Desktop/dock/splash 
  * types are not manageable. In case it could not figure out this property, it will return -1.
  */
-int netwm_manageable_window(Window win);
+int netwm_window_is_manageable(Window win);
 
 /**
  * \ingroup wm
  * Return window title or NULL if fails. Call free() on returned string.
  */
-char *netwm_get_window_title(Window win);
+char *netwm_window_get_title(Window win);
 
 /**
  * \ingroup wm
  * Return ID of currently focused window. If fails, return -1.
  */
-Window netwm_get_active_window(void);
+Window netwm_window_get_active(void);
 
 /**
  * \ingroup wm
  * Try to focus or raise given window.
  */
-void netwm_set_active_window(Window win);
+void netwm_window_set_active(Window win);
 
 /**
  * \ingroup wm
  * Maximize window.
  */
-void netwm_maximize_window(Window win);
+void netwm_window_maximize(Window win);
 
 /**
  * \ingroup wm
  * Close window.
  */
-void netwm_close_window(Window win);
+void netwm_window_close(Window win);
 
 /**
  * \ingroup wm
  * edewm specific: restore window to previous state
  */
-void wm_ede_restore_window(Window win);
+void wm_window_ede_restore(Window win);
 
 /**
  * \ingroup wm
  * Not part of NETWM. Set window state to one of WmStateValue.
  */
-WmStateValue wm_get_window_state(Window win);
+WmStateValue wm_window_get_state(Window win);
 
 /**
  * \ingroup wm
  * Not part of NETWM. Get one of WmStateValue for given window.
  */
-void wm_set_window_state(Window win, WmStateValue state);
+void wm_window_set_state(Window win, WmStateValue state);
 
 EDELIB_NS_END
 #endif

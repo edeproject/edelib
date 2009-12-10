@@ -216,7 +216,7 @@ void netwm_callback_remove(NetwmCallback cb) {
 	}
 }
 
-bool netwm_get_workarea(int& x, int& y, int& w, int &h) {
+bool netwm_workarea_get_size(int& x, int& y, int& w, int &h) {
 	init_atoms_once();
 
 	Atom real;
@@ -245,7 +245,99 @@ bool netwm_get_workarea(int& x, int& y, int& w, int &h) {
 	return false;
 }
 
-void netwm_set_window_type(Window win, int t) {
+int netwm_workspace_get_count(void) {
+	init_atoms_once();
+
+	Atom real;
+	int format;
+	unsigned long n, extra;
+	unsigned char* prop;
+
+	int status = XGetWindowProperty(fl_display, RootWindow(fl_display, fl_screen), 
+			_XA_NET_NUMBER_OF_DESKTOPS, 0L, 0x7fffffff, False, XA_CARDINAL, &real, &format, &n, &extra, 
+			(unsigned char**)&prop);
+
+	if(status != Success || !prop)
+		return -1;
+
+	int ns = int(*(long*)prop);
+	XFree(prop);
+	return ns;
+}
+
+void netwm_workspace_change(int n) {
+	init_atoms_once();
+
+	XEvent xev;
+	Window root_win = RootWindow(fl_display, fl_screen);
+
+	memset(&xev, 0, sizeof(xev));
+	xev.xclient.type = ClientMessage;
+	xev.xclient.serial = 0;
+	xev.xclient.send_event = True;
+	xev.xclient.window = root_win;
+	xev.xclient.display = fl_display;
+	xev.xclient.message_type = _XA_NET_CURRENT_DESKTOP;
+	xev.xclient.format = 32;
+	xev.xclient.data.l[0] = (long)n;
+	xev.xclient.data.l[1] = CurrentTime;
+
+	XSendEvent (fl_display, root_win, False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+	XSync(fl_display, True);
+}
+
+int netwm_workspace_get_current(void) {
+	init_atoms_once();
+
+	Atom real;
+	int format;
+	unsigned long n, extra;
+	unsigned char* prop;
+
+	int status = XGetWindowProperty(fl_display, RootWindow(fl_display, fl_screen), 
+			_XA_NET_CURRENT_DESKTOP, 0L, 0x7fffffff, False, XA_CARDINAL, &real, &format, &n, &extra, 
+			(unsigned char**)&prop);
+
+	if(status != Success || !prop)
+		return -1;
+
+	int ns = int(*(long*)prop);
+	XFree(prop);
+	return ns;
+}
+
+int netwm_workspace_get_names(char**& names) {
+	init_atoms_once();
+
+	/* FIXME: add _NET_SUPPORTING_WM_CHECK and _NET_SUPPORTED ??? */
+	XTextProperty wnames;
+	XGetTextProperty(fl_display, RootWindow(fl_display, fl_screen), &wnames, _XA_NET_DESKTOP_NAMES);
+
+	/* if wm does not understainds _NET_DESKTOP_NAMES this is not set */
+	if(!wnames.nitems || !wnames.value)
+		return 0;
+
+	int nsz;
+
+	/*
+	 * FIXME: Here should as alternative Xutf8TextPropertyToTextList since
+	 * many wm's set UTF8_STRING property. Below is XA_STRING and for UTF8_STRING will fail.
+	 */
+	if(!XTextPropertyToStringList(&wnames, &names, &nsz)) {
+		XFree(wnames.value);
+		return 0;
+	}
+
+	XFree(wnames.value);
+	return nsz;
+}
+
+void netwm_workspace_free_names(char **names) {
+	E_RETURN_IF_FAIL(names);
+	XFreeStringList(names);
+}
+
+void netwm_window_set_type(Window win, int t) {
 	init_atoms_once();
 
 	/* default */
@@ -273,7 +365,7 @@ void netwm_set_window_type(Window win, int t) {
 			(unsigned char*)&type, sizeof(Atom));
 }
 
-void netwm_set_window_strut(Window win, int left, int right, int top, int bottom) {
+void netwm_window_set_strut(Window win, int left, int right, int top, int bottom) {
 	init_atoms_once();
 
 	CARD32 strut[4] = { left, right, top, bottom };
@@ -282,94 +374,7 @@ void netwm_set_window_strut(Window win, int left, int right, int top, int bottom
 			PropModeReplace, (unsigned char*)&strut, sizeof(CARD32) * 4);
 }
 
-int netwm_get_workspace_count(void) {
-	init_atoms_once();
-
-	Atom real;
-	int format;
-	unsigned long n, extra;
-	unsigned char* prop;
-
-	int status = XGetWindowProperty(fl_display, RootWindow(fl_display, fl_screen), 
-			_XA_NET_NUMBER_OF_DESKTOPS, 0L, 0x7fffffff, False, XA_CARDINAL, &real, &format, &n, &extra, 
-			(unsigned char**)&prop);
-
-	if(status != Success || !prop)
-		return -1;
-
-	int ns = int(*(long*)prop);
-	XFree(prop);
-	return ns;
-}
-
-void netwm_change_workspace(int n) {
-	init_atoms_once();
-
-	XEvent xev;
-	Window root_win = RootWindow(fl_display, fl_screen);
-
-	memset(&xev, 0, sizeof(xev));
-	xev.xclient.type = ClientMessage;
-	xev.xclient.serial = 0;
-	xev.xclient.send_event = True;
-	xev.xclient.window = root_win;
-	xev.xclient.display = fl_display;
-	xev.xclient.message_type = _XA_NET_CURRENT_DESKTOP;
-	xev.xclient.format = 32;
-	xev.xclient.data.l[0] = (long)n;
-	xev.xclient.data.l[1] = CurrentTime;
-
-	XSendEvent (fl_display, root_win, False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
-	XSync(fl_display, True);
-}
-
-int netwm_get_current_workspace(void) {
-	init_atoms_once();
-
-	Atom real;
-	int format;
-	unsigned long n, extra;
-	unsigned char* prop;
-
-	int status = XGetWindowProperty(fl_display, RootWindow(fl_display, fl_screen), 
-			_XA_NET_CURRENT_DESKTOP, 0L, 0x7fffffff, False, XA_CARDINAL, &real, &format, &n, &extra, 
-			(unsigned char**)&prop);
-
-	if(status != Success || !prop)
-		return -1;
-
-	int ns = int(*(long*)prop);
-	XFree(prop);
-	return ns;
-}
-
-int netwm_get_workspace_names(char**& names) {
-	init_atoms_once();
-
-	/* FIXME: add _NET_SUPPORTING_WM_CHECK and _NET_SUPPORTED ??? */
-	XTextProperty wnames;
-	XGetTextProperty(fl_display, RootWindow(fl_display, fl_screen), &wnames, _XA_NET_DESKTOP_NAMES);
-
-	/* if wm does not understainds _NET_DESKTOP_NAMES this is not set */
-	if(!wnames.nitems || !wnames.value)
-		return 0;
-
-	int nsz;
-
-	/*
-	 * FIXME: Here should as alternative Xutf8TextPropertyToTextList since
-	 * many wm's set UTF8_STRING property. Below is XA_STRING and for UTF8_STRING will fail.
-	 */
-	if(!XTextPropertyToStringList(&wnames, &names, &nsz)) {
-		XFree(wnames.value);
-		return 0;
-	}
-
-	XFree(wnames.value);
-	return nsz;
-}
-
-int netwm_get_mapped_windows(Window **windows) {
+int netwm_window_get_all_mapped(Window **windows) {
 	init_atoms_once();
 
 	Atom real;
@@ -388,7 +393,7 @@ int netwm_get_mapped_windows(Window **windows) {
 	return n;
 }
 
-int netwm_get_window_workspace(Window win) {
+int netwm_window_get_workspace(Window win) {
 	E_RETURN_VAL_IF_FAIL(win >= 0, -1);
 
 	init_atoms_once();
@@ -415,7 +420,7 @@ int netwm_get_window_workspace(Window win) {
 	return desk;
 }
 
-int netwm_manageable_window(Window win) {
+int netwm_window_is_manageable(Window win) {
 	init_atoms_once();
 
 	Atom real;
@@ -443,7 +448,7 @@ int netwm_manageable_window(Window win) {
 	return 1;
 }
 
-char *netwm_get_window_title(Window win) {
+char *netwm_window_get_title(Window win) {
 	init_atoms_once();
 
 	XTextProperty xtp;
@@ -492,7 +497,7 @@ char *netwm_get_window_title(Window win) {
 	return ret;
 }
 
-Window netwm_get_active_window(void) {
+Window netwm_window_get_active(void) {
 	init_atoms_once();
 
 	Atom real;
@@ -513,7 +518,7 @@ Window netwm_get_active_window(void) {
 	return (Window)ret;
 }
 
-void netwm_set_active_window(Window win) {
+void netwm_window_set_active(Window win) {
 	init_atoms_once();	
 
 	XEvent xev;
@@ -533,7 +538,7 @@ void netwm_set_active_window(Window win) {
 	XSync(fl_display, True);
 }
 
-void netwm_maximize_window(Window win) {
+void netwm_window_maximize(Window win) {
 	init_atoms_once();	
 
 	XEvent xev;
@@ -554,7 +559,7 @@ void netwm_maximize_window(Window win) {
 	XSync(fl_display, True);
 }
 
-void netwm_close_window(Window win) {
+void netwm_window_close(Window win) {
 	init_atoms_once();	
 
 	XEvent xev;
@@ -574,7 +579,7 @@ void netwm_close_window(Window win) {
 	XSync(fl_display, True);
 }
 
-void wm_ede_restore_window(Window win) {
+void wm_window_ede_restore(Window win) {
 	init_atoms_once();	
 
 	XEvent xev;
@@ -594,7 +599,7 @@ void wm_ede_restore_window(Window win) {
 	XSync(fl_display, True);
 }
 
-WmStateValue wm_get_window_state(Window win) {
+WmStateValue wm_window_get_state(Window win) {
 	init_atoms_once();
 
 	Atom real;
@@ -607,7 +612,7 @@ WmStateValue wm_get_window_state(Window win) {
 			(unsigned char**)&prop);
 
 	if(status != Success || !prop)
-		return WM_STATE_NONE;
+		return WM_WINDOW_STATE_NONE;
 
 	WmStateValue ret = WmStateValue(*(long*)prop);
 	XFree(prop);
@@ -615,18 +620,18 @@ WmStateValue wm_get_window_state(Window win) {
 	return ret;
 }
 
-void wm_set_window_state(Window win, WmStateValue state) {
+void wm_window_set_state(Window win, WmStateValue state) {
 	E_RETURN_IF_FAIL((int)state > 0);
 
-	if(state == WM_STATE_WITHDRAW) {
+	if(state == WM_WINDOW_STATE_WITHDRAW) {
 		XWithdrawWindow(fl_display, win, fl_screen);
 		XSync(fl_display, True);
-	} else if(state == WM_STATE_ICONIC) {
+	} else if(state == WM_WINDOW_STATE_ICONIC) {
 		XIconifyWindow(fl_display, win, fl_screen);
 		XSync(fl_display, True);
 	}
 	
-	/* nothing for WM_STATE_NORMAL */
+	/* nothing for WM_WINDOW_STATE_NORMAL */
 }
 
 EDELIB_NS_END
