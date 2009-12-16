@@ -1,3 +1,7 @@
+2009-12-16  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Netwm.h: little change for netwm_window_is_manageable() doc
+
 2009-12-10  Sanel <karijes@users.sourceforge.net>
 
 	* edelib/Netwm.h:

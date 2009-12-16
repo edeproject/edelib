@@ -173,7 +173,7 @@ int netwm_window_get_workspace(Window win);
 
 /** 
  * \ingroup wm
- * Return 1 if given window is manageable (window can be moved or closed) or 0 if not. Desktop/dock/splash 
+ * Return 1 if given window is manageable (window can be moved or closed) or 0 if not. Desktop, dock and splash 
  * types are not manageable. In case it could not figure out this property, it will return -1.
  */
 int netwm_window_is_manageable(Window win);
