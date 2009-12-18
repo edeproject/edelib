@@ -28,12 +28,9 @@
 #include <edelib/StrUtil.h>
 #include <edelib/Nls.h>
 
-// max section len
-#define ESECT_MAX 128
-// max key len
-#define EKEY_MAX  128
-// starting size for line/value, can grow
-#define ELINE_SIZE_START 1024
+#define ESECT_MAX         128 /* max section len */
+#define EKEY_MAX          128 /* max key len */
+#define ELINE_SIZE_START 1024 /* starting size for line/value, can grow */
 
 #define COMMENT    '#'
 #define SECT_OPEN  '['
@@ -223,9 +220,6 @@ ConfigSection::~ConfigSection() {
 	EntryListIter it = entry_list.begin();
 	for (; it != entry_list.end(); ++it) {
 		ConfigEntry* e = *it;
-#ifdef CONFIG_INTERNAL
-		printf("deleting: %s\n", e->key);
-#endif
 		free(e->key);
 		free(e->value);
 		delete e;
@@ -247,26 +241,21 @@ void ConfigSection::add_entry(const char* key, const char* value) {
 	ConfigEntry* e = find_entry(key);
 	if (!e) {
 		e = new ConfigEntry;
-		e->keylen = strlen(key);
+		e->keylen   = strlen(key);
 		e->valuelen = strlen(value);
-		e->key = strdup(key);
-		e->value = strdup(value);
-		// hash the key
-		e->hash = do_hash(e->key, e->keylen);
+		e->key      = strdup(key);
+		e->value    = strdup(value);
+		e->hash     = do_hash(e->key, e->keylen);
 
 		E_ASSERT(e->key != NULL);
 		E_ASSERT(e->value != NULL);
-#ifdef CONFIG_INTERNAL
-		printf("Adding: |%s| = |%s| hash = %i section = %s\n", e->key, e->value, e->hash, sname);
-#endif
+
 		entry_list.push_back(e);
 	} else {
-#ifdef CONFIG_INTERNAL
-		printf("!!! found duplicate for %s\n", e->key);
-#endif
 		free(e->value);
 		e->valuelen = strlen(value);
-		e->value = strdup(value);
+		e->value    = strdup(value);
+
 		E_ASSERT(e->value != NULL);
 	}
 }
@@ -300,14 +289,8 @@ ConfigEntry* ConfigSection::find_entry(const char* key) {
 	return NULL;
 }
 
-/*
- * Config methods
- */
+/* Config methods */
 Config::Config() : errcode(0), linenum(0), sectnum(0), cached(0) {}
-
-Config::~Config() {
-	clear();
-}
 
 bool Config::load(const char* fname) {
 	E_ASSERT(fname != NULL);
@@ -364,9 +347,6 @@ bool Config::load(const char* fname) {
 				// first check if section exists, or create if not
 				tsect = find_section(section);
 				if (!tsect) {
-#ifdef CONFIG_INTERNAL
-					printf("---------------> adding section %s\n", section);
-#endif
 					++sectnum;
 					tsect = new ConfigSection(section);
 					section_list.push_back(tsect);
@@ -449,9 +429,6 @@ ConfigSection* Config::add_section(const char* section) {
 
 	ConfigSection* sc = find_section(section);
 	if (!sc) {
-#ifdef CONFIG_INTERNAL
-		printf("---------------> adding section %s\n", section);
-#endif
 		++sectnum;
 		sc = new ConfigSection(section);
 		section_list.push_back(sc);
@@ -469,20 +446,13 @@ ConfigSection* Config::find_section(const char* section) {
 	unsigned int hh = do_hash(section, slen);
 
 	// check if we have cached section
-	if (cached && cached->shash == hh && (strncmp(cached->sname, section, cached->snamelen) == 0)) {
-#ifdef CONFIG_INTERNAL
-		printf("Found %s cached\n", cached->sname);
-#endif
+	if (cached && cached->shash == hh && (strncmp(cached->sname, section, cached->snamelen) == 0))
 		return cached;
-	}
 
 	SectionListIter it = section_list.begin(), it_end = section_list.end();
 	for (; it != it_end; ++it) {
 		ConfigSection *cs = *it;
 		if (cs->shash == hh && (strncmp(cs->sname, section, cs->snamelen) == 0)) {
-#ifdef CONFIG_INTERNAL
-			printf("XXX found: %s\n", cs->sname);
-#endif
 			cached = cs;
 			return cs;
 		}
@@ -827,4 +797,4 @@ void Config::set(const char* section, const char* key, double value) {
 	sc->add_entry(key, tmp);
 }
 
-EDELIB_NS_END // EDELIB_NAMESPACE
+EDELIB_NS_END

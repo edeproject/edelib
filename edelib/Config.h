@@ -127,7 +127,7 @@ public:
 	Config();
 	
 	/** Destructor */
-	~Config();
+	~Config() { clear(); }
 
 	/**
 	 * Load file. Config's internal content will be cleared.

@@ -1,3 +1,8 @@
+2009-12-18  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Config.h:
+	* src/Config.cpp: small refactoring
+
 2009-12-16  Sanel <karijes@users.sourceforge.net>
 
 	* edelib/Netwm.h: little change for netwm_window_is_manageable() doc
