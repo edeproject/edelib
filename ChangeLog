@@ -1,3 +1,9 @@
+2010-01-19  Sanel <karijes@users.sourceforge.net>
+
+	* new entry in new year!!!
+	* src/DesktopFile.cpp: if localized keys are not found, fallback to
+	generic ones
+
 2009-12-18  Sanel <karijes@users.sourceforge.net>
 
 	* edelib/Config.h:

@@ -107,33 +107,37 @@ bool DesktopFile::name(char* val, int len) {
 	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, false);
 
 	/* TODO: Name key is required too; place it next to Type */
-	if(!Config::get_localized(ENTRY_SECT, "Name", val, len))
-		return false;
-	return true;
+	if(Config::get_localized(ENTRY_SECT, "Name", val, len))
+		return true;
+
+	return Config::get(ENTRY_SECT, "Name", val, len);
 }
 
 bool DesktopFile::generic_name(char* val, int len) {
 	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, false);
 
-	if(!Config::get_localized(ENTRY_SECT, "GenericName", val, len))
-		return false;
-	return true;
+	if(Config::get_localized(ENTRY_SECT, "GenericName", val, len))
+		return true;
+
+	return Config::get(ENTRY_SECT, "GenericName", val, len);
 }
 
 bool DesktopFile::comment(char* val, int len) {
 	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, false);
 
-	if(!Config::get_localized(ENTRY_SECT, "Comment", val, len))
-		return false;
-	return true;
+	if(Config::get_localized(ENTRY_SECT, "Comment", val, len))
+		return true;
+
+	return Config::get(ENTRY_SECT, "Comment", val, len);
 }
 
 bool DesktopFile::icon(char* val, int len) {
 	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, false);
 
-	if(!Config::get_localized(ENTRY_SECT, "Icon", val, len))
-		return false;
-	return true;
+	if(Config::get_localized(ENTRY_SECT, "Icon", val, len))
+		return true;
+
+	return Config::get(ENTRY_SECT, "Icon", val, len);
 }
 
 bool DesktopFile::exec(char* val, int len) {
