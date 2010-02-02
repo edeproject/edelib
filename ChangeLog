@@ -1,3 +1,8 @@
+2010-02-02  Sanel <karijes@users.sourceforge.net>
+
+	* po/update-messages.sh:
+	* po/messages.pot: created directory for translations with accompanying files
+
 2010-01-19  Sanel <karijes@users.sourceforge.net>
 
 	* new entry in new year!!!
