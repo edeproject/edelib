@@ -277,7 +277,7 @@ rule MakeTest
 	LinkAgainst $(1) : $(STDLIB) ;
 }
 
-# MakeInstallPrivate <location-dir> : <targets> : <opt-file-mode> : <opt-chown> : <opt-chgrp> ;
+# MakeInstallPrivate <location-dir> : <targets> : <opt-file-mode> : <opt-chown> : <opt-chgrp> : <opt-name> ;
 rule MakeInstallPrivate
 {
 	local i t s ;
@@ -295,7 +295,15 @@ rule MakeInstallPrivate
 	SEARCH on $(s) = $(SUBDIR) ;
 
 	for i in $(s) {
-		t = $(i:BSR=$(dir):G=installed) ;
+		# so we can install it as desired name
+		if $(6) { 
+			t = $(6:BSR=$(dir):G=installed) ;
+		} else {
+			t = $(i:BSR=$(dir):G=installed) ;
+		}
+
+		#t = $(i:BSR=$(dir):G=installed) ;
+
 		LocalDepends $(t) : $(i) ;
 		LocalDepends $(t) : $(dir) ;
 
@@ -380,6 +388,12 @@ rule InstallDocumentation
 rule InstallFile
 {
 	MakeInstallPrivate $(<) : $(>) : $(FILEMODE) ;
+}
+
+# InstallFileAs <location-dir> : <file> : <file-as> ;
+rule InstallFileAs
+{
+	MakeInstallPrivate $(1) : $(2) : $(FILEMODE) : : : $(3) ;
 }
 
 # InstallDirectory <location-dir> : <directory> ;

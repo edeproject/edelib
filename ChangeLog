@@ -2,6 +2,10 @@
 
 	* po/update-messages.sh:
 	* po/edelib.pot: default template file should be named edelib.pot
+	* Jamrules:
+	* Jamfile:
+	* po/Jamfile: modified MakeInstallPrivate so it can accept target
+	filename; added ability to install translated files in locale directory
 
 2010-02-02  Sanel <karijes@users.sourceforge.net>
 
