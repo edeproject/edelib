@@ -9,7 +9,7 @@ patterns="*.h *.c *.cpp"
 # template file
 potfile="edelib.pot"
 
-XGETTEXT="xgettext"
+XGETTEXT="@XGETTEXT@"
 if [ "x$XGETTEXT" = "x" ]; then
 	exit 0
 fi

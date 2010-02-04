@@ -154,7 +154,10 @@ AC_OUTPUT([
  edelib.pc
  edelib-gui.pc
  edelib-dbus.pc
+ po/update-messages.sh
 ])
+
+chmod +x po/update-messages.sh
 
 echo ""
 echo "Now run 'jam' or 'jam help' to see further options."

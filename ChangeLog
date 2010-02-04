@@ -1,3 +1,10 @@
+2010-02-04  Sanel <karijes@users.sourceforge.net>
+
+	* configure.in:
+	* Jamrules:
+	* po/update-message.sh.in: update-messages.sh will be filled with xgettext
+	path if available
+
 2010-02-03  Sanel <karijes@users.sourceforge.net>
 
 	* po/update-messages.sh:

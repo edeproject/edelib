@@ -506,6 +506,7 @@ LocalClean distclean :
 	$(TOP)/edelib/_conf.h.in 
 	$(TOP)/edelib/_conf.h 
 	$(TOP)/edelib/Version.h 
+	$(TOP)/po/update-messages.sh
 	$(JCACHEFILE)
 	$(HCACHEFILE) ;
 
