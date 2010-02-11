@@ -45,7 +45,7 @@ EDELIB_NS_BEGIN
  *
  * (theme.style "foo"
  * [
- *  (xxx   (get-something) <= get-something will be seen as function here and will be evaluated
+ *    (xxx (get-something)) <= get-something will be seen as function here and will be evaluated
  * ])
  *
  * If not set, guess, it will not be evaluated, yielding value different than strint or long,
@@ -57,27 +57,6 @@ EDELIB_NS_BEGIN
 #ifndef THEME_EVAL_VALUE_PAIR
 # define THEME_EVAL_VALUE_PAIR 1
 #endif
-
-#define STORAGE_STR_SET(item, str) \
-do {                               \
-	if(item) free(item);           \
-	item = strdup(str);            \
-} while(0)
-
-/* data that needs to be persistent */
-struct StyleStorage {
-	char *font_normal;
-	char *font_bold;
-	char *font_italic;
-
-	StyleStorage() : font_normal(NULL), font_bold(NULL), font_italic(NULL) { }
-
-	~StyleStorage() {
-		if(font_normal) free(font_normal);
-		if(font_bold)   free(font_bold);
-		if(font_italic) free(font_italic);
-	}
-};
 
 struct Theme_P {
 	scheme     *sc;
