@@ -1,3 +1,7 @@
+2010-02-15  Sanel <karijes@users.sourceforge.net>
+
+	* m4/fltk.m4: check if FLTK was compiled with XFT support
+
 2010-02-11  Sanel <karijes@users.sourceforge.net>
 
 	* src/Theme.cpp: some cleanup
