@@ -52,19 +52,16 @@ AC_DEFUN([EDELIB_FLTK], [
 
 		dnl check if FLTK was compiled with XFT support
 		AC_MSG_CHECKING([for XFT support in FLTK])
-		fltk_have_xft="no"
 
-		for i in $FLTK_LIBS; do
-			if test "$i" = "-lXft"; then
-				fltk_have_xft="yes"
-			fi
-		done
+		dnl directly grep fltk-config, instead checking for output in 'fltk-config --ldflags' as some 
+		dnl linux distros (Ubuntu) implicitly links X11 libraries against FLTK
+		fltk_have_xft=`cat $FLTK_CONFIG | sed -ne '/-lXft/p'`
 
-		if test $fltk_have_xft = "yes"; then
+		if test "x$fltk_have_xft" = "x"; then
+			AC_MSG_RESULT(no)
+		else
 			AC_MSG_RESULT(yes)
 			AC_DEFINE(HAVE_FLTK_XFT, 1, [Define to 1 if FLTK was compiled with XFT support])
-		else
-			AC_MSG_RESULT(no)
 		fi
 	else
 		AC_MSG_ERROR([You don't have fltk installed. To compile edelib, you will need it.])
