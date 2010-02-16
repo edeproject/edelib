@@ -50,12 +50,6 @@ CXXFLAGS ?= "@CXXFLAGS@" ;
 LDFLAGS  ?= "@LDFLAGS@" ;
 LIBS     ?= "@LIBS@" ;
 
-# some warning flags for SunStudio
-if $(SUN_COMPILER) {
-	$(CFLAGS)   += "+w2" ;
-	$(CXXFLAGS) += "+w2" ;
-}
-
 # standard C++ library we link with; for now is gcc's default, but user can override it from shell
 STDLIB   ?= -lstdc++ ;
 

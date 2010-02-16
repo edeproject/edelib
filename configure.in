@@ -49,17 +49,24 @@ AC_PATH_PROG(XGETTEXT, xgettext)
 AC_PATH_PROG(DOXYGEN, doxygen)
 EDELIB_PROG_JAM
 
-EDELIB_COMPILER_NAME
-
-if test "$ac_compiler_gnu" = "yes"; then
+EDELIB_COMPILER_VENDOR
+case $ac_compiler_vendor in 
+	"gcc")
 	SANITY_FLAGS="-Wall -pedantic -Wshadow"
 	DEBUG_FLAGS="-D_DEBUG"
 	OPTIM_FLAGS="-O2"
-else
+	;;
+	"sun")
+	SANITY_FLAGS="+w2"
+	DEBUG_FLAGS="-D_DEBUG"
+	OPTIM_FLAGS="-xO3"
+	;;
+	*)
 	SANITY_FLAGS=""
 	DEBUG_FLAGS="-D_DEBUG"
 	OPTIM_FLAGS=""
-fi
+	;;
+esac
 
 CFLAGS="-DHAVE_EDELIB_BASE_CONFIG_H $SANITY_FLAGS $user_cflags"
 CXXFLAGS="-DHAVE_EDELIB_BASE_CONFIG_H $SANITY_FLAGS $user_cxxflags"

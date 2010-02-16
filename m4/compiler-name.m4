@@ -17,32 +17,32 @@ dnl
 dnl You should have received a copy of the GNU Lesser General Public License
 dnl along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-dnl checks compiler name and fill 'ac_compiler_name' variable
+dnl checks compiler name and fill 'ac_compiler_vendor' variable
 
-AC_DEFUN([EDELIB_COMPILER_NAME], [
+AC_DEFUN([EDELIB_COMPILER_VENDOR], [
 	AC_MSG_CHECKING([for compiler vendor])
-	ac_compiler_name="unknown"
+	ac_compiler_vendor=""
 
 	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #if defined(__SUNPRO_C) || (__SUNPRO_CC)
 # else
 # include "error: this is not SunStudio."
 #endif
-]], [[]])], [ ac_compiler_name="sun" ], [])
+]], [[]])], [ ac_compiler_vendor="sun" ], [])
 
 	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #if defined(__INTEL_COMPILER) || (__ICC) || (__ECC)
 # else
 # include "error: this is not IntelCC."
 #endif
-]], [[]])], [ ac_compiler_name="intel" ], [])
+]], [[]])], [ ac_compiler_vendor="intel" ], [])
 
 	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #if defined(__GNUC__)
 # else
 # include "error: this is not gcc."
 #endif
-]], [[]])], [ ac_compiler_name="gcc" ], [])
+]], [[]])], [ ac_compiler_vendor="gcc" ], [])
 
-	AC_MSG_RESULT([$ac_compiler_name])
+	AC_MSG_RESULT([$ac_compiler_vendor])
 ])
