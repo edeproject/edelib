@@ -86,6 +86,13 @@ static Atom _XA_UTF8_STRING;
 
 #define REGISTER_ATOM(var, str) var = XInternAtom(fl_display, str, False)
 
+/* states for _NET_WM_STATE */
+enum {
+	STATE_REMOVE,
+	STATE_ADD,
+	STATE_TOGGLE
+};
+
 static short atoms_inited = 0;
 
 static void init_atoms_once(void) {
@@ -577,7 +584,7 @@ void netwm_window_maximize(Window win) {
 	xev.xclient.display = fl_display;
 	xev.xclient.message_type = _XA_NET_WM_STATE;
 	xev.xclient.format = 32;
-	xev.xclient.data.l[0] = 0;
+	xev.xclient.data.l[0] = STATE_TOGGLE;
 	xev.xclient.data.l[1] = _XA_NET_WM_STATE_MAXIMIZED_HORZ;
 	xev.xclient.data.l[2] = _XA_NET_WM_STATE_MAXIMIZED_VERT;
 
