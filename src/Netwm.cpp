@@ -38,7 +38,7 @@ typedef list<NetwmCallbackData> CbList;
 typedef list<NetwmCallbackData>::iterator CbListIt;
 
 static CbList callback_list;
-static bool   input_selected = false;
+static int    input_selected = 0;
 
 static Atom _XA_NET_WORKAREA;
 
@@ -71,8 +71,18 @@ static Atom _XA_NET_CLOSE_WINDOW;
 
 static Atom _XA_WM_STATE;
 static Atom _XA_NET_WM_STATE;
-static Atom _XA_NET_WM_STATE_MAXIMIZED_HORZ;
+static Atom _XA_NET_WM_STATE_MODAL;
+static Atom _XA_NET_WM_STATE_STICKY;
 static Atom _XA_NET_WM_STATE_MAXIMIZED_VERT;
+static Atom _XA_NET_WM_STATE_MAXIMIZED_HORZ;
+static Atom _XA_NET_WM_STATE_SHADED;
+static Atom _XA_NET_WM_STATE_SKIP_TASKBAR;
+static Atom _XA_NET_WM_STATE_SKIP_PAGER;
+static Atom _XA_NET_WM_STATE_HIDDEN;
+static Atom _XA_NET_WM_STATE_FULLSCREEN;
+static Atom _XA_NET_WM_STATE_ABOVE;
+static Atom _XA_NET_WM_STATE_BELOW;
+static Atom _XA_NET_WM_STATE_DEMANDS_ATTENTION;
 
 static Atom _XA_EDE_WM_ACTION;
 static Atom _XA_EDE_WM_RESTORE_SIZE;
@@ -86,14 +96,8 @@ static Atom _XA_UTF8_STRING;
 
 #define REGISTER_ATOM(var, str) var = XInternAtom(fl_display, str, False)
 
-/* states for _NET_WM_STATE */
-enum {
-	STATE_REMOVE,
-	STATE_ADD,
-	STATE_TOGGLE
-};
-
 static short atoms_inited = 0;
+static short xevent_added = 0;
 
 static void init_atoms_once(void) {
 	if(atoms_inited)
@@ -135,6 +139,16 @@ static void init_atoms_once(void) {
 	REGISTER_ATOM(_XA_NET_WM_STATE,                     "_NET_WM_STATE");
 	REGISTER_ATOM(_XA_NET_WM_STATE_MAXIMIZED_HORZ,      "_NET_WM_STATE_MAXIMIZED_HORZ");
 	REGISTER_ATOM(_XA_NET_WM_STATE_MAXIMIZED_VERT,      "_NET_WM_STATE_MAXIMIZED_VERT");
+	REGISTER_ATOM(_XA_NET_WM_STATE_MODAL,               "_NET_WM_STATE_MODAL");
+	REGISTER_ATOM(_XA_NET_WM_STATE_STICKY,              "_NET_WM_STATE_STICKY");
+	REGISTER_ATOM(_XA_NET_WM_STATE_SHADED,              "_NET_WM_STATE_SHADED");
+	REGISTER_ATOM(_XA_NET_WM_STATE_SKIP_TASKBAR,        "_NET_WM_STATE_SKIP_TASKBAR");
+	REGISTER_ATOM(_XA_NET_WM_STATE_SKIP_PAGER,          "_NET_WM_STATE_SKIP_PAGER");
+	REGISTER_ATOM(_XA_NET_WM_STATE_HIDDEN,              "_NET_WM_STATE_HIDDEN");
+	REGISTER_ATOM(_XA_NET_WM_STATE_FULLSCREEN,          "_NET_WM_STATE_FULLSCREEN");
+	REGISTER_ATOM(_XA_NET_WM_STATE_ABOVE,               "_NET_WM_STATE_ABOVE");
+	REGISTER_ATOM(_XA_NET_WM_STATE_BELOW,               "_NET_WM_STATE_BELOW");
+	REGISTER_ATOM(_XA_NET_WM_STATE_DEMANDS_ATTENTION,   "_NET_WM_STATE_DEMANDS_ATTENTION");
 
 	/* edewm specific */
 	REGISTER_ATOM(_XA_EDE_WM_ACTION,                    "_EDE_WM_ACTION");
@@ -195,17 +209,19 @@ void netwm_callback_add(NetwmCallback cb, void *data) {
 	/* to catch _XA_NET_CURRENT_DESKTOP and such events */
 	if(!input_selected) {
 		XSelectInput(fl_display, RootWindow(fl_display, fl_screen), PropertyChangeMask | StructureNotifyMask);
-		input_selected = true;
+		input_selected = 1;
 	}
 
-	NetwmCallbackData cb_data;
-	cb_data.cb = cb;
-	cb_data.data = data;
+	NetwmCallbackData c;
+	c.cb = cb;
+	c.data = data;
+	callback_list.push_back(c);
 
-	callback_list.push_back(cb_data);
-
-	Fl::remove_handler(xevent_handler);
-	Fl::add_handler(xevent_handler);
+	/* make sure it is added only once */
+	if(!xevent_added) {
+		Fl::add_handler(xevent_handler);
+		xevent_added = 1;
+	}
 }
 
 void netwm_callback_remove(NetwmCallback cb) {
@@ -566,8 +582,9 @@ void netwm_window_set_active(Window win) {
 	xev.xclient.format = 32;
 	xev.xclient.data.l[0] = (long)win;
 	xev.xclient.data.l[1] = CurrentTime;
+	xev.xclient.data.l[2] = 0;
 
-	XSendEvent (fl_display, RootWindow(fl_display, fl_screen), False, 
+	XSendEvent(fl_display, RootWindow(fl_display, fl_screen), False, 
 			SubstructureRedirectMask | SubstructureNotifyMask, &xev);
 	XSync(fl_display, True);
 }
@@ -584,7 +601,7 @@ void netwm_window_maximize(Window win) {
 	xev.xclient.display = fl_display;
 	xev.xclient.message_type = _XA_NET_WM_STATE;
 	xev.xclient.format = 32;
-	xev.xclient.data.l[0] = STATE_TOGGLE;
+	xev.xclient.data.l[0] = 2;
 	xev.xclient.data.l[1] = _XA_NET_WM_STATE_MAXIMIZED_HORZ;
 	xev.xclient.data.l[2] = _XA_NET_WM_STATE_MAXIMIZED_VERT;
 
@@ -627,6 +644,76 @@ void wm_window_ede_restore(Window win) {
 	xev.xclient.format = 32;
 	xev.xclient.data.l[0] = _XA_EDE_WM_RESTORE_SIZE;
 	xev.xclient.data.l[1] = CurrentTime;
+
+	XSendEvent (fl_display, RootWindow(fl_display, fl_screen), False, 
+			SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+	XSync(fl_display, True);
+}
+
+void netwm_window_set_state(Window win, NetwmStateValue val, NetwmStateAction action) {
+	init_atoms_once();	
+
+	XEvent xev;
+	memset(&xev, 0, sizeof(xev));
+	xev.xclient.type = ClientMessage;
+	xev.xclient.serial = 0;
+	xev.xclient.send_event = True;
+	xev.xclient.window = win;
+	xev.xclient.display = fl_display;
+	xev.xclient.message_type = _XA_NET_WM_STATE;
+	xev.xclient.format = 32;
+	xev.xclient.data.l[0] = (int)action;
+
+	if(val == NETWM_STATE_MAXIMIZED) {
+		xev.xclient.data.l[1] = _XA_NET_WM_STATE_MAXIMIZED_HORZ;
+		xev.xclient.data.l[2] = _XA_NET_WM_STATE_MAXIMIZED_VERT;
+	} else {
+		Atom av;
+
+		switch(val) {
+			case NETWM_STATE_MODAL:
+				av = _XA_NET_WM_STATE_MODAL;
+				break;
+			case NETWM_STATE_STICKY:
+				av = _XA_NET_WM_STATE_STICKY;
+				break;
+			case NETWM_STATE_MAXIMIZED_VERT:
+				av = _XA_NET_WM_STATE_MAXIMIZED_VERT;
+				break;
+			case NETWM_STATE_MAXIMIZED_HORZ:
+				av = _XA_NET_WM_STATE_MAXIMIZED_HORZ;
+				break;
+			case NETWM_STATE_SHADED:
+				av = _XA_NET_WM_STATE_SHADED;
+				break;
+			case NETWM_STATE_SKIP_TASKBAR:
+				av = _XA_NET_WM_STATE_SKIP_TASKBAR;
+				break;
+			case NETWM_STATE_SKIP_PAGER:
+				av = _XA_NET_WM_STATE_SKIP_PAGER;
+				break;
+			case NETWM_STATE_HIDDEN:
+				av = _XA_NET_WM_STATE_HIDDEN;
+				break;
+			case NETWM_STATE_FULLSCREEN:
+				av = _XA_NET_WM_STATE_FULLSCREEN;
+				break;
+			case NETWM_STATE_ABOVE:
+				av = _XA_NET_WM_STATE_ABOVE;
+				break;
+			case NETWM_STATE_BELOW:
+				av = _XA_NET_WM_STATE_BELOW;
+				break;
+			case NETWM_STATE_DEMANDS_ATTENTION:
+				av = _XA_NET_WM_STATE_DEMANDS_ATTENTION;
+			default:
+				E_WARNING(E_STRLOC ": Bad Netwm state: %i\n", action);
+				return;
+		}
+
+		xev.xclient.data.l[1] = av;
+		xev.xclient.data.l[2] = 0;
+	}
 
 	XSendEvent (fl_display, RootWindow(fl_display, fl_screen), False, 
 			SubstructureRedirectMask | SubstructureNotifyMask, &xev);

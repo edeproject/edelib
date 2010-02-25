@@ -71,7 +71,7 @@ enum {
 
 /**
  * \ingroup wm
- * State of the window.
+ * State of the window. These values represent old ICCCM standard.
  */
 enum WmStateValue {
 	WM_WINDOW_STATE_NONE      = -1,   ///< window state couldn't be determined
@@ -79,6 +79,38 @@ enum WmStateValue {
 	WM_WINDOW_STATE_NORMAL    = 1,    ///< window is visible
 	WM_WINDOW_STATE_ICONIC    = 3     ///< window is hidden
 };
+
+/**
+ * \ingroup wm
+ * State of the window. These values represent newer EWMH standard states.
+ */
+enum NetwmStateValue {
+	NETWM_STATE_NONE = -1,            ///< window state couldn't be determined
+	NETWM_STATE_MODAL,                ///< modal dialog box
+	NETWM_STATE_STICKY,               ///< sticky window
+	NETWM_STATE_MAXIMIZED_VERT,       ///< maximized vertically
+	NETWM_STATE_MAXIMIZED_HORZ,       ///< maximized horizontally
+	NETWM_STATE_MAXIMIZED,            ///< fully maximized
+	NETWM_STATE_SHADED,               ///< shaded window
+	NETWM_STATE_SKIP_TASKBAR,         ///< window should skip taskbar
+	NETWM_STATE_SKIP_PAGER,           ///< window should skip pager
+	NETWM_STATE_HIDDEN,               ///< window should be hidden (or minimized)
+	NETWM_STATE_FULLSCREEN,           ///< window should go in fullscreen mode
+	NETWM_STATE_ABOVE,                ///< window should go on top of all windows
+	NETWM_STATE_BELOW,                ///< window should go below all windows
+	NETWM_STATE_DEMANDS_ATTENTION     ///< some action in or with the window happened
+};
+
+/**
+ * \ingroup wm
+ * Options for setting one of NetwmStateValue values.
+ */
+enum NetwmStateAction {
+	NETWM_STATE_ACTION_REMOVE,        ///< remove state
+	NETWM_STATE_ACTION_ADD,           ///< add state
+	NETWM_STATE_ACTION_TOGGLE         ///< toggle state
+};
+
 
 /**
  * \ingroup wm
@@ -198,9 +230,9 @@ void netwm_window_set_active(Window win);
 
 /**
  * \ingroup wm
- * Maximize window.
+ * Maximize window. \deprecated with netwm_window_set_state().
  */
-void netwm_window_maximize(Window win);
+void netwm_window_maximize(Window win) EDELIB_DEPRECATED;
 
 /**
  * \ingroup wm
@@ -213,6 +245,16 @@ void netwm_window_close(Window win);
  * edewm specific: restore window to previous state
  */
 void wm_window_ede_restore(Window win);
+
+/**
+ * \ingroup wm
+ * Set window state to one of NetwmStateValue values. Value will be set, removed or toggled
+ * according to NetwmStateAction action.
+ *
+ * Contrary to wm_window_set_state(), you can't fetch once set state, as the state is send 
+ * as message, not set as window property.
+ */
+void netwm_window_set_state(Window win, NetwmStateValue val, NetwmStateAction action);
 
 /**
  * \ingroup wm

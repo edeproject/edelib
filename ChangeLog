@@ -1,3 +1,9 @@
+2010-02-25  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Netwm.h:
+	* src/Netwm.cpp: added netwm_window_set_state() and EWMH states, as generic
+	facility for setting window states; small code refactoring
+
 2010-02-18  Sanel <karijes@users.sourceforge.net>
 
 	* src/Netwm.cpp: use correct state for setting maximized state; by default
