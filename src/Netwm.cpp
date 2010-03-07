@@ -251,15 +251,16 @@ bool netwm_workarea_get_size(int& x, int& y, int& w, int &h) {
 	int status = XGetWindowProperty(fl_display, RootWindow(fl_display, fl_screen), 
 			_XA_NET_WORKAREA, 0L, 0x7fffffff, False, XA_CARDINAL, &real, &format, &n, &extra, (unsigned char**)&prop);
 
-	if(status != Success)
+	if((status != Success) || (format != 32))
 		return false;
 
-	CARD32* val = (CARD32*)prop;
+	/* cast to long, not CARD32, due 64-bit platforms */
+	long* val = (long*)prop;
 	if(val) {
-		x = val[0];
-		y = val[1];
-		w = val[2];
-		h = val[3];
+		x = (int)val[0];
+		y = (int)val[1];
+		w = (int)val[2];
+		h = (int)val[3];
 
 		XFree((char*)val);
 		return true;
@@ -428,10 +429,11 @@ int netwm_window_get_type(Window win) {
 void netwm_window_set_strut(Window win, int left, int right, int top, int bottom) {
 	init_atoms_once();
 
-	CARD32 strut[4] = { left, right, top, bottom };
+	/* TODO: should be longs */
+	long strut[4] = { left, right, top, bottom };
 
 	XChangeProperty(fl_display, win, _XA_NET_WM_STRUT, XA_CARDINAL, 32, 
-			PropModeReplace, (unsigned char*)&strut, sizeof(CARD32) * 4);
+			PropModeReplace, (unsigned char*)&strut, sizeof(long) * 4);
 }
 
 int netwm_window_get_all_mapped(Window **windows) {

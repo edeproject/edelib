@@ -1,3 +1,7 @@
+2010-03-07  Sanel <karijes@users.sourceforge.net>
+
+	* src/Netwm.cpp: fixed property fetching issues on 64-bit platform
+
 2010-02-25  Sanel <karijes@users.sourceforge.net>
 
 	* edelib/Netwm.h:
