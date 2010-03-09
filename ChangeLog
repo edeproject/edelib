@@ -1,3 +1,13 @@
+2010-03-10  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Netwm.h:
+	* src/Netwm.cpp: report NETWM_CHANGED_WINDOW_ICON when icon gets changed
+	via _NET_WM_ICON message
+	* configure.in: amd64 requires '-fPIC' even if library is compiled as
+	static
+	* examples/efile.cpp: some warning reduction
+
+
 2010-03-07  Sanel <karijes@users.sourceforge.net>
 
 	* src/Netwm.cpp: fixed property fetching issues on 64-bit platform

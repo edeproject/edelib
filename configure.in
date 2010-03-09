@@ -71,6 +71,13 @@ esac
 CFLAGS="-DHAVE_EDELIB_BASE_CONFIG_H $SANITY_FLAGS $user_cflags"
 CXXFLAGS="-DHAVE_EDELIB_BASE_CONFIG_H $SANITY_FLAGS $user_cxxflags"
 
+dnl libraries, even static one, on amd64 should be compiled with '-fPIC'
+host_machine=`uname -m`
+if test "$host_machine" = "x86_64"; then
+	CFLAGS="$CFLAGS -fPIC"
+	CXXFLAGS="$CXXFLAGS -fPIC"
+fi
+
 dnl basic headers
 AC_HEADER_STDC
 AC_CHECK_HEADER(string.h, AC_DEFINE(HAVE_STRING_H, 1, [Define to 1 if you have string.h file]))

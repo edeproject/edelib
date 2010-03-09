@@ -43,6 +43,7 @@ enum {
 	NETWM_CHANGED_WINDOW_NAME,           ///< window name was changed
 	NETWM_CHANGED_WINDOW_VISIBLE_NAME,   ///< window visible name was changed
 	NETWM_CHANGED_WINDOW_DESKTOP,        ///< window is moved to another workspace
+	NETWM_CHANGED_WINDOW_ICON,           ///< window icon was changed
 	NETWM_CHANGED_WINDOW_LIST            ///< window list was changed (another window is created or existing was closed)
 };
 

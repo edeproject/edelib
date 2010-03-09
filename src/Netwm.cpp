@@ -66,6 +66,7 @@ static Atom _XA_NET_CLIENT_LIST;
 static Atom _XA_NET_WM_DESKTOP;
 static Atom _XA_NET_WM_NAME;
 static Atom _XA_NET_WM_VISIBLE_NAME;
+static Atom _XA_NET_WM_ICON;
 static Atom _XA_NET_ACTIVE_WINDOW;
 static Atom _XA_NET_CLOSE_WINDOW;
 
@@ -130,6 +131,7 @@ static void init_atoms_once(void) {
 	REGISTER_ATOM(_XA_NET_WM_DESKTOP,                   "_NET_WM_DESKTOP");
 	REGISTER_ATOM(_XA_NET_WM_NAME,                      "_NET_WM_NAME");
 	REGISTER_ATOM(_XA_NET_WM_VISIBLE_NAME,              "_NET_WM_VISIBLE_NAME");
+	REGISTER_ATOM(_XA_NET_WM_ICON,                      "_NET_WM_ICON");
 	REGISTER_ATOM(_XA_NET_ACTIVE_WINDOW,                "_NET_ACTIVE_WINDOW");
 	REGISTER_ATOM(_XA_NET_CLOSE_WINDOW,                 "_NET_CLOSE_WINDOW");
 
@@ -180,6 +182,8 @@ static int xevent_handler(int e) {
 			action = NETWM_CHANGED_WINDOW_VISIBLE_NAME;
 		else if(fl_xevent->xproperty.atom == _XA_NET_WM_DESKTOP)
 			action = NETWM_CHANGED_WINDOW_DESKTOP;
+		else if(fl_xevent->xproperty.atom == _XA_NET_WM_ICON)
+			action = NETWM_CHANGED_WINDOW_ICON;
 		else if(fl_xevent->xproperty.atom == _XA_NET_CLIENT_LIST)
 			action = NETWM_CHANGED_WINDOW_LIST;
 		else

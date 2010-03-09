@@ -33,7 +33,7 @@ int main(int argc, char** argv) {
 
 		//printf("%s: %30s (%s)\n", argv[i], mt.comment().c_str(), mt.type().c_str());
 		printf("%s:", argv[i]);
-		printf("%*s ", mlen - strlen(argv[i]), "");
+		printf("%*s ", (int)(mlen - strlen(argv[i])), "");
 		printf("%s (%s)\n", mt.comment().c_str(), mt.type().c_str());
 	}
 
