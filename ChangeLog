@@ -4,7 +4,8 @@
 	* src/Nls.cpp
 	* src/Jamfile: allow translation of edelib specific code; also let this
 	code use explicitly edelib domain for translation search
-	* edelib/Ede.h: EDE specific file for common macro(s)
+	* edelib/Ede.h: EDE specific file for common macro(s); set FL_NORMAL_SIZE
+	to 12 by default
 
 2010-03-10  Sanel <karijes@users.sourceforge.net>
 

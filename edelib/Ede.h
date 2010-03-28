@@ -30,7 +30,9 @@
  *
  * Initialize common EDE code with application name (must be binary name) and full path to locale directory.
  */
-#define EDE_APPLICATION_WITH_NLS_PATH(name, path)   \
+#define EDE_APPLICATION_WITH_NLS_PATH(name, path)    \
+	extern int FL_NORMAL_SIZE;                       \
+	FL_NORMAL_SIZE = 12;                             \
 	EDELIB_NS_PREPEND(nls_support_init(name, path))
 
 /**
