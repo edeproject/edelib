@@ -2,7 +2,7 @@
  * $Id$
  *
  * Locale functions
- * Copyright (c) 2005-2007 edelib authors
+ * Copyright (c) 2005-2010 edelib authors
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,7 +25,15 @@
 
 #ifdef USE_NLS
 # include <libintl.h>
-# define _(s)  gettext(s)
+/* 
+ * this definition is used when edelib library code is compiled, so we
+ * can get edelib specific translations from edelib mo file
+ */
+# ifdef USE_EDELIB_GETTEXT_DOMAIN
+#  define _(s) dgettext("edelib", s)
+# else
+#  define _(s) gettext(s)
+# endif
 #else
 # define textdomain(domain) ((const char*)domain)
 # define bindtextdomain(domain, dir) ((const char*)dir)

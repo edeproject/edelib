@@ -100,6 +100,14 @@ SOURCE_DBUS =
 	EdbusMessage.cpp
 	EdbusObjectPath.cpp ;
 
+# use edelib translation domain
+LibraryObjectCcFlags $(XDGMIME)      : -DUSE_EDELIB_GETTEXT_DOMAIN ;
+LibraryObjectCcFlags $(PCRE)         : -DUSE_EDELIB_GETTEXT_DOMAIN ;
+LibraryObjectCcFlags $(TINYSCHEME)   : -DUSE_EDELIB_GETTEXT_DOMAIN ;
+LibraryObjectC++Flags $(SOURCE)      : -DUSE_EDELIB_GETTEXT_DOMAIN ;
+LibraryObjectC++Flags $(SOURCE_GUI)  : -DUSE_EDELIB_GETTEXT_DOMAIN ;
+LibraryObjectC++Flags $(SOURCE_DBUS) : -DUSE_EDELIB_GETTEXT_DOMAIN ;
+
 # libedelib
 MakeLibrary $(EDELIB_NAME) : $(SOURCE) ;
 

@@ -1,3 +1,11 @@
+2010-03-28  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Nls.h
+	* src/Nls.cpp
+	* src/Jamfile: allow translation of edelib specific code; also let this
+	code use explicitly edelib domain for translation search
+	* edelib/Ede.h: EDE specific file for common macro(s)
+
 2010-03-10  Sanel <karijes@users.sourceforge.net>
 
 	* edelib/Netwm.h:
@@ -6,7 +14,6 @@
 	* configure.in: amd64 requires '-fPIC' even if library is compiled as
 	static
 	* examples/efile.cpp: some warning reduction
-
 
 2010-03-07  Sanel <karijes@users.sourceforge.net>
 

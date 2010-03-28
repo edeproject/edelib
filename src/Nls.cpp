@@ -48,7 +48,10 @@ void nls_locale_from_c(char* old) {
 void nls_support_init(const char* appname, const char* dir) {
 #ifdef USE_NLS
 	setlocale(LC_MESSAGES, "");
+
+	bindtextdomain("edelib", dir);
 	bindtextdomain(appname, dir);
+
 	textdomain(appname);
 #endif
 }
