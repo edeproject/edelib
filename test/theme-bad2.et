@@ -1,0 +1,5 @@
+
+;; this would crash on unpached tinyschme
+(let (a 0
+      b 1)
+ (+ a b))

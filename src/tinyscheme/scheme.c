@@ -2539,6 +2539,11 @@ static pointer opexe_0(scheme *sc, enum scheme_opcodes op) {
           sc->args = cons(sc, sc->value, sc->args);
           if (is_pair(sc->code)) { /* continue */
                s_save(sc,OP_LET1, sc->args, cdr(sc->code));
+			   
+               if(!is_pair(car(sc->code))) {
+                  Error_0(sc, "expected pair");
+               }
+
                sc->code = cadar(sc->code);
                sc->args = sc->NIL;
                s_goto(sc,OP_EVAL);

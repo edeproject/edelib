@@ -1,3 +1,9 @@
+2010-05-07  Sanel <karijes@users.sourceforge.net>
+
+	* src/tinyscheme/scheme.c:
+	* test/theme.cpp:
+	* test/theme-bad2.et: prevent crashes on malformed 'let'
+
 2010-03-28  Sanel <karijes@users.sourceforge.net>
 
 	* edelib/Nls.h
