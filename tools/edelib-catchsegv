@@ -1,0 +1,32 @@
+#!/bin/sh
+
+appname=`basename $0`
+
+inspect() {
+	if test ! -x $1; then
+		echo "'$1' seems to not exists or is not executable file"
+		exit 1
+	fi
+
+	inspector=`which catchsegv`
+	if test "x$inspector" = "x"; then
+		echo "Unable to find 'catchsegv' command! Are you running too old glibc version?"
+		exit 1
+	fi
+
+	$inspector ./$1
+}
+
+if test $# -eq 0; then
+	echo "Usage: $appname [APPLICATION]"
+	echo "Dumps memory map when application crashes. Works only on Linux"
+	exit 1
+fi
+
+uname | grep "Linux2" > /dev/null
+if test $? -eq 1; then
+	echo "This tool works only on Linux :("
+	exit 1
+fi
+
+inspect $1
