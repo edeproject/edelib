@@ -23,6 +23,9 @@
 #include <ctype.h>
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
+
+/* 1.3.0 requires this */
+#define FL_LIBRARY   1
 #include <FL/x.H>
 
 /* 
