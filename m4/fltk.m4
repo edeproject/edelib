@@ -1,7 +1,7 @@
 dnl
 dnl $Id$
 dnl
-dnl Copyright (c) 2005-2007 edelib authors
+dnl Copyright (c) 2005-2011 edelib authors
 dnl
 dnl This library is free software; you can redistribute it and/or
 dnl modify it under the terms of the GNU Lesser General Public
@@ -38,7 +38,7 @@ AC_DEFUN([EDELIB_FLTK], [
 			;;
 			dnl check for FLTK 1.3.x branch
 			["1.3."[0123456789]])
-			AC_MSG_RESULT([yes... Looks like you have unstable FLTK branch ($fltk_version). edelib is not well tested with these FLTK versions])
+			AC_MSG_RESULT(yes)
 			;;
 			*)
 			AC_MSG_ERROR([Looks like you have an older FLTK version ($fltk_version). Required is >= 1.1.7])
