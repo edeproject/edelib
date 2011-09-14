@@ -291,7 +291,7 @@ UT_FUNC(ListTestPtrSort, "Test pointer list sort")
 
 	ls.sort(ptr_sort);
 
-	list<Foo*>::iterator it = ls.begin(), it_end = ls.end();
+	list<Foo*>::iterator it = ls.begin();
 	for(int i = 9; i >= 0; i--, ++it) {
 		UT_VERIFY( i == (*it)->n );
 		delete *it;
