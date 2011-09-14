@@ -43,6 +43,7 @@ TEST_FILES =
 	xml.cpp
 	mime.cpp
 	temp_file.cpp
+	functional.cpp
 	run.cpp
 	run_tests.cpp ;
 
