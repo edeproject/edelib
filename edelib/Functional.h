@@ -73,6 +73,7 @@ void map(F& func, const T& container, T& ret) {
  *    list <int> lst; // [1,2,3,4,5]
  *    reduce(sum, lst, ret);
  *    // result will be in form 1 + 2 + 3 + 4 + 5
+ *  \endcode
  */
 template <typename T, typename R, typename F>
 void reduce(F& func, const T& container, R& ret) {
