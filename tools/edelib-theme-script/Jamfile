@@ -1,5 +1,5 @@
 #
-# $Id$
+# $Id: Jamfile 2504 2009-02-23 13:16:02Z karijes $
 #
 # Copyright (c) 2005-2011 edelib authors
 #
@@ -16,7 +16,6 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-SubDir TOP tools ;
+SubDir TOP tools edelib-theme-script ;
 
-SubInclude TOP tools edelib-dbus-introspect ;
-SubInclude TOP tools edelib-theme-script;
+MakeTest edelib-theme-script : edelib-theme-script.cpp : -ledelib ;
