@@ -19,4 +19,4 @@
 SubDir TOP tools ;
 
 SubInclude TOP tools edelib-dbus-introspect ;
-SubInclude TOP tools edelib-theme-script;
+SubInclude TOP tools edelib-theme-script ;
