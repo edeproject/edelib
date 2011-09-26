@@ -26,7 +26,7 @@
 EDELIB_NS_BEGIN
 
 /**
- * \defgroup functional Functional handling for edelib::List
+ * \defgroup functional Functional handling for edelib::List and similar constructs
  */
 
 /**
@@ -92,7 +92,6 @@ void reduce(F& func, const T& container, R& ret) {
 		for(++it2; it2 != ite; ++it2)
 			ret = func(*it2, ret);
 	}
-	//return ret;
 }
 
 /**
@@ -106,6 +105,20 @@ void for_each(const F& func, const T& container) {
 
 	for(; it != ite; ++it)
 		func(*it);
+}
+
+/**
+ * \ingroup functional
+ * Same as above <i>for_each</i>, but with additional <i>void*</i> parameter
+ * that is given to function as second parameter (function is called as <i>func(val, void*)</i>
+ */
+template <typename T, typename F>
+void for_each(const F& func, const T& container, void* p) {
+	typename T::const_iterator it  = container.begin();
+	typename T::const_iterator ite = container.end();
+
+	for(; it != ite; ++it)
+		func(*it, p);
 }
 
 EDELIB_NS_END
