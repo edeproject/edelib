@@ -49,3 +49,19 @@
   (println a))
 
 (myprint x)
+
+(define-macro (if= arg1 arg2 . body)
+  `(if (equal? ,arg1 ,arg2)
+	 ,@body))
+
+(define-macro (if-not= arg1 arg2 . body)
+  `(if (not (equal? ,arg1 ,arg2))
+	 ,@body))
+
+
+(if= 3 4
+  (println "equal")
+  (println "not equal"))
+
+(if-not= 4 3
+  (println "not equal"))
