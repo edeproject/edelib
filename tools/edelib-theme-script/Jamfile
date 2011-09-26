@@ -19,3 +19,4 @@
 SubDir TOP tools edelib-theme-script ;
 
 MakeTest edelib-theme-script : edelib-theme-script.cpp : -ledelib ;
+InstallProgram $(bindir) : edelib-theme-script ;

@@ -43,3 +43,9 @@
 (println (string? "xx"))
 
 (println (vector 1 2 3))
+
+(define x 3)
+(defn myprint [a]
+  (println a))
+
+(myprint x)

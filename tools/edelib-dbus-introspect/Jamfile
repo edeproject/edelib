@@ -20,4 +20,5 @@ SubDir TOP tools edelib-dbus-introspect ;
 
 if $(DBUS_LIBS) {
 	MakeTest edelib-dbus-introspect : edelib-dbus-introspect.cpp : -ledelib_dbus $(FLTK_LIBS) -ledelib $(DBUS_LIBS) ;
+	InstallProgram $(bindir) : edelib-dbus-introspect ;
 }
