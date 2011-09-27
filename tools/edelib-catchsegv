@@ -18,7 +18,7 @@ inspect() {
 }
 
 if test $# -eq 0; then
-	echo "Usage: $appname [APPLICATION]"
+	echo "Usage: $appname [application]"
 	echo "Dumps memory map when application crashes. Works only on Linux"
 	exit 1
 fi
