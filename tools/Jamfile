@@ -18,7 +18,7 @@
 
 SubDir TOP tools ;
 
+InstallProgram $(bindir) : edelib-catchsegv ;
+
 SubInclude TOP tools edelib-dbus-introspect ;
 SubInclude TOP tools edelib-theme-script ;
-
-InstallProgram $(bindir) : edelib-catchsegv ;
