@@ -80,12 +80,14 @@ def visit(arg, dirname, names):
 		# enters it's childs; we are interested only in childs
 		if len(destdir) == 0:
 			continue
+
 		for sz in SIZES:
 			w, h = sz.split("x")
 			srcicon = "%s/%s" % (dirname, name)
-			# remove 'scalable' from destdir
-			destdir = destdir.replace("scalable/","")
-			findir = "%s/%s/%s" % (arg, sz, destdir)
+
+			# calculate relative destination by stealing latest part
+			destdir = destdir.split("/")[-1]
+			findir  = "%s/%s/%s" % (arg, sz, destdir)
 
 			if not dir_exists(findir):
 				os.makedirs(findir)
@@ -125,22 +127,10 @@ def main():
 		print "%s does not exists. What to convert?" % src
 		return
 
-	# go to location of given dir, so we could construct correct paths
-	parts = dst.split("/")
-
-	if len(parts) > 1:
-		path = "/".join(parts[:-1])
-		print path
-		os.chdir(path)
-		dst = parts[-1]
-		dst = dst.strip("/")
-
 	if dir_exists(dst):
 		print "%s exists. Remove it or chose another name" % dst
 		return
 
-	print "%s -> %s" % (src, dst)
-	return
 	convert(src, dst)
 
 if __name__ == "__main__":
