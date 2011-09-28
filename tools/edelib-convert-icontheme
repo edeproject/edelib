@@ -1,5 +1,22 @@
 #!/usr/bin/python
-# Converts svg icon theme to png one
+#
+# $Id: edelib-global.h 2785 2009-09-01 13:26:08Z karijes $
+#
+# Part of edelib tools.
+# Copyright (c) 2011 Sanel Zukan
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 import os, os.path
 import sys, stat
@@ -22,6 +39,8 @@ def find_binary(name):
 
 def find_converter():
 	"""Find either inkscape or rsvg tools"""
+	global inkscape_path, rsvg_path
+
 	cpath = find_binary("inkscape")
 	if cpath:
 		inkscape_path = cpath
@@ -43,8 +62,7 @@ def convert_ext(name):
 
 def dir_exists(path):
 	# first use this since stat() scream if not exists
-	if not os.access(path, os.F_OK):
-		return False
+	if not os.access(path, os.F_OK): return False
 	mode = os.stat(path)[stat.ST_MODE]
 	return stat.S_ISDIR(mode)
 
@@ -56,6 +74,8 @@ def skip_base(path):
 def visit(arg, dirname, names):
 	destdir = skip_base(dirname)
 	for name in names:
+		if name[-4:] != ".svg": continue
+
 		# os.walk will first walk on the top of source directory before 
 		# enters it's childs; we are interested only in childs
 		if len(destdir) == 0:
@@ -63,6 +83,8 @@ def visit(arg, dirname, names):
 		for sz in SIZES:
 			w, h = sz.split("x")
 			srcicon = "%s/%s" % (dirname, name)
+			# remove 'scalable' from destdir
+			destdir = destdir.replace("scalable/","")
 			findir = "%s/%s/%s" % (arg, sz, destdir)
 
 			if not dir_exists(findir):
@@ -75,9 +97,9 @@ def visit(arg, dirname, names):
 			elif rsvg_path:
 				cmd = "%s -w %s -h %s %s %s" % (rsvg_path, w, h, srcicon, dsticon)
 
-			print "%s -> %s" % (srcicon, dsticon)
+			print "Making %s..." % dsticon
 			if os.system(cmd) != 0:
-				print "FAILED :("
+				print "*** Failed to convert %s" % srcicon
 				return
 
 def convert(srcdir, dstdir):
@@ -103,10 +125,22 @@ def main():
 		print "%s does not exists. What to convert?" % src
 		return
 
+	# go to location of given dir, so we could construct correct paths
+	parts = dst.split("/")
+
+	if len(parts) > 1:
+		path = "/".join(parts[:-1])
+		print path
+		os.chdir(path)
+		dst = parts[-1]
+		dst = dst.strip("/")
+
 	if dir_exists(dst):
 		print "%s exists. Remove it or chose another name" % dst
 		return
 
+	print "%s -> %s" % (src, dst)
+	return
 	convert(src, dst)
 
 if __name__ == "__main__":
