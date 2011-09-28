@@ -41,7 +41,7 @@ if test $# -eq 0; then
 	exit 1
 fi
 
-uname | grep "Linux2" > /dev/null
+uname | grep "Linux" > /dev/null
 if test $? -eq 1; then
 	echo "This tool works only on Linux :("
 	exit 1
