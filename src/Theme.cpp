@@ -43,7 +43,7 @@ EDELIB_NS_BEGIN
  * (define (get-something)
  *  "something)
  *
- * (theme.style "foo"
+ * (theme.style "foo" 
  * [
  *    (xxx (get-something)) <= get-something will be seen as function here and will be evaluated
  * ])

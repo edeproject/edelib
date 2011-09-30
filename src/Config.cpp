@@ -18,12 +18,12 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
 #include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
 
 #include <edelib/Config.h>
+#include <edelib/TempFile.h>
 #include <edelib/Debug.h>
 #include <edelib/StrUtil.h>
 #include <edelib/Nls.h>
@@ -395,11 +395,17 @@ bool Config::load(const char* fname) {
 bool Config::save(const char* fname) {
 	E_ASSERT(fname != NULL);
 
-	FILE* f = fopen(fname, "w");
-	if (!f) {
+	TempFile t;
+	if(!t.create(".etmp.XXXXXX")) {
 		errcode = CONF_ERR_FILE;
 		return false;
 	}
+
+	/* so we could explicitly handle our options */
+	t.set_no_close(true);
+	t.set_auto_delete(false);
+
+	FILE *f = t.fstream();
 
 	SectionListIter sit = section_list.begin(), sit_end = section_list.end();
 	unsigned int sz = section_list.size();
@@ -411,12 +417,20 @@ bool Config::save(const char* fname) {
 		for (eit = (*sit)->entry_list.begin(); eit != (*sit)->entry_list.end(); ++eit)
 			fprintf(f, "%s=%s\n", (*eit)->key, (*eit)->value);
 
-		// prevent unneeded newline at the end of file
+		/* prevent unneeded newline at the end of file */
 		if(sz != 1)
 			fprintf(f, "\n");
 	}
 
-	fclose(f);
+	t.close();
+	E_ASSERT(t.name() && "Temporary name NULL. Report this as bug");
+
+	if(rename(t.name(), fname) != 0) {
+		E_WARNING("Unable to save to '%s'\n", fname);
+		return false;
+	}
+
+	t.unlink();
 	return true;
 }
 
