@@ -48,8 +48,8 @@ LINKCMD = "ln -s" ;
 # variables used by jam directly
 # OPTIM is cleared so it don't collide with FLAGS
 OPTIM     = ;
-CCFLAGS   = $(CFLAGS) -I$(TOP) ;
-C++FLAGS  = $(CXXFLAGS) -I$(TOP) ;
+CCFLAGS   = $(CFLAGS) -I$(TOP) -DE_LOG_DOMAIN="\\\"edelib\\\"" ;
+C++FLAGS  = $(CXXFLAGS) -I$(TOP) -DE_LOG_DOMAIN="\\\"edelib\\\"" ;
 LINKFLAGS = $(LDFLAGS) ;
 LINKLIBS  = $(LIBS) ;
 

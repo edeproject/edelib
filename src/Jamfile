@@ -38,10 +38,10 @@ TINYSCHEME = tinyscheme/scheme.c ;
 
 SOURCE = 
 	Missing.c
+	Debug.c
 	Color.cpp 
 	Config.cpp 
 	DateTime.cpp
-	Debug.cpp 
 	DesktopFile.cpp
 	Directory.cpp
 	File.cpp

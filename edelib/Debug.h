@@ -2,7 +2,7 @@
  * $Id$
  *
  * Debug functions
- * Copyright (c) 2005-2007 edelib authors
+ * Copyright (c) 2005-2011 edelib authors
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,10 +22,35 @@
 #define __EDELIB_DEBUG_H__
 
 #include "edelib-global.h"
+#include <stdarg.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
  * \defgroup macros edelib macros
  */
+
+#ifndef SKIP_DOCS
+EDELIB_API void edelib_logv(const char *domain, int type, const char *fmt, va_list args);
+EDELIB_API void edelib_log(const char *domain, int type, const char *fmt, ...);
+#endif
+
+/**
+ * \enum EdelibErrorMessageType
+ * \brief Type of messages received in error message handler
+ */
+typedef enum {
+	EDELIB_ERROR_MESSAGE_DEBUG,      /**< Debug message   */
+	EDELIB_ERROR_MESSAGE_WARNING,    /**< Warning message */
+	EDELIB_ERROR_MESSAGE_FATAL       /**< Fatal message   */
+} EdelibErrorMessageType;
+
+/** 
+ * Installs handler for error messages
+ */
+EDELIB_API void edelib_error_mesage_handler_install(void (*)(int t, const char* domain, const char* msg));
 
 /**
  * \def E_LOG_DOMAIN
@@ -35,19 +60,65 @@
  * whom log output belongs.
  */
 #ifndef E_LOG_DOMAIN
-	#define E_LOG_DOMAIN ((char*)0)
+ #define E_LOG_DOMAIN ((char*)0)
 #endif
 
-/* these functions are not in the namespace so we don't get * strange output with the preprocessor */
-EDELIB_API void _edelib_debug(const char* fmt, ...);
-EDELIB_API void _edelib_warning(const char* fmt, ...);
-EDELIB_API void _edelib_assert(int cond, const char* cond_text, const char* file, int line, const char* func);
-EDELIB_API void _edelib_fatal(const char* fmt, ...);
-
 #ifdef __GNUC__
-	#define _E_FUNCTION_NAME __PRETTY_FUNCTION__
+ #define _E_FUNCTION_NAME __PRETTY_FUNCTION__
 #else
-	#define _E_FUNCTION_NAME "<unknown>"
+ #define _E_FUNCTION_NAME "<unknown>"
+#endif
+
+/**
+ * \def E_DEBUG
+ * \ingroup macros
+ *
+ * Should be used for output debug information in stderr.
+ */
+
+/**
+ * \def E_WARNING
+ * \ingroup macros
+ *
+ * Should be use for output warnings in stderr.
+ */
+
+/**
+ * \def E_FATAL
+ * \ingroup macros
+ *
+ * Display error and call abort().
+ */
+
+#ifdef HAVE_ISO_VARARGS
+ #define E_DEBUG(...)    edelib_log(E_LOG_DOMAIN, EDELIB_ERROR_MESSAGE_DEBUG, __VA_ARGS__)
+ #define E_WARNING(...)  edelib_log(E_LOG_DOMAIN, EDELIB_ERROR_MESSAGE_WARNING, __VA_ARGS__)
+ #define E_FATAL(...)    edelib_log(E_LOG_DOMAIN, EDELIB_ERROR_MESSAGE_FATAL, __VA_ARGS__)
+#elif defined(HAVE_GNUC_VARARGS)
+ #define E_DEBUG(format...)    edelib_log(E_LOG_DOMAIN, EDELIB_ERROR_MESSAGE_DEBUG, format)
+ #define E_WARNING(format...)  edelib_log(E_LOG_DOMAIN, EDELIB_ERROR_MESSAGE_WARNING, format)
+ #define E_FATAL(format...)    edelib_log(E_LOG_DOMAIN, EDELIB_ERROR_MESSAGE_FATAL, format)
+#else
+ static void E_DEBUG(const char *fmt, ...) {
+	va_list args;
+	va_start(args, fmt);
+	edelib_logv(E_LOG_DOMAIN, EDELIB_ERROR_MESSAGE_DEBUG, fmt, args);
+	va_end(args);
+ }
+
+ static void E_WARNING(const char *fmt, ...) {
+	va_list args;
+	va_start(args, fmt);
+	edelib_logv(E_LOG_DOMAIN, EDELIB_ERROR_MESSAGE_WARNING, fmt, args);
+	va_end(args);
+ }
+
+ static void E_FATAL(const char *fmt, ...) {
+	va_list args;
+	va_start(args, fmt);
+	edelib_logv(E_LOG_DOMAIN, EDELIB_ERROR_MESSAGE_FATAL, fmt, args);
+	va_end(args);
+ }
 #endif
 
 /**
@@ -58,34 +129,15 @@ EDELIB_API void _edelib_fatal(const char* fmt, ...);
  * expression, file name and line number. If platform supports, it will try to output short stack content.
  */
 #ifdef NDEBUG
-	#define E_ASSERT(expr)
+ #define E_ASSERT(expr)
 #else
-	#define E_ASSERT(expr) _edelib_assert((expr) != 0, #expr, __FILE__, __LINE__, _E_FUNCTION_NAME)
+ #define E_ASSERT(expr) \
+	do { \
+		if(!(expr)) \
+		edelib_log(E_LOG_DOMAIN, EDELIB_ERROR_MESSAGE_FATAL, "Assertion failed: \"%s\" in %s (%d), function: \"%s\"\n", \
+			#expr, __FILE__, __LINE__, _E_FUNCTION_NAME); \
+	} while(0);
 #endif
-
-/**
- * \def E_DEBUG
- * \ingroup macros
- *
- * Should be used for output debug information in stderr.
- */
-#define E_DEBUG   _edelib_debug
-
-/**
- * \def E_WARNING
- * \ingroup macros
- *
- * Should be use for output warnings in stderr.
- */
-#define E_WARNING _edelib_warning
-
-/**
- * \def E_FATAL
- * \ingroup macros
- *
- * Display error and call abort().
- */
-#define E_FATAL   _edelib_fatal
 
 #define _E_STRLOC_STRINGIFY(arg)          _E_STRLOC_STRINGIFY_ARG(arg)
 #define _E_STRLOC_STRINGIFY_ARG(content)  #content
@@ -173,22 +225,8 @@ EDELIB_API void _edelib_fatal(const char* fmt, ...);
 #define EASSERT  E_ASSERT
 #define ESTRLOC  E_STRLOC
 
-EDELIB_NS_BEGIN
+#ifdef __cplusplus
+}
+#endif
 
-/**
- * \enum ErrorMessageType
- * \brief Type of messages received in error message handler
- */
-enum ErrorMessageType {
-	ERROR_MESSAGE_DEBUG,      ///< Debug message
-	ERROR_MESSAGE_WARNING,    ///< Warning message
-	ERROR_MESSAGE_FATAL       ///< Fatal message
-};
-
-/** 
- * Installs handler for error messages
- */
-EDELIB_API void error_mesage_handler_install(void (*)(ErrorMessageType t, const char* msg));
-
-EDELIB_NS_END
 #endif
