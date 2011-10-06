@@ -10,9 +10,6 @@
 (define (add-doc func str)
   (set! *doc-data* (cons (vector func str) *doc-data*)) )
 
-(add-doc "foo" "This is foo function with some cool data")
-;(add-doc "baz" "Baz function has something really cool. Do you know it?")
-
 (define (doc func)
 
   (define (printer v)
@@ -22,6 +19,3 @@
 
   (for-each printer *doc-data*)
   (newline) )
-
-(doc "foo")
-(doc "boo")

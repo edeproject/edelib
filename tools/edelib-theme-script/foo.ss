@@ -1,8 +1,13 @@
+(include "doc.ss")
+
 (display "Foo")
 (newline)
 
-(define (println a)
-  (display a)
+(define (print . args)
+  (for-each display args))
+
+(define (println . args)
+  (for-each display args)
   (newline))
 
 (define-macro (let1 a b . body)
@@ -20,6 +25,30 @@
 		  [,e ,f])
 	 ,@body))
 
+(define-macro (let4 a b c d e f g h . body)
+  `(let* ([,a ,b]
+		  [,c ,d]
+		  [,e ,f]
+		  [,g ,h])
+	 ,@body))
+
+(define-macro (let5 a b c d e f g h i j . body)
+  `(let* ([,a ,b]
+		  [,c ,d]
+		  [,e ,f]
+		  [,g ,h]
+		  [,i ,j])
+	 ,@body))
+
+(define-macro (let6 a b c d e f g h i j k l . body)
+  `(let* ([,a ,b]
+		  [,c ,d]
+		  [,e ,f]
+		  [,g ,h]
+		  [,i ,j]
+		  [,k ,l])
+	 ,@body))
+
 (let1 a 3 
   (println a))
 
@@ -31,6 +60,12 @@
 	  b 2
 	  c (+ a b)
   (println c))
+
+(let4 a 1
+	  b (+ 1 a)
+	  c b
+	  d a
+  (println "==> " (+ a b c d)) )
 
 (define-macro (defn func args . body)
   `(define (,func ,@args)
@@ -58,10 +93,28 @@
   `(if (not (equal? ,arg1 ,arg2))
 	 ,@body))
 
-
 (if= 3 4
   (println "equal")
   (println "not equal"))
 
 (if-not= 4 3
   (println "not equal"))
+
+(println "XXXXXXXXXXXXXXXXXXXXXXX")
+(define-macro (defn2 func args . body)
+  `(if (string? ,(car body))
+	 ;; with docstring
+	 (begin
+	   (add-doc (symbol->string ',func) ,(car body))
+	   (define (,func ,@args)
+	     ,@(cdr body) ))
+	 ;; without docstring
+	 (define (,func ,@args)
+	   ,@body) ))
+
+(defn2 foo [a b]
+  "This is some doc"
+  (+ a b))
+
+;(println (doc "foob"))
+(println (foo 1 2))
