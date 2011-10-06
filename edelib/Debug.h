@@ -90,11 +90,11 @@ EDELIB_API void edelib_error_mesage_handler_install(void (*)(int t, const char* 
  * Display error and call abort().
  */
 
-#ifdef HAVE_ISO_VARARGS
+#ifdef EDELIB_HAVE_ISO_VARARGS
  #define E_DEBUG(...)    edelib_log(E_LOG_DOMAIN, EDELIB_ERROR_MESSAGE_DEBUG, __VA_ARGS__)
  #define E_WARNING(...)  edelib_log(E_LOG_DOMAIN, EDELIB_ERROR_MESSAGE_WARNING, __VA_ARGS__)
  #define E_FATAL(...)    edelib_log(E_LOG_DOMAIN, EDELIB_ERROR_MESSAGE_FATAL, __VA_ARGS__)
-#elif defined(HAVE_GNUC_VARARGS)
+#elif defined(EDELIB_HAVE_GNUC_VARARGS)
  #define E_DEBUG(format...)    edelib_log(E_LOG_DOMAIN, EDELIB_ERROR_MESSAGE_DEBUG, format)
  #define E_WARNING(format...)  edelib_log(E_LOG_DOMAIN, EDELIB_ERROR_MESSAGE_WARNING, format)
  #define E_FATAL(format...)    edelib_log(E_LOG_DOMAIN, EDELIB_ERROR_MESSAGE_FATAL, format)

@@ -82,7 +82,7 @@ void edelib_log(const char *domain, int type, const char *fmt, ...) {
 	va_end(args);
 }
 
-#if !defined(HAVE_GNUC_VARARGS) && !defined(HAVE_ISO_VARARGS)
+#if !defined(EDELIB_HAVE_GNUC_VARARGS) && !defined(EDELIB_HAVE_ISO_VARARGS)
 void E_DEBUG(const char *fmt, ...) {
 	va_list args;
 	va_start(args, fmt);
