@@ -503,6 +503,7 @@ LocalClean distclean :
 	$(TOP)/config.log 
 	$(TOP)/config.status 
 	$(TOP)/doc/Doxyfile
+	$(TOP)/edelib/edelib-config.h
 	$(TOP)/edelib/_conf.h.in 
 	$(TOP)/edelib/_conf.h 
 	$(TOP)/edelib/Version.h 

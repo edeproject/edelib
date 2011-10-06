@@ -18,8 +18,8 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __EDELIB_GLOBAL_H__
-#define __EDELIB_GLOBAL_H__
+#ifndef __EDELIB_EDELIB_GLOBAL_H__
+#define __EDELIB_EDELIB_GLOBAL_H__
 
 /* Needed so we don't have to include necessary libraries.  */
 #ifndef NULL
@@ -220,5 +220,7 @@
 #ifdef HAVE_EDELIB_BASE_CONFIG_H
 # include "_conf.h"
 #endif
+
+#include "edelib-config.h"
 
 #endif

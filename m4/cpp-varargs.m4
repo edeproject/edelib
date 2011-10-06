@@ -34,6 +34,7 @@ AC_DEFUN([EDELIB_CPP_VARARGS], [
 
 		dnl g++ will warn for variadic macros in pedantic mode
 		if test "$GCC" = yes; then
+			CFLAGS="-Wno-variadic-macros $CFLAGS"
 			CXXFLAGS="-Wno-variadic-macros $CXXFLAGS"
 		fi
 	else

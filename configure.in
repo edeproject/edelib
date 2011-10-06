@@ -162,6 +162,43 @@ AC_SUBST(LDFLAGS)
 AC_SUBST(LDLIBS)
 AC_SUBST(XDG_MIME_HAVE_MMAP)
 
+dnl specific stuf which goes to edelib-config.h
+AC_CONFIG_COMMANDS([outfile], [
+ cat > $outfile <<\_____EOF
+/* generated file; please modify configure.in */
+#ifndef __EDELIB_EDELIB_CONFIG_H__
+#define __EDELIB_EDELIB_CONFIG_H__
+
+_____EOF
+
+ if test "x$have_iso_varargs" = "xyes"; then
+	 echo "#define EDELIB_HAVE_ISO_VARARGS 1" >> $outfile
+ fi
+
+ if test "x$have_gnuc_varargs" = "xyes"; then
+	 echo "#define EDELIB_HAVE_GNUC_VARARGS 1" >> $outfile
+ fi
+
+ if test "x$have_dbus" = "xyes"; then
+	 echo "#define EDELIB_HAVE_DBUS 1" >> $outfile
+ fi
+
+ if test "x$have_libxpm" = "xyes"; then
+	 echo "#define EDELIB_HAVE_LIBXPM 1" >> $outfile
+ fi
+
+ cat >> $outfile <<\_____EOF
+
+#endif
+_____EOF
+], [
+ outfile="edelib/edelib-config.h"
+ have_iso_varargs=$have_iso_varargs
+ have_gnuc_varargs=$have_gnuc_varargs
+ have_dbus=$have_dbus
+ have_libxpm=$have_libxpm
+])
+
 AC_OUTPUT([
  edelib/Version.h
  doc/Doxyfile
