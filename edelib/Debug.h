@@ -99,26 +99,9 @@ EDELIB_API void edelib_error_mesage_handler_install(void (*)(int t, const char* 
  #define E_WARNING(format...)  edelib_log(E_LOG_DOMAIN, EDELIB_ERROR_MESSAGE_WARNING, format)
  #define E_FATAL(format...)    edelib_log(E_LOG_DOMAIN, EDELIB_ERROR_MESSAGE_FATAL, format)
 #else
- static void E_DEBUG(const char *fmt, ...) {
-	va_list args;
-	va_start(args, fmt);
-	edelib_logv(E_LOG_DOMAIN, EDELIB_ERROR_MESSAGE_DEBUG, fmt, args);
-	va_end(args);
- }
-
- static void E_WARNING(const char *fmt, ...) {
-	va_list args;
-	va_start(args, fmt);
-	edelib_logv(E_LOG_DOMAIN, EDELIB_ERROR_MESSAGE_WARNING, fmt, args);
-	va_end(args);
- }
-
- static void E_FATAL(const char *fmt, ...) {
-	va_list args;
-	va_start(args, fmt);
-	edelib_logv(E_LOG_DOMAIN, EDELIB_ERROR_MESSAGE_FATAL, fmt, args);
-	va_end(args);
- }
+ void E_DEBUG(const char *fmt, ...);
+ void E_WARNING(const char *fmt, ...);
+ void E_FATAL(const char *fmt, ...);
 #endif
 
 /**

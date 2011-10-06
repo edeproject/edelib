@@ -81,3 +81,26 @@ void edelib_log(const char *domain, int type, const char *fmt, ...) {
 	edelib_logv(domain, type, fmt, args);
 	va_end(args);
 }
+
+#if !defined(HAVE_GNUC_VARARGS) && !defined(HAVE_ISO_VARARGS)
+void E_DEBUG(const char *fmt, ...) {
+	va_list args;
+	va_start(args, fmt);
+	edelib_logv(E_LOG_DOMAIN, EDELIB_ERROR_MESSAGE_DEBUG, fmt, args);
+	va_end(args);
+ }
+
+void E_WARNING(const char *fmt, ...) {
+	va_list args;
+	va_start(args, fmt);
+	edelib_logv(E_LOG_DOMAIN, EDELIB_ERROR_MESSAGE_WARNING, fmt, args);
+	va_end(args);
+ }
+
+void E_FATAL(const char *fmt, ...) {
+	va_list args;
+	va_start(args, fmt);
+	edelib_logv(E_LOG_DOMAIN, EDELIB_ERROR_MESSAGE_FATAL, fmt, args);
+	va_end(args);
+}
+#endif
