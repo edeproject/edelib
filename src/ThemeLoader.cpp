@@ -89,7 +89,7 @@ void ThemeLoader::apply_common_gui_elements(void) {
 	E_RETURN_IF_FAIL(priv->curr_theme);
 
 	char          buf[128];
-	long          font_sz;
+	long          font_sz, sh;
 	unsigned char r, g, b;
 
 	Theme *t = priv->curr_theme;
@@ -115,6 +115,10 @@ void ThemeLoader::apply_common_gui_elements(void) {
 	if(t->get_item("ede", "icon_theme", buf, sizeof(buf))) {
 		if(IconLoader::inited())
 			IconLoader::reload(buf);
+	}
+
+	if(t->get_item("ede", "scroll_width", sh, (long)Fl::scrollbar_size())) {
+		Fl::scrollbar_size((int)sh);
 	}
 
 	/* TODO: document this: ignored if font_(normal|bold|italic) has given size */
