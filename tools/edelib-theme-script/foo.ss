@@ -119,4 +119,4 @@
 ;(println (doc "foob"))
 (println (foo 1 2))
 
-(println _"This is some text")
+(println "This is some text")
