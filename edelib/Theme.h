@@ -56,6 +56,15 @@ public:
 	bool load(const char *f);
 
 	/**
+	 * Display prompt and wait for input. This function is intend to be used in console programs
+	 * where interactive input is needed. It will read infinitely from stdin, so is not suitable
+	 * inside GUI applications.
+	 *
+	 * If you don't understaind above, you definitely don't need it.
+	 */
+	void prompt(const char *banner);
+
+	/**
 	 * Deinitialize interpreter and clears internal data.
 	 */
 	void clear(void);

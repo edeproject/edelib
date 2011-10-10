@@ -213,6 +213,12 @@ bool Theme::load(const char *f) {
 	return true;
 }
 
+void Theme::prompt(const char *banner) {
+	E_RETURN_IF_FAIL(priv->is_loaded == true);
+	printf(banner);
+	scheme_load_file(priv->sc, stdin);
+}
+
 void Theme::clear(void) {
 	if(!priv)
 		return;
