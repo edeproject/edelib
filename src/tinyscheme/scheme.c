@@ -1634,7 +1634,7 @@ static int token(scheme *sc) {
                return (TOK_DOT);
           } else {
                backchar(sc,c);
-	       backchar(sc,'.');
+               backchar(sc,'.');
                return TOK_ATOM;
           }
      case '\'':
@@ -1670,6 +1670,10 @@ static int token(scheme *sc) {
                     return (TOK_SHARP);
                }
           }
+     case '_':
+		  if ((c=inchar(sc)) == '"')
+                return (TOK_DQUOTE);
+          /* else go to default */
      default:
           backchar(sc,c);
           return (TOK_ATOM);
