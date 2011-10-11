@@ -8,7 +8,7 @@ compare_icon_theme_results() {
 	ret1=`./icon-theme $theme_name $icon_name $icon_size 2> /dev/null`
 	ret2=`python icon-theme.py $theme_name $icon_name $icon_size`
 
-	if [ $ret1 != $ret2 ]; then
+	if test "x$ret1" != "x$ret2"; then
 		echo "icon-theme: FAILED: $ret1 != $ret2"
 	fi
 }
