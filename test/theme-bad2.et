@@ -1,5 +1,11 @@
+;; do not show errors
+(define (nothing err) 
+)
 
-;; this would crash on unpached tinyschme
+(define *error-hook* nothing)
+
+
+;; this would crash on unpached tinyscheme
 (let (a 0
       b 1)
  (+ a b))

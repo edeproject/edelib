@@ -7,19 +7,18 @@
 (theme.sample "img.jpg")
 
 (define (incrementor n)
- (+ n 1))
+  (+ n 1)
+)
 
-(theme.style "test style"
-[
-  (item1   "value 1")
+(theme.style "test style" [
+  item1   "value 1"
   ;; a comment
-  (item2   "value 2")
-  (item3   123)
-  (item4   (incrementor 4))
+  item2   "value 2"
+  item3   123
+  item4   (incrementor 4)
 ])
 
-(theme.style "test_style2"
-[
-  (item1   34)
-  (item1   "you should get this")
+(theme.style "test_style2" [
+  item1   34
+  item1   "you should get this"
 ])

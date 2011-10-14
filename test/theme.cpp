@@ -52,7 +52,6 @@ UT_FUNC(ThemeTestBad, "Test bad Theme file")
 {
 	/* tinyscheme should have been modified for this */
 	Theme t;
-
 	UT_VERIFY( t.load("theme-bad.et") == false );
 	UT_VERIFY( t.loaded() == false );
 
@@ -60,5 +59,5 @@ UT_FUNC(ThemeTestBad, "Test bad Theme file")
 	UT_VERIFY( t.loaded() == false );
 
 	long lval;
-	UT_VERIFY( t.get_item("test style", "item1", lval, 0) == false );
+	//UT_VERIFY( t.get_item("test style", "item1", lval, 0) == false );
 }

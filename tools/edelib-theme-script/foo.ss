@@ -119,4 +119,42 @@
 ;(println (doc "foob"))
 (println (foo 1 2))
 
-(println "This is some text")
+;; translation
+(println _"This is some text")
+
+(define-macro (->2 x form)
+  `,(list form x))
+
+(define-macro (-> x . form)
+ `(,(caar form) ,x) )
+
+;(println (-> "XXX" (println)))
+
+(defn foo [args]
+  (println args))
+
+(foo 1 2 3 4 5 6)
+
+(define (join tok . args)
+  (let1 ret ""
+	(define (appender s)
+	  (set! ret (string-append ret tok s)))
+    (for-each appender args)
+	ret ))
+
+(println (join "/" "foo" "boo" "moo" "goo"))
+
+(define (theme.mystyle name . args)
+  (println "---------> " name)
+  (println args))
+
+(theme.mystyle "ede" [
+  :scheme "ede"
+  :style  "gtk+"
+  :foreground "#ffff"
+  :background "#eeee"
+])
+
+;(println (foldr cons '() '(1 2 3 4 5) '(a b c d e f)))
+
+(println (list->vector '()))

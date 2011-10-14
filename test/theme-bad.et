@@ -10,7 +10,6 @@
 
 
 (theme.style "test_style2"
-
-  (item1   34)
-  (item1   "you should get this")
+  item1   34
+  item1   "you should get this"
 ])

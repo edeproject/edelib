@@ -6,16 +6,15 @@
 (theme.sample "img.jpg")
 
 (define (get-sample)
- "this is an sample"
+  "this is an sample"
 )
 
-(theme.style "ede" 
-[
-  (scheme             "gtk+")
-  (foreground_color   "#fff")
-  (font_normal        "-schumacher-*-medium-*-*-*-12-*-*-*-*-*-*-*")
-  (icon_theme         "edeneu")
-  (sample             (get-sample))
+(theme.style "ede" [
+  scheme             "gtk+"
+  foreground_color   "#fff"
+  font_normal        "-schumacher-*-medium-*-*-*-12-*-*-*-*-*-*-*"
+  icon_theme         "edeneu"
+  sample             (get-sample)
 ])
 
 (include "xxx.ewt")
