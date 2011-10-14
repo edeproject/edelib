@@ -12,6 +12,31 @@
 (define private:theme.name   #f)
 (define private:theme.styles '())
 
+;; helper to convert given list to paired list
+;; it is not efficient as first I'm converting things in vector, but didn't had enough inspiration
+;; for smarter solution
+;;(define (pair-items lst)
+;;  (let* ([vec (list->vector lst)]
+;;         [sz  (vector-length vec)]
+;;         [ret '()])
+;;
+;;    (let loop ([i 0]
+;;               [j 1])
+;;
+;;      (when (< j sz)
+;;        (set! ret 
+;;          (cons 
+;;            (list (vector-ref vec i) 
+;;                  (vector-ref vec j))
+;;            ret ))
+;;        ;; next iteration
+;;        (loop (+ i 2)
+;;              (+ j 2)
+;;    ) ) ) 
+;;    ;; reverse things as 'cons' put them in reverse order
+;;    (reverse ret)
+;;) )
+
 ;; Resolve path of theme specific items like local files, images or sounds.
 (define (theme.path-resolve item) 
  (if (and edelib-dir-separator
@@ -74,14 +99,10 @@
  `(set! private:theme.styles (cons (list ,name ',@body) private:theme.styles))
 )
 
-;; Find the given style and return it as list (returning last found match). Called from Theme class.
-(define (theme.style-get name)
- (let ((ret '()))
-  (for-each (lambda (x)
+;; called from Theme.cpp to find and return given style name
+(define-with-return (theme.style-get name)
+ (for-each (lambda (x)
              (if (string=? name (car x))
-              (set! ret (cadr x))))
-   private:theme.styles
-  )
-  ;; return
-  ret
+              (return (cadr x)) ))
+ private:theme.styles
 ))
