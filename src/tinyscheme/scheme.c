@@ -4007,7 +4007,6 @@ static const char *procname(pointer x) {
 /* kernel of this interpreter */
 static void Eval_Cycle(scheme *sc, enum scheme_opcodes op) {
   int count=0;
-  int old_op;
   
   sc->op = op;
   for (;;) {
@@ -4073,7 +4072,6 @@ static void Eval_Cycle(scheme *sc, enum scheme_opcodes op) {
 	pcd=dispatch_table+sc->op;
       }
     }
-    old_op=sc->op;
     if (pcd->func(sc, (enum scheme_opcodes)sc->op) == sc->NIL) {
       return;
     }
