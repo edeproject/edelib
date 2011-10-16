@@ -71,6 +71,10 @@ struct Theme_P {
 
 	/* to make sure the script was loaded */
 	bool is_loaded;
+
+	/* error handler */
+	ThemeErrorHandler err_func;
+	void              *err_func_data;
 };
 
 /*
@@ -95,6 +99,9 @@ static void theme_p_init(Theme_P *t) {
 	t->author = t->name = t->sample = NULL;
 	t->cached_ret = NULL;
 	t->is_loaded = false;
+
+	t->err_func = NULL;
+	t->err_func_data = NULL;
 }
 
 static char *get_string_var(scheme *sc, const char *symbol) {
@@ -123,6 +130,30 @@ static pointer get_style_once(Theme_P *priv, scheme *sc, const char *style_name)
 	return ret;
 }
 
+static pointer theme_error_hook(scheme *ss, pointer args) {
+	if(args == ss->NIL) return ss->F;
+
+	Theme_P *t = (Theme_P*)ss->ext_data;
+	E_ASSERT(t && "Theme_P hook installed without this pointer");
+
+	if(!t->err_func) return ss->F;
+
+	pointer arg, a = args;
+	String buf;
+
+	for(; a != ss->NIL; a = ss->vptr->pair_cdr(a)) {
+		arg = ss->vptr->pair_car(a);
+
+		if(ss->vptr->is_string(arg))
+			buf.append(ss->vptr->string_value(arg));
+		else if(ss->vptr->is_symbol(arg))
+			buf.append(ss->vptr->symname(arg));
+	}
+
+	t->err_func(buf.c_str(), t->err_func_data);
+	return ss->T;
+}
+
 Theme::Theme() : priv(NULL) {
 	priv = new Theme_P;
 	theme_p_init(priv);
@@ -144,9 +175,22 @@ bool Theme::load(const char *f) {
 	if(!ss)
 		return false;
 
+	priv->sc = ss;
+
 	/* must be called */
 	scheme_set_input_port_file(ss, stdin);
 	scheme_set_output_port_file(ss, stdout);
+
+	/* install user supplied error handler first, if given */
+	if(priv->err_func) {
+		ss->vptr->scheme_define(ss,
+								ss->global_env,
+								ss->vptr->mk_symbol(ss, "private:theme.error_hook"),
+								ss->vptr->mk_foreign_func(ss, theme_error_hook));
+
+		/* make sure interpreter does not use this function at all */
+		scheme_set_external_data(ss, (void*)priv);
+	}
 
 	/* load init stuff */
 	scheme_load_string(ss, init_scm_content);
@@ -191,8 +235,6 @@ bool Theme::load(const char *f) {
 		return false;
 	}
 
-	priv->sc = ss;
-
 	scheme_load_file(ss, fd);
 	fclose(fd);
 
@@ -213,10 +255,17 @@ bool Theme::load(const char *f) {
 	return true;
 }
 
-void Theme::prompt(const char *banner) {
-	E_RETURN_IF_FAIL(priv->is_loaded == true);
-	printf(banner);
-	scheme_load_file(priv->sc, stdin);
+void Theme::set_error_handler(ThemeErrorHandler f, void *data) {
+	priv->err_func = f;
+	priv->err_func_data = data;
+}
+
+ThemeErrorHandler Theme::error_handler(void) const {
+	return priv->err_func;
+}
+
+void *Theme::error_handler_data(void) const {
+	return priv->err_func_data;
 }
 
 void Theme::clear(void) {

@@ -75,8 +75,10 @@
  (newline)
 )
 
-;; use 'theme.error' as default report function
-(define *error-hook* theme.error)
+;; use 'theme.error' as default report function unless user supplied one already
+(if (defined? 'private:theme.error_hook)
+    (define *error-hook* private:theme.error_hook)
+    (define *error-hook* theme.error))
 
 (define (theme.author a)
  (set! private:theme.author a))

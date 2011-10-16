@@ -26,6 +26,7 @@
 EDELIB_NS_BEGIN
 
 class Theme_P;
+typedef void (*ThemeErrorHandler)(const char *str, void *data);
 
 /**
  * \ingroup widgets
@@ -41,7 +42,7 @@ class Theme_P;
  */
 class Theme {
 private:
-	Theme_P *priv;
+	Theme_P           *priv;
 	E_DISABLE_CLASS_COPY(Theme)
 public:
 	/** Constructor. */
@@ -56,15 +57,6 @@ public:
 	bool load(const char *f);
 
 	/**
-	 * Display prompt and wait for input. This function is intend to be used in console programs
-	 * where interactive input is needed. It will read infinitely from stdin, so is not suitable
-	 * inside GUI applications.
-	 *
-	 * If you don't understaind above, you definitely don't need it.
-	 */
-	void prompt(const char *banner);
-
-	/**
 	 * Deinitialize interpreter and clears internal data.
 	 */
 	void clear(void);
@@ -73,6 +65,19 @@ public:
 	 * Return true if theme loaded successfully.
 	 */
 	bool loaded(void) const;
+
+	/**
+	 * Install error handler that will be called when error occured during reading/parsing phase.
+	 * Handler should be installed before <em>load()</em> call. When <em>load()</em> completes and return status,
+	 * handler function will not be called any more, so all collected errors could be displayed or processed further.
+	 */
+	void set_error_handler(ThemeErrorHandler func, void *data = 0);
+
+	/* Return error handler data. */
+	void *error_handler_data(void) const;
+
+	/* Return error handler or NULL if not set. */
+	ThemeErrorHandler error_handler(void) const;
 
 	/**
 	 * Get C string item from theme using <em>style_name</em> style. Item will be stored in <em>ret</em> 
