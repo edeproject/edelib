@@ -33,6 +33,14 @@ struct ColorDb_P;
  *
  * ColorDb handles X11 color database, usualy stored in <em>/usr/share/X11/rgb.txt</em>. The main intent is to
  * provide human readable color names that will be resolved to associated rgb values.
+ *
+ * X11 color database looks like this:
+ * \code
+ *   0   139 139		DarkCyan
+ *   139   0 139		dark magenta
+ *   139   0 139		DarkMagenta
+ *   139   0   0		dark red
+ * \endcode
  */
 class EDELIB_API ColorDb {
 private:
