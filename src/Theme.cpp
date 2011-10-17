@@ -164,16 +164,14 @@ Theme::~Theme() {
 	delete priv;
 }
 
-bool Theme::load(const char *f) {
-	E_RETURN_VAL_IF_FAIL(f != NULL, false);
-	/* do not allow loading if clear() wasn't called before */
-	E_RETURN_VAL_IF_FAIL(priv->sc == NULL, false);
-
-	priv->is_loaded = false;
+void Theme::init_interpreter(void) {
+	if(priv->sc) return;
 
 	scheme *ss = scheme_init_new();
-	if(!ss)
-		return false;
+	if(!ss) {
+		E_WARNING(E_STRLOC ": Unable to init interpreter\n");
+		return;
+	}
 
 	priv->sc = ss;
 
@@ -198,15 +196,23 @@ bool Theme::load(const char *f) {
 	/* load theme stuff */
 	scheme_load_string(ss, theme_scm_content);
 
-	pointer sym;
-
 	/* 
 	 * Set (or override) common variables before actual script was loaded. 
 	 * Variables are static and can't be changed.
 	 */
-	sym = mk_symbol(ss, "edelib-dir-separator");
+	pointer sym = mk_symbol(ss, "edelib-dir-separator");
 	scheme_define(ss, ss->global_env, sym, mk_string(ss, E_DIR_SEPARATOR_STR));
 	ss->vptr->setimmutable(sym);
+}
+
+bool Theme::load(const char *f) {
+	E_RETURN_VAL_IF_FAIL(f != NULL, false);
+	/* do not allow loading if clear() wasn't called before */
+	E_RETURN_VAL_IF_FAIL(priv->sc == NULL, false);
+	priv->is_loaded = false;
+
+	init_interpreter();
+	scheme *ss = priv->sc;
 
 	/* 
 	 * Determine from which directory we loads file, and set that file as base directory
@@ -220,7 +226,7 @@ bool Theme::load(const char *f) {
 
 	/* If returned name is the same as file, dirname wasn't found directory name in given path. */
 	if(strcmp(dir, f) != 0) {
-		sym = mk_symbol(ss, "private:theme.search-path");
+		pointer sym = mk_symbol(ss, "private:theme.search-path");
 		scheme_define(ss, ss->global_env, sym, mk_string(ss, dir));
 		ss->vptr->setimmutable(sym);
 	}

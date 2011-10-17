@@ -26,7 +26,9 @@
 EDELIB_NS_BEGIN
 
 class Theme_P;
+#ifndef SKIP_DOCS
 typedef void (*ThemeErrorHandler)(const char *str, void *data);
+#endif
 
 /**
  * \ingroup widgets
@@ -44,6 +46,9 @@ class Theme {
 private:
 	Theme_P           *priv;
 	E_DISABLE_CLASS_COPY(Theme)
+
+	/* safe to be called multiple times */
+	void init_interpreter(void);
 public:
 	/** Constructor. */
 	Theme();
@@ -73,10 +78,10 @@ public:
 	 */
 	void set_error_handler(ThemeErrorHandler func, void *data = 0);
 
-	/* Return error handler data. */
+	/** Return error handler data. */
 	void *error_handler_data(void) const;
 
-	/* Return error handler or NULL if not set. */
+	/** Return error handler or NULL if not set. */
 	ThemeErrorHandler error_handler(void) const;
 
 	/**
