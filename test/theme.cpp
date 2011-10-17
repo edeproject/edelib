@@ -57,7 +57,4 @@ UT_FUNC(ThemeTestBad, "Test bad Theme file")
 
 	UT_VERIFY( t.load("theme-bad2.et") == false );
 	UT_VERIFY( t.loaded() == false );
-
-	long lval;
-	//UT_VERIFY( t.get_item("test style", "item1", lval, 0) == false );
 }
