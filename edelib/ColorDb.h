@@ -33,20 +33,10 @@ struct ColorDb_P;
  *
  * ColorDb handles X11 color database, usualy stored in <em>/usr/share/X11/rgb.txt</em>. The main intent is to
  * provide human readable color names that will be resolved to associated rgb values.
- *
- * X11 color database looks like this:
- * \code
- *   0   139 139		DarkCyan
- *   139   0 139		dark magenta
- *   139   0 139		DarkMagenta
- *   139   0   0		dark red
- * \endcode
  */
 class EDELIB_API ColorDb {
 private:
 	ColorDb_P *priv;
-	bool load_path(ColorDb_P **c, const char *p);	
-
 	E_DISABLE_CLASS_COPY(ColorDb)
 public:
 	/** Constructor. */
@@ -56,12 +46,15 @@ public:
 	~ColorDb();
 
 	/**
-	 * Load and parse database file from known locations (<em>/etc/X11/rgb.txt</em> or <em>/usr/share/X11/rgb.txt</em>). If
-	 * <em>path</em> was given, it will try to load this file.
-	 *
-	 * Returns true if loaded something meaningfull.
+	 * Load and parse database file from known locations (<em>/etc/X11/rgb.txt</em> or <em>/usr/share/X11/rgb.txt</em>).
+	 * Returns true if loaded something meaningful.
 	 */
-	bool load(const char *path = 0);
+	bool load(void);
+
+	/**
+	 * Explicitly load database from given file. Return false if fails.
+	 */
+	bool load(const char *file);
 
 	/**
 	 * Lookup given name and return RGB triplet. If name wasn't found, it will only return false.

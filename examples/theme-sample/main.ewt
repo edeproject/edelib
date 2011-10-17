@@ -11,7 +11,8 @@
 
 (theme.style "ede" [
   scheme             "gtk+"
-  foreground_color   "#fff"
+  foreground_color   "dark slate gray"
+  background_color   "mint cream"
   font_normal        "-schumacher-*-medium-*-*-*-12-*-*-*-*-*-*-*"
   icon_theme         "edeneu"
   sample             (get-sample)

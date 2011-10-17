@@ -2,7 +2,7 @@
  * $Id$
  *
  * Theming stuff
- * Copyright (c) 2009 edelib authors
+ * Copyright (c) 2009-2011 edelib authors
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,6 +26,7 @@
 #include <edelib/ThemeLoader.h>
 #include <edelib/IconLoader.h>
 #include <edelib/Color.h>
+#include <edelib/ColorDb.h>
 #include <edelib/Debug.h>
 #include <edelib/Util.h>
 #include <edelib/Resource.h>
@@ -58,13 +59,15 @@ struct ThemeLoader_P {
 	Theme           *curr_theme;
 	XSettingsClient *xs;
 	StyleStorage    *storage;
+	ColorDb         *color_db;
 
-	ThemeLoader_P() : curr_theme(NULL), xs(NULL), storage(NULL) { }
+	ThemeLoader_P() : curr_theme(NULL), xs(NULL), storage(NULL), color_db(NULL) { }
 
 	~ThemeLoader_P() {
 		delete curr_theme;
 		delete xs;
 		delete storage;
+		delete color_db;
 	}
 };
 
@@ -74,7 +77,30 @@ static StyleStorage *theme_p_get_storage(ThemeLoader_P *t) {
 	return t->storage;
 }
 
-static void xsettings_cb(const char* name, XSettingsAction action, XSettingsSetting* setting, void* data) { }
+/* if color starts with '#', assume it it html color; otherwise it is from ColorDb database */
+static bool figure_color(ColorDb *db,
+						 const char *buf, 
+						 unsigned char &r, 
+						 unsigned char &g,
+						 unsigned char &b)
+{
+	if(buf[0] == '#') {
+		color_html_to_rgb(buf, r, g, b);
+	} else {
+		if(!db->find(buf, r, g, b)) {
+			E_WARNING(E_STRLOC ": Unable to get color from X11 rgb database\n");
+			return false;
+		}
+	}
+
+	return true;
+}
+
+static void xsettings_cb(const char* name, 
+						 XSettingsAction action,
+						 XSettingsSetting* setting, 
+						 void* data) 
+{ }
 
 ThemeLoader::ThemeLoader() : priv(NULL) {
 	priv = new ThemeLoader_P;
@@ -94,22 +120,30 @@ void ThemeLoader::apply_common_gui_elements(void) {
 
 	Theme *t = priv->curr_theme;
 
+	/* load it only if wasn't loaded */
+	if(!priv->color_db) {
+		priv->color_db = new ColorDb;
+		priv->color_db->load();
+	}
+
+	ColorDb *cb = priv->color_db;
+
 	if(t->get_item("ede", "scheme", buf, sizeof(buf)))
 		Fl::scheme(buf);
 
 	if(t->get_item("ede", "background_color", buf, sizeof(buf))) {
-		color_html_to_rgb(buf, r, g, b);
-		Fl::background(r, g, b);
+		if(figure_color(cb, buf, r, g, b))
+			Fl::background(r, g, b);
 	}
 
 	if(t->get_item("ede", "background_color2", buf, sizeof(buf))) {
-		color_html_to_rgb(buf, r, g, b);
-		Fl::background2(r, g, b);
+		if(figure_color(cb, buf, r, g, b))
+			Fl::background2(r, g, b);
 	}
 
 	if(t->get_item("ede", "foreground_color", buf, sizeof(buf))) {
-		color_html_to_rgb(buf, r, g, b);
-		Fl::foreground(r, g, b);
+		if(figure_color(cb, buf, r, g, b))
+			Fl::foreground(r, g, b);
 	}
 
 	if(t->get_item("ede", "icon_theme", buf, sizeof(buf))) {

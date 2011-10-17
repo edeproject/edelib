@@ -56,27 +56,34 @@ ColorDb::~ColorDb() {
 	delete priv;
 }
 
-bool ColorDb::load_path(ColorDb_P **p, const char *path) {
-	E_ASSERT(path != NULL && "Path must not be NULL");
+bool ColorDb::load(void) {
+	for(int i = 0; x11_rgb[i]; i++)
+		if(load(x11_rgb[i]))
+			return true;
+	return false;
+}
 
-	FILE *fd = fopen(path, "r");
+bool ColorDb::load(const char *file) {
+	E_RETURN_VAL_IF_FAIL(file != NULL, false);
+
+	FILE *fd = fopen(file, "r");
 	if(!fd) return false;
-
-	if(!*p) {
-	   	*p = new ColorDb_P;
-	} else {
-		/* clear if we have something in list */
-		(*p)->list.clear();
-	}
 
 	char buf[256], name[64];
 	int r, g, b, ret;
+
+	if(!priv) {
+		priv = new ColorDb_P;
+	} else { 
+		/* clear list in case something is there */
+		priv->list.clear();
+	}
 
 	while(fgets(buf, sizeof(buf), fd) != NULL) {
 		ret = sscanf(buf, "%i %i %i\t%63[0-9A-Za-z ]s", &r, &g, &b, name);
 		errno = 0;
 		if(ret != 4 || errno != 0) {
-			E_WARNING(E_STRLOC ": Skipping line due errno set: '%s'\n", strerror(errno));
+			E_WARNING(E_STRLOC ": Skipping line as errno was set: '%s' (%i)\n", strerror(errno), errno);
 			continue;
 		}
 
@@ -86,24 +93,11 @@ bool ColorDb::load_path(ColorDb_P **p, const char *path) {
 		c.g = (unsigned char)g;
 		c.b = (unsigned char)b;
 
-		(*p)->list.push_back(c);
+		priv->list.push_back(c);
 	}
 
 	fclose(fd);
 	return true;
-}
-
-bool ColorDb::load(const char *path) {
-	if(path) {
-		E_RETURN_VAL_IF_FAIL(path != NULL, false);
-		return load_path(&priv, path);
-	} else {
-		for(int i = 0; x11_rgb[i]; i++)
-			if(load_path(&priv, x11_rgb[i]))
-				return true;
-	}
-
-	return false;
 }
 
 bool ColorDb::find(const char *name, unsigned char &r, unsigned char &g, unsigned char &b) {
