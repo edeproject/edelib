@@ -50,8 +50,11 @@ private:
 	/* safe to be called multiple times */
 	void init_interpreter(void);
 public:
-	/** Constructor. */
-	Theme();
+	/** 
+	 * Constructor.
+	 * \param msg_domain is used for translatable strings and should be set to application name that uses Theme class.
+	 */
+	Theme(const char *msg_domain = "edelib");
 
 	/** Destructor. */
 	~Theme();

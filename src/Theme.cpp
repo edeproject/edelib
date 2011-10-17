@@ -154,7 +154,7 @@ static pointer theme_error_hook(scheme *ss, pointer args) {
 	return ss->T;
 }
 
-Theme::Theme() : priv(NULL) {
+Theme::Theme(const char *msg_domain) : priv(NULL) {
 	priv = new Theme_P;
 	theme_p_init(priv);
 }

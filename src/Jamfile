@@ -40,6 +40,7 @@ SOURCE =
 	Missing.c
 	Debug.c
 	Color.cpp 
+	ColorDb.cpp 
 	Config.cpp 
 	DateTime.cpp
 	DesktopFile.cpp
