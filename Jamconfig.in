@@ -72,5 +72,8 @@ EDELIB_VERSION ?= "@EDELIB_API_VERSION@" ;
 # xdgmime
 XDG_MIME_HAVE_MMAP ?= "@XDG_MIME_HAVE_MMAP@" ;
 
+# flags for tinyscheme
+SCHEME_FLAGS ?= "@SCHEME_FLAGS@" ;
+
 # do not touch this
 JAMCONFIG_READ = "yes" ;

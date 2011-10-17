@@ -14,6 +14,7 @@ extern "C" {
  */
 #define USE_INTERFACE 1
 #define USE_MATH 0
+#define USE_GETTEXT 1
 
 /* If used as standalone interpreter */
 #ifndef STANDALONE      
@@ -109,6 +110,10 @@ extern "C" {
 
 #ifndef USE_INTERFACE
 # define USE_INTERFACE 0
+#endif
+
+#ifndef USE_GETTEXT
+# define USE_GETTEXT 0
 #endif
 
 typedef struct scheme scheme;

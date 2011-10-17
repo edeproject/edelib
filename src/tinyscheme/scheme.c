@@ -51,6 +51,7 @@
 #define TOK_SHARP   10
 #define TOK_SHARP_CONST 11
 #define TOK_VEC     12
+#define TOK_USCORE  13
 
 # define BACKQUOTE '`'
 
@@ -91,6 +92,13 @@ static const char *strlwr(char *s) {
 }
 #else
 # define strlwr(s) s
+#endif
+
+#if USE_GETTEXT
+# include <libintl.h>
+# include "utf8.h"
+# undef stricmp
+# define stricmp utf8_stricmp
 #endif
 
 #ifndef prompt
@@ -1674,7 +1682,7 @@ static int token(scheme *sc) {
           }
      case '_':
 		  if ((c=inchar(sc)) == '"')
-                return (TOK_DQUOTE);
+                return (TOK_USCORE);
           /* else go to default */
      default:
           backchar(sc,c);
@@ -3584,6 +3592,9 @@ static pointer opexe_4(scheme *sc, enum scheme_opcodes op) {
 
 static pointer opexe_5(scheme *sc, enum scheme_opcodes op) {
      pointer x;
+#if USE_GETTEXT
+     char *trans_str;
+#endif
 
      if(sc->nesting!=0) {
           int n=sc->nesting;
@@ -3712,6 +3723,21 @@ static pointer opexe_5(scheme *sc, enum scheme_opcodes op) {
 	       if(x==sc->F) {
 		 Error_0(sc,"Error reading string");
 	       }
+               setimmutable(x);
+               s_return(sc,x);
+          case TOK_USCORE:
+               x=readstrexp(sc);
+               if(x==sc->F) {
+                 Error_0(sc,"Error reading string");
+               }
+#if USE_GETTEXT
+               trans_str = gettext(strvalue(x));
+               if(trans_str != strvalue(x)) {
+                 sc->free(strvalue(x));				   
+                 strlength(x) = utf8_strlen(trans_str);
+                 strvalue(x) = store_string(sc, strlength(x), trans_str, 0);
+               }
+#endif
                setimmutable(x);
                s_return(sc,x);
           case TOK_SHARP: {

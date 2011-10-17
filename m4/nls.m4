@@ -34,6 +34,8 @@ AC_DEFUN([EDELIB_NLS], [
 		   eval "test $have_bindtextdomain = yes" && \
 		   eval "test $have_setlocale = yes"; then
 				AC_DEFINE(USE_NLS, 1, [Define to 1 if you want Native Language Support])
+				dnl flags for tinyscheme
+				SCHEME_FLAGS="-DUSE_GETTEXT"
 		fi
 	else
 		AC_MSG_RESULT(no)

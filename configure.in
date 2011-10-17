@@ -161,6 +161,7 @@ AC_SUBST(CXXFLAGS)
 AC_SUBST(LDFLAGS)
 AC_SUBST(LDLIBS)
 AC_SUBST(XDG_MIME_HAVE_MMAP)
+AC_SUBST(SCHEME_FLAGS)
 
 dnl specific stuf which goes to edelib-config.h
 AC_CONFIG_COMMANDS([outfile], [
