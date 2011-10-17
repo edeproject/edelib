@@ -26,6 +26,7 @@
 
 #include <edelib/Debug.h>
 #include <edelib/Directory.h>
+#include <edelib/Version.h>
 
 #include "tinyscheme/scheme.h"
 #include "tinyscheme/scheme-private.h"
@@ -238,6 +239,7 @@ bool Theme::load(const char *f) {
 	if(!fd) {
 		scheme_deinit(ss);
 		free(ss);
+		priv->sc = 0;
 		return false;
 	}
 
@@ -288,6 +290,13 @@ void Theme::clear(void) {
 
 bool Theme::loaded(void) const { 
 	return priv->is_loaded; 
+}
+
+void Theme::prompt(void) {
+	init_interpreter();
+
+	printf("Theme console (edelib %s)", EDELIB_VERSION);
+	scheme_load_file(priv->sc, stdin);
 }
 
 bool Theme::get_item(const char *style_name, const char *item_name, char *ret, unsigned int sz) {

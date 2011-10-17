@@ -88,6 +88,14 @@ public:
 	ThemeErrorHandler error_handler(void) const;
 
 	/**
+	 * Show prompt and wait for input. This function is intended to be called from console progams, as it will
+	 * wait intfinitely for user input, where scheme/theme expressions could be evaluated.
+	 *
+	 * This function is mostly for writing external tools for easier debugging.
+	 */
+	void prompt(void);
+
+	/**
 	 * Get C string item from theme using <em>style_name</em> style. Item will be stored in <em>ret</em> 
 	 * using no more than <em>sz</em> bytes. Return true if found and <em>ret</em> was set.
 	 */
