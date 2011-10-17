@@ -12,6 +12,8 @@ extern "C" {
 /*
  * Default values for #define'd symbols
  */
+#define USE_INTERFACE 1
+#define USE_MATH 0
 
 /* If used as standalone interpreter */
 #ifndef STANDALONE      
@@ -56,11 +58,8 @@ extern "C" {
 # define USE_INTERFACE 1
 #endif
 
-/* Sanel: use interface anyway */
-#define USE_INTERFACE 1
-
 #ifndef USE_MATH         /* If math support is needed */
-# define USE_MATH 0
+# define USE_MATH 1
 #endif
 
 #ifndef USE_CHAR_CLASSIFIERS  /* If char classifiers are needed */

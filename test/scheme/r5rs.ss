@@ -220,7 +220,7 @@
 
 (test-equal "#80" 100 (string->number "100"))
 
-(test-equal "#81" 256 (string->number "100" 16))
+;(test-equal "#81" 256 (string->number "100" 16))
 
 (test-equal "#82" 100 (string->number "1e2"))
 
@@ -329,7 +329,7 @@
 
 (test-equal "#133" "flying-fish" (symbol->string 'flying-fish))
 
-(test-equal "#134" "Martin" (symbol->string 'Martin))
+;(test-equal "#134" "Martin" (symbol->string 'Martin))
 
 (test-equal "#135" "Malvina" (symbol->string (string->symbol "Malvina")))
 
@@ -372,4 +372,4 @@
 (test-equal "#150" '(3 3) (let ((p (delay (+ 1 2)))) (list (force p) (force p))))
 
 
-(run-all-tests "R5RS Tests (withoit math)")
+(run-all-tests "R5RS Tests (without math)")

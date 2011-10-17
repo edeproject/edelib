@@ -89,6 +89,8 @@ static const char *strlwr(char *s) {
   }
   return p;
 }
+#else
+# define strlwr(s) s
 #endif
 
 #ifndef prompt

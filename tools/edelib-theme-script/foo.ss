@@ -122,12 +122,6 @@
 ;; translation
 (println _"This is some text")
 
-(define-macro (->2 x form)
-  `,(list form x))
-
-(define-macro (-> x . form)
- `(,(caar form) ,x) )
-
 ;(println (-> "XXX" (println)))
 
 (defn foo [args]
@@ -158,3 +152,9 @@
 ;(println (foldr cons '() '(1 2 3 4 5) '(a b c d e f)))
 
 (println (list->vector '()))
+(println "-------------->8----------------------")
+(define (-> . args)
+  (println args))
+
+
+(println "XXX" (sqrt 4))
