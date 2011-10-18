@@ -43,10 +43,19 @@
  * to setup correct path for localization data, which means the header (<em>Ede.h</em>) should
  * be included after <em>PREFIX</em> definition.
  */
+
+/**
+ * \def EDE_CONSOLE_APPLICATION
+ * \ingroup macros
+ *
+ * Same as EDE_APPLICATION but is intended for console applications.
+ */
 #ifdef PREFIX
-# define EDE_APPLICATION(name) EDE_APPLICATION_WITH_NLS_PATH(name, PREFIX"/share/locale")
+# define EDE_APPLICATION(name)         EDE_APPLICATION_WITH_NLS_PATH(name, PREFIX"/share/locale")
+# define EDE_CONSOLE_APPLICATION(name) EDE_APPLICATION_WITH_NLS_PATH(name, PREFIX"/share/locale")
 #else
-# define EDE_APPLICATION(name) EDE_APPLICATION_WITH_NLS_PATH(name, "dummy_path")
+# define EDE_APPLICATION(name)         EDE_APPLICATION_WITH_NLS_PATH(name, "dummy_path")
+# define EDE_CONSOLE_APPLICATION(name) EDE_APPLICATION_WITH_NLS_PATH(name, "dummy_path")
 #endif
 
 #endif
