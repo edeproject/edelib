@@ -61,14 +61,13 @@ Theme file is the file with one or bunch of styles. First file loaded from every
 (theme.author "John Foo <john@foo.com>")
 (theme.sample "img.jpg")
 
-(theme.style "ede" 
-[
-  (scheme             "gtk+")
-  (background_color   "#ffffff")
-  (background_color2  "#043456")
-  (foreground_color   "#fff")
-  (font_normal        "-schumacher-*-medium-*-*-*-12-*-*-*-*-*-*-*")
-  (icon_theme         "edeneu")
+(theme.style "ede" [
+  scheme             "gtk+"
+  background_color   "#ffffff"
+  background_color2  "#043456"
+  foreground_color   "red"
+  font_normal        "-schumacher-*-medium-*-*-*-12-*-*-*-*-*-*-*"
+  icon_theme         "edeneu"
 ])
 \endcode
 */
@@ -110,11 +109,10 @@ Here, <em>main.ewt</em> will include (via <em>(include)</em> directive) <em>appl
 (theme.sample "img.jpg")
 
 ;; styles
-(theme.style "ede" 
-[
-  (background_color   "#ffffff")
-  (background_color2  "#043456")
-  (icon_theme         "edeneu")
+(theme.style "ede" [
+  background_color   "#ffffff"
+  background_color2  "#043456"
+  icon_theme         "edeneu"
 ])
 
 ;; include the rest
@@ -162,10 +160,9 @@ But, beware! You can't use this assignment syntax all over .ewt files; it is val
 ...which brings us to <em>(theme.style)</em> syntax... Each <em>(theme.style)</em> must have a style name and block
 with a list of variables and their values. For example:
 \code
-(theme.style "demo-style"
-[
- (var1 "value1")
- (var2 "value2")
+(theme.style "demo-style" [
+  var1 "value1"
+  var2 "value2"
 ])
 \endcode
 

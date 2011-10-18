@@ -1328,19 +1328,12 @@ static pointer port_from_filename(scheme *sc, const char *fn, int prop) {
 }
 
 static port *port_rep_from_file(scheme *sc, FILE *f, int prop) {
-  char *rw;
   port *pt;
   pt=(port*)sc->malloc(sizeof(port));
   if(pt==0) {
     return 0;
   }
-  if(prop==(port_input|port_output)) {
-    rw="a+";
-  } else if(prop==port_output) {
-    rw="w";
-  } else {
-    rw="r";
-  }
+
   pt->kind=port_file|prop;
   pt->rep.stdio.file=f;
   pt->rep.stdio.closeit=0;
@@ -1473,8 +1466,8 @@ INTERFACE void putcharacter(scheme *sc, int c) {
 }
 
 /* read characters up to delimiter, but cater to character constants */
-static char   *readstr_upto(scheme *sc, char *delim) {
-  char   *p = sc->strbuff;
+static char *readstr_upto(scheme *sc, char *delim) {
+  char *p = sc->strbuff;
 
   while (!is_one_of(delim, (*p++ = inchar(sc))));
   if(p==sc->strbuff+2 && p[-2]=='\\') {
@@ -1681,7 +1674,7 @@ static int token(scheme *sc) {
                }
           }
      case '_':
-		  if ((c=inchar(sc)) == '"')
+          if ((c=inchar(sc)) == '"')
                 return (TOK_USCORE);
           /* else go to default */
      default:
@@ -4470,30 +4463,6 @@ void scheme_define(scheme *sc, pointer envir, pointer symbol, pointer value) {
 }
 
 #if !STANDALONE
-#if 0
-void scheme_apply0(scheme *sc, const char *procname) {
-     pointer carx=mk_symbol(sc,procname);
-     pointer cdrx=sc->NIL;
-
-     dump_stack_reset(sc); 
-     sc->envir = sc->global_env;
-     sc->code = cons(sc,carx,cdrx);
-     sc->interactive_repl=0;
-     sc->retcode=0;
-     Eval_Cycle(sc,OP_EVAL);
-}
-
-void scheme_call(scheme *sc, pointer func, pointer args) { 
-   dump_stack_reset(sc); 
-   sc->envir = sc->global_env; 
-   sc->args = args; 
-   sc->code = func; 
-   sc->interactive_repl =0; 
-   sc->retcode = 0; 
-   Eval_Cycle(sc, OP_APPLY); 
-} 
-#endif
-
 /* Sanel: added from the latest cvs code */
 pointer scheme_apply0(scheme *sc, const char *proc)
 { return scheme_eval(sc, cons(sc,mk_symbol(sc,proc),sc->NIL)); }
