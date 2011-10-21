@@ -87,7 +87,7 @@ SOURCE_GUI =
 	Theme.cpp
 	ThemeLoader.cpp
 	Window.cpp
-	WindowXid.cpp
+	WindowUtils.cpp
 	XSettingsClient.cpp
 	XSettingsCommon.cpp
 	XSettingsManager.cpp ;

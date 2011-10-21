@@ -165,3 +165,11 @@
 (define a 0)
 (define b 3)
 (println "==> " (: a + 1))
+
+(define (foldl f x lst)
+  (if (null? lst)
+	x
+	(f (car lst) (foldl f x (cdr lst)))))
+
+(println (foldr cons '(1 2 3 4 5 6) '()))
+(println (foldl cons '(1 2 3 4 5 6) '()))

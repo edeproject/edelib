@@ -1,8 +1,9 @@
 /*
  * $Id$
  *
- * Window xid creator
+ * Window utils
  * Copyright (c) 1998-2006 by Bill Spitzak and others
+ * Copyright (c) 2009-2011 edelib authors
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,7 +19,7 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <edelib/WindowXid.h>
+#include <edelib/WindowUtils.h>
 
 #include <ctype.h>
 #include <FL/Fl.H>
@@ -222,6 +223,12 @@ void window_xid_create(Fl_Window* win, void (*before_map_func)(Fl_Window*), int 
 		Fl::e_number = old_event;
 		win->redraw();
 	}
+}
+
+void window_center_on_screen(Fl_Window *win) {
+	int X, Y, W, H;
+	Fl::screen_xywh(X, Y, W, H);
+	win->position(W/2 - win->w()/2, H/2 - win->h()/2);
 }
 
 EDELIB_NS_END
