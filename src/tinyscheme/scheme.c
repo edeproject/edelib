@@ -898,14 +898,15 @@ static pointer mk_number(scheme *sc, num n) {
 /* allocate name to string area */
 static char *store_string(scheme *sc, int len_str, const char *str, char fill) {
      char *q;
+	 int  len = len_str + 1;
      
-     q=(char*)sc->malloc(len_str+1);
+     q=(char*)sc->malloc(len);
      if(q==0) {
           sc->no_memory=1;
           return sc->strbuff;
      }
      if(str!=0) {
-          strcpy(q, str);
+          snprintf(q, len, "%s", str);
      } else {
           memset(q, fill, len_str);
           q[len_str]=0;

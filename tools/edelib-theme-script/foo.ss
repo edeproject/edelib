@@ -10,6 +10,9 @@
   (for-each display args)
   (newline))
 
+(define-macro (: a op b)
+  `(,op ,a ,b))
+
 (define-macro (let1 a b . body)
   `(let ([,a ,b])
 	 ,@body))
@@ -158,3 +161,7 @@
 
 
 (println "XXX" (sqrt 4))
+
+(define a 0)
+(define b 3)
+(println "==> " (: a + 1))

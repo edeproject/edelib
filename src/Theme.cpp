@@ -22,10 +22,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <limits.h>
 
 #include <edelib/Debug.h>
 #include <edelib/Directory.h>
+#include <edelib/Missing.h>
 #include <edelib/Version.h>
 
 #include "tinyscheme/scheme.h"
@@ -44,9 +45,8 @@ EDELIB_NS_BEGIN
  * (define (get-something)
  *  "something)
  *
- * (theme.style "foo" 
- * [
- *    (xxx (get-something)) <= get-something will be seen as function here and will be evaluated
+ * (theme.style "foo"  [
+ *    xxx (get-something) <= get-something will be seen as function here and will be evaluated
  * ])
  *
  * If not set, guess, it will not be evaluated, yielding value different than strint or long,
@@ -201,8 +201,14 @@ void Theme::init_interpreter(void) {
 	 * Set (or override) common variables before actual script was loaded. 
 	 * Variables are static and can't be changed.
 	 */
-	pointer sym = mk_symbol(ss, "edelib-dir-separator");
+	pointer sym;
+
+	sym = mk_symbol(ss, "*edelib-dir-separator*");
 	scheme_define(ss, ss->global_env, sym, mk_string(ss, E_DIR_SEPARATOR_STR));
+	ss->vptr->setimmutable(sym);
+
+	sym = mk_symbol(ss, "*edelib-version*");
+	scheme_define(ss, ss->global_env, sym, mk_string(ss, EDELIB_VERSION));
 	ss->vptr->setimmutable(sym);
 }
 
@@ -219,7 +225,7 @@ bool Theme::load(const char *f) {
 	 * Determine from which directory we loads file, and set that file as base directory
 	 * where '(include)' statement can search additional files. Include uses 'private::theme.search-path'.
 	 */
-	char *path = strdup(f);
+	char *path = edelib_strndup(f, PATH_MAX);
 	if(!path)
 		E_FATAL(E_STRLOC ": No memory\n");
 
@@ -295,7 +301,7 @@ bool Theme::loaded(void) const {
 void Theme::prompt(void) {
 	init_interpreter();
 
-	printf("Theme console (edelib %s)", EDELIB_VERSION);
+	printf("Theme console (edelib %s). Type \"(quit)\" to exit.", EDELIB_VERSION);
 	scheme_load_file(priv->sc, stdin);
 }
 

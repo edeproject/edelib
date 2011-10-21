@@ -3,7 +3,7 @@
 ;; NOTE: keep the comments at the beginning of the line, so gen-c-string.sh can easily strip them
 
 ;; globals set by Theme class
-(define edelib-dir-separator      #f)
+(define *edelib-dir-separator*    #f)
 (define private:theme.search-path #f)
 
 ;; globals read by edelib Theme class
@@ -42,9 +42,9 @@
 
 ;; Resolve path of theme specific items like local files, images or sounds.
 (define (theme.path-resolve item) 
- (if (and edelib-dir-separator
+ (if (and *edelib-dir-separator*
           private:theme.search-path) 
-  (string-append private:theme.search-path edelib-dir-separator item)
+  (string-append private:theme.search-path *edelib-dir-separator* item)
   ;; else
    item 
 ))
