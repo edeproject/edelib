@@ -993,7 +993,7 @@ INTERFACE pointer gensym(scheme *sc) {
      char name[40]; 
 
      for(; sc->gensym_cnt<LONG_MAX; sc->gensym_cnt++) { 
-          sprintf(name,"gensym-%ld",sc->gensym_cnt); 
+          snprintf(name,40,"gensym-%ld",sc->gensym_cnt); 
 
           /* first check oblist */ 
           x = oblist_find_by_name(sc, name); 
@@ -1249,7 +1249,7 @@ static void gc(scheme *sc, pointer a, pointer b) {
   
   if (sc->gc_verbose) {
     char msg[80];
-    sprintf(msg,"done: %ld cells were recovered.\n", sc->fcells);
+    snprintf(msg,80,"done: %ld cells were recovered.\n", sc->fcells);
     putstr(sc,msg);
   }
 }
@@ -1761,18 +1761,18 @@ static void atom2str(scheme *sc, pointer l, int f, char **pp, int *plen) {
      } else if (is_number(l)) {
           p = sc->strbuff;
           if(is_integer(l)) {
-               sprintf(p, "%ld", ivalue_unchecked(l));
+               snprintf(p, STRBUFFSIZE, "%ld", ivalue_unchecked(l));
           } else {
-               sprintf(p, "%.10g", rvalue_unchecked(l));
+               snprintf(p, STRBUFFSIZE, "%.10g", rvalue_unchecked(l));
           }
      } else if (is_string(l)) {
           if (!f) {
                p = strvalue(l);
           } else { /* Hack, uses the fact that printing is needed */
                *pp=sc->strbuff;
-	       *plen=0;
+               *plen=0;
                printslashstring(sc, strvalue(l), strlength(l));
-	       return;
+               return;
           }
      } else if (is_character(l)) {
           int c=charvalue(l);
@@ -1783,33 +1783,37 @@ static void atom2str(scheme *sc, pointer l, int f, char **pp, int *plen) {
           } else {
                switch(c) {
                case ' ':
-                    sprintf(p,"#\\space"); break;
+                    snprintf(p, STRBUFFSIZE, "#\\space"); break;
                case '\n':
-                    sprintf(p,"#\\newline"); break;
+                    snprintf(p, STRBUFFSIZE, "#\\newline"); break;
                case '\r':
-                    sprintf(p,"#\\return"); break;
+                    snprintf(p, STRBUFFSIZE, "#\\return"); break;
                case '\t':
-                    sprintf(p,"#\\tab"); break;
+                    snprintf(p, STRBUFFSIZE, "#\\tab"); break;
                default:
 #if USE_ASCII_NAMES
                     if(c==127) {
-                         strcpy(p,"#\\del"); break;
+                         strcpy(p,"#\\del");
+						 break;
                     } else if(c<32) {
-                         strcpy(p,"#\\"); strcat(p,charnames[c]); break;
+                         snprintf(p, STRBUFFSIZE, "#\\%s", charnames[c]);
+						 break;
                     }
 #else
-		    if(c<32) {
-		      sprintf(p,"#\\x%x",c); break;
-		    }
+                    if(c<32) {
+                         snprintf(p, STRBUFFSIZE, "#\\x%x",c);
+						 break;
+                    }
 #endif
-                    sprintf(p,"#\\%c",c); break;
+                    snprintf(p, STRBUFFSIZE, "#\\%c",c);
+					break;
                }
           }
      } else if (is_symbol(l)) {
           p = symname(l);
      } else if (is_proc(l)) {
           p = sc->strbuff;
-          sprintf(p, "#<%s PROCEDURE %ld>", procname(l),procnum(l));
+          snprintf(p, STRBUFFSIZE, "#<%s PROCEDURE %ld>", procname(l),procnum(l));
      } else if (is_macro(l)) {
           p = "#<MACRO>";
      } else if (is_closure(l)) {
@@ -1818,7 +1822,7 @@ static void atom2str(scheme *sc, pointer l, int f, char **pp, int *plen) {
           p = "#<PROMISE>";
      } else if (is_foreign(l)) {
           p = sc->strbuff;
-          sprintf(p, "#<FOREIGN PROCEDURE %ld>", procnum(l));
+          snprintf(p, STRBUFFSIZE, "#<FOREIGN PROCEDURE %ld>", procnum(l));
      } else if (is_continuation(l)) {
           p = "#<CONTINUATION>";
      } else {
@@ -2610,7 +2614,7 @@ static pointer opexe_0(scheme *sc, enum scheme_opcodes op) {
                s_goto(sc,OP_BEGIN);
           }
      default:
-          sprintf(sc->strbuff, "%d: illegal operator", sc->op);
+          snprintf(sc->strbuff, STRBUFFSIZE, "%d: illegal operator", sc->op);
           Error_0(sc,sc->strbuff);
      }
      return sc->T;
@@ -2817,7 +2821,7 @@ static pointer opexe_1(scheme *sc, enum scheme_opcodes op) {
           s_goto(sc,OP_APPLY);
 
      default:
-          sprintf(sc->strbuff, "%d: illegal operator", sc->op);
+          snprintf(sc->strbuff, STRBUFFSIZE, "%d: illegal operator", sc->op);
           Error_0(sc,sc->strbuff);
      }
      return sc->T;
@@ -3237,7 +3241,7 @@ static pointer opexe_2(scheme *sc, enum scheme_opcodes op) {
      }
 
      default:
-          sprintf(sc->strbuff, "%d: illegal operator", sc->op);
+          snprintf(sc->strbuff, STRBUFFSIZE, "%d: illegal operator", sc->op);
           Error_0(sc,sc->strbuff);
      }
      return sc->T;
@@ -3359,7 +3363,7 @@ static pointer opexe_3(scheme *sc, enum scheme_opcodes op) {
      case OP_EQV:        /* eqv? */
           s_retbool(eqv(car(sc->args), cadr(sc->args)));
      default:
-          sprintf(sc->strbuff, "%d: illegal operator", sc->op);
+          snprintf(sc->strbuff, STRBUFFSIZE, "%d: illegal operator", sc->op);
           Error_0(sc,sc->strbuff);
      }
      return sc->T;
@@ -3890,7 +3894,7 @@ static pointer opexe_5(scheme *sc, enum scheme_opcodes op) {
      }
 
      default:
-          sprintf(sc->strbuff, "%d: illegal operator", sc->op);
+          snprintf(sc->strbuff, STRBUFFSIZE, "%d: illegal operator", sc->op);
           Error_0(sc,sc->strbuff);
 
      }
@@ -3945,7 +3949,7 @@ static pointer opexe_6(scheme *sc, enum scheme_opcodes op) {
      case OP_MACROP:          /* macro? */
           s_retbool(is_macro(car(sc->args)));
      default:
-          sprintf(sc->strbuff, "%d: illegal operator", sc->op);
+          snprintf(sc->strbuff, STRBUFFSIZE, "%d: illegal operator", sc->op);
           Error_0(sc,sc->strbuff);
      }
      return sc->T; /* NOTREACHED */
@@ -4033,21 +4037,21 @@ static void Eval_Cycle(scheme *sc, enum scheme_opcodes op) {
   for (;;) {
     op_code_info *pcd=dispatch_table+sc->op;
     if (pcd->name!=0) { /* if built-in function, check arguments */
-      char msg[512];
+      char msg[STRBUFFSIZE];
       int ok=1;
       int n=list_length(sc,sc->args);
       
       /* Check number of arguments */
       if(n<pcd->min_arity) {
 	ok=0;
-	sprintf(msg,"%s: needs%s %d argument(s)",
+	snprintf(msg, STRBUFFSIZE, "%s: needs%s %d argument(s)",
 		pcd->name,
 		pcd->min_arity==pcd->max_arity?"":" at least",
 		pcd->min_arity);
       }
       if(ok && n>pcd->max_arity) {
 	ok=0;
-	sprintf(msg,"%s: needs%s %d argument(s)",
+	snprintf(msg, STRBUFFSIZE, "%s: needs%s %d argument(s)",
 		pcd->name,
 		pcd->min_arity==pcd->max_arity?"":" at most",
 		pcd->max_arity);
@@ -4079,7 +4083,7 @@ static void Eval_Cycle(scheme *sc, enum scheme_opcodes op) {
 	  } while(i<n);
 	  if(i<n) {
 	    ok=0;
-	    sprintf(msg,"%s: argument %d must be: %s",
+	    snprintf(msg, STRBUFFSIZE, "%s: argument %d must be: %s",
 		    pcd->name,
 		    i+1,
 		    tests[j].kind);

@@ -122,7 +122,8 @@ char    no_memory;       /* Whether mem. alloc. has failed */
 
 #define LINESIZE 1024
 char    linebuff[LINESIZE];
-char    strbuff[256];
+#define STRBUFFSIZE 256
+char    strbuff[STRBUFFSIZE];
 
 FILE *tmpfp;
 int tok;

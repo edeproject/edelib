@@ -17,5 +17,12 @@ echo "#######################"
 cd scheme && ./run.sh
 [ "x$?" == "x1" ] && ret=1
 
+# write something at the bottom
+if [ "x$ret" == "x0" ]; then
+	echo "All tests passed."
+else
+	echo "Some of tests failed!!!"
+fi
+
 # if one of tests fails, mark all as failed
 exit $ret
