@@ -106,6 +106,30 @@
 #endif
 
 /**
+ * \def EDELIB_NS_USING_LIST
+ * \ingroup macros
+ *
+ * Import given list of names, by using EDELIB_NS_USING on each, like:
+ * \code
+ *   EDELIB_NS_USING_LIST(3, (String, List, foreign_callback_add))
+ * \endocode
+ *
+ * Notice given number; it should always match list size.
+ */
+#include "for-each-macro.h"
+#ifdef EDELIB_FOR_EACH_FUNC
+# define EDELIB_FOR_EACH_FUNC_OLD__ EDELIB_FOR_EACH_FUNC
+#endif
+
+#define EDELIB_FOR_EACH_FUNC EDELIB_NS_USING
+#define EDELIB_NS_USING_LIST(n, list) EDELIB_FOR_EACH(n, list)
+
+#ifdef EDELIB_FOR_EACH_FUNC_OLD__
+# define EDELIB_FOR_EACH_FUNC EDELIB_FOR_EACH_FUNC_OLD__
+# undef EDELIB_FOR_EACH_FUNC_OLD__
+#endif
+
+/**
  * \def E_EXPORT
  * \ingroup macro
  * Marks the given symbol publicly visible.
