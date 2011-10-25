@@ -167,3 +167,27 @@ UT_FUNC(DesktopFileTest3, "Test DesktopFile class (3)")
 
 	file_remove("foo.desktop");
 }
+
+UT_FUNC(DesktopFileTestExec, "Test DesktopFile exec")
+{
+	Config conf;
+	DesktopFile desk;
+	char buf[128];
+
+	conf.set("Desktop Entry", "Exec", "ls -la");
+	conf.set("Desktop Entry", "Type", "Application");
+	conf.save("foo.desktop");
+
+	UT_VERIFY( desk.load("foo.desktop") );
+	UT_VERIFY( desk.exec(buf, sizeof(buf)) == true );
+
+	UT_VERIFY( STR_EQUAL(buf, "/bin/ls -la") );
+
+	conf.set("Desktop Entry", "Exec", "not-existing");
+	conf.save("foo.desktop");
+
+	UT_VERIFY( desk.load("foo.desktop") );
+	UT_VERIFY( desk.exec(buf, sizeof(buf)) == false );
+
+	file_remove("foo.desktop");
+}
