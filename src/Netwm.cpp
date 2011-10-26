@@ -553,6 +553,70 @@ char *netwm_window_get_title(Window win) {
 	return ret;
 }
 
+Fl_RGB_Image *netwm_window_get_icon(Window win) {
+	E_RETURN_VAL_IF_FAIL(win >= 0, 0);
+	init_atoms_once();
+
+	Atom real;
+	int  format;
+	unsigned long n, extra;
+	unsigned char *prop = 0;
+	long len = 2;
+
+	int status = XGetWindowProperty(fl_display, win,
+			_XA_NET_WM_ICON, 0L, len, False, XA_CARDINAL, &real, &format, &n, &extra, (unsigned char**)&prop);
+
+	if((status != Success) || (real != XA_CARDINAL)) {
+		E_WARNING(E_STRLOC ": Failed to get icon dimensions\n");
+		if(prop) XFree(prop);
+		return 0;
+	}
+
+	long *data = (long*)prop;
+	unsigned int width, height;
+
+	width  = data[0];
+	height = data[1];
+	XFree(prop);
+
+	len += width * height;
+
+	format = 0;
+	prop   = 0;
+	real   = 0;
+
+	status = XGetWindowProperty(fl_display, win,
+			_XA_NET_WM_ICON, 0L, len, False, XA_CARDINAL, &real, &format, &n, &extra, (unsigned char**)&prop);
+
+	if((status != Success) || (real != XA_CARDINAL)) {
+		E_WARNING(E_STRLOC ": Failed to get icon data\n");
+		if(prop) XFree(prop);
+		return 0;
+	}
+
+	data = (long*)prop;
+
+	unsigned char *img_data = new unsigned char[width * height * 4];
+	unsigned char *ptr = img_data;
+	int            pixel;
+
+	for(int i = 2; i < len; i++) {
+		pixel = data[i];
+
+		*ptr++ = pixel >> 16 & 0xff;
+		*ptr++ = pixel >> 8  & 0xff;
+		*ptr++ = pixel & 0xff;
+		*ptr++ = pixel >> 24 & 0xff;
+	}
+
+	XFree(prop);
+
+	Fl_RGB_Image *img = new Fl_RGB_Image(img_data, width, height, 4);
+	img->alloc_array = 1;
+
+	return img;
+}
+
 Window netwm_window_get_active(void) {
 	init_atoms_once();
 

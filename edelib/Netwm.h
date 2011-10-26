@@ -22,7 +22,8 @@
 #define __EDELIB_NETWM_H__
 
 #include "edelib-global.h"
-#include <X11/Xlib.h>
+#include <FL/Fl_Image.H>
+#include <FL/x.H>
 
 EDELIB_NS_BEGIN
 
@@ -216,6 +217,12 @@ int netwm_window_is_manageable(Window win);
  * Return window title or NULL if fails. Call free() on returned string.
  */
 char *netwm_window_get_title(Window win);
+
+/**
+ * \ingroup wm
+ * Return window icon set with _NET_WM_ICON property.
+ */
+Fl_RGB_Image *netwm_window_get_icon(Window win);
 
 /**
  * \ingroup wm
