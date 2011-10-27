@@ -567,7 +567,7 @@ Fl_RGB_Image *netwm_window_get_icon(Window win) {
 			_XA_NET_WM_ICON, 0L, len, False, XA_CARDINAL, &real, &format, &n, &extra, (unsigned char**)&prop);
 
 	if((status != Success) || (real != XA_CARDINAL)) {
-		E_WARNING(E_STRLOC ": Failed to get icon dimensions\n");
+		E_WARNING(E_STRLOC ": Failed to get icon dimensions (status: %i is_cardinal: %i)\n", (status == Success), (real == XA_CARDINAL));
 		if(prop) XFree(prop);
 		return 0;
 	}
@@ -589,7 +589,7 @@ Fl_RGB_Image *netwm_window_get_icon(Window win) {
 			_XA_NET_WM_ICON, 0L, len, False, XA_CARDINAL, &real, &format, &n, &extra, (unsigned char**)&prop);
 
 	if((status != Success) || (real != XA_CARDINAL)) {
-		E_WARNING(E_STRLOC ": Failed to get icon data\n");
+		E_WARNING(E_STRLOC ": Failed to get icon data (status: %i is_cardinal: %i)\n", (status == Success), (real == XA_CARDINAL));
 		if(prop) XFree(prop);
 		return 0;
 	}
