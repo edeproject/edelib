@@ -108,15 +108,15 @@
 /**
  * \def EDELIB_NS_USING_LIST
  * \ingroup macros
- *
  * Import given list of names, by using EDELIB_NS_USING on each, like:
  * \code
  *   EDELIB_NS_USING_LIST(3, (String, List, foreign_callback_add))
- * \endocode
+ * \endcode
  *
  * Notice given number; it should always match list size.
  */
 #include "for-each-macro.h"
+
 #ifdef EDELIB_FOR_EACH_FUNC
 # define EDELIB_FOR_EACH_FUNC_OLD__ EDELIB_FOR_EACH_FUNC
 #endif
