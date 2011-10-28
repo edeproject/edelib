@@ -25,7 +25,10 @@
 
 #include <edelib/Debug.h>
 #include <edelib/List.h>
+#include <edelib/Missing.h>
 #include <edelib/Netwm.h>
+
+#define MAX_STRNDUP_BYTES 1024
 
 EDELIB_NS_BEGIN
 
@@ -521,7 +524,7 @@ char *netwm_window_get_title(Window win) {
 
 	if(status == Success && prop) {
 		title = (char *)prop;
-		ret = strdup(title);
+		ret = edelib_strndup(title, MAX_STRNDUP_BYTES);
 		XFree(prop);
 	} else {
 		/* try WM_NAME */
@@ -529,21 +532,21 @@ char *netwm_window_get_title(Window win) {
 			return NULL;
 
 		if(xtp.encoding == XA_STRING) {
-			ret = strdup((const char*)xtp.value);
+			ret = edelib_strndup((const char*)xtp.value, MAX_STRNDUP_BYTES);
 		} else {
 #if X_HAVE_UTF8_STRING
 			char **lst;
-			int lst_sz;
+			int  count;
 
-			status = Xutf8TextPropertyToTextList(fl_display, &xtp, &lst, &lst_sz);
-			if(status == Success && lst_sz > 0) {
-				ret = strdup((const char*)*lst);
+			status = Xutf8TextPropertyToTextList(fl_display, &xtp, &lst, &count);
+			if(status >= Success && count > 0) {
+				ret = edelib_strndup((const char*)lst[0], MAX_STRNDUP_BYTES);
 				XFreeStringList(lst);
 			} else {
-				ret = strdup((const char*)xtp.value);
+				ret = edelib_strndup((const char*)xtp.value, MAX_STRNDUP_BYTES);
 			}
 #else
-			ret = strdup((const char*)tp.value);
+			ret = edelib_strndup((const char*)tp.value, MAX_STRNDUP_BYTES);
 #endif
 		}
 
