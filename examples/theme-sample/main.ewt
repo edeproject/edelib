@@ -13,7 +13,8 @@
   scheme             "gtk+"
   foreground_color   "dark slate gray"
   background_color   "mint cream"
-  font_normal        "-schumacher-*-medium-*-*-*-12-*-*-*-*-*-*-*"
+  ;font_normal        "-schumacher-*-medium-*-*-*-12-*-*-*-*-*-*-*"
+  font_normal        "DejaVu Sans"
   icon_theme         "edeneu"
   sample             (get-sample)
 ])

@@ -36,6 +36,13 @@ PCRE = pcre/pcre.c ;
 
 TINYSCHEME = tinyscheme/scheme.c tinyscheme/utf8.c ;
 
+SDBM_SRC = 
+	sdbm.c
+	sdbm_hash.c
+	sdbm_pair.c ;
+
+SDBM = sdbm/$(SDBM_SRC) ;
+
 SOURCE = 
 	Missing.c
 	Debug.c
@@ -69,6 +76,7 @@ SOURCE =
 SOURCE_GUI = 
 	DirWatch.cpp
 	ExpandableGroup.cpp
+	FontCache.cpp
 	FontChooser.cpp
 	ForeignCallback.cpp
 	IconChooser.cpp 
@@ -84,6 +92,7 @@ SOURCE_GUI =
 	SevenSeg.cpp
 	TableBase.cpp 
 	$(TINYSCHEME)
+	$(SDBM)
 	Theme.cpp
 	ThemeLoader.cpp
 	Window.cpp

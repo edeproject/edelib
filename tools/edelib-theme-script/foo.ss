@@ -1,8 +1,5 @@
 (include "doc.ss")
 
-(display "Foo")
-(newline)
-
 (define (print . args)
   (for-each display args))
 
@@ -173,3 +170,27 @@
 
 (println (foldr cons '(1 2 3 4 5 6) '()))
 (println (foldl cons '(1 2 3 4 5 6) '()))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (nth n collection)
+  (cond
+	[(list? collection)
+	 (if (>= n (length collection))
+	   #f
+	   (list-ref collection n) )]
+	[(vector? collection)
+	 (if (>= n (vector-length collection))
+	   #f
+	   (vector-ref collection n) )]
+	[(string? collection)
+	 (if (>= n (string-length collection))
+	   #f
+	   (string-ref collection n) )]
+	[else
+	  (error "Unknown collection type") ]))
+
+(println (nth 3 '(1 2 3 4)))
+(println (nth 0 (vector 1 2 3 4 5)))
+(println (nth 1 "Some string"))
+(println (nth 100 ""))
