@@ -26,51 +26,58 @@
 
 EDELIB_NS_BEGIN
 
-/**
- * \defgroup fontcache Font Cache functions
- * Functions for for accessing available fonts, caching them and loading with readable names.
- *
- * FLTK does not have support for any kind of system font manipulation except to load all available fonts and
- * to access them by registered index. This strategy is inefficient and quite limited as there is no way to
- * manualy specify font name (like is done with Pango) and size, e.g. <em>sans 10</em>.
- */
+struct FontCache_P;
 
 /**
- * \ingroup fontcache
- * Initialize font cache database on given path and return if done succesfully. This function will call
- * <em>Fl::set_fonts("-*")</em>, which will in turn open display and register all available fonts to FLTK.
- *
- * This function is not meant to be used directly from application that wants to access font faces. Calling it,
- * it will register unnecessary fonts in FLTK and will increase application memory usage. Here it is so external
- * tools can use it.
+ * \class FontCache
+ * \brief Allow readable font names and cache their access
  */
-bool font_cache_init(const char *dir, const char *db = "edelib-font-cache", const char *prefix = "ede");
+class FontCache {
+private:
+	FontCache_P *priv;
+	E_DISABLE_CLASS_COPY(FontCache)
+public:
+	/** Constructor. */
+	FontCache() : priv(NULL) {}
+
+	/** Destructor; closes any remaining database handlers. */
+	~FontCache();
+
+	/** 
+	 * Try to load database in given folder with given name. If fails somehow (database does not exists or
+	 * it is not valid), it will return false.
+	 */
+	bool load(const char *dir, const char *db = "edelib-font-cache", const char *prefix = "ede");
+
+	/** Call load() with <em>user_cache_dir()</em> path. */
+	bool load(void);
+
+	/**
+	 * Try to find given face and size in given database path. If found, register it as FLTK font and set font id
+	 * and size.
+ 	 */
+	bool find(const char *n, Fl_Font &font, int &size);
+
+	/**
+	 * Initialize font cache database on given path and return number of stored fonts. It will call
+	 * <em>Fl::set_fonts("-*")</em>, which will in turn open display and register all available fonts to FLTK.
+	 *
+	 * This function is not meant to be used directly from application that wants to access font faces. Calling it,
+	 * it will register unnecessary fonts in FLTK and will increase application memory usage. Here it is so external
+	 * tools can use it.
+	 */
+	static int init_db(const char *dir, const char *db = "edelib-font-cache", const char *prefix = "ede");
+
+	/** Call init_db() with <em>user_cache_dir()</em> path. */
+	static int init_db(void);
+};
 
 /**
- * \ingroup fontcache
- * Call font_cache_init() with <em>user_cache_dir()</em> path.
+ * Function that will initialize FontCache object, load database from standard cache directory and find given 
+ * font name.
  */
-bool font_cache_init(void);
-
-/**
- * \ingroup fontcache
- * Try to find given face and size in given database path. If found, register it as FLTK font and set font id
- * and size.
- *
- * Font faces should have readable form, like:
- * \verbatim
- *   DejaVu Sans 10
- *   DejaVu Sans Bold Italic 15
- * \endverbatim
- */
-bool font_cache_get_by_name(const char *face, Fl_Font &f, Fl_Fontsize &s, const char *dir, const char *db = "edelib-font-cache", const char *prefix = "ede");
-
-/**
- * \ingroup fontcache
- * Call font_cache_get_by_name() with <em>user_cache_dir()</em> path.
- */
-bool font_cache_get_by_name(const char *face, Fl_Font &f, Fl_Fontsize &s);
+bool font_cache_find(const char *face, Fl_Font &f, Fl_Fontsize &s);
 
 EDELIB_NS_END
-
 #endif
+
