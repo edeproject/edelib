@@ -40,7 +40,7 @@ EDELIB_NS_BEGIN
  * (e.g. when you want to display it in some dialog), so you must use 
  * Fl::get_font_name((Fl_Font)returned_value, 0) to obtain stringized name (e.g. helvetica, courier, etc.)
  *
- * \return font name as integere, known to FLTK
+ * \return font name as integer, known to FLTK
  * \param name is titlebar
  * \param family is family of fonts (like ISO8859-1). If given NULL, it will use ISO8859-1; if given
  * <i>-*</i> will get all fonts with any encoding as long as they have normal X font names with dashes in them;

@@ -24,7 +24,9 @@
 #include <stdlib.h>
 #include <edelib/FontCache.h>
 #include <edelib/Directory.h>
+#include <edelib/StrUtil.h>
 #include <edelib/String.h>
+#include <edelib/List.h>
 #include <edelib/Util.h>
 #include <edelib/Debug.h>
 #include <edelib/Missing.h>
@@ -40,6 +42,35 @@
 
 EDELIB_NS_BEGIN
 
+typedef list<String*>           StrList;
+typedef list<String*>::iterator StrListIt;
+
+/* class to allow static storage of font names */
+class FontHolder {
+private:
+	StrList fonts;
+public:
+	~FontHolder() {
+		for(StrListIt it = fonts.begin(), ite = fonts.end(); it != ite; ++it)
+			delete *it;
+		fonts.clear();
+
+		E_DEBUG(E_STRLOC ": FontHolder::~FontHolder()\n");
+	}
+
+	const char *append(const char *n) {
+		String *s = new String(n);
+		s->trim();
+		fonts.push_back(s);
+		return s->c_str();
+	}
+
+	unsigned int size(void) const { return fonts.size(); }
+};
+
+/* internal holder for registered name inside FLTK */
+static FontHolder static_font_names;
+
 struct FontInfo {
 	char face[128];   /* terminated with 0 */
 	int  sizes[64];   /* if sizes are less that 64, 0 will be termination number */
@@ -50,7 +81,7 @@ struct FontInfo {
 
 static bool have_size(FontInfo *fi, int sz) {
 	for(int i = 0; i < fi->nsizes; i++) {
-		E_DEBUG("!!! %i == %i %i\n", fi->sizes[i], sz, fi->nsizes);
+		E_DEBUG("!!! %i == %i %i %s\n", fi->sizes[i], sz, fi->nsizes, fi->face);
 		if(fi->sizes[i] == sz) {
 			return true;
 		}
@@ -88,6 +119,8 @@ bool font_cache_init(const char *dir, const char *db, const char *prefix) {
 		f = Fl::get_font((Fl_Font)i);
 		nsizes = Fl::get_font_sizes((Fl_Font)i, sizes);
 		if(!nsizes) continue;
+
+		E_DEBUG("%s => %s\n", n, f);
 
 		edelib_strlcpy(name, n, FONT_CACHE_FACE_LEN);
 		edelib_strlcpy(fi.face, f, FONT_CACHE_FACE_LEN);
@@ -227,6 +260,16 @@ bool font_cache_get_by_name(const char *font, Fl_Font &f, Fl_Fontsize &s, const 
 	if(!have_size(fi, facesz)) {
 		E_WARNING(E_STRLOC ": Font size '%i' not found\n", facesz);
 		ret = false;
+	} else {
+		const char *ss = static_font_names.append(fi->face);
+		Fl_Font findex = (Fl_Font)FL_FREE_FONT + static_font_names.size();
+
+		/* register it under this index */
+		Fl::set_font(findex, ss);
+
+		/* return this to user */
+		f = findex;
+		s = facesz;
 	}
 
 	sdbm_close(fdb);
