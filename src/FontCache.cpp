@@ -63,8 +63,6 @@ public:
 		for(StrListIt it = fonts.begin(), ite = fonts.end(); it != ite; ++it)
 			delete *it;
 		fonts.clear();
-
-		E_DEBUG(E_STRLOC ": FontHolder::~FontHolder()\n");
 	}
 
 	const char *append(const char *n) {
@@ -233,6 +231,10 @@ int FontCache::init_db(const char *dir, const char *db, const char *prefix) {
 	String path = dir;
 	path.append(E_DIR_SEPARATOR_STR);
 	if(prefix) path.append(prefix);
+
+	/* create full path if needed */
+	dir_create_with_parents(path.c_str());
+
 	path.append(E_DIR_SEPARATOR_STR).append(db);
 
 	/* open database first */
@@ -301,7 +303,7 @@ int FontCache::init_db(const char *dir, const char *db, const char *prefix) {
 	sdbm_store(fdb, key, val, SDBM_REPLACE);
 
 	sdbm_close(fdb);
-	return true;
+	return nfonts;
 }
 
 int FontCache::init_db(void) {

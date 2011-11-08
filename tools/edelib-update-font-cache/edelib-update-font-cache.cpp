@@ -18,10 +18,12 @@ int main(int argc, char **argv) {
 	}
 
 	if(argc == 1) {
-		if(FontCache::init_db() < 0) {
+		int n = FontCache::init_db();
+		if(n < 0) {
 			puts("Unable to cache fonts. Check permissions in $XDG_CACHE_DIR folder or disk/memory free space");
 			return 1;
 		}
+		printf("Cached %i fonts\n", n);
 		goto done;
 	}
 
