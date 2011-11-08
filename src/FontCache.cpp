@@ -171,7 +171,7 @@ static bool parse_font(const char *font, char *ret, int &sz, int maxlen) {
 	return true;
 }
 
-bool font_cache_get_by_name(const char *dir, const char *font, Fl_Font &f, Fl_Fontsize &s, const char *db, const char *prefix) {
+bool font_cache_get_by_name(const char *font, Fl_Font &f, Fl_Fontsize &s, const char *dir, const char *db, const char *prefix) {
 	E_RETURN_VAL_IF_FAIL(db != NULL, false);
 	E_RETURN_VAL_IF_FAIL(font!= NULL, false);
 	E_RETURN_VAL_IF_FAIL(dir != NULL, false);
@@ -235,7 +235,7 @@ bool font_cache_get_by_name(const char *dir, const char *font, Fl_Font &f, Fl_Fo
 
 bool font_cache_get_by_name(const char *face, Fl_Font &f, Fl_Fontsize &s) {
 	String path = user_cache_dir();
-	return font_cache_get_by_name(path.c_str(), f, s);
+	return font_cache_get_by_name(face, f, s, path.c_str());
 }
 
 EDELIB_NS_END

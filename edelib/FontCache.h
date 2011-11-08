@@ -63,7 +63,7 @@ bool font_cache_init(void);
  *   DejaVu Sans Bold Italic 15
  * \endverbatim
  */
-bool font_cache_get_by_name(const char *dir, const char *face, Fl_Font &f, Fl_Fontsize &s, const char *db = "edelib-font-cache", const char *prefix = "ede");
+bool font_cache_get_by_name(const char *face, Fl_Font &f, Fl_Fontsize &s, const char *dir, const char *db = "edelib-font-cache", const char *prefix = "ede");
 
 /**
  * \ingroup fontcache
