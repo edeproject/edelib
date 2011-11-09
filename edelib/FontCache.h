@@ -77,9 +77,9 @@ public:
 
 /**
  * Function that will initialize FontCache object, load database from standard cache directory and find given 
- * font name.
+ * font name. If fails, it will set default values.
  */
-bool font_cache_find(const char *face, Fl_Font &f, Fl_Fontsize &s);
+bool font_cache_find(const char *face, Fl_Font &f, int &s, Fl_Font df = FL_HELVETICA, int ds = 12);
 
 EDELIB_NS_END
 #endif

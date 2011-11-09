@@ -312,11 +312,15 @@ int FontCache::init_db(void) {
 	return FontCache::init_db(path.c_str());
 }
 
-bool font_cache_find(const char *face, Fl_Font &f, Fl_Fontsize &s) {
+bool font_cache_find(const char *face, Fl_Font &f, int &s, Fl_Font df, int ds) {
 	FontCache fc;
-	E_RETURN_VAL_IF_FAIL(fc.load() == true, false);
 
-	return fc.find(face, f, s);
+	if(fc.load() && fc.find(face, f, s))
+		return true;
+
+	f = df;
+	s = ds;
+	return false;
 }
 
 EDELIB_NS_END
