@@ -197,6 +197,9 @@ bool FontCache::find(const char *n, Fl_Font &font, int &font_size) {
 		return false;
 	}
 
+	/* ignore case for font name */
+	str_tolower((unsigned char*)face);
+
 	/* find face/size combination */
 	datum key, val;
 
@@ -261,6 +264,9 @@ int FontCache::init_db(const char *dir, const char *db, const char *prefix) {
 
 		edelib_strlcpy(name, n, FONT_CACHE_FACE_LEN);
 		edelib_strlcpy(fi.face, f, FONT_CACHE_FACE_LEN);
+
+		/* ignore case for font name */
+		str_tolower((unsigned char*)name);
 
 		/* get sizes */
 		if(sizes[0] == 0) {
