@@ -41,7 +41,7 @@ public:
 	FontCache() : priv(NULL) {}
 
 	/** Destructor; closes any remaining database handlers. */
-	~FontCache();
+	~FontCache() { clear(); }
 
 	/** 
 	 * Try to load database in given folder with given name. If fails somehow (database does not exists or
@@ -51,6 +51,9 @@ public:
 
 	/** Call load() with <em>user_cache_dir()</em> path. */
 	bool load(void);
+
+	/** Unload database (if loaded) and explicitly clear all internal data. */
+	void clear(void);
 
 	/**
 	 * Try to find given face and size in given database path. If found, register it as FLTK font and set font id

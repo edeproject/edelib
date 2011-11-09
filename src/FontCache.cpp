@@ -128,13 +128,6 @@ static bool parse_font(const char *font, char *ret, int &sz, int maxlen) {
 	return true;
 }
 
-FontCache::~FontCache() {
-	if(priv) {
-		SDBM_SAFE_CLOSE(priv->db);
-		delete priv;
-	}
-}
-
 bool FontCache::load(const char *dir, const char *db, const char *prefix) {
 	E_RETURN_VAL_IF_FAIL(dir != NULL, false);
 	E_RETURN_VAL_IF_FAIL(db != NULL, false);
@@ -182,6 +175,14 @@ bool FontCache::load(const char *dir, const char *db, const char *prefix) {
 bool FontCache::load(void) {
 	String path = user_cache_dir();
 	return load(path.c_str());
+}
+
+void FontCache::clear(void) {
+	E_RETURN_IF_FAIL(priv != NULL);
+
+	SDBM_SAFE_CLOSE(priv->db);
+	delete priv;
+	priv = NULL;
 }
 
 bool FontCache::find(const char *n, Fl_Font &font, int &font_size) {
