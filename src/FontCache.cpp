@@ -220,7 +220,7 @@ bool FontCache::find(const char *n, Fl_Font &font, int &font_size) {
 	} 
 	
 	const char *sf = static_font_names.append(fi->face);
-	font = (Fl_Font)FL_FREE_FONT + static_font_names.size();
+	font = (Fl_Font)FL_FREE_FONT + (Fl_Font)static_font_names.size();
 	font_size = facesz;
 
 	/* register it under this index */
