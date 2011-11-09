@@ -31,6 +31,9 @@
 #include <edelib/Util.h>
 #include <edelib/Resource.h>
 #include <edelib/XSettingsClient.h>
+#include <edelib/FontCache.h>
+
+extern int FL_NORMAL_SIZE;
 
 EDELIB_NS_BEGIN
 
@@ -40,42 +43,19 @@ do {                               \
 	item = strdup(str);            \
 } while(0)
 
-/* data that needs to be persistent */
-struct StyleStorage {
-	char *font_normal;
-	char *font_bold;
-	char *font_italic;
-
-	StyleStorage() : font_normal(NULL), font_bold(NULL), font_italic(NULL) { }
-
-	~StyleStorage() {
-		if(font_normal) free(font_normal);
-		if(font_bold)   free(font_bold);
-		if(font_italic) free(font_italic);
-	}
-};
-
 struct ThemeLoader_P {
 	Theme           *curr_theme;
 	XSettingsClient *xs;
-	StyleStorage    *storage;
 	ColorDb         *color_db;
 
-	ThemeLoader_P() : curr_theme(NULL), xs(NULL), storage(NULL), color_db(NULL) { }
+	ThemeLoader_P() : curr_theme(NULL), xs(NULL),  color_db(NULL) { }
 
 	~ThemeLoader_P() {
 		delete curr_theme;
 		delete xs;
-		delete storage;
 		delete color_db;
 	}
 };
-
-static StyleStorage *theme_p_get_storage(ThemeLoader_P *t) {
-	if(!t->storage)
-		t->storage = new StyleStorage;
-	return t->storage;
-}
 
 /* if color starts with '#', assume it it html color; otherwise it is from ColorDb database */
 static bool figure_color(ColorDb *db,
@@ -115,7 +95,7 @@ void ThemeLoader::apply_common_gui_elements(void) {
 	E_RETURN_IF_FAIL(priv->curr_theme);
 
 	char          buf[128];
-	long          font_sz, sh;
+	long          sh;
 	unsigned char r, g, b;
 
 	Theme *t = priv->curr_theme;
@@ -155,31 +135,16 @@ void ThemeLoader::apply_common_gui_elements(void) {
 		Fl::scrollbar_size((int)sh);
 	}
 
-	/* TODO: document this: ignored if font_(normal|bold|italic) has given size */
-	if(t->get_item("ede", "font_size", font_sz, 0)) {
-		FL_NORMAL_SIZE = (int)font_sz;
+	if(t->get_item("ede", "font", buf, sizeof(buf))) {
+		Fl_Font f;
+		int     fs;
+
+		font_cache_find(buf, f, fs, FL_HELVETICA, 12);
+
+		Fl::set_font(FL_HELVETICA, f);
+		/* TODO: works only if window was shown after this call */
+		FL_NORMAL_SIZE = fs;
 		Fl::redraw();
-	}
-
-	if(t->get_item("ede", "font_normal", buf, sizeof(buf))) {
-		StyleStorage *st = theme_p_get_storage(priv);
-		STORAGE_STR_SET(st->font_normal, buf);
-
-		Fl::set_font(FL_HELVETICA, st->font_normal);
-	}
-
-	if(t->get_item("ede", "font_bold", buf, sizeof(buf))) {
-		StyleStorage *st = theme_p_get_storage(priv);
-		STORAGE_STR_SET(st->font_bold, buf);
-
-		Fl::set_font(FL_HELVETICA_BOLD, st->font_bold);
-	}
-
-	if(t->get_item("ede", "font_italic", buf, sizeof(buf))) {
-		StyleStorage *st = theme_p_get_storage(priv);
-		STORAGE_STR_SET(st->font_italic, buf);
-
-		Fl::set_font(FL_HELVETICA_ITALIC, st->font_italic);
 	}
 }
 
