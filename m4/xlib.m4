@@ -30,5 +30,38 @@ AC_DEFUN([EDELIB_X11], [
 		AC_MSG_NOTICE(*****************************************************)
 		AC_MSG_NOTICE(* edelib will be built without X11 and FLTK support *)
 		AC_MSG_NOTICE(*****************************************************)
+	else
+		dnl see if we can use C++ with X libs (long long issue on some platforms)
+		ac_saved_CXXFLAGS="$CXXFLAGS"
+		ac_saved_LIBS="$LIBS"
+
+		AC_LANG_SAVE
+		AC_LANG_CPLUSPLUS
+
+		# to detect long long warning, must use compiler pedantic option
+		if test "x$GCC" = "xyes"; then
+			pedantic_flag="-pedantic"
+		fi
+
+		CXXFLAGS="$X_CFLAGS $pedantic_flag"
+		LIBS="$X_LIBS $X_EXTRA_LIBS"
+
+		AC_TRY_COMPILE([
+#include <X11/Xproto.h>
+#include <X11/Xmd.h>
+],[
+  /* nothing */
+],[xlib_cpp_longlong=yes],[xlib_cpp_longlong=no])
+
+		if test "x$xlib_cpp_longlong" = "xno"; then
+			if test "x$GCC" = "xyes"; then
+				wno_long_long="-Wno-long-long"
+			fi
+		fi
+
+		AC_LANG_RESTORE
+
+		CXXFLAGS="$wno_long_long $ac_saved_CXXFLAGS"
+		LIBS="$ac_saved_LIBS"
 	fi
 ])
