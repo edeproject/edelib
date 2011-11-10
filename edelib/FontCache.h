@@ -29,6 +29,27 @@ EDELIB_NS_BEGIN
 struct FontCache_P;
 
 /**
+ * \def EDELIB_FONT_CACHE_FACE_LEN
+ * Maximum number of bytes allowed in font face name.
+ */
+#define EDELIB_FONT_CACHE_FACE_LEN 64
+
+/**
+ * \class FontInfo
+ * \brief Base structure for storing font information; used by FontCache
+ */
+struct FontInfo {
+	/** Face name with encoded style; usable only for FLTK. */
+	char face[EDELIB_FONT_CACHE_FACE_LEN];
+	/** All available sizes for this font. */
+	int  sizes[64];
+	/** Actual number of sizes in <em>sizes</em> array. */
+	int  nsizes;
+	/** Type of font; coresponds to FLTK nomenclature (FL_NORMAL, FL_BOLD, FL_ITALIC and FL_BOLD_ITALIC). */
+	int  type;
+};
+
+/**
  * \class FontCache
  * \brief Allow readable font names and cache their access
  */
@@ -60,6 +81,12 @@ public:
 	 * and size.
  	 */
 	bool find(const char *n, Fl_Font &font, int &size);
+
+	/**
+	 * This function can be used to iterate all fonts, where on each font will be called callback. Fonts will not be
+	 * in sorted order.
+	 */
+	void for_each_font(void (*) (const char *n, FontInfo *, void *), void *data = NULL);
 
 	/**
 	 * Initialize font cache database on given path and return number of stored fonts. It will call

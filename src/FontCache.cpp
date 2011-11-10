@@ -40,9 +40,6 @@
 /* maximum size for face size with size */
 #define FONT_CACHE_FACE_LEN_WITH_SIZE 68
 
-/* maximum size for face */
-#define FONT_CACHE_FACE_LEN 64
-
 #define SDBM_SAFE_CLOSE(db) \
 	if(db) {                \
 		sdbm_close(db);     \
@@ -75,20 +72,13 @@ public:
 	unsigned int size(void) const { return fonts.size(); }
 };
 
-/* internal holder for registered name inside FLTK */
-static FontHolder static_font_names;
-
-struct FontInfo {
-	char face[FONT_CACHE_FACE_LEN];   /* terminated with 0 */
-	int  sizes[64];                   /* if sizes are less that 64, 0 will be termination number */
-	int  nsizes;
-	int  type;                        /* 0 normal, 1 bold, 2 italic, 3 bold italic */
-};
-
 struct FontCache_P {
 	SDBM *db;
 	int   count;
 };
+
+/* internal holder for registered name inside FLTK */
+static FontHolder static_font_names;
 
 static bool have_size(FontInfo *fi, int sz) {
 	for(int i = 0; i < fi->nsizes; i++) {
@@ -189,7 +179,7 @@ bool FontCache::find(const char *n, Fl_Font &font, int &font_size) {
 	E_RETURN_VAL_IF_FAIL(priv->db != NULL, false);
 	E_RETURN_VAL_IF_FAIL(n != NULL, false);
 
-	char face[FONT_CACHE_FACE_LEN];
+	char face[EDELIB_FONT_CACHE_FACE_LEN];
 	int  facesz;
 	
 	if(!parse_font(n, face, facesz, FONT_CACHE_FACE_LEN_WITH_SIZE)) {
@@ -204,7 +194,8 @@ bool FontCache::find(const char *n, Fl_Font &font, int &font_size) {
 	datum key, val;
 
 	key.dptr = (char*)face;
-	key.dsize = edelib_strnlen(face, FONT_CACHE_FACE_LEN);
+	/* size is without terminating character */
+	key.dsize = edelib_strnlen(face, EDELIB_FONT_CACHE_FACE_LEN);
 
 	val = sdbm_fetch(priv->db, key);
 	if(!val.dptr) {
@@ -220,12 +211,34 @@ bool FontCache::find(const char *n, Fl_Font &font, int &font_size) {
 	} 
 	
 	const char *sf = static_font_names.append(fi->face);
-	font = (Fl_Font)FL_FREE_FONT + (Fl_Font)static_font_names.size();
+	font = (Fl_Font)(FL_FREE_FONT + static_font_names.size());
 	font_size = facesz;
 
 	/* register it under this index */
 	Fl::set_font(font, sf);
 	return true;
+}
+
+void FontCache::for_each_font(void (*func) (const char *, FontInfo *, void *), void *data) {
+	E_RETURN_IF_FAIL(priv->db != NULL);
+	E_RETURN_IF_FAIL(func != NULL);
+
+	datum     key, val;
+	FontInfo  *fi;
+	char      n[EDELIB_FONT_CACHE_FACE_LEN];
+	int       len;
+
+	for(key = sdbm_firstkey(priv->db); key.dptr != NULL; key = sdbm_nextkey(priv->db)) {
+		val = sdbm_fetch(priv->db, key);
+		fi  = (FontInfo*)val.dptr;
+		len = (key.dsize < EDELIB_FONT_CACHE_FACE_LEN) ? key.dsize + 1 : EDELIB_FONT_CACHE_FACE_LEN;
+		edelib_strlcpy(n, (char*)key.dptr, len);
+
+		/* skip information keys */
+		if(strncmp(n, "font-cache:", 11) == 0) continue;
+
+		func((const char*)n, fi, data);
+	}
 }
 
 int FontCache::init_db(const char *dir, const char *db, const char *prefix) {
@@ -246,7 +259,7 @@ int FontCache::init_db(const char *dir, const char *db, const char *prefix) {
 	E_RETURN_VAL_IF_FAIL(fdb != NULL, -1);
 
 	const char *n, *f;
-	char       name[FONT_CACHE_FACE_LEN];
+	char       name[EDELIB_FONT_CACHE_FACE_LEN];
 	int        count, type, nsizes, *sizes, nfonts = 0;
 	datum      key, val;
 	FontInfo   fi;
@@ -262,8 +275,8 @@ int FontCache::init_db(const char *dir, const char *db, const char *prefix) {
 		nsizes = Fl::get_font_sizes((Fl_Font)i, sizes);
 		if(!nsizes) continue;
 
-		edelib_strlcpy(name, n, FONT_CACHE_FACE_LEN);
-		edelib_strlcpy(fi.face, f, FONT_CACHE_FACE_LEN);
+		edelib_strlcpy(name, n, EDELIB_FONT_CACHE_FACE_LEN);
+		edelib_strlcpy(fi.face, f, EDELIB_FONT_CACHE_FACE_LEN);
 
 		/* ignore case for font name */
 		str_tolower((unsigned char*)name);
@@ -283,7 +296,7 @@ int FontCache::init_db(const char *dir, const char *db, const char *prefix) {
 		fi.type = type;
 
 		key.dptr = name;
-		key.dsize = edelib_strnlen(name, FONT_CACHE_FACE_LEN);
+		key.dsize = edelib_strnlen(name, EDELIB_FONT_CACHE_FACE_LEN);
 
 		val.dptr = (char*)&fi;
 		val.dsize = sizeof(fi);
