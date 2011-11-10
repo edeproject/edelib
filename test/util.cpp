@@ -95,9 +95,12 @@ UT_FUNC(XDGPathTest, "Test XDG paths")
 	it = lst.begin();
 
 	UT_VERIFY( ret == 2 );
-	UT_VERIFY( (*it) == "/usr/local/share" );
-	++it;
-	UT_VERIFY( (*it) == "/usr/share" );
+
+	if(ret == 2) {
+		UT_VERIFY( (*it) == "/usr/local/share" );
+		++it;
+		UT_VERIFY( (*it) == "/usr/share" );
+	}
 
 	lst.clear();
 
@@ -106,13 +109,16 @@ UT_FUNC(XDGPathTest, "Test XDG paths")
 	it = lst.begin();
 
 	UT_VERIFY( ret == 4 );
-	UT_VERIFY( (*it) == "/etc/myconf" );
-	++it;
-	UT_VERIFY( (*it) == "/etc/yourconf" );
-	++it;
-	UT_VERIFY( (*it) == "/usr/local/share/conf" );
-	++it;
-	UT_VERIFY( (*it) == "/some/path/conf" );
+
+	if(ret == 4) {
+		UT_VERIFY( (*it) == "/etc/myconf" );
+		++it;
+		UT_VERIFY( (*it) == "/etc/yourconf" );
+		++it;
+		UT_VERIFY( (*it) == "/usr/local/share/conf" );
+		++it;
+		UT_VERIFY( (*it) == "/some/path/conf" );
+	}
 
 	edelib_unsetenv("XDG_CONFIG_DIRS");
 	lst.clear();
