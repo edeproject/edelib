@@ -18,5 +18,6 @@
 
 SubDir TOP tools edelib-update-font-cache ;
 
+ObjectC++Flags edelib-update-font-cache.cpp : $(FLTK_CFLAGS) ;
 MakeTest edelib-update-font-cache : edelib-update-font-cache.cpp : -ledelib_gui -ledelib $(FLTK_LIBS) ;
 InstallProgram $(bindir) : edelib-update-font-cache ;
