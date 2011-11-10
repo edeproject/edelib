@@ -35,6 +35,7 @@ struct FontCache_P;
 #define EDELIB_FONT_CACHE_FACE_LEN 64
 
 /**
+ * \ingroup widgets
  * \class FontInfo
  * \brief Base structure for storing font information; used by FontCache
  */
@@ -50,6 +51,7 @@ struct FontInfo {
 };
 
 /**
+ * \ingroup widgets
  * \class FontCache
  * \brief Allow readable font names and cache their access
  */
@@ -75,6 +77,9 @@ public:
 
 	/** Unload database (if loaded) and explicitly clear all internal data. */
 	void clear(void);
+
+	/** Return number of fonts inside database. If database is not loaded or is unable to get font number, return -1. */
+	int count(void) const;
 
 	/**
 	 * Try to find given face and size in given database path. If found, register it as FLTK font and set font id
@@ -103,6 +108,7 @@ public:
 };
 
 /**
+ * \ingroup widgets
  * Function that will initialize FontCache object, load database from standard cache directory and find given 
  * font name. If fails, it will set default values.
  */

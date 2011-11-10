@@ -134,7 +134,7 @@ bool FontCache::load(const char *dir, const char *db, const char *prefix) {
 	if(!priv) {
 		priv = new FontCache_P;
 		priv->db = NULL;
-		priv->count = 0;
+		priv->count = -1;
 	}
 
 	priv->db = sdbm_open((char*)path.c_str(), O_RDONLY, 0640);
@@ -159,6 +159,14 @@ bool FontCache::load(const char *dir, const char *db, const char *prefix) {
 		return false;
 	}
 
+	key.dptr = (char*)"font-cache:count";
+	key.dsize = 16;
+	val = sdbm_fetch(priv->db, key);
+	if(val.dptr)
+		priv->count = *(int*)val.dptr;
+	else
+		E_WARNING(E_STRLOC ": Unable to get number of fonts from database\n");
+
 	return true;
 }
 
@@ -173,6 +181,13 @@ void FontCache::clear(void) {
 	SDBM_SAFE_CLOSE(priv->db);
 	delete priv;
 	priv = NULL;
+}
+
+int FontCache::count(void) const {
+	E_RETURN_VAL_IF_FAIL(priv != NULL, -1);
+	E_RETURN_VAL_IF_FAIL(priv->db != NULL, -1);
+
+	return priv->count;
 }
 
 bool FontCache::find(const char *n, Fl_Font &font, int &font_size) {
