@@ -38,6 +38,9 @@ struct FontCache_P;
  * \ingroup widgets
  * \class FontInfo
  * \brief Base structure for storing font information; used by FontCache
+ *
+ * FontInfo is structure used to store information in cache database. Database is represented in key/value form
+ * (actualy it is sdbm powered) where each key is font name and each value FontInfo structure.
  */
 struct FontInfo {
 	/** Face name with encoded style; usable only for FLTK. */
@@ -54,6 +57,16 @@ struct FontInfo {
  * \ingroup widgets
  * \class FontCache
  * \brief Allow readable font names and cache their access
+ *
+ * FLTK does not provide any kind of facility for advanced font handling, and this class is to provide
+ * at least some basis for this. Each font in FLTK can only be accessed by it's index number, stored in internal
+ * font array and set by <em>labelfont()</em>. This scheme is inefficient for non standard fonts (not predefined inside FLTK) as 
+ * index number can be different each time application starts, causing high probability to select different font face.
+ *
+ * FontCache tries to fix this; all fonts are prepopulated (either with <em>FontCache::init_db()</em> or external tool like
+ * <em>edelib-update-font-cache</em>), where cache database will be stored in XDG cache directory (\see user_cache_dir()).
+ *
+ * \todo complete
  */
 class FontCache {
 private:
