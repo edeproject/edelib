@@ -26,7 +26,7 @@ static int list_fonts(void) {
 		return 1;
 	}
 
-	f.for_each_font(on_font);
+	f.for_each_font_sorted(on_font);
 	return 0;
 }
 

@@ -245,6 +245,11 @@ void FontCache::for_each_font(void (*func) (const char *, FontInfo *, void *), v
 
 	for(key = sdbm_firstkey(priv->db); key.dptr != NULL; key = sdbm_nextkey(priv->db)) {
 		val = sdbm_fetch(priv->db, key);
+		if(E_UNLIKELY(!val.dptr)) {
+			E_WARNING(E_STRLOC ": Got nonexisting value\n");
+			continue;
+		}
+
 		fi  = (FontInfo*)val.dptr;
 		len = (key.dsize < EDELIB_FONT_CACHE_FACE_LEN) ? key.dsize + 1 : EDELIB_FONT_CACHE_FACE_LEN;
 		edelib_strlcpy(n, (char*)key.dptr, len);
@@ -253,6 +258,47 @@ void FontCache::for_each_font(void (*func) (const char *, FontInfo *, void *), v
 		if(strncmp(n, "font-cache:", 11) == 0) continue;
 
 		func((const char*)n, fi, data);
+	}
+}
+
+static void font_it_cb(const char *f, FontInfo *fi, void *data) {
+	StrList *slist = (StrList*)data;
+	String *str = new String(f);
+	slist->push_back(str);
+}
+
+/* TODO: bug in edelib */
+static bool sort_func(String* const &s1, String* const &s2) {
+	return *s1 < *s2;
+}
+
+void FontCache::for_each_font_sorted(void (*func) (const char *, FontInfo *, void *), void *data) {
+	E_RETURN_IF_FAIL(priv->db != NULL);
+	E_RETURN_IF_FAIL(func != NULL);
+
+	datum   key, val;
+	StrList slist;
+	String  *sp;
+
+	for_each_font(font_it_cb, (void*)&slist);
+	slist.sort(sort_func);
+
+	StrListIt it = slist.begin(), ite = slist.end();
+	for(; it != ite; ++it) {
+		sp = *it;
+
+		key.dptr  = (char*)sp->c_str();
+		key.dsize = sp->length();
+
+		val = sdbm_fetch(priv->db, key);
+		if(E_UNLIKELY(!val.dptr)) {
+			E_WARNING(E_STRLOC ": Got nonexisting value\n");
+			continue;
+		}
+
+		func(sp->c_str(), (FontInfo*)val.dptr, data);
+		/* we are not using it any more */
+		delete *it;
 	}
 }
 

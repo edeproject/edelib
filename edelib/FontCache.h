@@ -107,6 +107,14 @@ public:
 	void for_each_font(void (*) (const char *n, FontInfo *, void *), void *data = NULL);
 
 	/**
+	 * Iterate over fonts, just as <em>for_each_font()</em>, except fonts will be sorted. To operate like this, all
+	 * database keys must be fetched first and them sorted in memory. After that, it will access to database content.
+	 *
+	 * This function is clearly inefficient if called on large database.
+	 */
+	void for_each_font_sorted(void (*) (const char *n, FontInfo *, void *), void *data = NULL);
+
+	/**
 	 * Initialize font cache database on given path and return number of stored fonts. It will call
 	 * <em>Fl::set_fonts("-*")</em>, which will in turn open display and register all available fonts to FLTK.
 	 *
