@@ -500,6 +500,7 @@ LocalClean distclean :
 	$(TOP)/edelib.pc
 	$(TOP)/edelib-dbus.pc
 	$(TOP)/edelib-gui.pc
+	$(TOP)/edelib-gui-no-images.pc
 	$(TOP)/config.log 
 	$(TOP)/config.status 
 	$(TOP)/doc/Doxyfile

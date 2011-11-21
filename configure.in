@@ -214,6 +214,7 @@ AC_OUTPUT([
  Jamconfig
  edelib.pc
  edelib-gui.pc
+ edelib-gui-no-images.pc
  edelib-dbus.pc
  po/update-messages.sh
 ])

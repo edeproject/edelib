@@ -7,5 +7,5 @@ Name: edelib-gui
 Description: EDE GUI library
 Version: @EDELIB_API_VERSION@
 Requires: edelib
-Libs: -L${libdir} -ledelib_gui @FLTK_LIBS_FULL@
+Libs: -L${libdir} -ledelib_gui @FLTK_LIBS@
 Cflags: -I${includedir} @FLTK_CFLAGS@
