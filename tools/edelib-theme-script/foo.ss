@@ -194,3 +194,39 @@
 (println (nth 0 (vector 1 2 3 4 5)))
 (println (nth 1 "Some string"))
 (println (nth 100 ""))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; insertion sort
+(define (sort-with-operators lst op1 op2)
+
+  (define (empty? lst)
+	(= 0 (length lst)))
+
+  (define (insert n lst)
+	(cond
+	  [(empty? lst) (cons n lst)]
+	  [else
+		(cond
+		  [(op1 n (car lst)) (cons n lst)]
+		  [(op2 n (car lst)) (cons (car lst) (insert n (cdr lst)))] ) ] ) )
+
+  (if (empty? lst)
+	'()
+	(insert (car lst) (sort (cdr lst))) 
+) )
+
+(define (sort lst)
+  (sort-with-operators lst <= >))
+
+(define (sort-vector v)
+  (list->vector (sort (vector->list v))) )
+
+(println (sort (list 2 2 1 2 3 2 1 2 3 1000 12 2 2 1 2 2 2 3 3 4 4 5 6 7 8 9 10)))
+(println (sort-vector (vector 1 2 3 4 4 4 4 4 5 4 3 2 2 2 2 2 1 1 2 0)))
+
+;; (define oblist-str (map (lambda (x)
+;; 						  (symbol->string (car x)))
+;; 						(oblist)))
+;; 
+;; (define lst (sort-with-operators oblist-str string>=? string<?))
+;; (println lst)

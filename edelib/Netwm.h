@@ -39,7 +39,7 @@ enum {
 	NETWM_CHANGED_WORKSPACE_COUNT,       ///< workspace count was changed
 	NETWM_CHANGED_WORKSPACE_NAMES,       ///< workspace names gets changed
 	NETWM_CHANGED_CURRENT_WORKSPACE,     ///< different workspace was activated
-	NETWM_CHANGED_CURRENT_WORKAREA,      ///< workaread was changed
+	NETWM_CHANGED_CURRENT_WORKAREA,      ///< workarea was changed
 	NETWM_CHANGED_ACTIVE_WINDOW,         ///< different window was selected
 	NETWM_CHANGED_WINDOW_NAME,           ///< window name was changed
 	NETWM_CHANGED_WINDOW_VISIBLE_NAME,   ///< window visible name was changed
