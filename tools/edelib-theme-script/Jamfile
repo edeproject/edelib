@@ -18,5 +18,5 @@
 
 SubDir TOP tools edelib-theme-script ;
 
-MakeTest edelib-theme-script : edelib-theme-script.cpp : -ledelib ;
+MakeTest edelib-theme-script : edelib-theme-script.cpp : $(FLTK_LIBS_FULL) -ledelib ;
 InstallProgram $(bindir) : edelib-theme-script ;
