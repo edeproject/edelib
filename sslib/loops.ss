@@ -34,14 +34,3 @@
      (when ,expr
        ,@body
        (loop) )))
-
-(for i in (vector 12 3 4 5 6)
-  (for j in (list 1 2 3 4 5 6 7 8)
-    (display i) (display " ") (display j)
-    (newline) ))
-
-(define i 100)
-(while (> i 0)
-  (display i)
-  (newline)
-  (set! i (- i 1)) )
