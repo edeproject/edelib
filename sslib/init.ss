@@ -31,10 +31,10 @@
 (define (cddddr x) (cdr (cdr (cdr (cdr x)))))
 
 (macro (unless form)
-     `(if (not ,(cadr form)) (begin ,@(cddr form))))
+  `(if (not ,(cadr form)) (begin ,@(cddr form))))
 
 (macro (when form)
-     `(if ,(cadr form) (begin ,@(cddr form))))
+  `(if ,(cadr form) (begin ,@(cddr form))))
 
 ; DEFINE-MACRO Contributed by Andy Gaynor
 (macro (define-macro dform)
@@ -58,74 +58,81 @@
 (define (abs n) (if (>= n 0) n (- n)))
 (define (exact->inexact n) (* n 1.0))
 (define (<> n1 n2) (not (= n1 n2)))
+
 (define (max . lst)
-     (foldr (lambda (a b) (if (> a b) a b)) (car lst) (cdr lst)))
+  (foldr (lambda (a b) (if (> a b) a b)) (car lst) (cdr lst)))
+
 (define (min . lst)
-     (foldr (lambda (a b) (if (< a b) a b)) (car lst) (cdr lst)))
+  (foldr (lambda (a b) (if (< a b) a b)) (car lst) (cdr lst)))
+
 (define (succ x) (+ x 1))
 (define (pred x) (- x 1))
+
 (define (gcd a b)
   (let ((aa (abs a))
-	(bb (abs b)))
-     (if (= bb 0)
-          aa
-          (gcd bb (remainder aa bb)))))
+        (bb (abs b)))
+    (if (= bb 0)
+      aa
+      (gcd bb (remainder aa bb)))))
+
 (define (lcm a b)
-     (if (or (= a 0) (= b 0))
-          0
-          (abs (* (quotient a (gcd a b)) b))))
+  (if (or (= a 0) (= b 0)) 
+    0
+    (abs (* (quotient a (gcd a b)) b))))
 
 (define call/cc call-with-current-continuation)
 
 (define (string . charlist)
-     (list->string charlist))
+  (list->string charlist))
 
 (define (list->string charlist)
-     (let* ((len (length charlist))
-            (newstr (make-string len))
-            (fill-string!
-               (lambda (str i len charlist)
-                    (if (= i len)
-                         str
-                         (begin (string-set! str i (car charlist))
-                         (fill-string! str (+ i 1) len (cdr charlist)))))))
-          (fill-string! newstr 0 len charlist)))
+  (let* ((len (length charlist))
+         (newstr (make-string len))
+         (fill-string!
+           (lambda (str i len charlist) 
+             (if (= i len)
+               str
+               (begin
+                 (string-set! str i (car charlist))
+                 (fill-string! str (+ i 1) len (cdr charlist)) )))))
+    (fill-string! newstr 0 len charlist)))
 
 (define (string-fill! s e)
-     (let ((n (string-length s)))
-          (let loop ((i 0))
-               (if (= i n)
-                    s
-                    (begin (string-set! s i e) (loop (succ i)))))))
+  (let ((n (string-length s)))
+    (let loop ((i 0)) 
+      (if (= i n)
+        s
+        (begin (string-set! s i e) (loop (succ i))) ))))
 
 (define (string->list s)
-     (let loop ((n (pred (string-length s))) (l '()))
-          (if (= n -1)
-               l
-               (loop (pred n) (cons (string-ref s n) l)))))
+  (let loop ((n (pred (string-length s))) 
+             (l '()))
+    (if (= n -1)
+      l
+      (loop (pred n) (cons (string-ref s n) l)) )))
 
 (define (string-copy str)
-     (string-append str))
+  (string-append str))
 
 (define (string->anyatom str pred)
-     (let* ((a (string->atom str)))
-       (if (pred a) a
-	   (error "string->xxx: not a xxx" a))))
+  (let ((a (string->atom str))) 
+    (if (pred a)
+      a 
+      (error "string->xxx: not a xxx" a))))
 
 (define (string->number str) (string->anyatom str number?))
 
 (define (anyatom->string n pred)
-  (if (pred n)
-      (atom->string n)
-      (error "xxx->string: not a xxx" n)))
-  
+  (if (pred n) 
+    (atom->string n)
+    (error "xxx->string: not a xxx" n)))
 
 (define (number->string n) (anyatom->string n number?))    
 
 (define (char-cmp? cmp a b)
-     (cmp (char->integer a) (char->integer b)))
+  (cmp (char->integer a) (char->integer b)))
 (define (char-ci-cmp? cmp a b)
-     (cmp (char->integer (char-downcase a)) (char->integer (char-downcase b))))
+  (cmp (char->integer (char-downcase a)) (char->integer (char-downcase b))))
 
 (define (char=? a b) (char-cmp? = a b))
 (define (char<? a b) (char-cmp? < a b))
@@ -141,18 +148,17 @@
 
 ; Note the trick of returning (cmp x y)
 (define (string-cmp? chcmp cmp a b)
-     (let ((na (string-length a)) (nb (string-length b)))
-          (let loop ((i 0))
-               (cond
-                    ((= i na)
-                         (if (= i nb) (cmp 0 0) (cmp 0 1)))
-                    ((= i nb)
-                         (cmp 1 0))
-                    ((chcmp = (string-ref a i) (string-ref b i))
-                         (loop (succ i)))
-                    (else
-                         (chcmp cmp (string-ref a i) (string-ref b i)))))))
-
+  (let ((na (string-length a)) (nb (string-length b)))
+    (let loop ((i 0)) 
+      (cond 
+        [(= i na) 
+         (if (= i nb) (cmp 0 0) (cmp 0 1))]
+        [(= i nb)
+         (cmp 1 0)]
+        [(chcmp = (string-ref a i) (string-ref b i))
+         (loop (succ i))]
+        [else
+          (chcmp cmp (string-ref a i) (string-ref b i)) ]))))
 
 (define (string=? a b) (string-cmp? char-cmp? = a b))
 (define (string<? a b) (string-cmp? char-cmp? < a b))
@@ -169,84 +175,90 @@
 (define (list . x) x)
 
 (define (foldr f x lst)
-     (if (null? lst)
-          x
-          (foldr f (f x (car lst)) (cdr lst))))
+  (if (null? lst)
+    x 
+    (foldr f (f x (car lst)) (cdr lst))))
 
 (define (unzip1-with-cdr . lists)
   (unzip1-with-cdr-iterative lists '() '()))
 
 (define (unzip1-with-cdr-iterative lists cars cdrs)
   (if (null? lists)
-      (cons cars cdrs)
-      (let ((car1 (caar lists))
-	    (cdr1 (cdar lists)))
-	(unzip1-with-cdr-iterative 
-	 (cdr lists) 
-	 (append cars (list car1))
-	 (append cdrs (list cdr1))))))
+    (cons cars cdrs)
+    (let ((car1 (caar lists)) 
+          (cdr1 (cdar lists))) 
+      (unzip1-with-cdr-iterative 
+        (cdr lists) 
+        (append cars (list car1))
+        (append cdrs (list cdr1)) ))))
 
 (define (map proc . lists)
   (if (null? lists)
-      (apply proc)
-      (if (null? (car lists))
-	  '()
-	  (let* ((unz (apply unzip1-with-cdr lists))
-		 (cars (car unz))
-		 (cdrs (cdr unz)))
-	    (cons (apply proc cars) (apply map (cons proc cdrs)))))))
+    (apply proc)
+    (if (null? (car lists))
+      '()
+      (let* ((unz (apply unzip1-with-cdr lists))
+             (cars (car unz))
+             (cdrs (cdr unz)))
+        (cons (apply proc cars) (apply map (cons proc cdrs))) ))))
 
 (define (for-each proc . lists)
   (if (null? lists)
-      (apply proc)
-      (if (null? (car lists))
-	  #t
-	  (let* ((unz (apply unzip1-with-cdr lists))
-		 (cars (car unz))
-		 (cdrs (cdr unz)))
-	    (apply proc cars) (apply map (cons proc cdrs))))))
+    (apply proc)
+    (if (null? (car lists))
+      #t
+      (let* ((unz (apply unzip1-with-cdr lists))
+             (cars (car unz))
+             (cdrs (cdr unz)))
+        (apply proc cars)
+        (apply map (cons proc cdrs)) ))))
 
 (define (list-tail x k)
-    (if (zero? k)
-        x
-        (list-tail (cdr x) (- k 1))))
+  (if (zero? k)
+    x
+    (list-tail (cdr x)
+               (- k 1) )))
 
 (define (list-ref x k)
-    (car (list-tail x k)))
+  (car (list-tail x k)))
 
 (define (last-pair x)
-    (if (pair? (cdr x))
-        (last-pair (cdr x))
-        x))
+  (if (pair? (cdr x))
+    (last-pair (cdr x))
+    x))
 
 (define (head stream) (car stream))
 
 (define (tail stream) (force (cdr stream)))
 
 (define (vector-equal? x y)
-     (and (vector? x) (vector? y) (= (vector-length x) (vector-length y))
-          (let ((n (vector-length x)))
-               (let loop ((i 0))
-                    (if (= i n)
-                         #t
-                         (and (equal? (vector-ref x i) (vector-ref y i))
-                              (loop (succ i))))))))
+  (and (vector? x)
+       (vector? y)
+       (= (vector-length x)
+          (vector-length y))
+       (let loop ([i 0]
+                  [n (vector-length x)])
+         (if (= i n)
+           #t
+           (and (equal? (vector-ref x i) (vector-ref y i))
+                (loop (succ i) n) )))))
 
 (define (list->vector x)
-     (apply vector x))
+  (apply vector x))
 
 (define (vector-fill! v e)
-     (let ((n (vector-length v)))
-          (let loop ((i 0))
-               (if (= i n)
-                    v
-                    (begin (vector-set! v i e) (loop (succ i)))))))
+  (let ((n (vector-length v)))
+    (let loop ((i 0))
+      (if (= i n)
+        v
+        (begin (vector-set! v i e) (loop (succ i))) ))))
 
 (define (vector->list v)
-     (let loop ((n (pred (vector-length v))) (l '()))
-          (if (= n -1)
-               l
-               (loop (pred n) (cons (vector-ref v n) l)))))
+  (let loop ([n (pred (vector-length v))]
+             [l '()])
+    (if (= n -1)
+      l
+      (loop (pred n) (cons (vector-ref v n) l)))))
 
 ;; The following quasiquote macro is due to Eric S. Tiedemann.
 ;;   Copyright 1988 by Eric S. Tiedemann; all rights reserved.
@@ -309,22 +321,21 @@
 
 ;;;;; atom? and equal? written by a.k
 
-;;;; atom?
 (define (atom? x)
   (not (pair? x)))
 
-;;;;    equal?
 (define (equal? x y)
-     (cond
-          ((pair? x)
-               (and (pair? y)
-                    (equal? (car x) (car y))
-                    (equal? (cdr x) (cdr y))))
-          ((vector? x)
-               (and (vector? y) (vector-equal? x y)))
-          ((string? x)
-               (and (string? y) (string=? x y)))
-          (else (eqv? x y))))
+  (cond
+    [(pair? x)
+     (and (pair? y)
+          (equal? (car x) (car y))
+          (equal? (cdr x) (cdr y)))]
+    [(vector? x)
+     (and (vector? y) (vector-equal? x y))]
+    [(string? x)
+     (and (string? y) (string=? x y))]
+    [else
+      (eqv? x y )]))
 
 ;;;; (do ((var init inc) ...) (endtest result ...) body ...)
 ;;
@@ -360,40 +371,42 @@
   (cond
     ((null? lst) #f)
     ((cmp obj (car lst)) lst)
-    (else (generic-member cmp obj (cdr lst)))))
+    (else 
+      (generic-member cmp obj (cdr lst)))))
 
 (define (memq obj lst)
-     (generic-member eq? obj lst))
+  (generic-member eq? obj lst))
 (define (memv obj lst)
-     (generic-member eqv? obj lst))
+  (generic-member eqv? obj lst))
 (define (member obj lst)
-     (generic-member equal? obj lst))
+  (generic-member equal? obj lst))
 
 ;;;; generic-assoc
 (define (generic-assoc cmp obj alst)
-     (cond
-          ((null? alst) #f)
-          ((cmp obj (caar alst)) (car alst))
-          (else (generic-assoc cmp obj (cdr alst)))))
+  (cond
+    ((null? alst) #f)
+    ((cmp obj (caar alst)) (car alst))
+    (else
+      (generic-assoc cmp obj (cdr alst)))))
 
 (define (assq obj alst)
-     (generic-assoc eq? obj alst))
+  (generic-assoc eq? obj alst))
 (define (assv obj alst)
-     (generic-assoc eqv? obj alst))
+  (generic-assoc eqv? obj alst))
 (define (assoc obj alst)
-     (generic-assoc equal? obj alst))
+  (generic-assoc equal? obj alst))
 
 (define (acons x y z) (cons (cons x y) z))
 
 ;;;; Utility to ease macro creation
 (define (macro-expand form)
-     ((eval (get-closure-code (eval (car form)))) form))
+  ((eval (get-closure-code (eval (car form)))) form))
 
 ;;;; Handy for imperative programs
 ;;;; Used as: (define-with-return (foo x y) .... (return z) ...)
 (macro (define-with-return form)
-     `(define ,(cadr form)
-          (call/cc (lambda (return) ,@(cddr form)))))
+  `(define ,(cadr form) 
+     (call/cc (lambda (return) ,@(cddr form)))))
 
 ;;;; Simple exception handling
 ;
@@ -415,28 +428,29 @@
 (define *handlers* (list))
 
 (define (push-handler proc)
-     (set! *handlers* (cons proc *handlers*)))
+  (set! *handlers* (cons proc *handlers*)))
 
 (define (pop-handler)
-     (let ((h (car *handlers*)))
-          (set! *handlers* (cdr *handlers*))
-          h))
+  (let ((h (car *handlers*)))
+    (set! *handlers* (cdr *handlers*))
+    h))
 
 (define (more-handlers?)
-     (pair? *handlers*))
+  (pair? *handlers*))
 
 (define (throw . x)
-     (if (more-handlers?)
-          (apply (pop-handler))
-          (apply error x)))
+  (if (more-handlers?)
+    (apply (pop-handler))
+    (apply error x)))
 
 (macro (catch form)
-     (let ((label (gensym)))
-          `(call/cc (lambda (exit)
-               (push-handler (lambda () (exit ,(cadr form))))
-               (let ((,label (begin ,@(cddr form))))
-                    (pop-handler)
-                    ,label)))))
+  (let ((label (gensym)))
+    `(call/cc
+       (lambda (exit)
+         (push-handler (lambda () (exit ,(cadr form))))
+         (let ((,label (begin ,@(cddr form))))
+           (pop-handler)
+           ,label) ))))
 
 (define *error-hook* throw)
 
@@ -444,17 +458,17 @@
 ;;;;; Definition of MAKE-ENVIRONMENT, to be used with two-argument EVAL
 
 (macro (make-environment form)
-     `(apply (lambda ()
-               ,@(cdr form)
-               (current-environment))))
+  `(apply (lambda ()
+            ,@(cdr form)
+            (current-environment) )))
 
 (define-macro (eval-polymorphic x . envl)
   (display envl)
   (let* ((env (if (null? envl) (current-environment) (eval (car envl))))
          (xval (eval x env)))
     (if (closure? xval)
-	(make-closure (get-closure-code xval) env)
-	xval)))
+    (make-closure (get-closure-code xval) env)
+    xval)))
 
 ; Redefine this if you install another package infrastructure
 ; Also redefine 'package'
@@ -463,13 +477,18 @@
 ; Random number generator (maximum cycle)
 (define *seed* 1)
 (define (random-next)
-     (let* ((a 16807) (m 2147483647) (q (quotient m a)) (r (modulo m a)))
-          (set! *seed*
-               (-   (* a (- *seed*
-                         (* (quotient *seed* q) q)))
-                    (* (quotient *seed* q) r)))
-          (if (< *seed* 0) (set! *seed* (+ *seed* m)))
-          *seed*))
+  (let* ((a 16807) 
+         (m 2147483647)
+         (q (quotient m a))
+         (r (modulo m a)))
+    (set! *seed*
+          (-   (* a (- *seed*
+                    (* (quotient *seed* q) q)))
+               (* (quotient *seed* q) r)))
+    (if (< *seed* 0)
+      (set! *seed* (+ *seed* m)))
+    *seed*))
+
 ;; SRFI-0 
 ;; COND-EXPAND
 ;; Implemented as a macro
@@ -492,16 +511,19 @@
   (foldr (lambda (x y) (or (cond-eval x) (cond-eval y))) #f cond-list))
 
 (define (cond-eval condition)
-  (cond ((symbol? condition)
-	 (if (member condition *features*) #t #f))
-	((eq? condition #t) #t)
-	((eq? condition #f) #f)
-	(else (case (car condition)
-		((and) (cond-eval-and (cdr condition)))
-		((or) (cond-eval-or (cdr condition)))
-		((not) (if (not (null? (cddr condition)))
-			   (error "cond-expand : 'not' takes 1 argument")
-			   (not (cond-eval (cadr condition)))))
-		(else (error "cond-expand : unknown operator" (car condition)))))))
+  (cond 
+    ((symbol? condition)
+     (if (member condition *features*) #t #f))
+    ((eq? condition #t) #t)
+    ((eq? condition #f) #f)
+    (else
+      (case (car condition)
+        ((and) (cond-eval-and (cdr condition)))
+        ((or) (cond-eval-or (cdr condition)))
+        ((not) (if (not (null? (cddr condition)))
+               (error "cond-expand : 'not' takes 1 argument")
+               (not (cond-eval (cadr condition)))))
+        (else 
+          (error "cond-expand : unknown operator" (car condition)))))))
 
 (gc-verbose #f)
