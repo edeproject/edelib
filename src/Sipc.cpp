@@ -37,7 +37,7 @@
 # define UNIX_PATH_MAX 108
 #endif
 
-// max message length without ending '\n'
+/* max message length without ending '\n' */
 #define MSG_LEN_MAX 1024
 
 EDELIB_NS_BEGIN
@@ -72,7 +72,6 @@ SipcServerPrivate::~SipcServerPrivate() {
 	ConnectionListIter it = accepted_connections.begin(), it_end = accepted_connections.end();
 	for(; it != it_end; ++it) {
 		listener_remove_fd((*it)->fd);
-		//Fl::remove_fd((*it)->fd);
 		close((*it)->fd);
 		free((*it)->path);
 	}
@@ -125,9 +124,8 @@ static void accept_new_connection(SipcServerPrivate* p) {
 
 	p->accepted_connections.push_back(cp);
 
-	// listen accepted clients
+	/* listen accepted clients */
 	listener_add_fd(cp->fd, server_cb, p);
-	//Fl::add_fd(cp->fd, server_cb, p);
 }
 
 static void server_cb(int fd, void* data) {
@@ -156,7 +154,6 @@ static void server_cb(int fd, void* data) {
 
 		for(; it != it_end; ++it) {
 			if((*it)->fd == fd) {
-				//Fl::remove_fd(fd);
 				listener_remove_fd(fd);
 				close(fd);
 				free((*it)->path);
@@ -201,7 +198,7 @@ bool SipcServer::request_name(const char* prefix) {
 
 	struct sockaddr_un addr;
 	addr.sun_family = AF_UNIX;
-	strcpy(addr.sun_path, priv->path); // TODO strncpy
+	strcpy(addr.sun_path, priv->path); /* TODO strncpy */
 	priv->fd = socket(PF_UNIX, SOCK_STREAM, 0);
 
 	if(bind(priv->fd, (struct sockaddr*)&addr, sizeof(addr)) == -1) {
@@ -212,7 +209,6 @@ bool SipcServer::request_name(const char* prefix) {
 	::listen(priv->fd, 5);
 
 	listener_add_fd(priv->fd, server_cb, priv);
-	//Fl::add_fd(priv->fd, server_cb, priv);
 	return true;
 }
 
