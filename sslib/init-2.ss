@@ -16,8 +16,7 @@
 ;; You should have received a copy of the GNU Lesser General Public License
 ;; along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-;(include "doc.ss")
-(load "doc.ss")
+(include "doc.ss")
 
 (add-doc "print" "Print values to stdout.")
 (define (print . args)
@@ -83,8 +82,9 @@
      ,@body))
 
 (add-macro-doc "defn" "Creates function definition, allowing docstrings. Function can be created like:
-(defn sample-func [a b]
+(defn sample-func
   \"This is docstring\"
+  [a b]
   (+ a b))")
 (define-macro (defn func args . body)
   `(if (string? ,(car body))
@@ -98,8 +98,7 @@
        ,@body) ))
 
 (add-macro-doc "defvar" "Creates variable with value, allowing docstring. Variables can be created like:
-(defvar foo 3
-  \"This is docstring for foo.\")")
+(defvar foo 3 \"This is docstring for foo.\")")
 (define-macro (defvar var val . body)
   `(begin
      ;; here we are not using ,(car body) as this would evaluate expression first, yielding
@@ -123,6 +122,40 @@
 	 ;; without docstrings
 	 (define (,func ,@args)
 	   ,@body )))
+
+(add-macro-doc "for" "Loop construct that can be used over vectors, lists and strings. Looping is done as:
+  (for i in '(1 2 3 4 5)
+    (println i))
+or
+  (for i in \"this is sample string\"
+    (println i))")     
+(define-macro (for var _ collection . body)
+  `(cond
+     [(list? ,collection)
+      (map (lambda (,var) 
+             ,@body) 
+           ,collection)]
+     [(vector? ,collection)
+      (map (lambda (,var)
+             ,@body)
+           (vector->list ,collection) )]
+     [(string? ,collection)
+      (map (lambda (,var)
+             ,@body)
+           (string->list ,collection) )]
+     [else
+       (throw "Unsupported type in 'for' loop") ]))
+
+(add-macro-doc "while" "Looping construct found in common languages. Example:
+  (define i 0)
+  (while (< i 100)
+    (println i)
+    (set! i (+ 1 i)))")
+(define-macro (while expr . body)
+  `(let loop ()
+     (when ,expr
+       ,@body
+       (loop) )))
 
 (defun nth (n collection)
   "Returns index 'n' at given collection. Collection can be list, vector or string."
@@ -180,12 +213,10 @@ used for comparison."
 	  (filter pred (cdr seq)) ]
 ) )
 
-(defvar *foo* 3 "SSSSS")
-(defvar *boo* 3)
-;(defvar *moo* 3)
-;
-(println (doc "*foo*"))
-(println *foo*)
-(println (doc "*boo*"))
-(println (doc "if="))
-(println (doc "filter"))
+(defun range (s e)
+  "Create range starting from s and ending with e - 1."
+  (let loop ([s s]
+             [e e])
+    (if (>= s e)
+      (list)
+      (cons s (loop (+ 1 s) e)) )))
