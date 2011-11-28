@@ -33,6 +33,8 @@
   (add-doc-generic func str "variable"))
 
 (define-with-return (find-doc func)
+  (unless (string? func) (error _"find-doc expects string argument"))
+
   (for-each (lambda (x)
               (if (string=? func (vector-ref x 0))
                 (return (vector-ref x 1)) ))
@@ -42,9 +44,15 @@
 (define (doc func)
   (define ret (find-doc func))
   (if ret
-    (display ret)
+    (begin
+      (display func)
+      (display "\n----------\n")
+      (display ret))
     (display _"Not found"))
   (newline))
 
-(add-doc "find-doc" "Try to find documentation for given parameter. Return documentation string or #f if fails")
-(add-doc "doc" "Display documentation for given function name string")
+(add-doc "find-doc" "Try to find documentation for given parameter. Return documentation string or #f if fails.")
+(add-doc "doc" "Display documentation for given function name string.")
+(add-doc "add-doc" "Add documentation for given functioa.n")
+(add-doc "add-macro-doc" "Add documentation for macro.")
+(add-doc "add-var-doc" "Add documentation for variable.")

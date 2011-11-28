@@ -18,20 +18,29 @@
 
 ;; basic functions for handling 'include' statement
 (or (defined? '*include-path*)
-    (define *include-path* '()))
+    (define *include-path* (list)))
 
 (define (add-to-include-path path)
   (set! *include-path*
     (cons path *include-path*)))
 
-(define (file-exists f)
-  (let* ([fd   (open-input-file f)]
-         [ret  (if fd #t #f)])
-    (if fd
-      (close-input-port fd))
-    ret))
+(define (remove-from-include-path path)
+  (let ([n (list)])
+    (for-each (lambda (p)
+                (if (not (= p path))
+                  (set! n (cons p n)) ))
+              *include-path*)
+    (set! *include-path* n) 
+) )
 
 (define-with-return (include object)
+  (define (file-exists f)
+    (let* ([fd   (open-input-file f)]
+           [ret  (if fd #t #f)])
+      (if fd
+        (close-input-port fd))
+      ret))
+
   (for-each (lambda (x)
     (define full-path (string-append x "/" object))
 
