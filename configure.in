@@ -221,6 +221,12 @@ AC_OUTPUT([
 
 chmod +x po/update-messages.sh
 
+# generate scheme include files
+cd sslib
+./gen-c-string.sh init.ss  > init_ss.h
+./gen-c-string.sh theme.ss > theme_ss.h
+cd ..
+
 echo ""
 echo "Now run 'jam' or 'jam help' to see further options."
 echo ""

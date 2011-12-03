@@ -29,8 +29,8 @@
 #include <edelib/Missing.h>
 #include <edelib/Version.h>
 #include <edelib/Scheme.h>
-#include "ts/init_scm.h"
-#include "ts/theme_scm.h"
+#include "../sslib/init_ss.h"
+#include "../sslib/theme_ss.h"
 
 extern int FL_NORMAL_SIZE;
 
@@ -190,10 +190,10 @@ void Theme::init_interpreter(void) {
 	}
 
 	/* load init stuff */
-	scheme_load_string(ss, init_scm_content);
+	scheme_load_string(ss, init_ss_content);
 
 	/* load theme stuff */
-	scheme_load_string(ss, theme_scm_content);
+	scheme_load_string(ss, theme_ss_content);
 
 	/* 
 	 * Set (or override) common variables before actual script was loaded. 
