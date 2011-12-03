@@ -28,11 +28,9 @@
 #include <edelib/Directory.h>
 #include <edelib/Missing.h>
 #include <edelib/Version.h>
-
-#include "tinyscheme/scheme.h"
-#include "tinyscheme/scheme-private.h"
-#include "tinyscheme/init_scm.h"
-#include "tinyscheme/theme_scm.h"
+#include <edelib/Scheme.h>
+#include "ts/init_scm.h"
+#include "ts/theme_scm.h"
 
 extern int FL_NORMAL_SIZE;
 

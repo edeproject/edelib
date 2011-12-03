@@ -34,7 +34,7 @@ LibraryObjectCcFlags $(XDGMIME) : $(XDG_MIME_HAVE_MMAP) ;
 
 PCRE = pcre/pcre.c ;
 
-TINYSCHEME = tinyscheme/scheme.c tinyscheme/utf8.c ;
+TINYSCHEME = ts/scheme.c ts/utf8.c ;
 
 SDBM_SRC = 
 	sdbm.c
@@ -70,6 +70,7 @@ SOURCE =
 	TempFile.cpp
 	TiXml.cpp
 	TiXmlParser.cpp 
+	$(TINYSCHEME)
 	Util.cpp
 	$(XDGMIME) ;
 
@@ -91,7 +92,6 @@ SOURCE_GUI =
 	Netwm.cpp
 	SevenSeg.cpp
 	TableBase.cpp 
-	$(TINYSCHEME)
 	$(SDBM)
 	Theme.cpp
 	ThemeLoader.cpp

@@ -4017,7 +4017,7 @@ typedef struct {
 
 static op_code_info dispatch_table[]= { 
 #define _OP_DEF(A,B,C,D,E,OP) {A,B,C,D,E}, 
-#include "opdefines.h" 
+#include <edelib/ts/opdefines.h>
   { 0 } 
 }; 
 
