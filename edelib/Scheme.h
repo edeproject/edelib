@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  *
  * Scheme interpeter
  * Copyright (c) 2005-2011 edelib authors
@@ -31,7 +31,11 @@ extern "C" {
 #endif
 
 /**
- * \defgroup scheme scheme interpreter
+ * \defgroup scheme Scheme interpreter
+ * This code provides Scheme interpreter and implements most of R5RS specification. The backend is based on
+ * <a href="http://tinyscheme.sourceforge.net">tinyscheme</a>.
+ *
+ * \todo Complete docs.
  */
 
 /**
@@ -45,13 +49,31 @@ scheme *edelib_scheme_init(void);
  * Deinitialize and clear scheme interpeter object.
  */
 void edelib_scheme_deinit(scheme *s);
+
+#define edelib_scheme_load_file    scheme_load_file
+#define edelib_scheme_load_string  scheme_load_string
+
+#define edelib_scheme_set_external_data scheme_set_external_data
+#define edelib_scheme_define            scheme_define
+#define edelib_scheme_call              scheme_call
+
+#define edelib_scheme_cons              _cons
+#define edelib_scheme_mk_integer        mk_integer
+#define edelib_scheme_mk_real           mk_real
+#define edelib_scheme_mk_real           mk_symbol
+#define edelib_scheme_gensym            gensym
+#define edelib_scheme_mk_string         mk_string
+#define edelib_scheme_mk_counted_string mk_counted_string
+#define edelib_scheme_mk_character      mk_character
+#define edelib_scheme_mk_foreign_func   mk_foreign_func
+#define edelib_scheme_putstr            putstr
  
 /**
  * \def EDELIB_SCHEME_DEFINE
  * \ingroup scheme
  * Define new scheme function.
  */ 
-#define EDELIB_SCHEME_DEFINE(sc, func_name, func_ptr)	                \
+#define EDELIB_SCHEME_DEFINE(sc, func_ptr, func_name)	                \
   sc->vptr->scheme_define(sc, sc->gobal_env,                            \
                               sc->vptr->mk_symbol(sc, func_name),       \
                               sc->vptr->mk_foreign_func(sc, func_ptr))  
@@ -61,7 +83,7 @@ void edelib_scheme_deinit(scheme *s);
  * \ingroup scheme
  * Define new scheme function with documentation.
  */
-#define EDELIB_SCHEME_DEFINE2(sc, func_name, doc, func_ptr)     \
+#define EDELIB_SCHEME_DEFINE2(sc, func_ptr, func_name, doc)     \
  do {                                                           \
    scheme_load_string(sc, "(add-doc " #func_name "," #doc ")"); \
    EDELIB_SCHEME_DEFINE(sc, func_name, func_ptr);               \

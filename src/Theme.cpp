@@ -166,7 +166,7 @@ Theme::~Theme() {
 void Theme::init_interpreter(void) {
 	if(priv->sc) return;
 
-	scheme *ss = scheme_init_new();
+	scheme *ss = edelib_scheme_init();
 	if(!ss) {
 		E_WARNING(E_STRLOC ": Unable to init interpreter\n");
 		return;
@@ -241,7 +241,7 @@ bool Theme::load(const char *f) {
 
 	FILE *fd = fopen(f, "r");
 	if(!fd) {
-		scheme_deinit(ss);
+		edelib_scheme_deinit(ss);
 		free(ss);
 		priv->sc = 0;
 		return false;
@@ -285,7 +285,7 @@ void Theme::clear(void) {
 		return;
 
 	if(priv->sc) {
-		scheme_deinit(priv->sc);
+		edelib_scheme_deinit(priv->sc);
 		free(priv->sc);
 	}
 
