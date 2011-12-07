@@ -81,22 +81,6 @@
   `(if (not (equal? ,arg1 ,arg2))
      ,@body))
 
-(add-macro-doc "defn" "Creates function definition, allowing docstrings. Function can be created like:
-(defn sample-func
-  \"This is docstring\"
-  [a b]
-  (+ a b))")
-(define-macro (defn func args . body)
-  `(if (string? ,(car body))
-     ;; with docstring
-     (begin
-       (add-doc (symbol->string ',func) ,(car body))
-       (define (,func ,@args)
-         ,@(cdr body) ))
-     ;; without docstring
-     (define (,func ,@args)
-       ,@body) ))
-
 (add-macro-doc "defvar" "Creates variable with value, allowing docstring. Variables can be created like:
 (defvar foo 3 \"This is docstring for foo.\")")
 (define-macro (defvar var val . body)
