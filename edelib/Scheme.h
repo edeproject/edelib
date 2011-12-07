@@ -35,6 +35,11 @@ extern "C" {
  * This code provides Scheme interpreter and implements most of R5RS specification. The backend is based on
  * <a href="http://tinyscheme.sourceforge.net">tinyscheme</a>.
  *
+ * If you are not familiar with Scheme, you can find numerous tutorials online about this language. Here are two, quite suitable
+ * for begginers:
+ * - <a href="http://www.ccs.neu.edu/home/dorai/t-y-scheme/t-y-scheme.html">Teach Yourself Scheme in Fixnum Days</a>
+ * - <a href="http://www.shido.info/lisp/idx_scm_e.html">Yet Another Scheme Tutorial</a>
+ *
  * \todo Complete docs.
  */
 
@@ -61,7 +66,7 @@ extern "C" {
 /* try to avoid vpr by using function like macros */
 #define edelib_scheme_gensym(sc)                 (sc)->vptr->gensym(sc)
 #define edelib_scheme_cons(sc, a, b)             (sc)->vptr->cons(sc, a, b)	 
-#define edelib_scheme_immutable_cons(sc, a, b)    (sc)->vptr->immutable_cons(sc, a, b)
+#define edelib_scheme_immutable_cons(sc, a, b)   (sc)->vptr->immutable_cons(sc, a, b)
 #define edelib_scheme_reserve_cells(sc, n)       (sc)->vptr->reserve_cells(sc, n)
 #define edelib_scheme_mk_int(sc, num)            (sc)->vptr->mk_integer(sc, num)
 #define edelib_scheme_mk_double(sc, num)         (sc)->vptr->mk_real(sc, num)
