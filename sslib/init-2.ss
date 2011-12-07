@@ -116,15 +116,15 @@ or
 (define-macro (for var _ collection . body)
   `(cond
      [(list? ,collection)
-      (map (lambda (,var) 
+      (for-each (lambda (,var) 
              ,@body) 
            ,collection)]
      [(vector? ,collection)
-      (map (lambda (,var)
+      (for-each (lambda (,var)
              ,@body)
            (vector->list ,collection) )]
      [(string? ,collection)
-      (map (lambda (,var)
+      (for-each (lambda (,var)
              ,@body)
            (string->list ,collection) )]
      [else
