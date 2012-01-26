@@ -1,7 +1,7 @@
 ;; vim:ft=scheme:expandtab
 ;; $Id: String.h 2839 2009-09-28 11:36:20Z karijes $
 ;;
-;; Copyright (c) 2005-2011 edelib authors
+;; Copyright (c) 2005-2012 edelib authors
 ;;
 ;; This library is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU Lesser General Public
@@ -27,9 +27,35 @@
   (for-each display args)
   (newline))
 
-(add-macro-doc ":" "Simple infix operator. (: 2 + 3) will be transformed to (+ 2 3).")
-(define-macro (: a op b)
-  `(,op ,a ,b))
+
+(define (infix->prefix-func ex)
+  ;; simple check to see if we have binary operation
+  (define (binary-exp? x)
+    (and (list? x)
+         (= 3 (length x))))
+
+  ;; convert everything to prefix, and evaluate
+  (eval 
+    (if (atom? ex)
+      ex
+      (map infix->prefix-func
+           (if (binary-exp? ex)
+             (list
+               (cadr ex)    ;; operator
+               (car ex)     ;; first elem.
+               (caddr ex))  ;; second elem.
+             ex )))
+) )
+
+(define-macro (infix->prefix . args)
+  `(infix->prefix-func ',args))
+
+(add-macro-doc ":" "Infix operator. Operator precedence is not supported, so you must use parenthesis. Examples:
+(: 2 + 3)
+(: 2 + (3 - 100))
+(: 2 * (3 - (100 + 4)))"
+(define-macro (: . args)
+  `(infix->prefix-func ',args))
 
 (add-macro-doc "let1" "Form for creating single local variable; same as 'let' but in readable form. Can be used as:
 (let1 foo 3
@@ -100,12 +126,12 @@
   `(if (string? ,(car body))
      ;; with docstring
      (begin
-	   (add-doc (symbol->string ',func) ,(car body))
-	   (define (,func ,@args)
-		 ,@(cdr body) ))
-	 ;; without docstrings
-	 (define (,func ,@args)
-	   ,@body )))
+       (add-doc (symbol->string ',func) ,(car body))
+       (define (,func ,@args)
+         ,@(cdr body) ))
+     ;; without docstrings
+     (define (,func ,@args)
+       ,@body )))
 
 (add-macro-doc "for" "Loop construct that can be used over vectors, lists and strings. Looping is done as:
   (for i in '(1 2 3 4 5)
@@ -189,12 +215,12 @@ used for comparison."
 (defun filter (pred seq)
   "Filter sequence with given predicate."
   (cond
-	[(null? seq) '()]
-	[(pred (car seq))
-	 (cons (car seq)
-		   (filter pred (cdr seq)) )]
-	[else
-	  (filter pred (cdr seq)) ]
+    [(null? seq) '()]
+    [(pred (car seq))
+     (cons (car seq)
+           (filter pred (cdr seq)) )]
+    [else
+      (filter pred (cdr seq)) ]
 ) )
 
 (defun range (s e)
