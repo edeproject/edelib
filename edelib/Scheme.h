@@ -55,13 +55,41 @@ extern "C" {
  */
 #define edelib_scheme_deinit scheme_deinit
 
-/* some straight usage */
-#define edelib_scheme_load_file    scheme_load_file
+/**
+ * \ingroup scheme
+ * Load scheme source from file.
+ */
+#define edelib_scheme_load_file scheme_load_file
+
+/**
+ * \ingroup scheme
+ * Load scheme source from string.
+ */
 #define edelib_scheme_load_string  scheme_load_string
 
+/**
+ * \ingroup scheme
+ * Set additional data (pointer) accessible from scheme function. You can get data with <em>edelib_scheme_get_external_data</em>
+ */
 #define edelib_scheme_set_external_data scheme_set_external_data
-#define edelib_scheme_define            scheme_define
-#define edelib_scheme_call              scheme_call
+
+/**
+ * \ingroup scheme
+ * Get data set with <em>edelib_scheme_set_external_data</em>.
+ */
+#define edelib_scheme_get_external_data(sc) (sc)->ext_data
+
+/**
+ * \ingroup scheme
+ * Defines a new function. You shoud use EDELIB_SCHEME_DEFINE or EDELIB_SCHEME_DEFINE2 instead.
+ */
+#define edelib_scheme_define scheme_define
+
+/**
+ * \ingroup scheme
+ * Calls scheme function.
+ */
+#define edelib_scheme_call scheme_call
 
 /* try to avoid vpr by using function like macros */
 #define edelib_scheme_gensym(sc)                 (sc)->vptr->gensym(sc)
