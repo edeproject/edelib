@@ -208,8 +208,7 @@ this list with 'add-to-include-path' and 'remove-from-include-path' functions.")
      ;; car to fail on empty list; instead we convert whatever to symbol, then evaluate
      (if (= 1 (length ',body))
        (add-var-doc (symbol->string ',var) (car ',body)) )
-     (define ,var ,val) 
-) )
+     (define ,var ,val) ))
 
 (add-macro-doc "defun" "Creates function definition, allowing docstrings. Function can be created like:
 (defun sample-func (a b)
@@ -294,8 +293,7 @@ used for comparison."
 
   (if (empty? lst)
     '()
-    (insert (car lst) (sort (cdr lst))) 
-) )
+    (insert (car lst) (sort (cdr lst))) ))
 
 (defun sort (lst)
   "Sort list."
