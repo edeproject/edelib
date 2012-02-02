@@ -27,7 +27,6 @@
   (for-each display args)
   (newline))
 
-
 (define (infix->prefix-func ex)
   ;; simple check to see if we have binary operation
   (define (binary-exp? x)
@@ -53,7 +52,7 @@
 (add-macro-doc ":" "Infix operator. Operator precedence is not supported, so you must use parenthesis. Examples:
 (: 2 + 3)
 (: 2 + (3 - 100))
-(: 2 * (3 - (100 + 4)))"
+(: 2 * (3 - (100 + 4)))")
 (define-macro (: . args)
   `(infix->prefix-func ',args))
 
@@ -92,6 +91,11 @@
           [,e ,f]
           [,g ,h]
           [,i ,j])
+     ,@body))
+
+(add-macro-doc "if-not" "Same as (if (not x)).")
+(define-macro (if-not p . body)
+  `(if (not ,p)
      ,@body))
 
 (add-macro-doc "if=" "Compare two variables using equal?. Can be used as:
@@ -220,8 +224,7 @@ used for comparison."
      (cons (car seq)
            (filter pred (cdr seq)) )]
     [else
-      (filter pred (cdr seq)) ]
-) )
+      (filter pred (cdr seq)) ]))
 
 (defun range (s e)
   "Create range starting from s and ending with e - 1."
