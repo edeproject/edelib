@@ -16,5 +16,6 @@ run_file() {
 run_file unittest.ss
 run_file r5rs.ss
 run_file edelib.ss
+run_file sslib.ss
 
 exit $ret

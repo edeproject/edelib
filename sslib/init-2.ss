@@ -260,7 +260,8 @@ or
        (loop) )))
 
 (defun nth (n collection)
-  "Returns index 'n' at given collection. Collection can be list, vector or string."
+  "Returns index 'n' at given collection. Collection can be list, vector or string. In case of vector
+or string, access is in constant time. For list, it is linear."
   (cond
     [(list? collection)
      (if (>= n (length collection))
