@@ -85,5 +85,13 @@
 
 (test-equal "#14" '(1 2 3 4 5 6 7) (range 1 8))
 
+(test-equal "#15" (-> 10 (+ 20) (- 30) (+ 40)) 40)
+(test-equal "#15" (-> 2 (nth '(4 2 100 34 3))) 100)
+
+(test-equal "#16" (->> '(1 2 3)
+                       (map (lambda (x)
+                              (+ x 1) )))
+                  '(2 3 4))
+
 
 (run-all-tests "sslib Tests")

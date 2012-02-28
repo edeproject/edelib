@@ -259,6 +259,30 @@ or
        ,@body
        (loop) )))
 
+(add-macro-doc "->" "Clojure thrush form, where expression is threaded
+through the forms. The code:
+  (-> 10 (+ 20) (- 30))
+is equivalent to:
+  (- (+ 10 20) 30)")
+(define-macro (-> x form . body)
+  (if (pair? body)
+    `(-> (-> ,x ,form) ,@body)
+	(if (list? form)
+	  `(,(car form) ,x ,@(cdr form))
+      `(list ,form ,x) )))
+
+(add-macro-doc "->>" "Same as '->' except x is inserted as last item in
+form, and so on, like:
+  (->> (range 1 10) (map inc))
+is the same as:
+  (map inc (range 1 10))")
+(define-macro (->> x form . body)
+  (if (pair? body)
+    `(->> (->> ,x ,form) ,@body)
+	(if (list? form)
+	  `(,(car form) ,@(cdr form) ,x)
+	  `(list ,form ,x) )))
+
 (defun nth (n collection)
   "Returns index 'n' at given collection. Collection can be list, vector or string. In case of vector
 or string, access is in constant time. For list, it is linear."
