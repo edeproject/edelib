@@ -274,7 +274,7 @@ is equivalent to:
     `(-> (-> ,x ,form) ,@body)
 	(if (list? form)
 	  `(,(car form) ,x ,@(cdr form))
-      `(list ,form ,x) )))
+      (list form x) )))
 
 (add-macro-doc "->>" "Same as '->' except x is inserted as last item in
 form, and so on, like:
@@ -286,7 +286,7 @@ is the same as:
     `(->> (->> ,x ,form) ,@body)
 	(if (list? form)
 	  `(,(car form) ,@(cdr form) ,x)
-	  `(list ,form ,x) )))
+	  (list form x) )))
 
 (defun nth (n collection)
   "Returns index 'n' at given collection. Collection can be list, vector or string. In case of vector
@@ -350,3 +350,16 @@ used for comparison."
     (if (>= s e)
       (list)
       (cons s (loop (+ 1 s) e)) )))
+
+(defun fold-right (f x lst)
+  "Implementation of scheme's foldr function. Tinyscheme already
+provides foldr which is more like foldl."
+  (if (null? lst)
+    x
+	(f (car lst) (fold-right f x (cdr lst))) ))
+
+(defun fold-left (f x lst)
+  "Implementation of scheme's foldl."
+  (if (null? lst)
+    x
+	(fold-left f (f x (car lst)) (cdr lst)) ))
