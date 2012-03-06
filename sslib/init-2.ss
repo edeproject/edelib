@@ -187,6 +187,11 @@ this list with 'add-to-include-path' and 'remove-from-include-path' functions.")
   `(if (not ,p)
      ,@body))
 
+(add-macro-doc "when-not" "Same as (when (not x)).")
+(define-macro (when-not p . body)
+  `(when (not ,p)
+     ,@body))
+
 (add-macro-doc "if=" "Compare two variables using equal?. Can be used as:
 (if= a b
   do if are equal
