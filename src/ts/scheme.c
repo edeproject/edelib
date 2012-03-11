@@ -13,16 +13,21 @@
  */
 
 #define _SCHEME_SOURCE
-# include <edelib/ts/scheme-private.h>
+
+#include <edelib/ts/scheme-private.h>
+
 #ifndef WIN32
 # include <unistd.h>
 #endif
+
 #if USE_DL
 # include "dynload.h"
 #endif
+
 #if USE_MATH
 # include <math.h>
 #endif
+
 #include <limits.h>
 #include <float.h>
 #include <ctype.h>
