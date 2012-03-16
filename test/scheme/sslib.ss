@@ -93,5 +93,12 @@
                               (+ x 1) )))
                   '(2 3 4))
 
+(test-equal "#17" (take 2 '(1 2 3))
+			      '(1 2))
+
+(test-equal "#17" (take 100 '(1 2))
+			      '(1 2))
+
+(test-equal "#17" (take 1000 '()) '())
 
 (run-all-tests "sslib Tests")

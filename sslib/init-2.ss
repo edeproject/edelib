@@ -363,3 +363,10 @@ provides foldr which is more like foldl."
   (if (null? lst)
     x
 	(fold-left f (f x (car lst)) (cdr lst)) ))
+
+(defun take (n lst)
+  "Take n elements from given list."
+  (when (> n 0)
+    (if-not= lst '()
+      (cons (car lst)
+            (take (- n 1) (cdr lst)) ))))
