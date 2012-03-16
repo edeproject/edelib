@@ -105,4 +105,13 @@
 (test-equal "#18" (drop 1000 '()) '())
 (test-equal "#18" (drop 3 '(1 2 3)) '())
 
+(test-equal "#19" (partition 2 '(1 2 3 4)) '((1 2) (3 4)))
+(test-equal "#19" (partition 100 '(1 2 3)) '())
+(test-equal "#19" (partition 1 '(1 2 3))   '((1) (2) (3)))
+
+(test-equal "#20" (flatten '(1 2 3 (4 5) (((((6))))))) '(1 2 3 4 5 6))
+(test-equal "#20" (flatten '()) '())
+(test-equal "#20" (flatten #f) '())
+(test-equal "#20" (flatten '(1 2 3 4 5)) '(1 2 3 4 5))
+
 (run-all-tests "sslib Tests")

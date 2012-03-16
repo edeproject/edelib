@@ -381,3 +381,31 @@ provides foldr which is more like foldl."
         (if (> n 0)
           (loop (- n 1) (cdr lst))
           lst )))))
+
+(defun partition (n lst)
+  "Partition list on sublists where each sublist have n items."
+  (if (> n 0)
+    (let1 s (take n lst)
+	  (if (= n (length s))
+	    (cons s (partition n (drop n lst))) ))
+	(list) ))
+
+(defun flatten (lst)
+  "Return flat list of all nested sublists."
+  (if (list? lst)
+	(cond
+	  [(null? lst) lst]
+
+	  [(list? (car lst))
+	    (append (flatten (car lst))
+				(flatten (cdr lst)) )]
+	  [else
+		(cons (car lst) (flatten (cdr lst))) ])))
+
+;;
+;; interpreter specific stuff
+;;
+
+(defun edelib-scheme-objects ()
+  "Return list of currently existing objects inside interpreter."
+  (map car (oblist)))
