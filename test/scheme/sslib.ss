@@ -101,4 +101,8 @@
 
 (test-equal "#17" (take 1000 '()) '())
 
+(test-equal "#18" (drop 1 '(1 2 3 4)) '(2 3 4))
+(test-equal "#18" (drop 1000 '()) '())
+(test-equal "#18" (drop 3 '(1 2 3)) '())
+
 (run-all-tests "sslib Tests")

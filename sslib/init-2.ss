@@ -370,3 +370,14 @@ provides foldr which is more like foldl."
     (if-not= lst '()
       (cons (car lst)
             (take (- n 1) (cdr lst)) ))))
+
+(defun drop (n lst)
+  "Return new list without first n elements."
+  (let1 len (length lst)
+    (if (> n len)
+      lst
+      (let loop ([n   n]
+                 [lst lst])
+        (if (> n 0)
+          (loop (- n 1) (cdr lst))
+          lst )))))
