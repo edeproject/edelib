@@ -107,6 +107,18 @@ this list with 'add-to-include-path' and 'remove-from-include-path' functions.")
 ;; core extensions
 ;;
 
+(add-doc "first" "Return first element from the list. If list is empty, contrary to 'car' it will only return #f.")
+(define (first lst)
+  (if (null? lst)
+    #f
+    (car lst)))
+
+(add-doc "rest" "Return list without first element. Same as 'cdr' except it will return #f when list is empty.")
+(define (rest lst)
+  (if (null? lst)
+    #f
+    (cdr lst)))
+
 (add-doc "print" "Print values to stdout.")
 (define (print . args)
   (for-each display args))
@@ -272,8 +284,8 @@ is equivalent to:
 (define-macro (-> x form . body)
   (if (pair? body)
     `(-> (-> ,x ,form) ,@body)
-	(if (list? form)
-	  `(,(car form) ,x ,@(cdr form))
+    (if (list? form)
+      `(,(car form) ,x ,@(cdr form))
       (list form x) )))
 
 (add-macro-doc "->>" "Same as '->' except x is inserted as last item in
@@ -284,9 +296,9 @@ is the same as:
 (define-macro (->> x form . body)
   (if (pair? body)
     `(->> (->> ,x ,form) ,@body)
-	(if (list? form)
-	  `(,(car form) ,@(cdr form) ,x)
-	  (list form x) )))
+    (if (list? form)
+      `(,(car form) ,@(cdr form) ,x)
+      (list form x) )))
 
 (defun nth (n collection)
   "Returns index 'n' at given collection. Collection can be list, vector or string. In case of vector
@@ -356,13 +368,13 @@ used for comparison."
 provides foldr which is more like foldl."
   (if (null? lst)
     x
-	(f (car lst) (fold-right f x (cdr lst))) ))
+    (f (car lst) (fold-right f x (cdr lst))) ))
 
 (defun fold-left (f x lst)
   "Implementation of scheme's foldl."
   (if (null? lst)
     x
-	(fold-left f (f x (car lst)) (cdr lst)) ))
+    (fold-left f (f x (car lst)) (cdr lst)) ))
 
 (defun take (n lst)
   "Take n elements from given list."
@@ -386,21 +398,34 @@ provides foldr which is more like foldl."
   "Partition list on sublists where each sublist have n items."
   (if (> n 0)
     (let1 s (take n lst)
-	  (if (= n (length s))
-	    (cons s (partition n (drop n lst))) ))
-	(list) ))
+      (if (= n (length s))
+        (cons s (partition n (drop n lst))) ))
+    (list) ))
 
 (defun flatten (lst)
   "Return flat list of all nested sublists."
   (if (list? lst)
-	(cond
-	  [(null? lst) lst]
+    (cond
+      [(null? lst) lst]
 
-	  [(list? (car lst))
-	    (append (flatten (car lst))
-				(flatten (cdr lst)) )]
-	  [else
-		(cons (car lst) (flatten (cdr lst))) ])))
+      [(list? (car lst))
+        (append (flatten (car lst))
+                (flatten (cdr lst)) )]
+      [else
+        (cons (car lst) (flatten (cdr lst))) ])))
+
+(defun memoize (func)
+  "Returns memoized function. This is a function that will keep cached results among
+calls with the same parameters. Can speed up often called functions."
+  (let1 memo '()
+    (lambda args
+      (let1 cached (assoc args memo)
+        (if cached
+          (cadr cached)
+          (let1 result (apply func args)
+            (set! memo
+                  (cons (list args result) memo))
+            result ))))))
 
 ;;
 ;; interpreter specific stuff
