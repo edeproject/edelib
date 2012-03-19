@@ -2,7 +2,7 @@
  * $Id$
  *
  * Scheme interpeter
- * Copyright (c) 2005-2011 edelib authors
+ * Copyright (c) 2005-2012 edelib authors
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,9 +18,14 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+#include <edelib/Missing.h>
 #include <edelib/Scheme.h>
 #include <edelib/Version.h>
 #include <edelib/Directory.h>
+#include <edelib/Debug.h>
 
 scheme *edelib_scheme_init(void) {
 	scheme *s;
@@ -32,6 +37,28 @@ scheme *edelib_scheme_init(void) {
 
 	sym = edelib_scheme_mk_symbol(s, "*edelib-version*");
 	edelib_scheme_define(s, EDELIB_SCHEME_GLOBAL_ENV(s), sym, edelib_scheme_mk_string(s, EDELIB_VERSION));
+
+	/* load init files; it is a list of files separated with ':' */
+	char *paths = getenv("EDELIB_SCHEME_INIT");
+	if(paths) {
+		char *tmp = edelib_strndup(paths, 256);
+		FILE *fd  = NULL;
+
+		for(char *p = strtok(tmp, ":"); p; p = strtok(NULL, ":")) {
+			fd = fopen(p, "r");
+
+			if(!fd) {
+				E_WARNING(E_STRLOC ": unable to open '%s'. Skipping...\n", p);
+				continue;
+			}
+
+			edelib_scheme_load_file(s, fd);
+			fclose(fd);
+			fd = NULL;
+		}
+
+		free(tmp);
+	}
 
 	return s;
 }

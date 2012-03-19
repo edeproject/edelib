@@ -1148,7 +1148,7 @@ static void mark(pointer a) {
 
 	t = (pointer) 0;
 	p = a;
- E2:  setmark(p);
+E2: setmark(p);
 	if(is_vector(p)) {
 		int i;
 		int n=ivalue_unchecked(p)/2+ivalue_unchecked(p)%2;
@@ -1168,14 +1168,16 @@ static void mark(pointer a) {
 		p = q;
 		goto E2;
 	}
- E5:  q = cdr(p); /* down cdr */
+
+E5: q = cdr(p); /* down cdr */
 	if (q && !is_mark(q)) {
 		cdr(p) = t;
 		t = p;
 		p = q;
 		goto E2;
 	}
- E6:   /* up.  Undo the link switching from steps E4 and E5. */ 
+
+E6: /* up.  Undo the link switching from steps E4 and E5. */ 
 	if (!t)
 		return;
 	q = t;
@@ -4264,7 +4266,6 @@ scheme *scheme_init_new_custom_alloc(func_alloc my_malloc, func_dealloc my_free)
 		return sc;
 	}
 }
-
 
 int scheme_init(scheme *sc) {
 	return scheme_init_custom_alloc(sc,malloc,free);

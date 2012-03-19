@@ -7,7 +7,6 @@ static void help(void) {
 	puts("Usage: edelib-script [OPTIONS] <file>");
 	puts("Options:");
 	puts("   -h   --help          display this help\n");
-	puts("   -t   --theme  <file> load file as theme\n");
 	puts("Load interpreter. If <file> was given, interpret it");
 }
 
@@ -36,8 +35,19 @@ int main(int argc, char** argv) {
 	edelib_scheme_set_input_port_file(sc, stdin);
 	edelib_scheme_set_output_port_file(sc, stdout);
 
-	printf("edelib script %s. Type \"(quit)\" to exit.", EDELIB_VERSION);
-	edelib_scheme_load_file(sc, stdin);
+	if(prompt) {
+		printf("edelib script %s. Type \"(quit)\" to exit.", EDELIB_VERSION);
+		edelib_scheme_load_file(sc, stdin);
+	} else {
+		FILE *fd = fopen(argv[1], "r");
+		if(!fd) {
+			printf("Unable to load '%s' as scheme source\n", argv[1]);
+			return 1;
+		}
+
+		edelib_scheme_load_file(sc, fd);
+		fclose(fd);
+	}
 
 	edelib_scheme_deinit(sc);
 	return 0;
