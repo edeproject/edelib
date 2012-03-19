@@ -46,6 +46,7 @@ SDBM = sdbm/$(SDBM_SRC) ;
 SOURCE = 
 	Missing.c
 	Debug.c
+	Scheme.cpp
 	Color.cpp 
 	ColorDb.cpp 
 	Config.cpp 

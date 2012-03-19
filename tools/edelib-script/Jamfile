@@ -1,7 +1,7 @@
 #
 # $Id: Jamfile 2504 2009-02-23 13:16:02Z karijes $
 #
-# Copyright (c) 2005-2011 edelib authors
+# Copyright (c) 2005-2012 edelib authors
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-SubDir TOP tools edelib-theme-script ;
+SubDir TOP tools edelib-script ;
 
-MakeTest edelib-theme-script : edelib-theme-script.cpp : $(FLTK_LIBS_FULL) -ledelib ;
-InstallProgram $(bindir) : edelib-theme-script ;
+MakeTest edelib-script : edelib-script.cpp : $(FLTK_LIBS_FULL) -ledelib ;
+InstallProgram $(bindir) : edelib-script ;

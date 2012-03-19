@@ -47,7 +47,7 @@ extern "C" {
  * \ingroup scheme
  * Initialize scheme interpreter and returns scheme object. If something fails (e.g. not enough memory, return NULL). 
  */
-#define edelib_scheme_init scheme_init_new
+scheme *edelib_scheme_init(void);
   
 /**
  * \ingroup scheme
@@ -90,6 +90,11 @@ extern "C" {
  * Calls scheme function.
  */
 #define edelib_scheme_call scheme_call
+
+#define edelib_scheme_set_input_port_file scheme_set_input_port_file
+#define edelib_scheme_set_input_port_string scheme_set_input_port_string
+#define edelib_scheme_set_output_port_file scheme_set_output_port_file
+#define edelib_scheme_set_output_port_string scheme_set_output_port_string 
 
 /* try to avoid vpr by using function like macros */
 #define edelib_scheme_gensym(sc)                 (sc)->vptr->gensym(sc)
@@ -149,7 +154,7 @@ extern "C" {
  * Define new scheme function.
  */ 
 #define EDELIB_SCHEME_DEFINE(sc, func_ptr, func_name)	                \
-  sc->vptr->scheme_define(sc, sc->gobal_env,                            \
+  sc->vptr->scheme_define(sc, sc->global_env,                           \
                               sc->vptr->mk_symbol(sc, func_name),       \
                               sc->vptr->mk_foreign_func(sc, func_ptr))  
 
@@ -158,13 +163,14 @@ extern "C" {
  * \ingroup scheme
  * Define new scheme function with documentation.
  */
-#define EDELIB_SCHEME_DEFINE2(sc, func_ptr, func_name, doc)     \
- do {                                                           \
-   scheme_load_string(sc, "(add-doc " #func_name "," #doc ")"); \
-   EDELIB_SCHEME_DEFINE(sc, func_name, func_ptr);               \
- } while(0)
+#define EDELIB_SCHEME_DEFINE2(sc, func_ptr, func_name, doc)      \
+  do {                                                           \
+	scheme_load_string(sc, "(add-doc " #func_name "," #doc ")"); \
+	EDELIB_SCHEME_DEFINE(sc, func_name, func_ptr);				 \
+  } while(0)
 
-#define EDELIB_SCHEME_OBJECT(sc) ((sc)->vptr)
+#define EDELIB_SCHEME_OBJECT(sc)     ((sc)->vptr)
+#define EDELIB_SCHEME_GLOBAL_ENV(sc) ((sc)->global_env)
 
 /**
  * \def EDELIB_SCHEME_IS_NIL
