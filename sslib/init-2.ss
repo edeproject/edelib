@@ -331,7 +331,7 @@ used for comparison."
       [else
         (cond
           [(op1 n (car lst)) (cons n lst)]
-          [(op2 n (car lst)) (cons (car lst) (insert n (cdr lst)))] ) ] ) )
+          [(op2 n (car lst)) (cons (car lst) (insert n (cdr lst)))] )]))
 
   (if (empty? lst)
     '()
@@ -343,7 +343,7 @@ used for comparison."
 
 (defun sort-vector (v)
   "Sort vector."
-  (list->vector (sort (vector->list v))))
+  (->> v vector->list sort list->vector))
 
 (defun filter (pred seq)
   "Filter sequence with given predicate."
@@ -426,6 +426,11 @@ calls with the same parameters. Can speed up often called functions."
             (set! memo
                   (cons (list args result) memo))
             result ))))))
+
+(defun compose (f g)
+  "Returns a function which is composition of functions f and g."
+  (lambda args
+	(f (apply g args))))
 
 ;;
 ;; interpreter specific stuff
