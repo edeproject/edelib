@@ -192,26 +192,48 @@
         (append cars (list car1))
         (append cdrs (list cdr1)) ))))
 
+(define (map1 proc list)
+  (if (null? list)
+    '()
+	(cons (proc (car list))
+		  (map1 proc (cdr list)))))
+
+(define (for-each1 proc list)
+  (cond
+   ((null? list)
+     #t)
+   (else
+	 (proc (car list))
+	 (for-each1 proc (cdr list)) )))
+
 (define (map proc . lists)
-  (if (null? lists)
-    (apply proc)
-    (if (null? (car lists))
-      '()
+  (cond
+    [(null? lists)
+	 (apply proc)]
+	[(null? (car lists))
+	 '()]
+	[(null? (cdr lists))
+	 (map1 proc (car lists))]
+	[else
       (let* ((unz (apply unzip1-with-cdr lists))
              (cars (car unz))
              (cdrs (cdr unz)))
-        (cons (apply proc cars) (apply map (cons proc cdrs))) ))))
+        (cons (apply proc cars) (apply map (cons proc cdrs))) )]))
 
 (define (for-each proc . lists)
-  (if (null? lists)
-    (apply proc)
-    (if (null? (car lists))
-      #t
-      (let* ((unz (apply unzip1-with-cdr lists))
-             (cars (car unz))
-             (cdrs (cdr unz)))
-        (apply proc cars)
-        (apply map (cons proc cdrs)) ))))
+  (cond
+   [(null? lists)
+	(apply proc)]
+   [(null? (car lists))
+	#t]
+   [(null? (cdr lists))
+	(for-each1 proc (car lists))]
+   [else
+     (let* ((unz (apply unzip1-with-cdr lists))
+            (cars (car unz))
+            (cdrs (cdr unz)))
+	   (apply proc cars)
+       (apply map (cons proc cdrs)) )]))
 
 (define (list-tail x k)
   (if (zero? k)
