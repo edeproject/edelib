@@ -496,6 +496,75 @@
 ; Also redefine 'package'
 (define *colon-hook* eval)
 
+;;;;; I/O
+
+(define (input-output-port? p)
+     (and (input-port? p) (output-port? p)))
+
+(define (close-port p)
+     (cond 
+          ((input-output-port? p) (close-input-port (close-output-port p)))
+          ((input-port? p) (close-input-port p))
+          ((output-port? p) (close-output-port p))
+          (else (throw "Not a port" p))))
+
+(define (call-with-input-file s p)
+     (let ((inport (open-input-file s)))
+          (if (eq? inport #f)
+               #f
+               (let ((res (p inport)))
+                    (close-input-port inport)
+                    res))))
+
+(define (call-with-output-file s p)
+     (let ((outport (open-output-file s)))
+          (if (eq? outport #f)
+               #f
+               (let ((res (p outport)))
+                    (close-output-port outport)
+                    res))))
+
+(define (with-input-from-file s p)
+     (let ((inport (open-input-file s)))
+          (if (eq? inport #f)
+               #f
+               (let ((prev-inport (current-input-port)))
+                    (set-input-port inport)
+                    (let ((res (p)))
+                         (close-input-port inport)
+                         (set-input-port prev-inport)
+                         res)))))
+
+(define (with-output-to-file s p)
+     (let ((outport (open-output-file s)))
+          (if (eq? outport #f)
+               #f
+               (let ((prev-outport (current-output-port)))
+                    (set-output-port outport)
+                    (let ((res (p)))
+                         (close-output-port outport)
+                         (set-output-port prev-outport)
+                         res)))))
+
+(define (with-input-output-from-to-files si so p)
+     (let ((inport (open-input-file si))
+           (outport (open-input-file so)))
+          (if (not (and inport outport))
+               (begin
+                    (close-input-port inport)
+                    (close-output-port outport)
+                    #f)
+               (let ((prev-inport (current-input-port))
+                     (prev-outport (current-output-port)))
+                    (set-input-port inport)
+                    (set-output-port outport)
+                    (let ((res (p)))
+                         (close-input-port inport)
+                         (close-output-port outport)
+                         (set-input-port prev-inport)
+                         (set-output-port prev-outport)
+                         res)))))
+
 ; Random number generator (maximum cycle)
 (define *seed* 1)
 (define (random-next)
