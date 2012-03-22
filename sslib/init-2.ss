@@ -432,6 +432,19 @@ calls with the same parameters. Can speed up often called functions."
   (lambda args
 	(f (apply g args))))
 
+(add-macro-doc "lazy" "Return lazy function with value caching. Calling that function (without parameters) will
+realize sequence caching return value."
+(define-macro (lazy . body)
+  (let2 forced (gensym)
+        value  (gensym)
+    `(let2 ,forced #f
+           ,value  #f
+       (lambda ()
+         (unless ,forced
+           (set! ,value (begin ,@body))
+           (set! ,forced #t))
+         ,value ))))
+
 ;;
 ;; interpreter specific stuff
 ;;
