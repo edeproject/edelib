@@ -128,35 +128,6 @@ this list with 'add-to-include-path' and 'remove-from-include-path' functions.")
   (for-each display args)
   (newline))
 
-(define (infix->prefix-func ex)
-  ;; simple check to see if we have binary operation
-  (define (binary-exp? x)
-    (and (list? x)
-         (= 3 (length x))))
-
-  ;; convert everything to prefix, and evaluate
-  (eval 
-    (if (atom? ex)
-      ex
-      (map infix->prefix-func
-           (if (binary-exp? ex)
-             (list
-               (cadr ex)    ;; operator
-               (car ex)     ;; first elem.
-               (caddr ex))  ;; second elem.
-             ex )))
-) )
-
-(define-macro (infix->prefix . args)
-  `(infix->prefix-func ',args))
-
-(add-macro-doc ":" "Infix operator. Operator precedence is not supported, so you must use parenthesis. Examples:
-(: 2 + 3)
-(: 2 + (3 - 100))
-(: 2 * (3 - (100 + 4)))")
-(define-macro (: . args)
-  `(infix->prefix-func ',args))
-
 (add-macro-doc "let1" "Form for creating single local variable; same as 'let' but in readable form. Can be used as:
 (let1 foo 3
   (println foo))")
@@ -394,6 +365,11 @@ provides foldr which is more like foldl."
           (loop (- n 1) (cdr lst))
           lst )))))
 
+(defun split-at (n lst)
+  "Split given list on two sublists from position n."
+  (list (take n lst)
+        (drop n lst)))
+
 (defun partition (n lst)
   "Partition list on sublists where each sublist have n items."
   (if (> n 0)
@@ -430,10 +406,10 @@ calls with the same parameters. Can speed up often called functions."
 (defun compose (f g)
   "Returns a function which is composition of functions f and g."
   (lambda args
-	(f (apply g args))))
+    (f (apply g args))))
 
 (add-macro-doc "lazy" "Return lazy function with value caching. Calling that function (without parameters) will
-realize sequence caching return value."
+realize sequence caching return value.")
 (define-macro (lazy . body)
   (let2 forced (gensym)
         value  (gensym)
@@ -444,6 +420,66 @@ realize sequence caching return value."
            (set! ,value (begin ,@body))
            (set! ,forced #t))
          ,value ))))
+
+;; 
+;; infix syntax
+;;
+
+(define *edelib-scheme-precedence-table*
+  '((|| 10)
+    (&& 20)
+    (== 30)
+    (=  30)
+    (!= 30)
+    (<  40)
+    (>  40)
+    (<= 40)
+    (>= 40)
+    (-  50)
+    (+  50)
+    (/  60)
+    (*  70)
+    (mod 80)))
+
+;; latest entry in *edelib-scheme-precedence-table*
+(define *edelib-scheme-precedence-table-max* 80)
+
+(define (find-lowest-precedence lst)
+  (let loop ([i           0]
+             [lst         lst]
+             [lowest-i    #f]
+             [lowest-prec *edelib-scheme-precedence-table-max*])
+
+    (if (= 0 (length lst))
+      lowest-i
+      (let3 key  (first lst)
+            val  (assq key *edelib-scheme-precedence-table*)
+            prec (if val (cadr val) #f)
+        (if (and prec
+                 (<= prec lowest-prec))
+          (loop (+ i 1) (rest lst) i prec)
+          (loop (+ i 1) (rest lst) lowest-i lowest-prec) ) ) ) ) )
+
+(define (infix->prefix lst)
+  (cond
+    [(not (list? lst))  lst]
+    [(= 1 (length lst)) (->> lst first infix->prefix)]
+    [else
+      (let1 lowest (find-lowest-precedence lst)
+        (if lowest
+          (let5 lsp (split-at lowest lst)
+                hd  (car  lsp)
+                tl  (cadr lsp)
+                op  (car tl)
+                tl  (cdr tl)
+            (list op
+                  (infix->prefix hd)
+                  (infix->prefix tl) ) )
+          lst ) ) ] ) )
+
+(add-macro-doc ":" "Infix syntax support, e.g. '(: 2 + 3 + 100 * (20 / 3))' with variable support.")
+(define-macro (: . body)
+  (infix->prefix body))
 
 ;;
 ;; interpreter specific stuff
