@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+
 #include <edelib/Missing.h>
 #include <edelib/Scheme.h>
 #include <edelib/Version.h>
@@ -58,6 +59,8 @@ scheme *edelib_scheme_init(void) {
 		}
 
 		free(tmp);
+	} else {
+		E_WARNING(E_STRLOC ": EDELIB_SCHEME_INIT wasn't set. Interpreter will load without init files\n");
 	}
 
 	return s;
