@@ -25,7 +25,7 @@
 (define *doc-data* '())
 
 (define (add-doc-generic func str type)
-  (set! *doc-data* (cons (vector func str type) *doc-data*)) )
+  (set! *doc-data* (cons (vector func str type) *doc-data*)))
 
 (define (add-doc func str)
   (add-doc-generic func str "function"))
