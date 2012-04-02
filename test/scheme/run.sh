@@ -1,6 +1,6 @@
 #!/bin/sh 
 
-export EDELIB_SCHEME_INIT="../../sslib/init.ss:../../sslib/init-2.ss"
+export EDELIB_SCHEME_INIT="../../sslib/init.ss:../../sslib/init-2.ss:../../sslib/theme.ss"
 bin="../../tools/edelib-script/edelib-script"
 ret=0
 
