@@ -418,13 +418,14 @@ protected:
 private:
 	TiXmlBase( const TiXmlBase& );				// not implemented.
 	void operator=( const TiXmlBase& base );	// not allowed.
-
+#ifndef SKIP_DOCS
 	struct Entity
 	{
 		const char*     str;
 		unsigned int	strLength;
 		char		    chr;
 	};
+#endif
 	enum
 	{
 		NUM_ENTITY = 5,

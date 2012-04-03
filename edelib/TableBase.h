@@ -205,7 +205,10 @@ private:
 	int _auto_drag;
 	int _selecting;
 
-	// An STL-ish vector without templates
+	/**
+	 * \class IntVector
+	 * \brief STL-ish vector without templates
+	 */
 	class IntVector {
 		private:
 			int *arr;
@@ -214,19 +217,30 @@ private:
 			void init() { arr = NULL; _size = 0; }
 			void copy(int *newarr, unsigned int newsize) { size(newsize); memcpy(arr, newarr, newsize * sizeof(int)); }
 		public:
+			/** Initialize empty vector. */
 			IntVector() { init(); }
+			/** Clean if there is some data. */
 			~IntVector() { if ( arr ) free(arr); arr = NULL; }
+			/** Copy constructor */
 			IntVector(IntVector&o) { init(); copy(o.arr, o._size); }
+			/** Asignment. */
 			IntVector& operator=(IntVector&o) { init(); copy(o.arr, o._size); return(*this); }
+			/** Indexing operator. */
 			int operator[](int x) const { return(arr[x]); }
+			/** Indexing operator.*/
 			int& operator[](int x) { return(arr[x]); }
+			/** Return number of items. */
 			unsigned int size() { return(_size); }
+			/** Reallocate to given size. */
 			void size(unsigned int count) {
 				if ( count != _size )
 				{ arr = (int*)realloc(arr, count * sizeof(int)); _size = count; }
 			}
+			/** Remove last element. */
 			int pop_back() { int tmp = arr[_size-1]; _size--; return(tmp); }
+			/** Append element to the end. */
 			void push_back(int val) { unsigned int x = _size; size(_size+1); arr[x] = val; }
+			/** Return last element. */
 			int back() { return(arr[_size-1]); }
 	};
 
