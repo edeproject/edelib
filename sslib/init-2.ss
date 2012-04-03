@@ -421,6 +421,15 @@ realize sequence caching return value.")
            (set! ,forced #t))
          ,value ))))
 
+(defun replace-all (what to lst)
+  "Replace all occurences of 'what' into 'to' in given list. Returns new list with replaced values."
+  (if (null? lst)
+    '()
+    (cons (if (equal? what (car lst))
+            to
+            (car lst))
+          (replace-all what to (cdr lst)) ))) 
+
 ;; 
 ;; infix syntax
 ;;
