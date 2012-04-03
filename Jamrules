@@ -274,7 +274,7 @@ rule MakeTest
 		LinkAgainst $(1) : $(3) ;
 	}
 
-	LinkAgainst $(1) : $(STDLIB) ;
+	LinkAgainst $(1) : $(STDLIB) $(DMALLOC_LIBC) $(DMALLOC_LIBCXX) ;
 }
 
 # MakeInstallPrivate <location-dir> : <targets> : <opt-file-mode> : <opt-chown> : <opt-chgrp> : <opt-name> ;

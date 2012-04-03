@@ -75,5 +75,10 @@ XDG_MIME_HAVE_MMAP ?= "@XDG_MIME_HAVE_MMAP@" ;
 # flags for tinyscheme
 SCHEME_FLAGS ?= "@SCHEME_FLAGS@" ;
 
+# dmalloc flags; explicit flags are added as dmalloc must be used
+# as last link statement
+DMALLOC_LIBC   ?= "@DMALLOC_LIBC@" ;
+DMALLOC_LIBCXX ?= "@DMALLOC_LIBCXX@" ;
+
 # do not touch this
 JAMCONFIG_READ = "yes" ;

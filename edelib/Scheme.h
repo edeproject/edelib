@@ -26,10 +26,6 @@
 # include "ts/scheme-private.h"  
 #endif
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /**
  * \defgroup scheme Scheme interpreter
  * This code provides Scheme interpreter and implements most of R5RS specification. The backend is based on
@@ -178,8 +174,5 @@ scheme *edelib_scheme_init(void);
  * Macro for checking if given variable nil (NULL in scheme parlance).
  */
 #define EDELIB_SCHEME_IS_NIL(sc, var) ((var) == sc->NIL)
-  
-#ifdef __cplusplus
-}
-#endif
+
 #endif

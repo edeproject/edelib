@@ -18,5 +18,5 @@
 
 SubDir TOP tools edelib-script ;
 
-MakeTest edelib-script : edelib-script.cpp : $(FLTK_LIBS_FULL) -ledelib ;
+MakeTest edelib-script : edelib-script.cpp : -ledelib ;
 InstallProgram $(bindir) : edelib-script ;

@@ -1,7 +1,7 @@
 #
-# $Id$
+# $Id: Jamfile 3218 2012-03-19 12:03:44Z karijes $
 #
-# Copyright (c) 2005-2007 edelib authors
+# Copyright (c) 2005-2011 edelib authors
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -16,18 +16,6 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-SubDir TOP ;
+SubDir TOP sslib ;
 
-InstallDirectory [ FDirName $(includedir) ] : [ FDirName $(TOP) edelib ] ;
-InstallFile      [ FDirName $(libdir) pkgconfig ] : [ FFileName $(TOP) edelib.pc ] ;
-InstallFile      [ FDirName $(libdir) pkgconfig ] : [ FFileName $(TOP) edelib-gui.pc ] ;
-InstallFile      [ FDirName $(libdir) pkgconfig ] : [ FFileName $(TOP) edelib-gui-no-images.pc ] ;
-InstallFile      [ FDirName $(libdir) pkgconfig ] : [ FFileName $(TOP) edelib-dbus.pc ] ;
-
-SubInclude TOP src ;
-SubInclude TOP sslib ;
-SubInclude TOP test ;
-SubInclude TOP examples ;
-SubInclude TOP doc ;
-SubInclude TOP tools ;
-SubInclude TOP po ;
+Clean distclean : init_ss.h theme_ss.h ;
