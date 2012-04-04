@@ -42,8 +42,16 @@
 /**
  * \ingroup scheme
  * Initialize scheme interpreter and returns scheme object. If something fails (e.g. not enough memory, return NULL). 
+ * This function will read EDELIB_SCHEME_INIT environment variable, to pick up bootstrap files with their paths (init.ss and init-2.ss) and will
+ * warn if EDELIB_SCHEME_INIT wasn't set. Paths should be separated with <b>:</b> (just as PATH), e.g. <i>path/init.ss:path/init-2.ss:/path/other.ss</i>.
  */
 scheme *edelib_scheme_init(void);
+
+/**
+ * \ingroup scheme
+ * Initialize scheme interpeter, but will not load any code. Useful for explicitly loading desired bootstrap code.
+ */
+#define edelib_scheme_init_raw scheme_init_new
   
 /**
  * \ingroup scheme

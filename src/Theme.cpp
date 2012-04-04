@@ -166,7 +166,7 @@ Theme::~Theme() {
 void Theme::init_interpreter(void) {
 	if(priv->sc) return;
 
-	scheme *ss = edelib_scheme_init();
+	scheme *ss = edelib_scheme_init_raw();
 	if(!ss) {
 		E_WARNING(E_STRLOC ": Unable to init interpreter\n");
 		return;
