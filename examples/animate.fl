@@ -1,0 +1,36 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0300 
+header_name {.h} 
+code_name {.cxx}
+Function {} {open
+} {
+  Fl_Window {} {
+    label {Animation demo} open selected
+    xywh {618 240 270 225} type Double visible
+  } {
+    Fl_Box {} {
+      label label
+      xywh {10 11 120 110} box THIN_DOWN_BOX
+    }
+    Fl_Button {} {
+      label {@||}
+      xywh {177 135 40 40} labelsize 20
+    }
+    Fl_Button {} {
+      label {&Close}
+      xywh {170 190 90 25}
+    }
+    Fl_Button {} {
+      label {@square}
+      xywh {219 135 40 40}
+    }
+    Fl_Button {} {
+      label {@>}
+      xywh {135 135 40 40} labelsize 20
+    }
+    Fl_Box {} {
+      label label
+      xywh {140 10 120 110} box THIN_DOWN_BOX
+    }
+  }
+} 

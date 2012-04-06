@@ -2,7 +2,7 @@
  * $Id: String.h 2594 2009-03-25 14:54:54Z karijes $
  *
  * EDE specific code
- * Copyright (c) 2010 edelib authors
+ * Copyright (c) 2010-2012 edelib authors
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,16 +24,48 @@
 #include "edelib-global.h"
 #include "Nls.h"
 
+EDELIB_NS_BEGIN
+
+/**
+ * \class ApplicationBootstrap
+ * \brief EDE application bootstrapper
+ *
+ * This class should not be called directly, it will be called from EDE_APPLICATION macro. It will essentially
+ * setup needed assets required by application, like initialize default theme, load icons and such, and after application
+ * ends, it will cleanup loaded data.
+ *
+ * When this class is used (via EDE_APPLICATION), it must be linked with libedelib_gui (and dependencies), as will load GUI specific code.
+ */
+class ApplicationBootstrap {
+public:
+	/** Initialize constructor. */
+	ApplicationBootstrap();
+	/** Cleanup. */
+	~ApplicationBootstrap();
+};
+
+EDELIB_NS_END
+
 /**
  * \def EDE_APPLICATION_WITH_NLS_PATH
  * \ingroup macros
  *
  * Initialize common EDE code with application name (must be binary name) and full path to locale directory.
  */
-#define EDE_APPLICATION_WITH_NLS_PATH(name, path)    \
-	extern int FL_NORMAL_SIZE;                       \
-	FL_NORMAL_SIZE = 12;                             \
-	EDELIB_NS_PREPEND(nls_support_init(name, path))
+#define EDE_APPLICATION_WITH_NLS_PATH(name, path)   \
+	extern int FL_NORMAL_SIZE;                      \
+	FL_NORMAL_SIZE = 12;                            \
+	EDELIB_NS_PREPEND(nls_support_init(name, path); \
+	if(is_console) EDELIB_NS_PREPEND(ApplicationBootstrap) __ede_application_bootstrap;
+
+/**
+ * \def EDE_CONSOLE_APPLICATION_WITH_NLS_PATH
+ * \ingroup macros
+ *
+ * Same as EDE_APPLICATION_WITH_NLS_PATH but only for console applications.
+ */
+#define EDE_CONSOLE_APPLICATION_WITH_NLS_PATH(name, path) \
+	EDELIB_NS_PREPEND(nls_support_init(name, path)
 
 /**
  * \def EDE_APPLICATION
@@ -52,10 +84,10 @@
  */
 #ifdef PREFIX
 # define EDE_APPLICATION(name)         EDE_APPLICATION_WITH_NLS_PATH(name, PREFIX"/share/locale")
-# define EDE_CONSOLE_APPLICATION(name) EDE_APPLICATION_WITH_NLS_PATH(name, PREFIX"/share/locale")
+# define EDE_CONSOLE_APPLICATION(name) EDE_CONSOLE_APPLICATION_WITH_NLS_PATH(name, PREFIX"/share/locale")
 #else
 # define EDE_APPLICATION(name)         EDE_APPLICATION_WITH_NLS_PATH(name, "dummy_path")
-# define EDE_CONSOLE_APPLICATION(name) EDE_APPLICATION_WITH_NLS_PATH(name, "dummy_path")
+# define EDE_CONSOLE_APPLICATION(name) EDE_CONSOLE_APPLICATION_WITH_NLS_PATH(name, "dummy_path")
 #endif
 
 #endif
