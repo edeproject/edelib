@@ -39,7 +39,7 @@ EDELIB_NS_BEGIN
 class ApplicationBootstrap {
 public:
 	/** Initialize constructor. */
-	ApplicationBootstrap();
+	ApplicationBootstrap(const char *name, const char *nls_path);
 	/** Cleanup. */
 	~ApplicationBootstrap();
 };
@@ -55,8 +55,7 @@ EDELIB_NS_END
 #define EDE_APPLICATION_WITH_NLS_PATH(name, path)   \
 	extern int FL_NORMAL_SIZE;                      \
 	FL_NORMAL_SIZE = 12;                            \
-	EDELIB_NS_PREPEND(nls_support_init(name, path); \
-	if(is_console) EDELIB_NS_PREPEND(ApplicationBootstrap) __ede_application_bootstrap;
+	EDELIB_NS_PREPEND(ApplicationBootstrap) __ede_application_bootstrap(name, path)
 
 /**
  * \def EDE_CONSOLE_APPLICATION_WITH_NLS_PATH
