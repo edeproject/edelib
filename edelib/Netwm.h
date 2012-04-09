@@ -195,6 +195,12 @@ void netwm_window_set_strut(Window win, int left, int right, int top, int bottom
 
 /**
  * \ingroup wm
+ * Remove offset, previously set with <i>netwm_window_set_strut</i>. If offset not set, it will do nothing.
+ */
+void netwm_window_remove_strut(Window win);
+
+/**
+ * \ingroup wm
  * Get array of mapped windows. Returns array size or -1 if fails. Call XFree() to free allocation.
  */
 int netwm_window_get_all_mapped(Window **windows);

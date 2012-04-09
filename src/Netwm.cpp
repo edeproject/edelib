@@ -443,6 +443,12 @@ void netwm_window_set_strut(Window win, int left, int right, int top, int bottom
 			PropModeReplace, (unsigned char*)&strut, sizeof(long) * 4);
 }
 
+void netwm_window_remove_strut(Window win) {
+	init_atoms_once();
+
+	XDeleteProperty(fl_display, win, _XA_NET_WM_STRUT);
+}
+
 int netwm_window_get_all_mapped(Window **windows) {
 	init_atoms_once();
 
