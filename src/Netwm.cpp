@@ -445,7 +445,6 @@ void netwm_window_set_strut(Window win, int left, int right, int top, int bottom
 
 void netwm_window_remove_strut(Window win) {
 	init_atoms_once();
-
 	XDeleteProperty(fl_display, win, _XA_NET_WM_STRUT);
 }
 

@@ -1,7 +1,7 @@
 #
 # $Id: Jamfile 3218 2012-03-19 12:03:44Z karijes $
 #
-# Copyright (c) 2005-2011 edelib authors
+# Copyright (c) 2005-2012 edelib authors
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -19,3 +19,4 @@
 SubDir TOP sslib ;
 
 Clean distclean : init_ss.h theme_ss.h ;
+InstallFile $(libdir)/edelib/sslib : init.ss init-2.ss theme.ss ;
