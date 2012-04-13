@@ -18,5 +18,9 @@
 
 SubDir TOP tools edelib-script ;
 
-MakeTest edelib-script : edelib-script.cpp : -ledelib ;
+if $(SHARED) {
+	ADDON = -ledelib_gui $(FLTK_LIBS_FULL) ;
+}
+
+MakeTest edelib-script : edelib-script.cpp : $(ADDON) ;
 InstallProgram $(bindir) : edelib-script ;

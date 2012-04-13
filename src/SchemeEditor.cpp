@@ -699,7 +699,7 @@ void SchemeEditor::object_color(int id, int c) {
 	unsigned int sz = sizeof(styletable) / sizeof(styletable[0]);
 	E_RETURN_IF_FAIL(sz > (unsigned int)id);
 
-	styletable[sz].color = c;
+	styletable[id].color = c;
 }
 
 void SchemeEditor::object_color(int id, const char *c) {
