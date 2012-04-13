@@ -93,6 +93,7 @@ SOURCE_GUI =
 	Menu_global.cpp
 	MessageBox.cpp
 	Netwm.cpp
+	SchemeEditor.cpp
 	SevenSeg.cpp
 	TableBase.cpp 
 	$(SDBM)

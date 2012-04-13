@@ -51,6 +51,7 @@ if $(FLTK_LIBS) {
 	MakeTest menu : menu.cpp : $(FLTK_LIBS) $(ADDONLIB) ;
 	MakeTest theme : theme.cpp : $(FLTK_LIBS) $(ADDONLIB) ;
 	MakeTest animate : animate.cpp : $(FLTK_LIBS) $(ADDONLIB) ;
+	MakeTest script_editor : script_editor.cpp : $(FLTK_LIBS) $(ADDONLIB) ;
 }
 
 if $(FLTK_LIBS) && $(SHARED) {
