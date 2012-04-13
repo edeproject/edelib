@@ -87,6 +87,9 @@ int main() {
 "  (println \"Hi \" i \" times :P\"))\n"
 );
 
+	e->object_color(6, "#314e6c");
+	e->object_color(1, "#826647");
+
 	win->end();
 	win->resizable(e);
 	win->show();

@@ -48,8 +48,7 @@ static Fl_Text_Display::Style_Table_Entry styletable[] = {     // Style table
 	{ FL_DARK_RED,   FL_COURIER,        FL_NORMAL_SIZE }, // E - Directives
 	{ FL_DARK_RED,   FL_COURIER_BOLD,   FL_NORMAL_SIZE }, // F - Types
 	{ FL_BLUE,       FL_COURIER_BOLD,   FL_NORMAL_SIZE }, // G - Keywords
-	{ FL_DARK_GREEN, FL_COURIER,        FL_NORMAL_SIZE }, // H - Parenthesis
-	{ FL_RED,        FL_COURIER_BOLD,   FL_NORMAL_SIZE }  // I - Matched Parenthesis
+	{ FL_DARK_GREEN, FL_COURIER,        FL_NORMAL_SIZE }  // H - Parenthesis
 };
 
 static const char *code_keywords[] = {

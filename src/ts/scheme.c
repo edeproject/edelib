@@ -1427,9 +1427,9 @@ static void backchar(scheme *sc, int c) {
 	port *pt;
 	if(c==EOF) return;
 	pt=sc->inport->_object._port;
-	if(pt->kind&port_file) {
+	if(pt->kind & port_file) {
 		ungetc(c,pt->rep.stdio.file);
-	} else {
+	} else if (pt->kind & port_string) {
 		if(pt->rep.string.curr!=pt->rep.string.start) {
 			--pt->rep.string.curr;
 		}
@@ -1438,9 +1438,9 @@ static void backchar(scheme *sc, int c) {
 
 INTERFACE void putstr(scheme *sc, const char *s) {
 	port *pt=sc->outport->_object._port;
-	if(pt->kind&port_file) {
+	if(pt->kind & port_file) {
 		fputs(s,pt->rep.stdio.file);
-	} else {
+	} else if(pt->kind & port_string) {
 		for(;*s;s++) {
 			if(pt->rep.string.curr!=pt->rep.string.past_the_end) {
 				*pt->rep.string.curr++=*s;
@@ -1451,9 +1451,9 @@ INTERFACE void putstr(scheme *sc, const char *s) {
 
 static void putchars(scheme *sc, const char *s, int len) {
 	port *pt=sc->outport->_object._port;
-	if(pt->kind&port_file) {
+	if(pt->kind & port_file) {
 		fwrite(s,1,len,pt->rep.stdio.file);
-	} else {
+	} else if(pt->kind & port_string) {
 		for(;len;len--) {
 			if(pt->rep.string.curr!=pt->rep.string.past_the_end) {
 				*pt->rep.string.curr++=*s++;
@@ -1464,9 +1464,9 @@ static void putchars(scheme *sc, const char *s, int len) {
 
 INTERFACE void putcharacter(scheme *sc, int c) {
 	port *pt=sc->outport->_object._port;
-	if(pt->kind&port_file) {
+	if(pt->kind & port_file) {
 		fputc(c,pt->rep.stdio.file);
-	} else {
+	} else if(pt->kind & port_string) {
 		if(pt->rep.string.curr!=pt->rep.string.past_the_end) {
 			*pt->rep.string.curr++=c;
 		}

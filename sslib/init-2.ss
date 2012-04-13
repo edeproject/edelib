@@ -490,6 +490,30 @@ realize sequence caching return value.")
 (define-macro (: . body)
   (infix->prefix body))
 
+;; Fisher-Yates shuffle using 'random-next' from init.ss
+(define (shuffle-vector! vec)
+  (let1 len (vector-length vec)
+    (let loop ([i 0]
+               [j (modulo (random-next) len)])
+      (when (< i len)
+        (let2 tmp1 (vector-ref vec i)
+              tmp2 (vector-ref vec j)
+          (vector-set! vec j tmp1)
+          (vector-set! vec i tmp2)
+
+          (loop (succ i)
+                (modulo (random-next) len) ) ) ) ) 
+    vec) )
+
+(defun shuffle (lst)
+  "Return new shuffled list. Note how this function uses 'random-next' where
+initial state will likely be the same every time, so either call (random-next) unspecified
+number of times before, or call (shuffle lst) different times within each call."
+  (->> lst
+       list->vector
+       shuffle-vector!
+       vector->list))
+
 ;;
 ;; interpreter specific stuff
 ;;

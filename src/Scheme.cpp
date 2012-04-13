@@ -33,6 +33,9 @@ scheme *edelib_scheme_init(void) {
 	pointer sym;
 
 	s = scheme_init_new();
+	scheme_set_input_port_file(s, stdin);
+	scheme_set_output_port_file(s, stdout);
+
 	sym = edelib_scheme_mk_symbol(s, "*edelib-dir-separator*");
 	edelib_scheme_define(s, EDELIB_SCHEME_GLOBAL_ENV(s), sym, edelib_scheme_mk_string(s, E_DIR_SEPARATOR_STR));
 
