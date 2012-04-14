@@ -22,12 +22,13 @@ public:
 	virtual int handle(int e);
 };
 
+/* functions called from scheme */
 static pointer quit_editor(scheme *sc, pointer args) {
 	if(ask("You are going to quit editor. Proceed?"))
 		win->hide();
 	return sc->T;
 }
-	
+
 MyEditor::MyEditor(int X, int Y, int W, int H, const char *l) : SchemeEditor(X, Y, W, H, l) {
 	sc = edelib_scheme_init_raw();
 	FILE *fd;
@@ -40,6 +41,7 @@ MyEditor::MyEditor(int X, int Y, int W, int H, const char *l) : SchemeEditor(X, 
 
 	edelib_scheme_set_input_port_file(sc, stdin);
 	edelib_scheme_set_output_port_string(sc, eval_buf, eval_buf + sizeof(eval_buf));
+
 	EDELIB_SCHEME_DEFINE(sc, quit_editor, "quit");
 }
 
@@ -89,7 +91,7 @@ int main() {
 
 	e->object_color(6, "#314e6c");
 	e->object_color(1, "#826647");
-
+	e->wrap_mode(Fl_Text_Display::WRAP_AT_BOUNDS, e->w());
 	win->end();
 	win->resizable(e);
 	win->show();

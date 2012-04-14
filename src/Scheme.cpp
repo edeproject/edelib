@@ -28,6 +28,9 @@
 #include <edelib/Directory.h>
 #include <edelib/Debug.h>
 
+/* where to find init files if they are not given */
+#define EDELIB_SCHEME_DEFAULT_LIB_PATH EDELIB_INSTALL_PREFIX "/lib/edelib/sslib"
+
 scheme *edelib_scheme_init(void) {
 	scheme *s;
 	pointer sym;
@@ -63,7 +66,23 @@ scheme *edelib_scheme_init(void) {
 
 		free(tmp);
 	} else {
-		E_WARNING(E_STRLOC ": EDELIB_SCHEME_INIT wasn't set. Interpreter will load without init files\n");
+		FILE *fd;
+		char path[PATH_MAX];
+		const char *init_files[] = {"init.ss", "init-2.ss", 0};
+		bool found_files = false;
+
+		for(int i = 0; init_files[i]; i++) {
+			snprintf(path, sizeof(path), "%s/%s", EDELIB_SCHEME_DEFAULT_LIB_PATH, init_files[i]);
+			fd = fopen(path, "r");
+			if(fd) {
+				found_files = true;
+				edelib_scheme_load_file(s, fd);
+				fclose(fd);
+			}
+		}
+
+		if(!found_files)
+			E_WARNING(E_STRLOC ": EDELIB_SCHEME_INIT wasn't set. Interpreter will load without init files\n");
 	}
 
 	return s;

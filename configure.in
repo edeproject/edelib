@@ -198,6 +198,10 @@ _____EOF
 	 echo "#define EDELIB_HAVE_FLTK_XFT 1" >> $outfile
  fi
 
+ if test "x$prefix" != "x"; then
+	 echo "#define EDELIB_INSTALL_PREFIX \"$prefix\"" >> $outfile
+ fi
+
  cat >> $outfile <<\_____EOF
 
 #endif
@@ -209,6 +213,7 @@ _____EOF
  have_dbus=$have_dbus
  have_libxpm=$have_libxpm
  fltk_have_xft=$fltk_have_xft
+ prefix=$prefix
 ])
 
 AC_OUTPUT([
