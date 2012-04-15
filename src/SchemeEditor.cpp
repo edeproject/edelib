@@ -662,7 +662,7 @@ int SchemeEditor::handle(int e) {
 					deep--;
 
 					if(deep == 0) {
-						buffer()->highlight(p, pos);
+						buffer()->highlight(p, pos + 1);
 						return ret;
 					}
 				}
@@ -683,7 +683,7 @@ int SchemeEditor::handle(int e) {
 					deep--;
 
 					if(deep == 0) {
-						buffer()->highlight(pos, p);
+						buffer()->highlight(pos, p + 1);
 						return ret;
 					}
 				}

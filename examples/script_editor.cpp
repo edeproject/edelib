@@ -50,9 +50,17 @@ MyEditor::~MyEditor() {
 }
 
 void MyEditor::eval_selection(void) {
-	if(!buffer()->selected()) return;
+	char *copy = NULL;
 
-	char *copy = buffer()->selection_text();
+	if(buffer()->selected()) {
+		copy = buffer()->selection_text();
+	} else {
+		/* check if we got something highlighted from parenthesis match */
+		copy = buffer()->highlight_text();
+	}
+
+	if(!copy) return;
+		
 	edelib_scheme_load_string(sc, copy);
 	free(copy);
 
