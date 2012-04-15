@@ -36,14 +36,18 @@
  * - <a href="http://www.ccs.neu.edu/home/dorai/t-y-scheme/t-y-scheme.html">Teach Yourself Scheme in Fixnum Days</a>
  * - <a href="http://www.shido.info/lisp/idx_scm_e.html">Yet Another Scheme Tutorial</a>
  *
+ * To initialize interpreter you start with <i>edelib_scheme_init</i> or <i>edelib_scheme_init_raw</i>, which will return interpreter
+ * object. As interpreter does not use any global state, you can safely run multiple interpreter instances in different threads.
+ *
  * \todo Complete docs.
  */
 
 /**
  * \ingroup scheme
- * Initialize scheme interpreter and returns scheme object. If something fails (e.g. not enough memory, return NULL). 
- * This function will read EDELIB_SCHEME_INIT environment variable, to pick up bootstrap files with their paths (init.ss and init-2.ss) and will
- * warn if EDELIB_SCHEME_INIT wasn't set. Paths should be separated with <b>:</b> (just as PATH), e.g. <i>path/init.ss:path/init-2.ss:/path/other.ss</i>.
+ * Initialize scheme interpreter and returns scheme object. By default, it will try to search bootstrap files in builtin path
+ * (depends on <i>--prefix</i> when <b>configure</b> script was run). This can be overridden by setting <i>EDELIB_SCHEME_INIT</i>
+ * environment variable with explicitly given bootstrap files and their absolute path. The paths should be separated with <b>:</b>
+ * (just as PATH), e.g. <i>path/init.ss:path/init-2.ss:/path/other.ss</i>.
  */
 scheme *edelib_scheme_init(void);
 
@@ -95,9 +99,28 @@ scheme *edelib_scheme_init(void);
  */
 #define edelib_scheme_call scheme_call
 
+/**
+ * \ingroup scheme
+ * Set FILE object as input port.
+ */
 #define edelib_scheme_set_input_port_file scheme_set_input_port_file
-#define edelib_scheme_set_input_port_string scheme_set_input_port_string
+
+/**
+ * \ingroup scheme
+ * Set FILE object as output port.
+ */
 #define edelib_scheme_set_output_port_file scheme_set_output_port_file
+
+/**
+ * \ingroup scheme
+ * Set character array as input port. You should give pointer to the first element and pointer to the last.
+ */
+#define edelib_scheme_set_input_port_string scheme_set_input_port_string
+
+/**
+ * \ingroup scheme
+ * Set character array as output port. You should give pointer to the first element and pointer to the last.
+ */
 #define edelib_scheme_set_output_port_string scheme_set_output_port_string 
 
 /* try to avoid vpr by using function like macros */

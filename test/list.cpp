@@ -213,6 +213,33 @@ UT_FUNC(ListTestEqual, "Test list equality operators")
 	UT_VERIFY( l1 != l2 );
 }
 
+struct DummyStructForListTest {
+	int a,b;
+};
+
+UT_FUNC(ListTestArrow, "Test list -> operator")
+{
+	list<DummyStructForListTest> lst;
+	DummyStructForListTest d1, d2;
+	d1.a = d1.b = 1;
+
+	d2.a = 3;
+	d2.b = 100;
+
+	lst.push_back(d1);
+	lst.push_back(d2);
+
+	list<DummyStructForListTest>::iterator it = lst.begin();
+
+	UT_VERIFY(it->a == 1);
+	UT_VERIFY(it->b == 1);
+
+	++it;
+
+	UT_VERIFY(it->a == 3);
+	UT_VERIFY(it->b == 100);
+}
+
 static bool reverse_cmp(const int& v1, const int& v2) { return v1 > v2; }
 
 UT_FUNC(ListTestSort, "Test list sort")

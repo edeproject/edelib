@@ -48,6 +48,12 @@ struct ListIterator {
 		return *(T*)node->value;
 	}
 
+	T* operator->(void) const {
+		E_ASSERT(node != 0 && "Bad code! Access to zero node!!!"); 
+		E_ASSERT(node->value != 0 && "Bad code! Dereferencing NULL value!!!"); 
+		return (T*)node->value;
+	}
+
 	bool operator!=(const ListIterator& other) const { return node != other.node; }
 	bool operator==(const ListIterator& other) const { return node == other.node; }
 	ListIterator& operator++(void) { node = node->next; return *this; }
@@ -70,6 +76,12 @@ struct ListConstIterator {
 		E_ASSERT(node != 0 && "Bad code! Access to zero node!!!"); 
 		E_ASSERT(node->value != 0 && "Bad code! Dereferencing NULL value!!!"); 
 		return *(T*)node->value;
+	}
+
+	const T* operator->(void) const { 
+		E_ASSERT(node != 0 && "Bad code! Access to zero node!!!"); 
+		E_ASSERT(node->value != 0 && "Bad code! Dereferencing NULL value!!!"); 
+		return (T*)node->value;
 	}
 
 	bool operator!=(const ListConstIterator& other) const { return node != other.node; }
