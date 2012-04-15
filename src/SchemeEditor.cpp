@@ -1,31 +1,25 @@
-//
-// "$Id: editor.cxx 8602 2011-04-18 11:29:30Z manolo $"
-//
-// A simple text editor program for the Fast Light Tool Kit (FLTK).
-//
-// This program is described in Chapter 4 of the FLTK Programmer's Guide.
-//
-// Copyright 1998-2010 by Bill Spitzak and others.
-//
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Library General Public
-// License as published by the Free Software Foundation; either
-// version 2 of the License, or (at your option) any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Library General Public License for more details.
-//
-// You should have received a copy of the GNU Library General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA.
-//
-// Please report all bugs and problems on the following page:
-//
-//     http://www.fltk.org/str.php
-//
+/*
+ * $Id: String.h 2839 2009-09-28 11:36:20Z karijes $
+ *
+ * Fl_Text_Editor enhacement for scheme editing
+ * Copyright (c) 2005-2012 edelib authors
+ * 
+ * This program is described in Chapter 4 of the FLTK Programmer's Guide.
+ * Copyright 1998-2010 by Bill Spitzak and others.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include <edelib/SchemeEditor.h>
 #include <edelib/Debug.h>
