@@ -128,6 +128,10 @@ this list with 'add-to-include-path' and 'remove-from-include-path' functions.")
   (for-each display args)
   (newline))
 
+(add-doc "empty?" "Check if given list is empty.")
+(define (empty? lst)
+  (= 0 (length lst)))
+
 (add-macro-doc "let1" "Form for creating single local variable; same as 'let' but in readable form. Can be used as:
 (let1 foo 3
   (println foo))")
@@ -293,9 +297,6 @@ or string, access is in constant time. For list, it is linear."
 (defun sort-with-operators (lst op1 op2)
   "Sort given list 'lst' using insertion sort. 'op1' and 'op2' are operators
 used for comparison."
-  (define (empty? lst)
-    (= 0 (length lst)))
-
   (define (insert n lst)
     (cond
       [(empty? lst) (cons n lst)]
