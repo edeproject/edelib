@@ -338,34 +338,55 @@ int netwm_workspace_get_current(void) {
 }
 
 int netwm_workspace_get_names(char**& names) {
-	init_atoms_once();
+	names = 0;
 
-	/* FIXME: add _NET_SUPPORTING_WM_CHECK and _NET_SUPPORTED ??? */
-	XTextProperty wnames;
-	XGetTextProperty(fl_display, RootWindow(fl_display, fl_screen), &wnames, _XA_NET_DESKTOP_NAMES);
+	int wc = netwm_workspace_get_count();
+	if(wc <= 0) return 0;
 
-	/* if wm does not understainds _NET_DESKTOP_NAMES this is not set */
-	if(!wnames.nitems || !wnames.value)
-		return 0;
+	/* TODO: add _NET_SUPPORTING_WM_CHECK and _NET_SUPPORTED ??? */
+	Atom real;
+	int format, status;
+	unsigned long n, extra;
+	unsigned char* prop = 0;
 
-	int nsz;
+	status = XGetWindowProperty(fl_display, RootWindow(fl_display, fl_screen),
+								_XA_NET_DESKTOP_NAMES, 0L, 0x7fffffff, False, _XA_UTF8_STRING , &real, &format, &n, &extra,
+								(unsigned char**)&prop);
 
-	/*
-	 * FIXME: Here should as alternative Xutf8TextPropertyToTextList since
-	 * many wm's set UTF8_STRING property. Below is XA_STRING and for UTF8_STRING will fail.
-	 */
-	if(!XTextPropertyToStringList(&wnames, &names, &nsz)) {
-		XFree(wnames.value);
-		return 0;
+	if(status == Success && prop) {
+		char *content = (char *)prop;
+		int  len;
+
+		/*
+		 * using 'new' operator for array allocation will remove valgrind's warning
+		 * for invalid size when last element is marked as 0
+		 */
+		names = new char*[wc + 1];
+
+		for(int i = 0; i < wc; i++) {
+			len = strlen(content);
+			names[i] = strdup(content);
+			content += len + 1;
+		}
+
+		/* mark end of array */
+		names[wc] = 0;
+		XFree(prop);
 	}
 
-	XFree(wnames.value);
-	return nsz;
+	return wc;
 }
 
 void netwm_workspace_free_names(char **names) {
 	E_RETURN_IF_FAIL(names);
-	XFreeStringList(names);
+	int i;
+
+	for(i = 0; names[i]; i++)
+		free(names[i]);
+
+	free(names[i]);
+	delete [] names;
+	names = 0;
 }
 
 void netwm_window_set_type(Window win, int t) {
