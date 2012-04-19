@@ -30,7 +30,7 @@ static void internal_logger(int type, const char *domain, const char *msg);
 static EdelibErrorHandlerType do_log = internal_logger;
 
 #ifdef __GLIBC__
- #include <execinfo.h>
+#include <execinfo.h>
 
 static void __dump_stack(int fd) {
 	/* stacktrace depth calls */
@@ -46,7 +46,7 @@ static void __dump_stack(int fd) {
  fprintf(err, "----------------------\n")
 #else
  #define DUMP_STACK(err, fd)
-#endif
+#endif /* __GLIBC__ */
 
 
 static void internal_logger(int type, const char *domain, const char *msg) {
