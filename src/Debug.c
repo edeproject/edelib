@@ -48,7 +48,6 @@ static void __dump_stack(int fd) {
  #define DUMP_STACK(err, fd)
 #endif /* __GLIBC__ */
 
-
 static void internal_logger(int type, const char *domain, const char *msg) {
 	if(domain)
 		fprintf(stderr, "[%s] %s", domain, msg);

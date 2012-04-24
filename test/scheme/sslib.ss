@@ -118,4 +118,7 @@
 (test-equal "#21" (replace-all 1 100 '(2 3 4 5 6)) '(2 3 4 5 6))
 (test-equal "#21" (replace-all '<> "foo" '(2 3 <> "boo" <> <> "moo")) '(2 3 "foo" "boo" "foo" "foo" "moo"))
 
+;; integer->char fixes
+(test-equal "#22" (integer->char 256) #\nul)
+
 (run-all-tests "sslib Tests")

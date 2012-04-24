@@ -1782,6 +1782,7 @@ static void atom2str(scheme *sc, pointer l, int f, char **pp, int *plen) {
 		}
 	} else if (is_character(l)) {
 		int c=charvalue(l);
+		if(c < 0) return;
 		p = sc->strbuff;
 		if (!f) {
 			p[0]=c;
@@ -1811,7 +1812,14 @@ static void atom2str(scheme *sc, pointer l, int f, char **pp, int *plen) {
 					break;
 				}
 #endif
-				snprintf(p, STRBUFFSIZE, "#\\%c",c);
+				/*
+				 * Sanel: I'm not sure how exactly integer->char should look like, but from guile I'm seeing
+				 * how for > 127 it will return octal values, so eg. (integer->char 128) == #\200
+				 */
+				if(c >= 128)
+					snprintf(p, STRBUFFSIZE, "#\\%o", c);
+				else
+					snprintf(p, STRBUFFSIZE, "#\\%c", c);
 				break;
 			}
 		}
@@ -3040,7 +3048,7 @@ static pointer opexe_2(scheme *sc, enum scheme_opcodes op) {
 	case OP_INT2CHAR: { /* integer->char */
 		unsigned char c;
 		c=(unsigned char)ivalue(car(sc->args));
-		s_return(sc,mk_character(sc,(char)c));
+		s_return(sc,mk_character(sc,(unsigned char)c));
 	}
 
 	case OP_CHARUPCASE: {
