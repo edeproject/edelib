@@ -16,9 +16,7 @@
 ;; You should have received a copy of the GNU Lesser General Public License
 ;; along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-;;
-;; documentation system
-;;
+;;; documentation system
 
 ;; each element will be in form (vector <func name> <doc> <type>))
 ;; where <type> can be in form "function" "variable" or "macro"
@@ -61,9 +59,7 @@
 (add-doc "add-macro-doc" "Add documentation for macro.")
 (add-doc "add-var-doc" "Add documentation for variable.")
 
-;;
-;; include facility
-;;
+;;; include facility
 
 (or (defined? '*include-path*)
     (define *include-path* (list)))
@@ -103,9 +99,7 @@ this list with 'add-to-include-path' and 'remove-from-include-path' functions.")
             *include-path*
 ) )
 
-;;
-;; core extensions
-;;
+;;; core extensions
 
 (add-doc "first" "Return first element from the list. If list is empty, contrary to 'car' it will only return #f.")
 (define (first lst)
@@ -431,9 +425,7 @@ realize sequence caching return value.")
             (car lst))
           (replace-all what to (cdr lst)) ))) 
 
-;; 
-;; infix syntax
-;;
+;;; infix syntax
 
 (define *edelib-scheme-precedence-table*
   '((|| 10)
@@ -515,9 +507,7 @@ number of times before, or call (shuffle lst) different times within each call."
        shuffle-vector!
        vector->list))
 
-;;
-;; interpreter specific stuff
-;;
+;;; interpreter specific stuff
 
 (defun edelib-scheme-objects ()
   "Return list of currently existing objects inside interpreter."
