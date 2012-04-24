@@ -131,7 +131,7 @@ void ThemeLoader::apply_common_gui_elements(void) {
 			IconLoader::reload(buf);
 	}
 
-	if(t->get_item("ede", "scroll_width", sh, (long)Fl::scrollbar_size())) {
+	if(t->get_item("ede", "scrollbar_width", sh, (long)Fl::scrollbar_size())) {
 		Fl::scrollbar_size((int)sh);
 	}
 

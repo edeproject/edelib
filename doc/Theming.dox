@@ -27,8 +27,8 @@ theme code. Actually, edelib::Theme provides a full Scheme language (based on
 parts of it.
 
 \section themeintro_concepts Concepts
-Theme introduces a few terms, known from other toolkits and environments. Some have pretty the same
-meaning, some have a different one.
+Theme is introducing a few terms known from other toolkits and environments, where some have pretty the same
+meaning and some have a different one.
 
 \subsection themeintro_style Style
 %Theme style is a set of elements with values. Elements can be anything, like font size or background color.
@@ -39,10 +39,8 @@ will be used.
 
 \subsection themeintro_scheme Scheme
 Scheme is engine for painting widgets. Scheme is term from FLTK (see Fl::scheme() in FLTK documentation)
-and, for God sake, do not confuse it with Scheme language :)
-
-To simplify the things, scheme is for FLTK as <em>engines</em> for GTK+. Schemes are implemented in C++
-and uses FLTK low level drawing facility to paint widget elements.
+and should not be confused with Scheme language; you can see schemes for FLTK as <em>engines</em> for GTK+.
+Schemes are implemented in C++ and uses FLTK low level drawing facility to paint widget elements.
 
 Currently schemes can't be extended and theme loader uses a few of them already built in FLTK code.
 
@@ -55,7 +53,6 @@ Theme file is the file with one or bunch of styles. First file loaded from every
 (ewt here means Ede Widget Theme). Here is an example how <em>main.ewt</em> can look like:
 \code
 ;; this is a comment
-; a comment too
 
 (theme.name   "Sample Theme")
 (theme.author "John Foo <john@foo.com>")
@@ -63,10 +60,10 @@ Theme file is the file with one or bunch of styles. First file loaded from every
 
 (theme.style "ede" [
   scheme             "gtk+"
-  background_color   "#ffffff"
+  background_color   "dark slate gray"
   background_color2  "#043456"
   foreground_color   "red"
-  font_normal        "-schumacher-*-medium-*-*-*-12-*-*-*-*-*-*-*"
+  font               "sans 12"
   icon_theme         "edeneu"
 ])
 \endcode
