@@ -138,7 +138,9 @@ public:
 	bool load(const char* fname);
 
 	/**
-	 * Save content to the file.
+	 * Save content to the file. Note however that content will be first stored in temporary
+	 * file, then will be renamed to final location; with this it is safe to use this function
+	 * in places where folders are monitored for changes too.
 	 *
 	 * \return true if file saving was ok, otherwise false.
 	 * \param fname path to store config file.

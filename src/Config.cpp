@@ -21,6 +21,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
+#include <sys/stat.h>
 
 #include <edelib/Config.h>
 #include <edelib/TempFile.h>
@@ -422,15 +423,18 @@ bool Config::save(const char* fname) {
 			fprintf(f, "\n");
 	}
 
+	/* explicitly flush */
+	fflush(f);
 	t.close();
+
 	E_ASSERT(t.name() && "Temporary name NULL. Report this as bug");
 
 	if(rename(t.name(), fname) != 0) {
 		E_WARNING("Unable to save to '%s'\n", fname);
 		return false;
-	}
+	} 
 
-	t.unlink();
+	chmod(fname, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH);
 	return true;
 }
 
