@@ -356,6 +356,7 @@ String icon_chooser(const char* dir) {
 	IconChooser ic;
 	ic.load(dir);
 
+	ic.set_modal();
 	ic.show();
 	while(ic.visible())
 		Fl::wait();
@@ -376,6 +377,7 @@ String icon_chooser(IconSizes sz, IconContext ctx) {
 		ic.load_from_list(all);
 	}
 
+	ic.set_modal();
 	ic.show();
 	while(ic.visible())
 		Fl::wait();
