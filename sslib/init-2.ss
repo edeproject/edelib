@@ -288,24 +288,24 @@ or string, access is in constant time. For list, it is linear."
     [else
       (error _"Unknown collection type") ]))
 
-(defun sort-with-operators (lst op1 op2)
-  "Sort given list 'lst' using insertion sort. 'op1' and 'op2' are operators
-used for comparison."
+(defun sort-with-operator (lst op)
+  "Sort given list 'lst' using insertion sort. 'op' is operator used for comparison."
   (define (insert n lst)
     (cond
       [(empty? lst) (cons n lst)]
       [else
-        (cond
-          [(op1 n (car lst)) (cons n lst)]
-          [(op2 n (car lst)) (cons (car lst) (insert n (cdr lst)))] )]))
+        (if (op n (car lst))
+			(cons n lst)
+			(cons (car lst)
+				  (insert n (cdr lst))) ) ] ) )
 
   (if (empty? lst)
     '()
-    (insert (car lst) (sort (cdr lst))) ))
+    (insert (car lst) (sort-with-operator (cdr lst) op)) ) )
 
 (defun sort (lst)
-  "Sort list."
-  (sort-with-operators lst <= >))
+  "Sort list using < operator."
+  (sort-with-operator lst <))
 
 (defun sort-vector (v)
   "Sort vector."
