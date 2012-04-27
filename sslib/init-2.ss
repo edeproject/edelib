@@ -101,6 +101,13 @@ this list with 'add-to-include-path' and 'remove-from-include-path' functions.")
 
 ;;; core extensions
 
+(add-doc "eval-string" "Evaluate string. The string can be any valid scheme expression as long as is provided as
+single expression (e.g. as '(+ 1 2 3)' but not multiple one, e.g. '(+ 1 2 3) (+ 3 4)').")
+(define (eval-string str)
+  (eval
+    (with-input-from-string str
+	  (lambda () (read)) ) ) )
+
 (add-doc "first" "Return first element from the list. If list is empty, contrary to 'car' it will only return #f.")
 (define (first lst)
   (if (null? lst)
@@ -511,7 +518,8 @@ number of times before, or call (shuffle lst) different times within each call."
 
 (defun list->string (lst)
   "Convert list to string."
-  (let1 ret "("
+  (let2 len (length lst)
+		ret "("
       
     (define (str-append! s add-space)
       (set! ret (string-append ret s))
