@@ -507,6 +507,45 @@ number of times before, or call (shuffle lst) different times within each call."
        shuffle-vector!
        vector->list))
 
+;;; to string conversions
+
+(defun list->string (lst)
+  "Convert list to string."
+  (let1 ret "("
+      
+    (define (str-append! s add-space)
+      (set! ret (string-append ret s))
+      (if add-space
+        (set! ret (string-append ret " "))))
+
+    (let loop ([lst lst])
+      (for-each (lambda (x)
+                  (cond
+                    [(list? x)
+                     (str-append! "(" #f)
+                     (loop x)
+                     (str-append! ") " #f)]
+
+                    [(vector? x)
+                     (str-append! "#(" #f)
+                     (loop (vector->list x))
+                     (str-append! ") " #f)]
+
+                    ;; hm... bug probably, as (atom? vector) => #t
+                    [(atom? x) (str-append! (atom->string x) #t)]
+                    [else
+                      (error "Unknown type in 'list->string'. Got:" x) ] ) )
+                lst ) )
+
+    ;; close everything
+    (str-append! ")" #f)
+    ret
+) )
+
+(defun vector->string (vec)
+  "Convert vector to string."
+  (string-append "#" (->> (vector->list vec) list->string)))
+
 ;;; interpreter specific stuff
 
 (defun edelib-scheme-objects ()
