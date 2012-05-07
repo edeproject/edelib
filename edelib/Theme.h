@@ -23,9 +23,12 @@
 
 #include "edelib-global.h"
 
-EDELIB_NS_BEGIN
+/* make it visible outside namespace */
+struct scheme;
 
+EDELIB_NS_BEGIN
 class Theme_P;
+
 #ifndef SKIP_DOCS
 typedef void (*ThemeErrorHandler)(const char *str, void *data);
 #endif
@@ -116,8 +119,13 @@ public:
 
 	/** Return name of theme example image. */
 	const char *sample_image(void) const;
+
+	/**
+	 * Return interpreter instance and can return NULL if theme isn't loaded successfully.
+	 * This function makes sense only if you loaded some theme.
+	 */
+	scheme* get_interpreter(void);
 };
 
 EDELIB_NS_END
 #endif
-

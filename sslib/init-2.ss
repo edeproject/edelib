@@ -170,6 +170,12 @@ single expression (e.g. as '(+ 1 2 3)' but not multiple one, e.g. '(+ 1 2 3) (+ 
           [,i ,j])
      ,@body))
 
+(add-macro-doc "letn" "Allow unlimited number of bindings to be created in single form, like in Clojure.
+All bindings can be used in the next one, as 'let*' is used for the final construction.")
+(define-macro (letn form . body)
+  `(let* ,(partition 2 form)
+	 ,@body))
+
 (add-macro-doc "if-not" "Same as (if (not x)).")
 (define-macro (if-not p . body)
   `(if (not ,p)

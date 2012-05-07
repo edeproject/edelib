@@ -416,4 +416,9 @@ const char* Theme::sample_image(void) const {
 	return priv->sample;
 }
 
+scheme* Theme::get_interpreter(void) {
+	E_RETURN_VAL_IF_FAIL(priv->sc != NULL, NULL);
+	return priv->sc;
+}	
+
 EDELIB_NS_END
