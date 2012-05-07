@@ -112,6 +112,9 @@ static bool parse_font(const char *font, char *ret, int &sz, int maxlen) {
 	/* include space for '\0' */
 	len++;
 
+	/* nothing valuable found */
+	E_RETURN_VAL_IF_FAIL(len > 0, false);
+
 	sz = atoi(nbuf);
 	edelib_strlcpy(ret, font, len);
 
@@ -198,7 +201,7 @@ bool FontCache::find(const char *n, Fl_Font &font, int &font_size) {
 	int  facesz;
 	
 	if(!parse_font(n, face, facesz, FONT_CACHE_FACE_LEN_WITH_SIZE)) {
-		E_WARNING(E_STRLOC ": Unable to parse '%s' as font\n", n);
+		E_WARNING(E_STRLOC ": Unable to parse '%s' as valid font name\n", n);
 		return false;
 	}
 
