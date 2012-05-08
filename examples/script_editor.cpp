@@ -61,13 +61,13 @@ void MyEditor::eval_selection(void) {
 
 	if(!copy) return;
 		
+	memset(eval_buf, 0, sizeof(eval_buf));
+	edelib_scheme_set_output_port_string(sc, eval_buf, eval_buf + sizeof(eval_buf));
+
 	edelib_scheme_load_string(sc, copy);
 	free(copy);
 
 	buffer()->append(eval_buf);
-
-	memset(eval_buf, 0, sizeof(eval_buf));
-	edelib_scheme_set_output_port_string(sc, eval_buf, eval_buf + sizeof(eval_buf));
 }
 
 int MyEditor::handle(int e) {
@@ -91,6 +91,9 @@ int main() {
 ";; and evaluate it. To do so, select some content and press <CTRL>-j keys.\n"
 "\n"
 "(println \"Hi from edelib-script!\")\n"
+"\n"
+";; If you eval the next line, you will quit the editor.\n"
+"(quit)\n"
 "\n"
 ";; Print something 10 times\n"
 "(for i in (range 1 10)\n"
