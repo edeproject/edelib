@@ -626,7 +626,7 @@ void SchemeEditor::textsize(int s) {
 		styletable[i].size = s;
 }
 
-#if (FL_MAJOR_VERSION == 1) && (FL_MINOR_VERSION >= 3)
+#if (FL_MAJOR_VERSION >= 1) && (FL_MINOR_VERSION >= 3)
 # define BUFFER_CHAR_AT(buf, i) ((buf)->char_at(i))
 #else
 # define BUFFER_CHAR_AT(buf, i) ((buf)->character(i))

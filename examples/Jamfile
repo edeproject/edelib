@@ -37,6 +37,8 @@ if $(FLTK_LIBS) {
 					xsettings_client.cpp
 					menu.cpp
 					theme.cpp
+					animate.cpp
+					script_editor.cpp
 					: $(FLTK_CFLAGS) ;
 
 	MakeTest egroup : egroup.cpp : $(FLTK_LIBS) $(ADDONLIB) ;

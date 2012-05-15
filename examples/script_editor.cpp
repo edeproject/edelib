@@ -1,3 +1,5 @@
+#include <stdlib.h>
+#include <string.h>
 #include <edelib/SchemeEditor.h>
 #include <edelib/Scheme.h>
 #include <edelib/Window.h>
@@ -102,7 +104,11 @@ int main() {
 
 	e->object_color(6, "#314e6c");
 	e->object_color(1, "#826647");
+
+#if FL_MAJOR_VERSION >= 1 && FL_MINOR_VERSION >= 3
 	e->wrap_mode(Fl_Text_Display::WRAP_AT_BOUNDS, e->w());
+#endif
+
 	win->end();
 	win->resizable(e);
 	win->show();
