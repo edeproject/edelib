@@ -19,6 +19,7 @@
  */
 
 #include <string.h>
+#include <stdlib.h>
 #include <X11/Xproto.h>
 #include <FL/Fl.H>
 #include <FL/x.H>

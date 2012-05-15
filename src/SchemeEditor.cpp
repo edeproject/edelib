@@ -626,6 +626,12 @@ void SchemeEditor::textsize(int s) {
 		styletable[i].size = s;
 }
 
+#if (FL_MAJOR_VERSION == 1) && (FL_MINOR_VERSION >= 3)
+# define BUFFER_CHAR_AT(buf, i) ((buf)->char_at(i))
+#else
+# define BUFFER_CHAR_AT(buf, i) ((buf)->character(i))
+#endif
+
 int SchemeEditor::handle(int e) {
 	int ret = Fl_Text_Editor::handle(e);
 
@@ -640,19 +646,19 @@ int SchemeEditor::handle(int e) {
 		int pos = insert_position() - 1;
 		if(pos < 0) return ret;
 
-		int ch = buffer()->char_at(pos);
+		int ch = BUFFER_CHAR_AT(buffer(), pos);
 
 		if(strchr(EDITOR_PARENS_CLOSE, ch)) {
 			int deep = 0;
 
 			/* go backward and search matching open one */
 			for(int p = pos; p >= 0; p--) {
-				if(strchr(EDITOR_PARENS_CLOSE, buffer()->char_at(p))) {
+				if(strchr(EDITOR_PARENS_CLOSE, BUFFER_CHAR_AT(buffer(), p))) {
 					deep++;
 					continue;
 				}
 
-				if(strchr(EDITOR_PARENS_OPEN, buffer()->char_at(p))) {
+				if(strchr(EDITOR_PARENS_OPEN, BUFFER_CHAR_AT(buffer(), p))) {
 					deep--;
 
 					if(deep == 0) {
@@ -668,12 +674,12 @@ int SchemeEditor::handle(int e) {
 
 			/* go forward and search matching one */
 			for(int p = pos; p < buffer()->length(); p++) {
-				if(strchr(EDITOR_PARENS_OPEN, buffer()->char_at(p))) {
+				if(strchr(EDITOR_PARENS_OPEN, BUFFER_CHAR_AT(buffer(), p))) {
 					deep++;
 					continue;
 				}
 
-				if(strchr(EDITOR_PARENS_CLOSE, buffer()->char_at(p))) {
+				if(strchr(EDITOR_PARENS_CLOSE, BUFFER_CHAR_AT(buffer(), p))) {
 					deep--;
 
 					if(deep == 0) {
@@ -692,7 +698,7 @@ void SchemeEditor::object_color(int id, int c) {
 	unsigned int sz = sizeof(styletable) / sizeof(styletable[0]);
 	E_RETURN_IF_FAIL(sz > (unsigned int)id);
 
-	styletable[id].color = c;
+	styletable[id].color = (Fl_Color)c;
 }
 
 void SchemeEditor::object_color(int id, const char *c) {
