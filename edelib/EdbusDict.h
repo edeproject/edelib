@@ -101,7 +101,7 @@ struct EDELIB_API EdbusDictEntry {
  *   d.append(EdbusData::to_string("baz"), EdbusData::to_bool(true));
  * \endcode
  *
- * Besides using find() to get a content, you can use iterator too \see EdbusDictIterator.
+ * Besides using find() to get a content, you can use iterator too. \see EdbusDictIterator
  * Iterator points to the EdbusDictEntry which have two members, each EdbusData type. This means
  * that you should use <em>is_</em> members to check key and value types.
  *
@@ -148,8 +148,7 @@ struct EDELIB_API EdbusDict : public EdbusContainer<EdbusDictEntry> {
 
 	/**
 	 * Find and retrieve value associated with this key. If value is
-	 * not found, it will retrieve invalid EdbusData type (\see EdbusData for the
-	 * details about invalid (EDBUS_TYPE_INVALID) type)
+	 * not found, it will retrieve invalid EdbusData type (EDBUS_TYPE_INVALID). \see EdbusData
 	 *
 	 * \return associated value or invalid type
 	 * \param key is key//value pair to be searched
