@@ -338,12 +338,13 @@ rule InstallStaticLibrary
 # InstallSharedLibrary <location-dir> : <library> ;
 rule InstallSharedLibrary
 {	
-	local i t s ;
+	local i t s sh o ;
 	local dir = $(1) ;
 
 	MkDir $(dir) ;
 
-	s = [ FGristFiles $(2:S=$(SUFLIB_SHARED).$(EDELIB_VERSION)) ] ;
+	s  = [ FGristFiles $(2:S=$(SUFLIB_SHARED).$(EDELIB_VERSION)) ] ;
+	sh = [ FGristFiles $(2:S=$(SUFLIB_SHARED)) ] ;
 	SEARCH on $(s) = $(SUBDIR) ;
 
 	for i in $(s) {
@@ -359,6 +360,22 @@ rule InstallSharedLibrary
 
 	# install .la file
 	MakeInstallPrivate $(dir) : $(2:S=$(SUFLA_SHARED)) ;
+
+	# install .so by making symbolic link; first remove all those directory parts
+  	# from variables (including grist)
+	o = $(s:G=) ;
+	o = $(o:D=) ;
+  	sh = $(sh:D=) ;
+
+  	# mark it as not file since it is just a name (e.g. ln -s foo.so.2 <target>)
+  	NotFile $(o) ;
+    SymLink $(sh) : $(o) ;
+
+  	# tell jam to put it in installation folder
+	MakeLocate $(sh) : $(dir) ;
+
+    LocalDepends install : $(sh) ;
+  	UninstallSharedLibrary1 uninstall : $(sh) ;
 }
 
 actions InstallSharedLibrary1
