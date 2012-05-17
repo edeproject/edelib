@@ -21,7 +21,7 @@
 import os, os.path
 import sys, stat
 
-SIZES        = ["16x16", "22x22", "32x32", "48x48", "64x64"]
+SIZES        = ["16x16", "22x22", "32x32", "48x48", "64x64", "128x128"]
 PROGRAM_NAME = "edelib-convert-icontheme"
 
 inkscape_path = None
