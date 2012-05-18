@@ -121,4 +121,12 @@
 ;; integer->char fixes
 (test-equal "#22" (integer->char 256) #\nul)
 
+;; tinyscheme will on (make-vector) produce #(() ()...) but guile #(<unspecified>...) so we must init all
+;; fields so comparison can work
+(test-equal "#23" (doto (make-vector 3)
+						(vector-set! 0 1)
+						(vector-set! 1 1)
+						(vector-set! 2 1))
+				  #(1 1 1))
+
 (run-all-tests "sslib Tests")

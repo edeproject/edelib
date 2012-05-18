@@ -522,7 +522,7 @@ number of times before, or call (shuffle lst) different times within each call."
 
 ;;; to string conversions
 
-(defun list->string (lst)
+(defun list-as-string (lst)
   "Convert list to string."
   (let2 len (length lst)
 		ret "("
@@ -556,9 +556,19 @@ number of times before, or call (shuffle lst) different times within each call."
     ret
 ) )
 
-(defun vector->string (vec)
+(defun vector-as-string (vec)
   "Convert vector to string."
-  (string-append "#" (->> (vector->list vec) list->string)))
+  (string-append "#" (->> (vector->list vec) list-as-string)))
+
+(define-macro (doto x . forms)
+  (let ([gx (gensym)])
+    `(let ([,gx ,x])
+       ,@(map (lambda (form)
+                (if (list? form)
+                  `(,(first form) ,gx ,@(rest form))
+                  `(,form ,gx)))
+              forms)
+       ,gx)))
 
 ;;; interpreter specific stuff
 
