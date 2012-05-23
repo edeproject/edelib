@@ -16,6 +16,14 @@
 ;; You should have received a copy of the GNU Lesser General Public License
 ;; along with this library. If not, see <http://www.gnu.org/licenses/>.
 
+;; uncomment these for different scheme implementations
+;(define-macro (define-with-return . form)
+;  `(define ,(car form)
+;	    (call/cc (lambda (return) ,@(cdr form)))))
+;
+;(define (defined? v)
+;  #f)
+
 ;;; documentation system
 
 ;; each element will be in form (vector <func name> <doc> <type>))
