@@ -1,11 +1,33 @@
 #!/bin/sh
 
-aclocal -I m4 \
-	  && libtoolize --quiet --force --copy \
-	  && autoheader \
-	  && automake --add-missing --foreign --copy \
-	  && autoconf
+# create aclocal.m4 file with content of given directory without 'aclocal' tool
+aclocal_emulate() {
+	dir="$1"
+	filename="aclocal.m4"
+
+	rm -f $filename
+
+	for i in `ls $dir/*`; do
+		echo "m4_include([$i])" >> $filename
+	done
+
+	echo " " >> $filename
+}
 
 if [ "$1" = "--compile" ]; then
-	./configure --enable-debug --disable-shared --prefix=/tmp/ede && make
+	compile=1
+fi
+
+if aclocal_emulate m4 && autoheader && autoconf configure.in.jam; then
+	echo ""
+	echo "Now run ./configure [OPTIONS]"
+	echo "or './configure --help' to see them"
+
+	if [ $compile ]; then
+		./configure --enable-profile --enable-debug --prefix=/opt/ede && jam
+	fi
+else
+	echo ""
+	echo "We failed :(. There should be some output, right?"
+	exit 1
 fi

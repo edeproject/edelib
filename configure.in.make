@@ -24,14 +24,22 @@ m4_define([edelib_version], [edelib_major_version.edelib_minor_version.edelib_pa
 AC_PREREQ(2.13)
 
 AC_INIT(edelib, edelib_version, [karijes@users.sourceforge.net])
+# ---
+AM_INIT_AUTOMAKE([AC_PACKAGE_TARNAME], [AC_PACKAGE_VERSION])
+# ---
+AM_SILENT_RULES([yes])
 
 AC_CONFIG_SRCDIR(edelib/Nls.h)
 AC_CONFIG_HEADER(edelib/_conf.h:edelib/_conf.h.in)
+dnl AC_CONFIG_MACRO_DIR([m4])
 
 EDELIB_MAJOR_VERSION=edelib_major_version
 EDELIB_MINOR_VERSION=edelib_minor_version
 EDELIB_PATCH_VERSION=edelib_patch_version
 EDELIB_API_VERSION=$PACKAGE_VERSION
+
+dnl for libtool versioning
+EDELIB_LIBTOOL_VERSION_STR="$EDELIB_MAJOR_VERSION:$EDELIB_MINOR_VERSION:$EDELIB_PATCH_VERSION"
 
 dnl configure fuck up CFLAGS/CXXFLAG by adding '-O2' and '-g' after AC_PROG_CC and AC_PROG_CXX
 dnl and there is no way to remove them without knowing if user added them
@@ -47,7 +55,9 @@ AC_PATH_PROG(SED, sed)
 AC_PATH_PROG(MSGFMT, msgfmt)
 AC_PATH_PROG(XGETTEXT, xgettext)
 AC_PATH_PROG(DOXYGEN, doxygen)
-EDELIB_PROG_JAM
+AM_CONDITIONAL(HAVE_DOXYGEN, test "x$DOXYGEN" != "x")
+
+AC_PROG_LIBTOOL
 
 EDELIB_COMPILER_VENDOR
 case $ac_compiler_vendor in 
@@ -71,13 +81,6 @@ esac
 CFLAGS="-DHAVE_EDELIB_BASE_CONFIG_H $SANITY_FLAGS $user_cflags"
 CXXFLAGS="-DHAVE_EDELIB_BASE_CONFIG_H $SANITY_FLAGS $user_cxxflags"
 
-dnl libraries, even static one, on amd64 should be compiled with '-fPIC'
-host_machine=`uname -m`
-if test "$host_machine" = "x86_64"; then
-	CFLAGS="$CFLAGS -fPIC"
-	CXXFLAGS="$CXXFLAGS -fPIC"
-fi
-
 dnl basic headers
 AC_HEADER_STDC
 AC_CHECK_HEADER(string.h, AC_DEFINE(HAVE_STRING_H, 1, [Define to 1 if you have string.h file]))
@@ -97,7 +100,7 @@ AC_CHECK_HEADER(libutil.h, AC_DEFINE(HAVE_LIBUTIL_H, 1, [Define to 1 if you have
 AC_CHECK_HEADER(util.h, AC_DEFINE(HAVE_UTIL_H, 1, [Define to 1 if you have util.h]))
 
 dnl xdgmimcache.c
-AC_CHECK_FUNC(mmap, XDG_MIME_HAVE_MMAP=-DHAVE_MMAP)
+AC_CHECK_FUNC(mmap, AC_DEFINE(HAVE_MMAP, 1, [Define to 1 if you have mmap()]))
 
 EDELIB_CPP_VARARGS
 EDELIB_DATETIME
@@ -154,6 +157,7 @@ AC_SUBST(EDELIB_MAJOR_VERSION)
 AC_SUBST(EDELIB_MINOR_VERSION)
 AC_SUBST(EDELIB_PATCH_VERSION)
 AC_SUBST(EDELIB_API_VERSION)
+AC_SUBST(EDELIB_LIBTOOL_VERSION_STR)
 AC_SUBST(FLTK_CFLAGS)
 AC_SUBST(FLTK_LIBS)
 AC_SUBST(FLTK_LIBS_FULL)
@@ -217,9 +221,9 @@ _____EOF
 ])
 
 AC_OUTPUT([
+ Makefile
  edelib/Version.h
  doc/Doxyfile
- Jamconfig
  edelib.pc
  edelib-gui.pc
  edelib-gui-no-images.pc
@@ -235,6 +239,5 @@ cd sslib
 ./gen-c-string.sh theme.ss > theme_ss.h
 cd ..
 
-echo ""
-echo "Now run 'jam' or 'jam help' to see further options."
-echo ""
+# create config.h
+echo "#include \"edelib/_conf.h\"" > config.h
