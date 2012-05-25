@@ -195,6 +195,7 @@ libedelib_gui_include_HEADERS = \
 	edelib/XSettingsCommon.h \
 	edelib/XSettingsManager.h
 
+lib_libedelib_gui_la_CXXFLAGS = @FLTK_CFLAGS@
 lib_libedelib_gui_la_LDFLAGS = -version-info @EDELIB_LIBTOOL_VERSION_STR@
 
 lib_libedelib_dbus_la_SOURCES = \
@@ -217,8 +218,8 @@ libedelib_dbus_include_HEADERS = \
 	edelib/EdbusMessage.h \
 	edelib/EdbusObjectPath.h
 
-lib_libedelib_dbus_la_CFLAGS   = @DBUS_CFLAGS@
-lib_libedelib_dbus_la_CXXFLAGS = @DBUS_CFLAGS@
+lib_libedelib_dbus_la_CFLAGS   = @FLTK_CFLAGS@ @DBUS_CFLAGS@
+lib_libedelib_dbus_la_CXXFLAGS = @FLTK_CFLAGS@ @DBUS_CFLAGS@
 lib_libedelib_dbus_la_LDFLAGS = -version-info @EDELIB_LIBTOOL_VERSION_STR@
 
 ### programs
