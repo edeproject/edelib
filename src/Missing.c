@@ -219,9 +219,10 @@ int edelib_scandir(const char* dir, struct dirent*** namelist,
 		int (*filter)(const struct dirent* name),
 		int (*compar)(struct dirent** n1, struct dirent** n2)) 
 {
+   
 #ifdef HAVE_SCANDIR
 	return scandir(dir, &namelist, filter, compar);
-#else
+#else 
 	DIR *dfd;
 	struct dirent **lst, *entry, *nentry;
 	int i = 0, sz = 5;
