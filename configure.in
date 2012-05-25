@@ -25,8 +25,8 @@ AC_PREREQ(2.13)
 
 AC_INIT(edelib, edelib_version, [karijes@users.sourceforge.net])
 
-AC_CONFIG_SRCDIR(edelib/Nls.h)
-AC_CONFIG_HEADER(edelib/_conf.h:edelib/_conf.h.in)
+AC_CONFIG_SRCDIR(src/String.cpp)
+AC_CONFIG_HEADER(config.h:config.h.in)
 
 EDELIB_MAJOR_VERSION=edelib_major_version
 EDELIB_MINOR_VERSION=edelib_minor_version
@@ -68,8 +68,8 @@ case $ac_compiler_vendor in
 	;;
 esac
 
-CFLAGS="-DHAVE_EDELIB_BASE_CONFIG_H $SANITY_FLAGS $user_cflags"
-CXXFLAGS="-DHAVE_EDELIB_BASE_CONFIG_H $SANITY_FLAGS $user_cxxflags"
+CFLAGS="-DHAVE_CONFIG_H $SANITY_FLAGS $user_cflags"
+CXXFLAGS="-DHAVE_CONFIG_H $SANITY_FLAGS $user_cxxflags"
 
 dnl libraries, even static one, on amd64 should be compiled with '-fPIC'
 host_machine=`uname -m`
@@ -97,7 +97,7 @@ AC_CHECK_HEADER(libutil.h, AC_DEFINE(HAVE_LIBUTIL_H, 1, [Define to 1 if you have
 AC_CHECK_HEADER(util.h, AC_DEFINE(HAVE_UTIL_H, 1, [Define to 1 if you have util.h]))
 
 dnl xdgmimcache.c
-AC_CHECK_FUNC(mmap, XDG_MIME_HAVE_MMAP=-DHAVE_MMAP)
+AC_CHECK_FUNC(mmap, AC_DEFINE(HAVE_MMAP, 1, [Define to 1 if you have mmap()]))
 
 EDELIB_CPP_VARARGS
 EDELIB_DATETIME

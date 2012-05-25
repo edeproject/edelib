@@ -18,7 +18,7 @@ if [ "$1" = "--compile" ]; then
 	compile=1
 fi
 
-if aclocal_emulate m4 && autoheader && autoconf configure.in.jam; then
+if aclocal_emulate m4 && autoheader && autoconf; then
 	echo ""
 	echo "Now run ./configure [OPTIONS]"
 	echo "or './configure --help' to see them"

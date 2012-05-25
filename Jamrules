@@ -522,8 +522,8 @@ LocalClean distclean :
 	$(TOP)/config.status 
 	$(TOP)/doc/Doxyfile
 	$(TOP)/edelib/edelib-config.h
-	$(TOP)/edelib/_conf.h.in 
-	$(TOP)/edelib/_conf.h 
+	$(TOP)/config.h.in
+	$(TOP)/config.h
 	$(TOP)/edelib/Version.h 
 	$(TOP)/po/update-messages.sh
     $(TOP)/sslib/init_ss.h

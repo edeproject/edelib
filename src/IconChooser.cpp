@@ -89,7 +89,7 @@ void IconBox::set_icon_path(const String& s) {
 		if(ptr2)
 			*ptr2 = '\0';
 	} else {
-		ptr = _("(unknown)");
+		ptr = (char*)_("(unknown)");
 	}
 
 	iconname = strdup(ptr);

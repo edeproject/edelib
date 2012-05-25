@@ -18,8 +18,12 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdlib.h> // free, getenv
-#include <string.h> // strdup, strlen
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#include <stdlib.h>
+#include <string.h>
 #include <time.h>
 #include <stdio.h>
 
@@ -29,7 +33,7 @@
 #include <edelib/Missing.h>
 
 #ifdef HAVE_SETTIMEOFDAY
-#include <sys/time.h> // for settimeofday()
+#include <sys/time.h> /* for settimeofday() */
 #endif
 
 #define YEAR_BASE       1900

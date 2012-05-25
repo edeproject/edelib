@@ -241,10 +241,5 @@
 # define EDELIB_DEPRECATED
 #endif
 
-#ifdef HAVE_EDELIB_BASE_CONFIG_H
-# include "_conf.h"
-#endif
-
 #include "edelib-config.h"
-
 #endif

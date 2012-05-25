@@ -24,6 +24,10 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE   /* Needed for getpt, ptsname in glibc 2.1.x systems */
 #endif
