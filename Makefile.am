@@ -152,6 +152,7 @@ lib_libedelib_gui_la_SOURCES = \
 	src/MenuBase.cpp   \
 	src/MenuButton.cpp   \
 	src/MenuItem.cpp \
+	src/MenuTooltip.cpp \
 	src/Menu_add.cpp   \
 	src/Menu_global.cpp \
 	src/MessageBox.cpp \
@@ -181,6 +182,7 @@ libedelib_gui_include_HEADERS = \
 	edelib/MenuBase.h \
 	edelib/MenuButton.h \
 	edelib/MenuItem.h \
+	edelib/MenuTooltip.h \
 	edelib/MessageBox.h \
 	edelib/Netwm.h \
 	edelib/SchemeEditor.h \
