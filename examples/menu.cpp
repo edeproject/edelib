@@ -50,6 +50,7 @@ int main(int argc, char **argv) {
 		Fl_Image* img3 = (Fl_Image*)IconLoader::get("system-log-out", ICON_SIZE_TINY);
 
 		menu_[1].image(img1);
+		menu_[1].tooltip("Tooltip for First Item");
 		menu_[2].image(img2);
 		menu_[8].image(img3);
 
@@ -58,6 +59,7 @@ int main(int argc, char **argv) {
 
 		Fl_Image* img4 = (Fl_Image*)IconLoader::get("folder", ICON_SIZE_TINY);
 		menu_menu[0].image(img4);
+		menu_menu[0].tooltip("This should be some folder");
 	win->end();
 	win->show(argc, argv);
 	return Fl::run();

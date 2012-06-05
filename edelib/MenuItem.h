@@ -59,6 +59,9 @@ struct EDELIB_API MenuItem {
 	// additional field can be used in struct generated from FLUID
 	Fl_Image *image_;
 
+	// for tooltip support
+	const char *tooltip_;
+
 	// advance N items, skipping submenus:
 	const MenuItem *next(int=1) const;
 	MenuItem *next(int i=1) { return (MenuItem*)(((const MenuItem*)this)->next(i)); }
@@ -107,6 +110,8 @@ struct EDELIB_API MenuItem {
 	void image(Fl_Image* a) { image_ = a; }
 	void image(Fl_Image& a) { image_ = &a; }
 	Fl_Image* image() const { return image_; }
+	void tooltip(const char* t) { tooltip_ = t; }
+	const char* tooltip() const { return tooltip_; }
 
 	// used by menubar:
 	int measure(int* h, const MenuBase*) const;

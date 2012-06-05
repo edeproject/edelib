@@ -38,6 +38,7 @@
 #include <FL/fl_draw.H>
 
 #include <edelib/MenuBase.h>
+#include <edelib/MenuTooltip.h>
 
 #ifdef __APPLE__
 # include <Carbon/Carbon.h>
@@ -126,6 +127,8 @@ public:
   void autoscroll(int);
   void position(int x, int y);
   int is_inside(int x, int y);
+public:
+  void hide();
 };
 
 #define LEADING 4 // extra vertical leading
@@ -179,6 +182,12 @@ void MenuItem::draw(int x, int y, int w, int h, const MenuBase* m, int selected,
       x += 3;
       w -= 8;
     } else {
+      // Sanel: stupid place to put tooltip handling, but MenuItem does not receive FL_ENTER event correctly
+      if(tooltip() && activevisible())
+        MenuTooltip::enter_area((Fl_Widget*)m, x, y, w, h, tooltip());
+      else
+        MenuTooltip::current(0);
+
       fl_draw_box(b, x+1, y-(LEADING-2)/2, w-2, h+(LEADING-2), r);
     }
   }
@@ -529,6 +538,11 @@ void menuwindow::draw() {
   drawn_selected = selected;
 }
 
+void menuwindow::hide(void) {
+  MenuTooltip::current(0); 
+  Fl_Menu_Window::hide();
+}
+
 void menuwindow::set_selected(int n) {
   if (n != selected) {selected = n; damage(FL_DAMAGE_CHILD);}
 }
@@ -769,7 +783,7 @@ int menuwindow::early_hide_handle(int e) {
     }
     for (mymenu = pp.nummenus-1; ; mymenu--) {
       item = pp.p[mymenu]->find_selected(mx, my);
-      if (item >= 0) 
+      if (item >= 0)
         break;
       if (mymenu <= 0) {
         // buttons in menubars must be deselected if we move outside of them!
@@ -796,7 +810,9 @@ int menuwindow::early_hide_handle(int e) {
 	pp.state = MENU_PUSH_STATE;
       else
 	pp.state = PUSH_STATE;
-    }} return 1;
+    }
+  }
+  return 1;
   case FL_RELEASE:
     // Mouse must either be held down/dragged some, or this must be
     // the second click (not the one that popped up the menu):
