@@ -62,6 +62,12 @@ struct EDELIB_API MenuItem {
 	// for tooltip support
 	const char *tooltip_;
 
+	// called internally, but for any fiddling with the menu, make sure to call it
+	static void init_extensions(MenuItem *i) {
+		i->image_ = 0;
+		i->tooltip_ = 0;
+	}
+
 	// advance N items, skipping submenus:
 	const MenuItem *next(int=1) const;
 	MenuItem *next(int i=1) { return (MenuItem*)(((const MenuItem*)this)->next(i)); }
