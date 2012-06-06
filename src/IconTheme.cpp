@@ -97,9 +97,6 @@ static void init_base_dirs(StrList& dirs) {
 	}
 
 	dirs.push_back("/usr/share/pixmaps/");
-
-	/* not in the Spec, but some systems puts KDE in 'opt' */
-	dirs.push_back("/opt/kde/share/icons/");
 }
 
 static int check_size(int sz) {
@@ -300,8 +297,7 @@ void IconTheme::load(const char* name) {
 }
 
 void IconTheme::clear(void) {
-	if(!priv)
-		return;
+	if(!priv) return;
 
 	delete priv;
 	priv = NULL;
@@ -313,17 +309,58 @@ String IconTheme::find_icon(const char* icon, IconSizes sz, IconContext ctx) {
 	if(priv->dirlist.empty())
 		return "";
 
-	String ret;
-	ret.reserve(64);
+	String ret; ret.reserve(64);
+	bool has_extension = false;
 
+	/* handle the case when icon has extension */
+	for(int i = 0; icon_extensions[i]; i++) {
+		if(str_ends(icon, icon_extensions[i])) {
+			has_extension = true;
+			break;
+		}
+	}
+
+	/* check if icon has extension; this is error, but check that anyway */
 	DirListIter it = priv->dirlist.begin(), it_end = priv->dirlist.end();
 
 	/* ICON_CONTEXT_ANY means context is ignored, but also means slower lookup since all entries are searched */
 	for(; it != it_end; ++it) {
 		if((*it).size == sz && ((*it).context == ctx || ctx == ICON_CONTEXT_ANY)) {
-			for(int i = 0; icon_extensions[i]; i++) {
+			if(has_extension) {
 				ret = (*it).path;
 				ret += E_DIR_SEPARATOR_STR;
+				ret += icon;
+
+				if(file_test(ret.c_str(), FILE_TEST_IS_REGULAR))
+					return ret;
+			} else {
+				for(int i = 0; icon_extensions[i]; i++) {
+					ret = (*it).path;
+					ret += E_DIR_SEPARATOR_STR;
+					ret += icon;
+					ret += icon_extensions[i];
+
+					/* only check if exists; not too good, but we do not handle file opennings */
+					if(file_test(ret.c_str(), FILE_TEST_IS_REGULAR))
+						return ret;
+				}
+			}
+		}
+	}
+
+	/* the icon wasn't found in theme; search it in folders */
+	StrListIter si = priv->theme_dirs.begin(), se = priv->theme_dirs.end();
+	for(; si != se; ++si) {
+		if(has_extension) {
+			ret = *si;
+			/* added dirs already have E_DIR_SEPARATOR_STR added */
+			ret += icon;
+
+			if(file_test(ret.c_str(), FILE_TEST_IS_REGULAR))
+				return ret;
+		} else {
+			for(int i = 0; icon_extensions[i]; i++) {
+				ret = *si;
 				ret += icon;
 				ret += icon_extensions[i];
 
@@ -334,6 +371,7 @@ String IconTheme::find_icon(const char* icon, IconSizes sz, IconContext ctx) {
 		}
 	}
 
+	/* nothing found */
 	return "";
 }
 
