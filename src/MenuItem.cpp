@@ -182,10 +182,10 @@ void MenuItem::draw(int x, int y, int w, int h, const MenuBase* m, int selected,
       x += 3;
       w -= 8;
     } else {
-      // Sanel: stupid place to put tooltip handling, but MenuItem does not receive FL_ENTER event correctly
-      if(tooltip() && activevisible())
+    // Sanel: stupid place to put tooltip handling, but MenuItem does not receive FL_ENTER event correctly
+    if(tooltip() && activevisible()) {
         MenuTooltip::enter_area((Fl_Widget*)m, x, y, w, h, tooltip());
-      else
+    } else
         MenuTooltip::current(0);
 
       fl_draw_box(b, x+1, y-(LEADING-2)/2, w-2, h+(LEADING-2), r);

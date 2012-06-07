@@ -27,7 +27,14 @@
 EDELIB_NS_BEGIN
 
 #define MAX_WIDTH 400
+
+class TooltipWin;
+
+Fl_Widget* MenuTooltip::widget_ = 0;
+static TooltipWin *window = 0;
 static const char *tip;
+static int H;
+static char recent_tooltip, recursion;
 
 class TooltipWin : public Fl_Menu_Window {
 public:
@@ -47,14 +54,12 @@ public:
 	}
 };
 
-Fl_Widget* MenuTooltip::widget_ = 0;
-static TooltipWin *window = 0;
-static int Y, H;
-
-#ifdef __APPLE__
-Fl_Window *Fl_Tooltip::current_window(void) { return (Fl_Window*)window; }
-#endif
-
+/*
+ * The layout() was modified from original Fl_Tooltip, as y coordinate is not remembered any more
+ * and mouse y position is used as referent point. This is because remembered y would dump tooltip
+ * window around, since originally, the tooltip was shown on the same place as possible; with menus
+ * this isn't possible.
+ */
 void TooltipWin::layout() {
 	fl_font(Fl_Tooltip::font(), Fl_Tooltip::size());
 	int ww, hh;
@@ -62,12 +67,8 @@ void TooltipWin::layout() {
 	fl_measure(tip, ww, hh, FL_ALIGN_LEFT|FL_ALIGN_WRAP|FL_ALIGN_INSIDE);
 	ww += 6; hh += 6;
 
-	// find position on the screen of the widget:
-	int ox = Fl::event_x_root();
-	int oy = Y + H+2;
-	for (Fl_Widget* p = TooltipWin::current(); p; p = p->window()) {
-		oy += p->y();
-	}
+	int ox = Fl::event_x_root() + 10;
+	int oy = Fl::event_y_root() + 10;
 	int scr_x, scr_y, scr_w, scr_h;
 
 	Fl::screen_xywh(scr_x, scr_y, scr_w, scr_h);
@@ -81,7 +82,6 @@ void TooltipWin::layout() {
 	}
 
 	if (oy < scr_y) oy = scr_y;
-
 	resize(ox, oy, ww, hh);
 }
 
@@ -91,9 +91,6 @@ void TooltipWin::draw() {
 	fl_font(Fl_Tooltip::font(), Fl_Tooltip::size());
 	fl_draw(tip, 3, 3, w()-6, h()-6, Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_WRAP));
 }
-
-static char recent_tooltip;
-static char recursion;
 
 static void recent_timeout(void*) {
 	recent_tooltip = 0;
@@ -162,7 +159,7 @@ void MenuTooltip::enter_area(Fl_Widget *wid, int x, int y, int w, int h, const c
 	Fl::remove_timeout(recent_timeout);
 
 	// remember it:
-	widget_ = wid; Y = y; H = h; tip = t;
+	widget_ = wid; H = h; tip = t;
 	// popup the tooltip immediately if it was recently up:
 	if (recent_tooltip) {
 		if (window) window->hide();
