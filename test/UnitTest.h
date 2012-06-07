@@ -38,10 +38,10 @@ class UnitTest {
 		void verify(bool condition, const char* condstr, const char* fname, unsigned long line);
 };
 
-#define UT_VERIFY(cond)                      verify(cond,  #cond, __FILE__, __LINE__)
-#define UT_VERIFY_EQUAL(p1, p2)              verify(((p1) == (p2)),  #p1" == "#p2, __FILE__, __LINE__)
-#define UT_VERIFY_NOT_EQUAL(p1, p2)          verify(((p1) != (p2)),  #p1" != "#p2, __FILE__, __LINE__)
-#define UT_FAIL(reason)                      verify(false, reason, __FILE__, __LINE__)
+#define UT_VERIFY(cond)             verify((cond),  #cond, __FILE__, __LINE__)
+#define UT_VERIFY_EQUAL(p1, p2)     verify(((p1) == (p2)),  #p1 " == " #p2, __FILE__, __LINE__)
+#define UT_VERIFY_NOT_EQUAL(p1, p2) verify(((p1) != (p2)),  #p1 " != " #p2, __FILE__, __LINE__)
+#define UT_FAIL(reason)             verify(false, reason, __FILE__, __LINE__)
 
 struct UTList {
 	bool alloc;

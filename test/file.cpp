@@ -9,9 +9,7 @@ UT_FUNC(File, "Test File")
 	File f;
 	f.open("Jamfile");
 	char buff[128];
-	while(f.readline(buff, 128) >= 0 )
-	{
-	}
+	while(f.readline(buff, 128) >= 0 ) {}
 	f.close();
 
 	UT_VERIFY(f.name() == NULL);
@@ -35,9 +33,14 @@ UT_FUNC(FileFunctions, "Test File functions")
 	UT_VERIFY( file_path("mv", true) == "/usr/gnu/bin/mv" );
 	UT_VERIFY( file_path("ls", true) == "/usr/gnu/bin/ls" );
 #else
-	UT_VERIFY( file_path("mkdir", true) == "/bin/mkdir" );
-	UT_VERIFY( file_path("mv", true) == "/bin/mv" );
-	UT_VERIFY( file_path("ls", true) == "/bin/ls" );
+	String p = file_path("mkdir", true);
+	UT_VERIFY( p == "/bin/mkdir"  || p == "/usr/bin/mkdir" );
+
+	p = file_path("mv", true);
+	UT_VERIFY( p == "/bin/mv" || p == "/usr/bin/mv" );
+
+	p = file_path("ls", true);
+	UT_VERIFY( p == "/bin/ls" || p == "/usr/bin/ls" );
 #endif
 
 

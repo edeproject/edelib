@@ -81,7 +81,8 @@ UT_FUNC(DesktopFileTest2, "Test DesktopFile class (2)")
 	/* OpenSolaris gives higher priority to gnu tools in PATH */
 	UT_VERIFY( STR_EQUAL(buff, "/usr/gnu/bin/sh --help --another-param") );
 #else
-	UT_VERIFY( STR_EQUAL(buff, "/bin/sh --help --another-param") );
+	UT_VERIFY( STR_EQUAL(buff, "/bin/sh --help --another-param") ||
+			   STR_EQUAL(buff, "/usr/bin/sh --help --another-param") );
 #endif
 
 	UT_VERIFY( desk.try_exec(found) == true );
@@ -181,7 +182,8 @@ UT_FUNC(DesktopFileTestExec, "Test DesktopFile exec")
 	UT_VERIFY( desk.load("foo.desktop") );
 	UT_VERIFY( desk.exec(buf, sizeof(buf)) == true );
 
-	UT_VERIFY( STR_EQUAL(buf, "/bin/ls -la") );
+	UT_VERIFY( STR_EQUAL(buf, "/bin/ls -la") ||
+			   STR_EQUAL(buf, "/usr/bin/ls -la") );
 
 	conf.set("Desktop Entry", "Exec", "not-existing");
 	conf.save("foo.desktop");
