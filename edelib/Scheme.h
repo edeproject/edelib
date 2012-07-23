@@ -2,7 +2,7 @@
  * $Id$
  *
  * Scheme interpeter
- * Copyright (c) 2005-2011 edelib authors
+ * Copyright (c) 2005-2012 edelib authors
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -77,6 +77,18 @@ scheme *edelib_scheme_init(void);
 
 /**
  * \ingroup scheme
+ * Call a scheme function with arguments.
+ */
+#define edelib_scheme_eval scheme_eval
+
+/**
+ * \ingroup scheme
+ * Call a scheme function without arguments.
+ */
+#define edelib_scheme_apply0 scheme_apply0
+
+/**
+ * \ingroup scheme
  * Set additional data (pointer) accessible from scheme function. You can get data with <em>edelib_scheme_get_external_data</em>
  */
 #define edelib_scheme_set_external_data scheme_set_external_data
@@ -125,8 +137,8 @@ scheme *edelib_scheme_init(void);
 
 /* try to avoid vpr by using function like macros */
 #define edelib_scheme_gensym(sc)                 (sc)->vptr->gensym(sc)
-#define edelib_scheme_cons(sc, a, b)             (sc)->vptr->cons(sc, a, b)	 
-#define edelib_scheme_immutable_cons(sc, a, b)   (sc)->vptr->immutable_cons(sc, a, b)
+#define edelib_scheme_cons(sc, a, b)             _cons((sc), a, b, 0)	 
+#define edelib_scheme_immutable_cons(sc, a, b)   _cons((sc), a, b, 1)
 #define edelib_scheme_reserve_cells(sc, n)       (sc)->vptr->reserve_cells(sc, n)
 #define edelib_scheme_mk_int(sc, num)            (sc)->vptr->mk_integer(sc, num)
 #define edelib_scheme_mk_double(sc, num)         (sc)->vptr->mk_real(sc, num)
