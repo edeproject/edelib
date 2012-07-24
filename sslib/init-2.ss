@@ -23,6 +23,10 @@
 ;
 ;(define (defined? v)
 ;  #f)
+;
+;(define-macro (when s . body)
+;  `(if ,s
+;	 (begin ,@body)))
 
 ;;; documentation system
 
@@ -365,21 +369,18 @@ provides foldr which is more like foldl."
 
 (defun take (n lst)
   "Take n elements from given list."
-  (when (> n 0)
-    (if-not= lst '()
-      (cons (car lst)
-            (take (- n 1) (cdr lst)) ))))
+  (if (or (equal? lst '())
+          (<= n 0))
+    (list)
+    (cons (car lst)
+          (take (- n 1) (cdr lst)) ) ) )
 
 (defun drop (n lst)
   "Return new list without first n elements."
-  (let1 len (length lst)
-    (if (> n len)
-      lst
-      (let loop ([n   n]
-                 [lst lst])
-        (if (> n 0)
-          (loop (- n 1) (cdr lst))
-          lst )))))
+  (if (or (equal? lst '())
+		  (<= n 0))
+    lst
+	(drop (- n 1) (cdr lst)) ) ) 
 
 (defun split-at (n lst)
   "Split given list on two sublists from position n."
@@ -388,11 +389,11 @@ provides foldr which is more like foldl."
 
 (defun partition (n lst)
   "Partition list on sublists where each sublist have n items."
-  (if (> n 0)
-    (let1 s (take n lst)
-      (if (= n (length s))
-        (cons s (partition n (drop n lst))) ))
-    (list) ))
+  (let2 s (take n lst)
+        l (length s)
+    (if (= n l)
+      (cons s (partition n (drop n lst)))
+      (list) ) ) )
 
 (defun flatten (lst)
   "Return flat list of all nested sublists."
