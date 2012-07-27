@@ -403,7 +403,8 @@ style_parse(const char *text, char *style, int length) {
 	  if (col == 0 && *text == '#') {
 		// Set style to directive
 		current = 'E';
-	  } else if (strncmp(text, ";;", 2) == 0) {
+		//} else if (strncmp(text, ";;", 2) == 0) {
+	  } else if (*text == ';') {
 		current = 'B';
 		for (; length > 0 && *text != '\n'; length --, text ++) *style++ = 'B';
 
@@ -601,9 +602,44 @@ style_update(int		pos,			// I - Position of update
 
 static void style_unfinished_cb(int, void*) { }
 
+/* for indenting; inspired of indentation from FLUID */
+static int indent_cb(int key, SchemeEditor *e) {
+	if (e->buffer()->selected()) {
+		e->insert_position(e->buffer()->primary_selection()->start());
+		e->buffer()->remove_selection();
+	}
+
+	int pos = e->insert_position();
+	int start = e->line_start(pos);
+	char *text = e->buffer()->text_range(start, pos);
+	char *ptr;
+
+	for (ptr = text; isspace(*ptr); ptr ++)
+		;
+
+	*ptr = '\0';  
+	if (*text) {
+		// use only a single 'insert' call to avoid redraw issues
+		int n = strlen(text);
+		char *b = (char*)malloc(n+2);
+		*b = '\n';
+		strcpy(b+1, text);
+		e->insert(b);
+		free(b);
+	} else {
+		e->insert("\n");
+	}
+
+	e->show_insert_position();
+	e->set_changed();
+	if (e->when()&FL_WHEN_CHANGED) e->do_callback();
+
+	free(text);
+	return 1;
+}
+
 SchemeEditor::SchemeEditor(int X, int Y, int W, int H, const char *l) : Fl_Text_Editor(X, Y, W, H, l) {
 	pmatch = true;
-
 	/* setup buffers */
 	textbuf = new Fl_Text_Buffer();
 	stylebuf = new Fl_Text_Buffer();
@@ -618,6 +654,7 @@ SchemeEditor::SchemeEditor(int X, int Y, int W, int H, const char *l) : Fl_Text_
 				   'A', style_unfinished_cb, 0);
 
 	style_init(textbuf, stylebuf);
+	add_key_binding(FL_Enter, FL_TEXT_EDITOR_ANY_STATE, (Fl_Text_Editor::Key_Func)indent_cb);
 }
 
 void SchemeEditor::textsize(int s) {

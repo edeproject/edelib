@@ -2284,7 +2284,7 @@ static pointer opexe_0(scheme *sc, enum scheme_opcodes op) {
 					"Loading %s\n", strvalue(car(sc->args)));
 		}
 		if (!file_push(sc,strvalue(car(sc->args)))) {
-			Error_1(sc,"unable to open", car(sc->args));
+			Error_1(sc,"unable to open ", car(sc->args));
 		}
 		s_goto(sc,OP_T0LVL);
 

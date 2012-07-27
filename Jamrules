@@ -490,13 +490,13 @@ NotFile install ;
 # as shared library or not. Depending on that, we select appropriate rule.
 actions quietly RunTests
 {
-	cd tests; ./run_tests
+	cd tests; ./run-all.sh
 }
 
 actions quietly RunTestsShared
 {
 	export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:`pwd`/lib"
-	cd test; ./run_tests
+	cd test; ./run-all.sh
 }
 
 if $(SHARED) {
