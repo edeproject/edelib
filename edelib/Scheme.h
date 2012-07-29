@@ -204,8 +204,8 @@ scheme *edelib_scheme_init(void);
  */
 #define EDELIB_SCHEME_DEFINE2(sc, func_ptr, func_name, doc)      \
   do {                                                           \
-	scheme_load_string(sc, "(add-doc " #func_name "," #doc ")"); \
-	EDELIB_SCHEME_DEFINE(sc, func_name, func_ptr);				 \
+	scheme_load_string(sc, "(add-doc " #func_name " " #doc ")"); \
+	EDELIB_SCHEME_DEFINE(sc, func_ptr, func_name);				 \
   } while(0)
 
 #define EDELIB_SCHEME_OBJECT(sc)     ((sc)->vptr)
