@@ -221,12 +221,12 @@ All bindings can be used in the next one, as 'let*' is used for the final constr
        (add-var-doc (symbol->string ',var) (car ',body)) )
      (define ,var ,val) ))
 
-(add-macro-doc "defun" "Creates function definition, allowing docstrings. Function can be created like:
+(add-macro-doc "defun" "Creates function definition, allowing docstrings. Functions can be created like:
 (defun sample-func (a b)
   \"This is docstring\"
   (+ a b))")
 (define-macro (defun func args . body)
-  `(if (string? ,(car body))
+  `(if (string? ',(car body))
      ;; with docstring
      (begin
        (add-doc (symbol->string ',func) ,(car body))
