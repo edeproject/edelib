@@ -19,14 +19,14 @@
 ;; uncomment these for different scheme implementations
 ;(define-macro (define-with-return . form)
 ;  `(define ,(car form)
-;	    (call/cc (lambda (return) ,@(cdr form)))))
+;       (call/cc (lambda (return) ,@(cdr form)))))
 ;
 ;(define (defined? v)
 ;  #f)
 ;
 ;(define-macro (when s . body)
 ;  `(if ,s
-;	 (begin ,@body)))
+;    (begin ,@body)))
 
 ;;; documentation system
 
@@ -118,7 +118,7 @@ single expression (e.g. as '(+ 1 2 3)' but not multiple one, e.g. '(+ 1 2 3) (+ 
 (define (eval-string str)
   (eval
     (with-input-from-string str
-	  (lambda () (read)) ) ) )
+      (lambda () (read)) ) ) )
 
 (add-doc "first" "Return first element from the list. If list is empty, contrary to 'car' it will only return #f.")
 (define (first lst)
@@ -186,7 +186,7 @@ single expression (e.g. as '(+ 1 2 3)' but not multiple one, e.g. '(+ 1 2 3) (+ 
 All bindings can be used in the next one, as 'let*' is used for the final construction.")
 (define-macro (letn form . body)
   `(let* ,(partition 2 form)
-	 ,@body))
+     ,@body))
 
 (add-macro-doc "if-not" "Same as (if (not x)).")
 (define-macro (if-not p . body)
@@ -320,9 +320,9 @@ or string, access is in constant time. For list, it is linear."
       [(empty? lst) (cons n lst)]
       [else
         (if (op n (car lst))
-			(cons n lst)
-			(cons (car lst)
-				  (insert n (cdr lst))) ) ] ) )
+            (cons n lst)
+            (cons (car lst)
+                  (insert n (cdr lst))) ) ] ) )
 
   (if (empty? lst)
     '()
@@ -378,9 +378,9 @@ provides foldr which is more like foldl."
 (defun drop (n lst)
   "Return new list without first n elements."
   (if (or (equal? lst '())
-		  (<= n 0))
+          (<= n 0))
     lst
-	(drop (- n 1) (cdr lst)) ) ) 
+    (drop (- n 1) (cdr lst)) ) ) 
 
 (defun split-at (n lst)
   "Split given list on two sublists from position n."
@@ -406,6 +406,13 @@ provides foldr which is more like foldl."
                 (flatten (cdr lst)) )]
       [else
         (cons (car lst) (flatten (cdr lst))) ])))
+
+(defun repeatedly (n func)
+  "Call func n times and return the list of collected results."
+  (let loop ()
+    (if (<= n 0)
+      (list)
+      (cons (func) (repeatedly (- n 1) func)) ) ) )
 
 (defun memoize (func)
   "Returns memoized function. This is a function that will keep cached results among
@@ -534,7 +541,7 @@ number of times before, or call (shuffle lst) different times within each call."
 (defun list-as-string (lst)
   "Convert list to string."
   (let2 len (length lst)
-		ret "("
+        ret "("
       
     (define (str-append! s add-space)
       (set! ret (string-append ret s))

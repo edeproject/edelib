@@ -129,4 +129,10 @@
 						(vector-set! 2 1))
 				  #(1 1 1))
 
+(test-equal "#24" (repeatedly 4 [lambda () (range 1 4)])
+                  '((1 2 3) (1 2 3) (1 2 3) (1 2 3)))
+
+(test-equal "#24" (repeatedly 10 (lambda () 1))
+                  '(1 1 1 1 1 1 1 1 1 1))
+
 (run-all-tests "sslib Tests")
