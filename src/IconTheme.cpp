@@ -371,6 +371,31 @@ String IconTheme::find_icon(const char* icon, IconSizes sz, IconContext ctx) {
 		}
 	}
 
+#if 0	
+	/* third chance, search through icon theme, ignoring the size and context */
+	for(it = priv->dirlist.begin(); it != it_end; ++it) {
+		if(has_extension) {
+			ret = (*it).path;
+			ret += E_DIR_SEPARATOR_STR;
+			ret += icon;
+
+			if(file_test(ret.c_str(), FILE_TEST_IS_REGULAR))
+				return ret;
+		} else {
+			for(int i = 0; icon_extensions[i]; i++) {
+				ret = (*it).path;
+				ret += E_DIR_SEPARATOR_STR;
+				ret += icon;
+				ret += icon_extensions[i];
+
+				/* only check if exists; not too good, but we do not handle file opennings */
+				if(file_test(ret.c_str(), FILE_TEST_IS_REGULAR))
+					return ret;
+			}
+		}
+	}
+#endif
+
 	/* nothing found */
 	return "";
 }
