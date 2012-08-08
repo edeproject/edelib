@@ -21,6 +21,7 @@
 #include <FL/Fl_Tile.H>
 #include <FL/Fl_Hold_Browser.H>
 #include <FL/Fl_Output.H>
+#include <FL/Fl_File_Chooser.H>
 #include <FL/Fl.H>
 
 #include <edelib/Debug.h>
@@ -35,11 +36,14 @@
 #include <edelib/EdbusList.h>
 
 #include "ScriptEditor.h"
+#include "ObjectTree.h"
+#include "icons.h"
 
 EDELIB_NS_USING(MenuItem)
 EDELIB_NS_USING(MenuBar)
 EDELIB_NS_USING(ask)
 EDELIB_NS_USING(alert)
+EDELIB_NS_USING(message)
 EDELIB_NS_USING(EdbusConnection)
 EDELIB_NS_USING(EdbusMessage)
 EDELIB_NS_USING(EdbusList)
@@ -54,6 +58,9 @@ static void quit_cb(Fl_Widget*, void*);
 static void session_bus_cb(Fl_Widget*, void*);
 static void system_bus_cb(Fl_Widget*, void*);
 static void disconnect_cb(Fl_Widget*, void*);
+static void about_cb(Fl_Widget*, void*);
+static void save_cb(Fl_Widget*, void*);
+static void load_cb(Fl_Widget*, void*);
 
 static MenuItem menu_[] = {
 	{_("&File"), 0,  0, 0, 64, FL_NORMAL_LABEL, 0},
@@ -62,17 +69,21 @@ static MenuItem menu_[] = {
 	{_("System Bus"), 0,  system_bus_cb, 0, 0, FL_NORMAL_LABEL, 0},
 	{0,0,0,0,0,0,0,0,0},
 	{_("Disconnect"), 0,  disconnect_cb, 0, 128, FL_NORMAL_LABEL, 0},
+	{_("Load..."), 0,  load_cb, 0, 0, FL_NORMAL_LABEL, 0},
+	{_("Save As..."), 0,  save_cb, 0, 128, FL_NORMAL_LABEL, 0},
 	{_("&Quit"), 0x40071,  quit_cb, 0, 0, FL_NORMAL_LABEL, 0},
 	{0,0,0,0,0,0,0,0,0},
 	{_("&Help"), 0,  0, 0, 64, FL_NORMAL_LABEL, 0},
-	{_("&About"), 0,  0, 0, 0, FL_NORMAL_LABEL, 0},
+	{_("&About"), 0,  about_cb, 0, 0, FL_NORMAL_LABEL, 0},
 	{0,0,0,0,0,0,0,0,0},
 	{0,0,0,0,0,0,0,0,0}
 };
 
 static Fl_Output *status_bar;
 static Fl_Double_Window *win;
-static Fl_Hold_Browser *service_browser, *method_browser;
+static Fl_Hold_Browser *service_browser;
+static ObjectTree *method_browser;
+static ScriptEditor *script_editor;
 static int connection_bus_type;
 static EdbusConnection *bus_connection;
 
@@ -92,8 +103,6 @@ static void list_bus_names(EdbusConnection *c, Fl_Hold_Browser *browser) {
 		return;
 	}
 
-	E_DEBUG("==> %s\n", reply.path());
-
 	/* we should get array of strings */
 	EdbusMessage::const_iterator el = reply.begin();
 	if(!el->is_array()) {
@@ -109,7 +118,9 @@ static void list_bus_names(EdbusConnection *c, Fl_Hold_Browser *browser) {
 			continue;
 		}
 
+		if(it->to_string()[0] == ':') continue;
 		browser->add(it->to_string());
+		browser->icon(browser->size(), &image_service);
 	}
 }
 
@@ -147,6 +158,29 @@ static void disconnect_cb(Fl_Widget*, void*) {
 	status_bar->value(_("Not connected"));
 	service_browser->clear();
 	method_browser->clear();
+
+	if(bus_connection) bus_connection->disconnect();
+}
+
+static void about_cb(Fl_Widget*, void*) {
+	message("edelib DBus Explorer v0.1");
+}
+
+static void browser_cb(Fl_Browser *b, void*) {
+	if(b->value() > 0)
+		method_browser->introspect(b->text(b->value()), bus_connection);
+}
+
+static void save_cb(Fl_Widget*, void*) {
+	char *path = fl_file_chooser(_("Save shell content"), "*.{scm,ss}", "content.ss", 0);
+	if(path && script_editor->buffer()->savefile(path) != 0)
+		alert(_("Failed to save file as '%s'"), path);
+}
+
+static void load_cb(Fl_Widget*, void*) {
+	char *path = fl_file_chooser(_("Load shell content"), "*.{scm,ss}", "content.ss", 0);
+	if(path && script_editor->buffer()->loadfile(path) != 0)
+		alert(_("Failed to load file from '%s'"), path);
 }
 
 int main(int argc, char **argv) {
@@ -163,11 +197,12 @@ int main(int argc, char **argv) {
 		tile->begin();
 			service_browser = new Fl_Hold_Browser(5, 50, 220, 320, _("Services"));
         	service_browser->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+			service_browser->callback((Fl_Callback*)browser_cb);
 
-			method_browser = new Fl_Hold_Browser(225, 50, 370, 320, _("Methods"));
+			method_browser = new ObjectTree(225, 50, 370, 320, _("Objects and methods"));
 			method_browser->align(Fl_Align(FL_ALIGN_TOP_LEFT));
 
-			new ScriptEditor(5, 370, 590, 105);
+			script_editor = new ScriptEditor(5, 370, 590, 105);
 		tile->end();
 		Fl_Group::current()->resizable(tile);
 
@@ -178,8 +213,8 @@ int main(int argc, char **argv) {
 	/* initialize state to none */
 	disconnect_cb(0, 0);
 	win->show(argc, argv);
-	int ret = Fl::run();
 
+	int ret = Fl::run();
 	delete bus_connection;
 	return ret;
 }
