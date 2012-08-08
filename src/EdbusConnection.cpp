@@ -390,6 +390,9 @@ bool EdbusConnection::connect(EdbusConnectionType ctype) {
 }
 
 void EdbusConnection::disconnect(void) {
+	E_RETURN_IF_FAIL(dc != NULL);
+	E_RETURN_IF_FAIL(dc->conn != NULL);
+
 	/* only non-shared connections are allowed to be closed */
 	if(dc->conn)
 		dbus_connection_unref(dc->conn);

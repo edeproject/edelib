@@ -189,7 +189,6 @@ public:
 	 * If child @p has not exited, return NotExited (-2).
  	 */
 	static int check_pid_exited(pid_t pid);
-
 };
 
 EDELIB_NS_END
