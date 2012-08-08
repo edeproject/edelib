@@ -16,12 +16,17 @@
 ;; You should have received a copy of the GNU Lesser General Public License
 ;; along with this library. If not, see <http://www.gnu.org/licenses/>.
 
+(add-doc "lazy-car" "Returns the first element of lazy list.")
 (define lazy-car car)
 
+(add-doc "lazy-rest" "Returns sublist of lazy list without first element.")
 (define (lazy-cdr lst)
   (force (cdr lst)))
 
+(add-doc "lazy-first" "The same as 'lazy-car'.")
 (define lazy-first lazy-car)
+
+(add-doc "lazy-rest" "The same as 'lazy-cdr'.")
 (define lazy-rest lazy-cdr)
 
 (add-macro-doc "lazy-cons" "Lazy cons.")

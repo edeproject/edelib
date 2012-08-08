@@ -47,13 +47,16 @@
   (add-doc-generic func str "variable"))
 
 (define-with-return (find-doc func)
-  (unless (string? func) (error _"find-doc expects string argument"))
-
-  (for-each (lambda (x)
-              (if (string=? func (vector-ref x 0))
-                (return (vector-ref x 1)) ))
-            *doc-data*)
-  #f)
+  (let ([ff (cond
+              [(string? func) func]
+              [(symbol? func) (symbol->string func)]
+              [else
+                (error _"find-doc expects string or symbol as argument") ] ) ] )
+    (for-each (lambda (x)
+                (if (string=? ff (vector-ref x 0))
+                  (return (vector-ref x 1)) ))
+              *doc-data*)
+    #f) )
 
 (define (doc func)
   (define ret (find-doc func))
@@ -122,15 +125,21 @@ single expression (e.g. as '(+ 1 2 3)' but not multiple one, e.g. '(+ 1 2 3) (+ 
 
 (add-doc "first" "Return first element from the list. If list is empty, contrary to 'car' it will only return #f.")
 (define (first lst)
-  (if (null? lst)
+  (if (or (null? lst)
+		  (not lst))
     #f
     (car lst)))
 
 (add-doc "rest" "Return list without first element. Same as 'cdr' except it will return #f when list is empty.")
 (define (rest lst)
-  (if (null? lst)
+  (if (or (null? lst)
+		  (not lst))
     #f
     (cdr lst)))
+
+(add-doc "second" "Return second element from the list. If list is empty or have less elements, only return #f.")
+(define (second lst)
+  (first (rest lst)))
 
 (add-doc "print" "Print values to stdout.")
 (define (print . args)
