@@ -24,6 +24,7 @@
 #include <edelib/List.h>
 
 #include "ObjectTree.h"
+#include "Entity.h"
 #include "icons.h"
 
 EDELIB_NS_USING(EdbusConnection)
@@ -32,7 +33,8 @@ EDELIB_NS_USING(EdbusMessage)
 #define INTROSPECTABLE_INTERFACE "org.freedesktop.DBus.Introspectable"
 #define INTROSPECTABLE_METHOD    "Introspect"
 
-#define STR_CMP(s1, s2) (strcmp((s1), (s2)) == 0)
+#define STR_CMP(s1, s2)     (strcmp((s1), (s2)) == 0)
+#define STR_CMP_VALUE(o, s) (strcmp((o)->Value(), (s)) == 0)
 
 static void scan_object(EdbusConnection *conn, EdbusMessage &msg, const char *service, const char *path, ObjectTree *self) {
 	EdbusMessage reply;
@@ -64,7 +66,7 @@ static void scan_object(EdbusConnection *conn, EdbusMessage &msg, const char *se
 
 	for(el = el->FirstChildElement(); el; el = el->NextSibling()) {
 		/* we have subobjects */
-		if(STR_CMP(el->Value(), "node")) {
+		if(STR_CMP_VALUE(el, "node")) {
 			const char *name = el->ToElement()->Attribute("name");
 			if(!name) {
 				E_DEBUG(E_STRLOC ": <node> is expected to have 'name' attribute\n");
@@ -83,7 +85,7 @@ static void scan_object(EdbusConnection *conn, EdbusMessage &msg, const char *se
 
 			/* recurse */
 			scan_object(conn, msg, service, buf, self);
-		} else if(STR_CMP(el->Value(), "interface")) {
+		} else if(STR_CMP_VALUE(el, "interface")) {
 			/* full interface: get methods and properties */
 			const char *name = el->ToElement()->Attribute("name");
 			if(!name) {
@@ -100,29 +102,76 @@ static void scan_object(EdbusConnection *conn, EdbusMessage &msg, const char *se
 			/* append methods, signals and properties */
 			TiXmlNode *sel;
 			char buf2[256];
+			Fl_Image *icon;
+			EntityType et;
 
 			for(sel = el->FirstChildElement(); sel; sel = sel->NextSibling()) {
-				if(STR_CMP(sel->Value(), "method")) {
-					name = sel->ToElement()->Attribute("name");
-					snprintf(buf2, sizeof(buf2), "%s/%s", buf, name);
-					titem = self->add(buf2);
-					titem->usericon(&image_method);
-					self->close(titem);
-				} else if(STR_CMP(sel->Value(), "signal")) {
-					name = sel->ToElement()->Attribute("name");
-					snprintf(buf2, sizeof(buf2), "%s/%s", buf, name);
-					titem = self->add(buf2);
-					titem->usericon(&image_signal);
-					self->close(titem);
-				} else if(STR_CMP(sel->Value(), "property")) {
-					name = sel->ToElement()->Attribute("name");
-					snprintf(buf2, sizeof(buf2), "%s/%s", buf, name);
-					titem = self->add(buf2);
-					titem->usericon(&image_property);
-					self->close(titem);
+				if(STR_CMP_VALUE(sel, "method")) {
+					icon = &image_method;
+					et = ENTITY_METHOD;
+				} else if(STR_CMP_VALUE(sel, "signal")) {
+					icon = &image_signal;
+					et = ENTITY_SIGNAL;
+				} else if(STR_CMP_VALUE(sel, "property")) {
+					icon = &image_property;
+					et = ENTITY_PROPERTY;
 				} else {
 					E_WARNING(E_STRLOC ": Got unknown node '%s'. Skipping...\n", sel->Value());
+					continue;
 				}
+
+				/* everything else are common elements between different types */
+				name = sel->ToElement()->Attribute("name");
+				snprintf(buf2, sizeof(buf2), "%s/%s", buf, name);
+				titem = self->add(buf2);
+				titem->usericon(icon);
+				self->close(titem);
+
+				/* fill our metadata */
+				Entity *en = new Entity();
+				en->set_type(et);
+				en->set_name(name);
+				en->set_path(buf2);
+
+				if(et == ENTITY_PROPERTY) {
+					const char *argstype, *argsname, *argsaccess;
+					argstype = sel->ToElement()->Attribute("type");
+					argsname = sel->ToElement()->Attribute("name");
+					argsaccess = sel->ToElement()->Attribute("access");
+
+					en->append_arg(argsname, argstype, DIRECTION_NONE, argsaccess);
+				} else {
+					TiXmlNode *argsnode;
+					for(argsnode = sel->FirstChildElement(); argsnode; argsnode = argsnode->NextSibling()) {
+						if(!STR_CMP_VALUE(argsnode, "arg")) {
+							E_WARNING(E_STRLOC ": Expecting 'arg' node, but got '%s'. Skipping...\n", argsnode->Value());
+							continue;
+						}
+
+						const char *argstype, *argsname, *argsdirection;
+						ArgDirection dir = DIRECTION_NONE;
+
+						argstype = argsnode->ToElement()->Attribute("type");
+						if(!argstype) continue;
+
+						argsname = argsnode->ToElement()->Attribute("name");
+						if(!argsname) continue;
+
+						/* it is fine to not have direction, which means it is only a method */
+						argsdirection = argsnode->ToElement()->Attribute("direction");
+						if(argsdirection) {
+							if(STR_CMP(argsdirection, "in"))
+								dir = DIRECTION_IN;
+							else if(STR_CMP(argsdirection, "out"))
+								dir = DIRECTION_OUT;
+						}
+
+						en->append_arg(argsname, argstype, dir);
+					}
+				}
+
+				/* put it inside our tree */
+				self->append_entity(en);
 			}
 		}
 	}
@@ -140,4 +189,14 @@ void ObjectTree::introspect(const char *service, EdbusConnection *c) {
 	EdbusMessage  m;
 	scan_object(c, m, service, "/", this);
 	redraw();
+}
+
+void ObjectTree::clear(void) {
+	Fl_Tree::clear();
+
+	EntityListIt it = entities.begin(), ite = entities.end();
+	while(it != ite) {
+		delete *it;
+		it = entities.erase(it);
+	}
 }

@@ -79,10 +79,45 @@ int ScriptEditor::handle(int e) {
 		{
 			eval_selection();
 			return 1;
-		} else if(Fl::event_ctrl() && Fl::event_key() == 'l') {
+		}
+
+		if(Fl::event_ctrl() && Fl::event_key() == 'l') {
 			buffer()->remove(0, buffer()->length());
 			return 1;
+		} 
+
+#if 0
+		/* emacsy keys */
+		if(Fl::event_alt() && Fl::event_key() == 'f') {
+			next_word();
+			return 1;
 		}
+
+		if(Fl::event_alt() && Fl::event_key() == 'b') {
+			previous_word();
+			return 1;
+		}
+
+		if(Fl::event_ctrl() && Fl::event_key() == 'a') {
+			Fl_Text_Editor::kf_move(FL_Home, this);
+			return 1;
+		}
+		
+		if(Fl::event_ctrl() && Fl::event_key() == 'e') {
+			Fl_Text_Editor::kf_move(FL_End, this);
+			return 1;
+		}
+
+		if(Fl::event_ctrl() && Fl::event_key() == 'v') {
+			Fl_Text_Editor::kf_move(FL_Page_Up, this);
+			return 1;
+		}
+
+		if(Fl::event_alt() && Fl::event_key() == 'v') {
+			Fl_Text_Editor::kf_move(FL_Page_Down, this);
+			return 1;
+		}
+#endif
 	}
 
 	return SchemeEditor::handle(e);

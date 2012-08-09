@@ -216,6 +216,7 @@ int main(int argc, char **argv) {
 
 	/* initialize state to none */
 	disconnect_cb(0, 0);
+	win->callback(quit_cb);
 	win->show(argc, argv);
 
 	int ret = Fl::run();

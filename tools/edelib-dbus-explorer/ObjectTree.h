@@ -22,11 +22,22 @@
 
 #include <FL/Fl_Tree.H>
 #include <edelib/EdbusConnection.h>
+#include <edelib/List.h>
+
+class Entity;
+
+typedef EDELIB_NS_PREPEND(list<Entity*>) EntityList;
+typedef EDELIB_NS_PREPEND(list<Entity*>::iterator) EntityListIt;
 
 class ObjectTree : public Fl_Tree {
+private:
+	EntityList entities;
 public:
 	ObjectTree(int X, int Y, int W, int H, const char *l = 0);
+	virtual ~ObjectTree() { clear(); }
 	void introspect(const char *service, EDELIB_NS_PREPEND(EdbusConnection) *c);
+	void append_entity(Entity *e) { entities.push_back(e); }
+	void clear(void);
 };
 
 #endif

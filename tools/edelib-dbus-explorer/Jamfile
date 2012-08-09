@@ -19,6 +19,10 @@
 SubDir TOP tools edelib-dbus-explorer ;
 
 if $(DBUS_LIBS) {
-	MakeTest edelib-dbus-explorer : edelib-dbus-explorer.cpp ScriptEditor.cpp ObjectTree.cpp : -ledelib_dbus $(FLTK_LIBS) -ledelib $(DBUS_LIBS) ;
+	MakeTest edelib-dbus-explorer : edelib-dbus-explorer.cpp
+  									ScriptEditor.cpp
+  									ObjectTree.cpp
+  									Entity.cpp	
+  								  : -ledelib_dbus $(FLTK_LIBS) -ledelib $(DBUS_LIBS) ;
 	InstallProgram $(bindir) : edelib-dbus-explorer ;
 }
