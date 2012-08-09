@@ -170,16 +170,32 @@ static void scan_object(EdbusConnection *conn, EdbusMessage &msg, const char *se
 					}
 				}
 
-				/* put it inside our tree */
+				/* put it inside our tree so we can manage it */
 				self->append_entity(en);
+				/* add also inside Fl_Tree_Item */
+				titem->user_data(en);
 			}
 		}
+	}
+}
+
+static void tree_cb(Fl_Tree *tree, void*) {
+	Fl_Tree_Item *item = tree->callback_item();
+	if(!item) return;
+
+	if(tree->callback_reason() == FL_TREE_REASON_SELECTED && item->user_data()) {
+		char buf[128];
+		Entity *en = (Entity*)item->user_data();
+		en->get_prototype(buf, sizeof(buf));
+
+		E_DEBUG("%s > %s\n", item->label(), buf);
 	}
 }
 
 ObjectTree::ObjectTree(int X, int Y, int W, int H, const char *l) : Fl_Tree(X, Y, W, H, l) {
 	showroot(0);
 	item_labelbgcolor(color());
+	callback((Fl_Callback*)tree_cb);
 }
 
 void ObjectTree::introspect(const char *service, EdbusConnection *c) {
