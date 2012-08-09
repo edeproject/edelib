@@ -53,6 +53,8 @@ EDELIB_NS_USING_LIST(2, (EDBUS_SESSION, EDBUS_SYSTEM))
 #define CONNECTED_BUS_NONE    0
 #define CONNECTED_BUS_SESSION 1
 #define CONNECTED_BUS_SYSTEM  2
+
+#define LOAD_SAVE_PATTERN "*.{ss,scm}"
 	
 static void quit_cb(Fl_Widget*, void*);
 static void session_bus_cb(Fl_Widget*, void*);
@@ -122,6 +124,8 @@ static void list_bus_names(EdbusConnection *c, Fl_Hold_Browser *browser) {
 		browser->add(it->to_string());
 		browser->icon(browser->size(), &image_service);
 	}
+
+	browser->sort();
 }
 
 static void session_bus_cb(Fl_Widget*, void*) {
@@ -172,13 +176,13 @@ static void browser_cb(Fl_Browser *b, void*) {
 }
 
 static void save_cb(Fl_Widget*, void*) {
-	char *path = fl_file_chooser(_("Save shell content"), "*.{scm,ss}", "content.ss", 0);
+	char *path = fl_file_chooser(_("Save shell content"), LOAD_SAVE_PATTERN, 0, 0);
 	if(path && script_editor->buffer()->savefile(path) != 0)
 		alert(_("Failed to save file as '%s'"), path);
 }
 
 static void load_cb(Fl_Widget*, void*) {
-	char *path = fl_file_chooser(_("Load shell content"), "*.{scm,ss}", "content.ss", 0);
+	char *path = fl_file_chooser(_("Load shell content"), LOAD_SAVE_PATTERN, 0, 0);
 	if(path && script_editor->buffer()->loadfile(path) != 0)
 		alert(_("Failed to load file from '%s'"), path);
 }

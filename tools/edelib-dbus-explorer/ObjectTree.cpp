@@ -17,10 +17,11 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <string.h>
 #include <edelib/Debug.h>
 #include <edelib/EdbusMessage.h>
 #include <edelib/TiXml.h>
-#include <string.h>
+#include <edelib/List.h>
 
 #include "ObjectTree.h"
 #include "icons.h"
@@ -70,6 +71,7 @@ static void scan_object(EdbusConnection *conn, EdbusMessage &msg, const char *se
 				continue;
 			}
 
+			/* TODO: maybe use EdbusObjectPath? */
 			if(strcmp(path, "/") == 0)
 				snprintf(buf, sizeof(buf), "/%s", name);
 			else
