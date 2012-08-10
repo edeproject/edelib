@@ -173,6 +173,14 @@ public:
 	void disconnect(void);
 
 	/**
+	 * Return if this object is connected. This method will not only check the status of internal connection holder,
+	 * like if <em>connect()</em> was called, but will also check if current connection is alive, consulting DBus API call.
+	 *
+	 * \return true if connected or false if not
+	 */
+	bool connected(void);
+
+	/**
 	 * Sends a message.
 	 *
 	 * \return true if succesfully got reply

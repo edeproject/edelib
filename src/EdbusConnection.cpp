@@ -437,6 +437,15 @@ void EdbusConnection::disconnect(void) {
 	}
 }
 
+bool EdbusConnection::connected(void) {
+	E_RETURN_VAL_IF_FAIL(dc != NULL, false);
+	E_RETURN_VAL_IF_FAIL(dc->conn != NULL, false);
+
+	if(dbus_connection_get_is_connected(dc->conn) != TRUE)
+		return false;
+	return true;
+}
+
 bool EdbusConnection::send(const EdbusMessage& content) {
 	E_RETURN_VAL_IF_FAIL(dc != NULL, false);
 	E_RETURN_VAL_IF_FAIL(dc->conn != NULL, false);
