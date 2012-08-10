@@ -59,6 +59,7 @@ private:
 	EntityType       tp;
 	char             *name;
 	char             *path;
+	char             *interface;
 	ArgSignatureList args;
 public:
 	Entity();
@@ -73,10 +74,16 @@ public:
 	void  set_path(const char *p);
 	char *get_path(void) { return path; }
 
+	void  set_interface(const char *i);
+	char *get_interface(void) { return interface; }
+
 	void append_arg(const char *name, const char *type, ArgDirection direction, const char *access = NULL);
 
 	/* get prototype as readable string */
 	bool get_prototype(char *buf, int bufsz);
+
+	/* get prototype as scheme code */
+	bool get_prototype_as_scheme(char *buf, int bufsz);
 };
 
 #endif

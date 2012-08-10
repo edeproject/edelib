@@ -23,6 +23,7 @@ if $(DBUS_LIBS) {
   									ScriptEditor.cpp
   									ObjectTree.cpp
   									Entity.cpp	
+  									ScriptDBus.cpp
   								  : -ledelib_dbus $(FLTK_LIBS) -ledelib $(DBUS_LIBS) ;
 	InstallProgram $(bindir) : edelib-dbus-explorer ;
 }

@@ -20,34 +20,49 @@
 #include <string.h>
 #include <stdlib.h>
 #include <FL/Fl.H>
+#include <edelib/EdbusConnection.h>
+#include <edelib/Debug.h>
+
 #include "ScriptEditor.h"
+#include "ScriptDBus.h"
 
 EDELIB_NS_USING(SchemeEditor)
+EDELIB_NS_USING(EdbusConnection)
 
-static char eval_buf[1024];
+static char eval_buf[SCRIPT_EDITOR_EVAL_BUFSZ];
 
 ScriptEditor::ScriptEditor(int X, int Y, int W, int H, const char *l) : SchemeEditor(X, Y, W, H, l), sc(NULL) {
-	sc = edelib_scheme_init();
 	textsize(12);
-
-	edelib_scheme_set_input_port_file(sc, stdin);
-	edelib_scheme_set_output_port_string(sc, eval_buf, eval_buf + sizeof(eval_buf));
-
-	object_color(6, "#314e6c");
-	object_color(1, "#826647");
 
 #if FL_MAJOR_VERSION >= 1 && FL_MINOR_VERSION >= 3
 	wrap_mode(Fl_Text_Display::WRAP_AT_BOUNDS, w());
 #endif
+}
+
+ScriptEditor::~ScriptEditor() {
+	if(sc) edelib_scheme_deinit(sc);
+}
+
+void ScriptEditor::init_scripting(EdbusConnection **con) {
+	E_RETURN_IF_FAIL(sc == NULL);
+
+	sc = edelib_scheme_init();
+	edelib_scheme_set_input_port_file(sc, stdin);
+	edelib_scheme_set_output_port_string(sc, eval_buf, eval_buf + sizeof(eval_buf));
+
+	/*
+	 * init dbus binding
+	 * NOTE: EdbusConnection here can be NULL, depending if connection was initialized or not
+	 */
+	script_dbus_load(sc, con);
+
+	object_color(6, "#314e6c");
+	object_color(1, "#826647");
 
 	buffer()->append(
 ";; This is edelib script editor and interactive shell.\n"
 ";; Type some expression and press SHIFT-Enter to evaluate it;\n"
 ";; the result will be visible inside editor.\n");
-}
-
-ScriptEditor::~ScriptEditor() {
-	edelib_scheme_deinit(sc);
 }
 
 void ScriptEditor::eval_selection(void) {

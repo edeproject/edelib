@@ -18,23 +18,42 @@
  */
 
 #include <string.h>
+#include <FL/Fl.H>
+#include <FL/Fl_Tooltip.H>
 #include <edelib/Debug.h>
 #include <edelib/EdbusMessage.h>
 #include <edelib/TiXml.h>
 #include <edelib/List.h>
+#include <edelib/MenuItem.h>
+#include <edelib/Nls.h>
+#include <edelib/String.h>
 
 #include "ObjectTree.h"
+#include "ScriptEditor.h"
 #include "Entity.h"
 #include "icons.h"
 
 EDELIB_NS_USING(EdbusConnection)
 EDELIB_NS_USING(EdbusMessage)
+EDELIB_NS_USING(MenuItem)
+EDELIB_NS_USING(MenuButton)
+EDELIB_NS_USING(String)
 
 #define INTROSPECTABLE_INTERFACE "org.freedesktop.DBus.Introspectable"
 #define INTROSPECTABLE_METHOD    "Introspect"
 
 #define STR_CMP(s1, s2)     (strcmp((s1), (s2)) == 0)
 #define STR_CMP_VALUE(o, s) (strcmp((o)->Value(), (s)) == 0)
+
+static char tooltip_buf[128];
+static void send_to_editor_cb(Fl_Widget*, void*);
+static void describe_in_editor_cb(Fl_Widget*, void*);
+
+static MenuItem menu_[] = {
+	{_("&Send to editor"), 0, send_to_editor_cb, 0},
+	{_("&Describe"), 0, describe_in_editor_cb, 0},
+	{0}
+};
 
 static void scan_object(EdbusConnection *conn, EdbusMessage &msg, const char *service, const char *path, ObjectTree *self) {
 	EdbusMessage reply;
@@ -93,6 +112,9 @@ static void scan_object(EdbusConnection *conn, EdbusMessage &msg, const char *se
 				continue;
 			}
 
+			String interface_str = name;
+			String object_path_str = path;
+
 			/* append interface to tree */
 			snprintf(buf, sizeof(buf), "%s/%s", path, name);
 			titem = self->add(buf);
@@ -131,7 +153,8 @@ static void scan_object(EdbusConnection *conn, EdbusMessage &msg, const char *se
 				Entity *en = new Entity();
 				en->set_type(et);
 				en->set_name(name);
-				en->set_path(buf2);
+				en->set_interface(interface_str.c_str());
+				en->set_path(object_path_str.c_str());
 
 				if(et == ENTITY_PROPERTY) {
 					const char *argstype, *argsname, *argsaccess;
@@ -179,23 +202,34 @@ static void scan_object(EdbusConnection *conn, EdbusMessage &msg, const char *se
 	}
 }
 
-static void tree_cb(Fl_Tree *tree, void*) {
-	Fl_Tree_Item *item = tree->callback_item();
-	if(!item) return;
+static void send_to_editor_cb(Fl_Widget*, void *s) {
+	ObjectTree *self = (ObjectTree*)s;
+	Fl_Tree_Item *titem = self->first_selected_item();
 
-	if(tree->callback_reason() == FL_TREE_REASON_SELECTED && item->user_data()) {
-		char buf[128];
-		Entity *en = (Entity*)item->user_data();
-		en->get_prototype(buf, sizeof(buf));
+	if(!titem || !titem->user_data()) return;
 
-		E_DEBUG("%s > %s\n", item->label(), buf);
+	Entity *en = (Entity*)titem->user_data();
+	Fl_Text_Buffer *ebuf = self->get_editor_buffer();
+
+	E_RETURN_IF_FAIL(ebuf != NULL);
+
+	char buf[SCRIPT_EDITOR_EVAL_BUFSZ];
+	if(en->get_prototype_as_scheme(buf, sizeof(buf))) {
+		ebuf->append("\n");
+		ebuf->append(buf);
 	}
 }
 
-ObjectTree::ObjectTree(int X, int Y, int W, int H, const char *l) : Fl_Tree(X, Y, W, H, l) {
+static void describe_in_editor_cb(Fl_Widget*, void *s) {
+	//ObjectTree *self = (ObjectTree*)s;
+}
+
+ObjectTree::ObjectTree(int X, int Y, int W, int H, const char *l) : Fl_Tree(X, Y, W, H, l), editor_buf(NULL), action_menu(NULL) {
 	showroot(0);
 	item_labelbgcolor(color());
-	callback((Fl_Callback*)tree_cb);
+
+	action_menu = new MenuButton(0, 0, 0, 0);
+	action_menu->menu(menu_);
 }
 
 void ObjectTree::introspect(const char *service, EdbusConnection *c) {
@@ -215,4 +249,36 @@ void ObjectTree::clear(void) {
 		delete *it;
 		it = entities.erase(it);
 	}
+}
+
+int ObjectTree::handle(int ev) {
+	if(ev == FL_PUSH) {
+		const Fl_Tree_Item *clicked = find_clicked();
+
+		if(clicked && clicked->user_data()) {
+			/* show prototype as tooltip */
+			Entity *e = (Entity*)clicked->user_data();
+
+			if(Fl::event_button() == FL_RIGHT_MOUSE) {
+				deselect_all();
+				select((Fl_Tree_Item*) clicked, 1);
+
+				/* by default popup() does not call callbacks */
+				const MenuItem * m = action_menu->menu()->popup(Fl::event_x(), Fl::event_y());
+				if(m && m->callback()) 
+					m->do_callback(0, this);
+			} else {
+				e->get_prototype(tooltip_buf, sizeof(tooltip_buf));
+
+				Fl::belowmouse(this);
+				/*
+				 * I will never understaind how 'entity_area()' works, as obviously y coordinate always
+				 * gets messed up. Here '50' is hardcoded to fix tooltip messed position.
+				 */
+				Fl_Tooltip::enter_area(this, clicked->x(), clicked->y() - 50, clicked->w(), clicked->h(), tooltip_buf);
+			}
+		}
+	}
+
+	return Fl_Tree::handle(ev);
 }

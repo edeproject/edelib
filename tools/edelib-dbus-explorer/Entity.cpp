@@ -90,11 +90,12 @@ ArgSignature::~ArgSignature() {
 	if(access) free(access);
 }
 
-Entity::Entity() : tp(ENTITY_NONE), name(NULL), path(NULL) { }
+Entity::Entity() : tp(ENTITY_NONE), name(NULL), path(NULL), interface(NULL) { }
 
 Entity::~Entity() {
 	if(name) free(name);
 	if(path) free(path);
+	if(interface) free(interface);
 
 	ArgSignatureListIt it = args.begin(), ite = args.end();
 	for(; it != ite; it = args.erase(it))
@@ -107,6 +108,10 @@ void Entity::set_name(const char *n) {
 
 void Entity::set_path(const char *p) {
 	path = edelib_strndup(p, MAX_STRSZ);
+}
+
+void Entity::set_interface(const char *i) {
+	interface = edelib_strndup(i, MAX_STRSZ);
 }
 
 void Entity::append_arg(const char *n, const char *type, ArgDirection direction, const char *access) {
@@ -128,7 +133,7 @@ bool Entity::get_prototype(char *buf, int bufsz) {
 	if(args.empty()) {
 		ret = "void ";
 		ret += name;
-		ret += " (void)";
+		ret += " ()";
 	} else {
 		if(tp == ENTITY_PROPERTY) {
 			/* we should only get single argument */
@@ -173,7 +178,8 @@ bool Entity::get_prototype(char *buf, int bufsz) {
 			bool   have_something = false;
 
 			for(it = args.begin(); it != ite; ++it) {
-				if((*it)->direction == DIRECTION_IN) {
+				/* AFAIK only 'direction=out' is explicitly set */
+				if((*it)->direction != DIRECTION_OUT) {
 					/* so we can correctly watch adding commas */
 					if(have_something) ret += ", ";
 
@@ -187,6 +193,24 @@ bool Entity::get_prototype(char *buf, int bufsz) {
 			ret += ')';
 		}
 	}
+
+	if(!ret.empty()) {
+		edelib_strlcpy(buf, ret.c_str(), bufsz);
+		return true;
+	}
+
+	return false;
+}
+
+bool Entity::get_prototype_as_scheme(char *buf, int bufsz) {
+	E_RETURN_VAL_IF_FAIL(name != NULL, false);
+	E_RETURN_VAL_IF_FAIL(tp != ENTITY_NONE, false);
+
+	String ret;
+	E_DEBUG("%i %i %s\n", tp, args.size(), get_name());
+
+	if(args.empty() && tp == ENTITY_SIGNAL)
+		ret.printf("(dbus-signal \"%s\" \"%s\" \"%s\")", get_path(), get_interface(), get_name());
 
 	if(!ret.empty()) {
 		edelib_strlcpy(buf, ret.c_str(), bufsz);

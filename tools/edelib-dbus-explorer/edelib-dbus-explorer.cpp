@@ -207,6 +207,10 @@ int main(int argc, char **argv) {
 			method_browser->align(Fl_Align(FL_ALIGN_TOP_LEFT));
 
 			script_editor = new ScriptEditor(5, 370, 590, 105);
+			script_editor->init_scripting(&bus_connection);
+
+			/* so method_browser can write in it */
+			method_browser->set_editor_buffer(script_editor->buffer());
 		tile->end();
 		Fl_Group::current()->resizable(tile);
 

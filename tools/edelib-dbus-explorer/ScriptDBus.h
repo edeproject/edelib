@@ -17,26 +17,16 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __EDELIB_DBUS_EXPLORER_SCRIPT_EDITOR_H__
-#define __EDELIB_DBUS_EXPLORER_SCRIPT_EDITOR_H__
+#ifndef __EDELIB_DBUS_EXPLORER_SCRIPT_DBUS_H__
+#define __EDELIB_DBUS_EXPLORER_SCRIPT_DBUS_H__
 
-#include <edelib/SchemeEditor.h>
-#include <edelib/Scheme.h>
 #include <edelib/EdbusConnection.h>
 
-/* Default size for script editor evaluation results */
-#define SCRIPT_EDITOR_EVAL_BUFSZ 1024
+/* scheme bindings for DBus */
+struct scheme;
 
-/* REPL and edelib-script editor */
-class ScriptEditor : public EDELIB_NS_PREPEND(SchemeEditor) {
-private:
-	scheme *sc;
-	void eval_selection(void);
-public:
-	ScriptEditor(int X, int Y, int W, int H, const char *l = 0);
-	~ScriptEditor();
-	void init_scripting(EDELIB_NS_PREPEND(EdbusConnection) **con);
-	virtual int handle(int e);
-};
+void script_dbus_load(scheme *s, EDELIB_NS_PREPEND(EdbusConnection) **con);
 
 #endif
+
+

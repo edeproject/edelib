@@ -21,8 +21,10 @@
 #define __EDELIB_DBUS_EXPLORER_OBJECT_TREE_H__
 
 #include <FL/Fl_Tree.H>
+#include <FL/Fl_Text_Buffer.H>
 #include <edelib/EdbusConnection.h>
 #include <edelib/List.h>
+#include <edelib/MenuButton.h>
 
 class Entity;
 
@@ -31,13 +33,21 @@ typedef EDELIB_NS_PREPEND(list<Entity*>::iterator) EntityListIt;
 
 class ObjectTree : public Fl_Tree {
 private:
-	EntityList entities;
+	Fl_Text_Buffer                *editor_buf;
+	EDELIB_NS_PREPEND(MenuButton) *action_menu;
+	EntityList                    entities;
+
 public:
 	ObjectTree(int X, int Y, int W, int H, const char *l = 0);
 	virtual ~ObjectTree() { clear(); }
 	void introspect(const char *service, EDELIB_NS_PREPEND(EdbusConnection) *c);
 	void append_entity(Entity *e) { entities.push_back(e); }
 	void clear(void);
+
+	void            set_editor_buffer(Fl_Text_Buffer *b) { editor_buf = b; }
+	Fl_Text_Buffer *get_editor_buffer(void) { return editor_buf; }
+
+	int handle(int ev);
 };
 
 #endif
