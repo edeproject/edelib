@@ -106,14 +106,13 @@ static void scan_object(EdbusConnection *conn, EdbusMessage &msg, const char *se
 			scan_object(conn, msg, service, buf, self);
 		} else if(STR_CMP_VALUE(el, "interface")) {
 			/* full interface: get methods and properties */
-			const char *name = el->ToElement()->Attribute("name");
+			const char *interface_name, *name = el->ToElement()->Attribute("name");
+			/* remember it for Entity */
+			interface_name = name;
 			if(!name) {
 				E_DEBUG(E_STRLOC ": <interface> is expected to have 'name' attribute\n");
 				continue;
 			}
-
-			String interface_str = name;
-			String object_path_str = path;
 
 			/* append interface to tree */
 			snprintf(buf, sizeof(buf), "%s/%s", path, name);
@@ -153,8 +152,8 @@ static void scan_object(EdbusConnection *conn, EdbusMessage &msg, const char *se
 				Entity *en = new Entity();
 				en->set_type(et);
 				en->set_name(name);
-				en->set_interface(interface_str.c_str());
-				en->set_path(object_path_str.c_str());
+				en->set_interface(interface_name);
+				en->set_path(path);
 
 				if(et == ENTITY_PROPERTY) {
 					const char *argstype, *argsname, *argsaccess;
@@ -214,10 +213,8 @@ static void send_to_editor_cb(Fl_Widget*, void *s) {
 	E_RETURN_IF_FAIL(ebuf != NULL);
 
 	char buf[SCRIPT_EDITOR_EVAL_BUFSZ];
-	if(en->get_prototype_as_scheme(buf, sizeof(buf))) {
-		ebuf->append("\n");
+	if(en->get_prototype_as_scheme(buf, sizeof(buf)))
 		ebuf->append(buf);
-	}
 }
 
 static void describe_in_editor_cb(Fl_Widget*, void *s) {

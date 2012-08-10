@@ -18,15 +18,21 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <string.h>
 #include <edelib/Scheme.h>
 #include <edelib/Debug.h>
 #include <edelib/EdbusMessage.h>
+#include <edelib/EdbusData.h>
+
 #include "ScriptDBus.h"
 
 EDELIB_NS_USING(EdbusConnection)
 EDELIB_NS_USING(EdbusMessage)
+EDELIB_NS_USING(EdbusData)
 
 static EdbusConnection **curr_con = NULL;
+
+#define STR_CMP(s1, s2) (strcmp((s1), (s2)) == 0)
 
 /* TODO: find better way to handle this, or add edelib_scheme_error inside Scheme.h */
 #define LOCAL_SCHEME_ERROR(scm, str) scheme_load_string(scm, "(error " #str ")");
@@ -55,9 +61,72 @@ static int list_length(scheme *s, pointer args) {
 	return n;
 }
 
+static bool edbus_data_from_pair(scheme *s, pointer type, pointer val, EdbusData &ret) {
+	E_RETURN_VAL_IF_FAIL(edelib_scheme_is_symbol(s, type), false);
+	char *sym = edelib_scheme_symname(s, type);
+
+	if(STR_CMP(sym, ":int16") || STR_CMP(sym, ":uint16") ||
+	   STR_CMP(sym, ":int32") || STR_CMP(sym, ":uint32") ||
+	   STR_CMP(sym, ":byte") || STR_CMP(sym, ":bool"))
+	{
+		if(edelib_scheme_is_int(s, val)) {
+			int iv = edelib_scheme_int_value(s, val);
+
+			if (STR_CMP(sym, ":byte"))       ret = EdbusData::from_byte((byte_t)iv);
+			else if(STR_CMP(sym, ":bool"))   ret = EdbusData::from_bool((bool)iv);
+			else if(STR_CMP(sym, ":int16"))  ret = EdbusData::from_int16((int16_t)iv);
+			else if(STR_CMP(sym, ":uint16")) ret = EdbusData::from_uint16((uint16_t)iv);
+			else if(STR_CMP(sym, ":int32"))  ret = EdbusData::from_int32((int32_t)iv);
+			else if(STR_CMP(sym, ":uint32")) ret = EdbusData::from_uint32((uint32_t)iv);
+
+			return true;
+		}
+
+		LOCAL_SCHEME_ERROR(s, "Type marked as byte/bool/integer but the value is not");
+		return false;
+	}
+
+	if(STR_CMP(sym, ":double")) {
+		if(edelib_scheme_is_double(s, val)) {
+			double dv = edelib_scheme_double_value(s, val);
+			ret = EdbusData::from_double(dv);
+			return true;
+		}
+
+		LOCAL_SCHEME_ERROR(s, "Type marked as double but the value is not");
+		return false;
+	}
+
+	if(STR_CMP(sym, ":string")) {
+		if(edelib_scheme_is_string(s, val)) {
+			char *sv = edelib_scheme_string_value(s, val);
+			ret = EdbusData::from_string(sv);
+			return true;
+		}
+
+		LOCAL_SCHEME_ERROR(s, "Type marked as string but the value is not");
+		return false;
+	}
+
+	if(STR_CMP(sym, ":array")) {
+		if(edelib_scheme_is_vector(s, val)) {
+		}
+
+		LOCAL_SCHEME_ERROR(s, "Type marked as array but the value is not vector");
+		return false;
+	}
+
+	return true;
+}
+
+/* accept list in form '(:int32 3 :string 4 :bool 5 ...) and construct EdbusMessage from it */
+static EdbusMessage& edbus_message_from_list(scheme *s, pointer args, EdbusMessage &msg) {
+}
+
 pointer script_bus_signal(scheme *s, pointer args) {
 	LOCAL_SCHEME_RETURN_IF_NOT_CONNECTED(s);
-	LOCAL_SCHEME_RETURN_IF_FAIL(s, list_length(s, args) == 3, "Expecting 3 arguments");
+	int len = list_length(s, args);
+	LOCAL_SCHEME_RETURN_IF_FAIL(s, (len == 3 || len == 4), "Expecting at least 3 and max 4 arguments");
 
 	pointer path, interface, name;
 	path = edelib_scheme_pair_car(s, args);
@@ -73,7 +142,7 @@ pointer script_bus_signal(scheme *s, pointer args) {
 
 	EdbusMessage msg;
 	msg.create_signal(edelib_scheme_string_value(s, path),
-					  edelib_scheme_string_value(s, args),
+					  edelib_scheme_string_value(s, interface),
 					  edelib_scheme_string_value(s, name));
 	
 	if((*curr_con)->send(msg)) return s->T;
