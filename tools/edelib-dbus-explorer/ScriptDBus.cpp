@@ -29,6 +29,7 @@
 EDELIB_NS_USING(EdbusConnection)
 EDELIB_NS_USING(EdbusMessage)
 EDELIB_NS_USING(EdbusData)
+EDELIB_NS_USING(EDBUS_TYPE_INVALID)
 
 static EdbusConnection **curr_con = NULL;
 
@@ -110,9 +111,21 @@ static bool edbus_data_from_pair(scheme *s, pointer type, pointer val, EdbusData
 
 	if(STR_CMP(sym, ":array")) {
 		if(edelib_scheme_is_vector(s, val)) {
+			LOCAL_SCHEME_ERROR(s, "Not implemented yet");
+			return false;
 		}
 
 		LOCAL_SCHEME_ERROR(s, "Type marked as array but the value is not vector");
+		return false;
+	}
+
+	if(STR_CMP(sym, ":list")) {
+		if(edelib_scheme_is_pair(s, val)) {
+			LOCAL_SCHEME_ERROR(s, "Not implemented yet");
+			return false;
+		}
+
+		LOCAL_SCHEME_ERROR(s, "Type marked as list but the value is not list");
 		return false;
 	}
 
@@ -120,11 +133,47 @@ static bool edbus_data_from_pair(scheme *s, pointer type, pointer val, EdbusData
 }
 
 /* accept list in form '(:int32 3 :string 4 :bool 5 ...) and construct EdbusMessage from it */
-static EdbusMessage& edbus_message_from_list(scheme *s, pointer args, EdbusMessage &msg) {
+static bool edbus_message_params_from_list(scheme *s, pointer args, EdbusMessage &msg) {
+	int len = list_length(s, args);
+
+	if(E_UNLIKELY(len < 1)) {
+		LOCAL_SCHEME_ERROR(s, "Arguments and their types are not specified.");
+		return false;
+	}
+
+	if(E_UNLIKELY((len % 2) != 0)) {
+		LOCAL_SCHEME_ERROR(s, "Mismatched number or arguments and their types. Somewhere you are either missing argument type or type does not have variable");
+		return false;
+	}
+
+	/* start scanning in pair */
+	pointer t, v, tmp = args;
+
+	for(; tmp && tmp != s->NIL; tmp = edelib_scheme_pair_cdr(s, tmp)) {
+		t = edelib_scheme_pair_car(s, tmp);
+
+		tmp = edelib_scheme_pair_cdr(s, tmp);
+		E_ASSERT(tmp != s->NIL && "Wrong code. Always expected pair");
+
+		v = edelib_scheme_pair_car(s, tmp);
+		E_ASSERT(v != s->NIL && "Wrong code. Always expected pair");
+
+		EdbusData data;
+		if(edbus_data_from_pair(s, t, v, data)) {
+			msg << data;
+		} else {
+			/* let caller knows something fails */
+			return false;
+		}
+	}
+
+	/* all fine */
+	return true;
 }
 
 pointer script_bus_signal(scheme *s, pointer args) {
 	LOCAL_SCHEME_RETURN_IF_NOT_CONNECTED(s);
+
 	int len = list_length(s, args);
 	LOCAL_SCHEME_RETURN_IF_FAIL(s, (len == 3 || len == 4), "Expecting at least 3 and max 4 arguments");
 
@@ -149,11 +198,55 @@ pointer script_bus_signal(scheme *s, pointer args) {
 	return s->F;
 }
 
+pointer script_bus_method_call(scheme *s, pointer args) {
+	LOCAL_SCHEME_RETURN_IF_NOT_CONNECTED(s);
+
+	int len = list_length(s, args);
+	LOCAL_SCHEME_RETURN_IF_FAIL(s, (len >= 4), "Expecting at least 4 arguments");
+
+	pointer service, path, interface, name, params;
+	service = edelib_scheme_pair_car(s, args);
+	LOCAL_SCHEME_RETURN_IF_FAIL(s, edelib_scheme_is_string(s, service), "First argument must be a string");
+
+	args = edelib_scheme_pair_cdr(s, args);
+	path = edelib_scheme_pair_car(s, args);
+	LOCAL_SCHEME_RETURN_IF_FAIL(s, edelib_scheme_is_string(s, path), "Second argument must be a string");
+
+	args = edelib_scheme_pair_cdr(s, args);
+	interface = edelib_scheme_pair_car(s, args);
+	LOCAL_SCHEME_RETURN_IF_FAIL(s, edelib_scheme_is_string(s, interface), "Third argument must be a string");
+
+	args = edelib_scheme_pair_cdr(s, args);
+	name = edelib_scheme_pair_car(s, args);
+	LOCAL_SCHEME_RETURN_IF_FAIL(s, edelib_scheme_is_string(s, name), "Fourth argument must be a string");
+
+	EdbusMessage msg;
+
+	//void create_method_call(const char* service, const char* path, const char* interface, const char* method);
+	msg.create_method_call(edelib_scheme_string_value(s, service),
+						   edelib_scheme_string_value(s, path),
+						   edelib_scheme_string_value(s, interface),
+						   edelib_scheme_string_value(s, name));
+
+	args = edelib_scheme_pair_cdr(s, args);
+	if(args != s->NIL && ((params = edelib_scheme_pair_car(s, args)) != s->NIL)) {
+		/* fail if we can't get arguments */
+		if(!edbus_message_params_from_list(s, params, msg))
+			return s->F;
+	}
+
+	if((*curr_con)->send(msg)) return s->T;
+	return s->F;
+}
+
 void script_dbus_load(scheme *s, EdbusConnection **con) {
 	curr_con = con;
 
 	EDELIB_SCHEME_DEFINE2(s, script_bus_signal, "dbus-signal",
-						  "Send DBus signal with given parameters. Parameters are object path, interface\n "
-						  "and signal name. DBus signals does not return value so this function will return\n "
-						  "either #t or #f depending if signal successfully sent.");
+"Send DBus signal with given parameters. Parameters are object path, interface\n\
+and signal name. DBus signals does not return value so this function will return\n\
+either #t or #f depending if signal successfully sent.");
+
+	EDELIB_SCHEME_DEFINE2(s, script_bus_method_call, "dbus-call",
+"Call DBus method with given arguments. This call will wait for reply and return as scheme object.");
 }

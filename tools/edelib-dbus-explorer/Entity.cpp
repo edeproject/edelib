@@ -209,8 +209,11 @@ bool Entity::get_prototype_as_scheme(char *buf, int bufsz) {
 	String ret;
 	E_DEBUG("%i %i %s\n", tp, args.size(), get_name());
 
-	if(args.empty() && tp == ENTITY_SIGNAL)
-		ret.printf("(dbus-signal \"%s\" \"%s\" \"%s\")", get_path(), get_interface(), get_name());
+	if(tp == ENTITY_SIGNAL) {
+		if(args.empty()) {
+			ret.printf("(dbus-signal \"%s\" \"%s\" \"%s\")", get_path(), get_interface(), get_name());
+		}
+	}
 
 	if(!ret.empty()) {
 		edelib_strlcpy(buf, ret.c_str(), bufsz);
