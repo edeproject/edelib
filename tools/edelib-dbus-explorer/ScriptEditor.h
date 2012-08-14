@@ -28,7 +28,9 @@
 class ScriptEditor : public EDELIB_NS_PREPEND(SchemeEditor) {
 private:
 	scheme *sc;
+	int    template_pos;
 	void eval_selection(void);
+	void search_template_word_and_highlight(void);
 public:
 	ScriptEditor(int X, int Y, int W, int H, const char *l = 0);
 	~ScriptEditor();

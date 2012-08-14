@@ -107,18 +107,19 @@ static String& signature_to_scheme(ArgSignatureList &lst, String &ret) {
 
 		for(const char *ptr = (*it)->sig; ptr && *ptr; ptr++) {
 			if(*ptr == 'a')
-				ret += ":array '(";
+				ret += ":array (";
 			else if(*ptr == '(' || *ptr == 'r')
-				ret += ":struct '(";
+				ret += ":struct (";
 			else if(*ptr == '{' || *ptr == 'e')
-				ret += ":dict '(";
+				ret += ":dict (";
 			else if(*ptr == ')' || *ptr == '}') {
 				ret += ")";
 				/* end of containers */
 			} else if(basic_signature_char_to_string(*ptr, basic_type)) {
 				ret += ":";
 				ret += basic_type;
-				ret +=  EDELIB_DBUS_EXPLORER_DEFAULT_VALUE_TEMPLATE;
+				ret += ' ';
+				ret += EDELIB_DBUS_EXPLORER_DEFAULT_VALUE_TEMPLATE;
 			}
 
 			ret += " ";
@@ -267,8 +268,6 @@ bool Entity::get_prototype_as_scheme(char *buf, int bufsz) {
 	E_RETURN_VAL_IF_FAIL(tp != ENTITY_NONE, false);
 
 	String ret;
-	E_DEBUG("%i %i %s\n", tp, args.size(), get_name());
-
 	if(tp == ENTITY_SIGNAL) {
 		ret.printf("(dbus-signal \"%s\" \"%s\" \"%s\"", get_path(), get_interface(), get_name());
 		if(args.empty()) {
@@ -277,6 +276,7 @@ bool Entity::get_prototype_as_scheme(char *buf, int bufsz) {
 			String scm_params;
 			signature_to_scheme(args, scm_params);
 			ret += scm_params;
+			ret += ')';
 		}
 	} else if(tp == ENTITY_METHOD) {
 		ret.printf("(dbus-call \"%s\" \"%s\" \"%s\" \"%s\"", get_service(), get_path(), get_interface(), get_name());
@@ -286,6 +286,7 @@ bool Entity::get_prototype_as_scheme(char *buf, int bufsz) {
 			String scm_params;
 			signature_to_scheme(args, scm_params);
 			ret += scm_params;
+			ret += ')';
 		}
 	}
 

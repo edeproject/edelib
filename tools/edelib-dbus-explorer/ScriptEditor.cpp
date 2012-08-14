@@ -22,6 +22,7 @@
 #include <FL/Fl.H>
 #include <edelib/EdbusConnection.h>
 #include <edelib/Debug.h>
+#include <edelib/Missing.h>
 
 #include "ScriptEditor.h"
 #include "ScriptDBus.h"
@@ -32,7 +33,7 @@ EDELIB_NS_USING(EdbusConnection)
 
 static char eval_buf[EDELIB_DBUS_EXPLORER_DEFAULT_SCRIPT_EVAL_BUFSIZE];
 
-ScriptEditor::ScriptEditor(int X, int Y, int W, int H, const char *l) : SchemeEditor(X, Y, W, H, l), sc(NULL) {
+ScriptEditor::ScriptEditor(int X, int Y, int W, int H, const char *l) : SchemeEditor(X, Y, W, H, l), sc(NULL), template_pos(0) {
 	textsize(12);
 
 #if FL_MAJOR_VERSION >= 1 && FL_MINOR_VERSION >= 3
@@ -56,6 +57,14 @@ void ScriptEditor::init_scripting(EdbusConnection **con) {
 	 * NOTE: EdbusConnection here can be NULL, depending if connection was initialized or not
 	 */
 	script_dbus_load(sc, con);
+
+	FILE *fd = fopen("edelib-dbus-explorer.ss", "r");
+	if(!fd) {
+		E_WARNING(E_STRLOC ": Unable to load 'edelib-dbus-explorer.ss'\n");
+	} else {
+		edelib_scheme_load_file(sc, fd);
+		fclose(fd);
+	}
 
 	object_color(6, "#314e6c");
 	object_color(1, "#826647");
@@ -87,6 +96,18 @@ void ScriptEditor::eval_selection(void) {
 	buffer()->append(eval_buf);
 }
 
+void ScriptEditor::search_template_word_and_highlight(void) {
+	if(!buffer()->search_forward(template_pos, EDELIB_DBUS_EXPLORER_DEFAULT_VALUE_TEMPLATE, &template_pos, 1)) {
+		template_pos = 0;
+		return;
+	}
+
+	int len = edelib_strnlen(EDELIB_DBUS_EXPLORER_DEFAULT_VALUE_TEMPLATE, 128);
+	buffer()->select(template_pos, template_pos + len);
+
+	template_pos += len;
+}
+
 int ScriptEditor::handle(int e) {
 	/* catch shortcut before we enter into SchemeEditor */
 	if(e == FL_KEYBOARD) {
@@ -101,6 +122,11 @@ int ScriptEditor::handle(int e) {
 			buffer()->remove(0, buffer()->length());
 			return 1;
 		} 
+
+		if(Fl::event_shift() && Fl::event_key() == FL_Tab) {
+			search_template_word_and_highlight();
+			return 1;
+		}
 
 #if 0
 		/* emacsy keys */
