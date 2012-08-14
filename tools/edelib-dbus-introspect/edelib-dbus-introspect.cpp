@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
 	}
 
 	EdbusMessage msg, reply;
-	msg.create_method_call(destination, object , INTROSPECTABLE_INTERFACE, INTROSPECTABLE_METHOD);
+	msg.create_method_call(destination, object, INTROSPECTABLE_INTERFACE, INTROSPECTABLE_METHOD);
 
 	if(!con.send_with_reply_and_block(msg, 1000, reply)) {
 		printf("Failed to get reply from bus!\n");

@@ -23,12 +23,17 @@
 #include <edelib/Debug.h>
 #include <edelib/EdbusMessage.h>
 #include <edelib/EdbusData.h>
+#include <edelib/EdbusList.h>
+#include <edelib/EdbusDict.h>
 
 #include "ScriptDBus.h"
 
 EDELIB_NS_USING(EdbusConnection)
 EDELIB_NS_USING(EdbusMessage)
 EDELIB_NS_USING(EdbusData)
+EDELIB_NS_USING(EdbusObjectPath)
+EDELIB_NS_USING(EdbusList)
+EDELIB_NS_USING(EdbusDict)
 EDELIB_NS_USING(EDBUS_TYPE_INVALID)
 
 static EdbusConnection **curr_con = NULL;
@@ -60,6 +65,20 @@ static int list_length(scheme *s, pointer args) {
 	}
 
 	return n;
+}
+
+/* this could be a part of edelib scheme */
+static pointer reverse_in_place(scheme *sc, pointer term, pointer lst) {
+	pointer p = lst, result = term, q;
+
+	while(p != sc->NIL) {
+		q = edelib_scheme_pair_cdr(sc, p);
+		edelib_scheme_cdr_set(sc, p, result);
+		result = p;
+		p = q;
+	}
+
+	return result;
 }
 
 static bool edbus_data_from_pair(scheme *s, pointer type, pointer val, EdbusData &ret) {
@@ -130,6 +149,103 @@ static bool edbus_data_from_pair(scheme *s, pointer type, pointer val, EdbusData
 	}
 
 	return true;
+}
+
+#define RETURN_FROM_EDBUS_TO_SCHEME_AS_INT(scm, object, type)	\
+do {															\
+	if(object.is_ ## type ()) {									\
+		type ## _t v = object.to_ ## type ();					\
+		return edelib_scheme_mk_int(scm, (long)v);				\
+	}															\
+} while(0)
+
+static pointer edbus_data_to_scheme_object(scheme *s, EdbusData &data) {
+	if(data.is_bool()) {
+		bool v = data.to_bool();
+		return edelib_scheme_mk_int(s, (long)v);
+	}
+
+	if(data.is_char()) {
+		char c = data.to_char();
+		return edelib_scheme_mk_character(s, (int)c);
+	}
+
+	if(data.is_double())
+		return edelib_scheme_mk_double(s, data.to_double());
+
+	if(data.is_string())
+		return edelib_scheme_mk_string(s, data.to_string());
+
+	if(data.is_object_path()) {
+		EdbusObjectPath v = data.to_object_path();
+		return edelib_scheme_mk_string(s, v.path());
+	}
+
+	if(data.is_variant()) {
+		/* recurse, as variant can be anything */
+		EdbusData v = data.to_variant().value;
+		return edbus_data_to_scheme_object(s, v);
+	}
+
+	RETURN_FROM_EDBUS_TO_SCHEME_AS_INT(s, data, byte);
+	RETURN_FROM_EDBUS_TO_SCHEME_AS_INT(s, data, int16);
+	RETURN_FROM_EDBUS_TO_SCHEME_AS_INT(s, data, uint16);
+	RETURN_FROM_EDBUS_TO_SCHEME_AS_INT(s, data, int32);
+	RETURN_FROM_EDBUS_TO_SCHEME_AS_INT(s, data, uint32);
+	RETURN_FROM_EDBUS_TO_SCHEME_AS_INT(s, data, int64);
+	RETURN_FROM_EDBUS_TO_SCHEME_AS_INT(s, data, uint64);
+
+	/* array is represented as scheme vector */
+	if(data.is_array()) {
+		EdbusList arr = data.to_array();
+		EdbusList::const_iterator it = arr.begin(), ite = arr.end();
+		int i = 0;
+
+		pointer elem, vec = edelib_scheme_mk_vector(s, arr.size());
+		for(; it != ite; ++it, ++i) {
+			/* element can be anything, so recurse again; also remove constness as elements will not be modified */
+			elem = edbus_data_to_scheme_object(s, (EdbusData&)*it);
+			edelib_scheme_vector_elem_set(s, vec, i, elem);
+		}
+
+		return vec;
+	}
+
+	/* struct is represented as scheme list */
+	if(data.is_struct()) {
+		EdbusList v = data.to_struct();
+		EdbusList::const_iterator it = v.begin(), ite = v.end();
+
+		pointer elem, ret = s->NIL;
+		for(; it != ite; ++it) {
+			elem = edbus_data_to_scheme_object(s, (EdbusData&)*it);
+			ret = edelib_scheme_cons(s, elem, ret);
+		}
+
+		return reverse_in_place(s, s->NIL, ret);
+	}
+
+	/* dictionary is represented as list of list, like: '((key val) (key val) ...) so we can use assoc */
+	if(data.is_dict()) {
+		EdbusDict v = data.to_dict();	
+		EdbusDict::const_iterator it = v.begin(), ite = v.end();
+
+		pointer key, val, kv_pair = s->NIL, ret = s->NIL;
+		for(; it != ite; ++it) {
+			key = edbus_data_to_scheme_object(s, (EdbusData&)(it->key));
+			val = edbus_data_to_scheme_object(s, (EdbusData&)(it->value));
+
+			/* add them in reverse order so we don't have to reverse it */
+			kv_pair = edelib_scheme_cons(s, val, kv_pair);
+			kv_pair = edelib_scheme_cons(s, key, kv_pair);
+
+			ret = edelib_scheme_cons(s, kv_pair, ret);
+		}
+
+		return ret;
+	}
+
+	return s->F;
 }
 
 /* accept list in form '(:int32 3 :string 4 :bool 5 ...) and construct EdbusMessage from it */
@@ -222,7 +338,6 @@ pointer script_bus_method_call(scheme *s, pointer args) {
 
 	EdbusMessage msg;
 
-	//void create_method_call(const char* service, const char* path, const char* interface, const char* method);
 	msg.create_method_call(edelib_scheme_string_value(s, service),
 						   edelib_scheme_string_value(s, path),
 						   edelib_scheme_string_value(s, interface),
@@ -235,7 +350,18 @@ pointer script_bus_method_call(scheme *s, pointer args) {
 			return s->F;
 	}
 
-	if((*curr_con)->send(msg)) return s->T;
+	EdbusMessage reply;
+	if((*curr_con)->send_with_reply_and_block(msg, 1000, reply)) {
+		if(reply.size() == 0) {
+			E_DEBUG(E_STRLOC ": got reply with 0 objects\n");
+			return s->T;
+		}
+
+		/* scan reply and construct scheme objects */
+		EdbusData item = *(reply.begin());
+		return edbus_data_to_scheme_object(s, item);
+	}
+
 	return s->F;
 }
 
@@ -247,6 +373,12 @@ void script_dbus_load(scheme *s, EdbusConnection **con) {
 and signal name. DBus signals does not return value so this function will return\n\
 either #t or #f depending if signal successfully sent.");
 
+	/*
+	EDELIB_SCHEME_DEFINE2(s, script_bus_get_property, "dbus-get-property",
+"Return value of named property on given interface. If failed to fetch property value\n\
+return #f.");
+	*/
+
 	EDELIB_SCHEME_DEFINE2(s, script_bus_method_call, "dbus-call",
-"Call DBus method with given arguments. This call will wait for reply and return as scheme object.");
+"Call DBus method with given arguments. This call will wait for reply and return result as scheme object.");
 }

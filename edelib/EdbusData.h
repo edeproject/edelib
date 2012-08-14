@@ -243,7 +243,7 @@ public:
 	/**
 	 * Returns a int64 value if it holds
 	 */
-	int64_t  to_int64(void) const;
+	int64_t to_int64(void) const;
 
 	/**
 	 * Returns a uint64 value if it holds

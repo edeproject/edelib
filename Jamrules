@@ -526,7 +526,7 @@ LocalClean distclean :
 	$(TOP)/config.h
 	$(TOP)/edelib/Version.h 
 	$(TOP)/po/update-messages.sh
-    $(TOP)/sslib/init_ss.h
+	$(TOP)/sslib/init_ss.h
 	$(TOP)/sslib/theme_ss.h
 	$(JCACHEFILE)
 	$(HCACHEFILE) ;
