@@ -60,6 +60,7 @@ private:
 	char             *name;
 	char             *path;
 	char             *interface;
+	char             *service;
 	ArgSignatureList args;
 public:
 	Entity();
@@ -76,6 +77,9 @@ public:
 
 	void  set_interface(const char *i);
 	char *get_interface(void) { return interface; }
+
+	void  set_service(const char *s);
+	char *get_service(void) { return service; }
 
 	void append_arg(const char *name, const char *type, ArgDirection direction, const char *access = NULL);
 

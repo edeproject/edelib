@@ -25,11 +25,12 @@
 
 #include "ScriptEditor.h"
 #include "ScriptDBus.h"
+#include "Default.h"
 
 EDELIB_NS_USING(SchemeEditor)
 EDELIB_NS_USING(EdbusConnection)
 
-static char eval_buf[SCRIPT_EDITOR_EVAL_BUFSZ];
+static char eval_buf[EDELIB_DBUS_EXPLORER_DEFAULT_SCRIPT_EVAL_BUFSIZE];
 
 ScriptEditor::ScriptEditor(int X, int Y, int W, int H, const char *l) : SchemeEditor(X, Y, W, H, l), sc(NULL) {
 	textsize(12);

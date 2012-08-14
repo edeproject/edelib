@@ -17,23 +17,23 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __EDELIB_DBUS_EXPLORER_SCRIPT_EDITOR_H__
-#define __EDELIB_DBUS_EXPLORER_SCRIPT_EDITOR_H__
+#ifndef __EDELIB_DBUS_EXPLORER_DEFAULT_H__
+#define __EDELIB_DBUS_EXPLORER_DEFAULT_H__
 
-#include <edelib/SchemeEditor.h>
-#include <edelib/Scheme.h>
-#include <edelib/EdbusConnection.h>
+/* some default values shared between code */
 
-/* REPL and edelib-script editor */
-class ScriptEditor : public EDELIB_NS_PREPEND(SchemeEditor) {
-private:
-	scheme *sc;
-	void eval_selection(void);
-public:
-	ScriptEditor(int X, int Y, int W, int H, const char *l = 0);
-	~ScriptEditor();
-	void init_scripting(EDELIB_NS_PREPEND(EdbusConnection) **con);
-	virtual int handle(int e);
-};
+/*
+ * standard value when method/signal calls is written, with argumens; also used by
+ * editor to find next unreplaced word
+ */
+#define EDELIB_DBUS_EXPLORER_DEFAULT_VALUE_TEMPLATE "REPLACE_ME"
+
+
+/*
+ * The size of eval buffer for scheme; bigger means scheme will write more output in it.
+ * This has nothing to do with ScriptEditor buffer, which will append content of scheme
+ * evaliation buffer, limited with this size.
+ */
+#define EDELIB_DBUS_EXPLORER_DEFAULT_SCRIPT_EVAL_BUFSIZE 1024
 
 #endif

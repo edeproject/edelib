@@ -31,6 +31,7 @@
 #include "ObjectTree.h"
 #include "ScriptEditor.h"
 #include "Entity.h"
+#include "Default.h"
 #include "icons.h"
 
 EDELIB_NS_USING(EdbusConnection)
@@ -155,6 +156,9 @@ static void scan_object(EdbusConnection *conn, EdbusMessage &msg, const char *se
 				en->set_interface(interface_name);
 				en->set_path(path);
 
+				/* TODO: this doesn't have to be copied */
+				en->set_service(service);
+
 				if(et == ENTITY_PROPERTY) {
 					const char *argstype, *argsname, *argsaccess;
 					argstype = sel->ToElement()->Attribute("type");
@@ -212,7 +216,7 @@ static void send_to_editor_cb(Fl_Widget*, void *s) {
 
 	E_RETURN_IF_FAIL(ebuf != NULL);
 
-	char buf[SCRIPT_EDITOR_EVAL_BUFSZ];
+	char buf[EDELIB_DBUS_EXPLORER_DEFAULT_SCRIPT_EVAL_BUFSIZE];
 	if(en->get_prototype_as_scheme(buf, sizeof(buf)))
 		ebuf->append(buf);
 }

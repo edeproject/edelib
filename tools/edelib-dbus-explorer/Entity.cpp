@@ -22,6 +22,7 @@
 #include <edelib/Debug.h>
 #include <edelib/String.h>
 #include "Entity.h"
+#include "Default.h"
 
 EDELIB_NS_USING(list)
 EDELIB_NS_USING(String)
@@ -29,57 +30,112 @@ EDELIB_NS_USING(String)
 #define MAX_STRSZ 256
 #define STR_CMP(s1, s2) (strcmp((s1), (s2)) == 0)
 
+static bool basic_signature_char_to_string(char sig, String &ret) {
+	switch(sig) {
+		case 'y':
+			ret = "byte";
+			break;
+		case 'b':
+			ret = "bool";
+			break;
+		case 'n':
+			ret = "int16";
+			break;
+		case 'q':
+			ret = "uint16";
+			break;
+		case 'i':
+			ret = "int32";
+			break;
+		case 'u':
+			ret = "uint32";
+			break;
+		case 'x':
+			ret = "int64";
+			break;
+		case 't':
+			ret = "uint64";
+			break;
+		case 'd':
+			ret = "double";
+			break;
+		case 's':
+			ret = "string";
+			break;
+		case 'o':
+			ret = "object-path";
+			break;
+		case 'g':
+			ret = "signature";
+			break;
+		case 'v':
+			ret = "variant";
+			break;
+		default:
+			return false;
+	}
+
+	return true;
+}
+
 /* try to return DBus signature tags as readable content, like 'a' -> Array or 's' -> String */
 static void signature_to_readable(const char *sig, String &ret) {
 	int len = edelib_strnlen(sig, MAX_STRSZ);
-	if(len == 1) {
-		switch(sig[0]) {
-			case 'y':
-				ret = "byte";
-				return;
-			case 'b':
-				ret = "bool";
-				return;
-			case 'n':
-				ret = "int16";
-				return;
-			case 'q':
-				ret = "uint16";
-				return;
-			case 'i':
-				ret = "int32";
-				return;
-			case 'u':
-				ret = "uint32";
-				return;
-			case 'x':
-				ret = "int64";
-				return;
-		   	case 't':
-				ret = "uint64";
-				return;
-			case 'd':
-				ret = "double";
-				return;
-			case 's':
-				ret = "string";
-				return;
-			case 'o':
-				ret = "object_path";
-				return;
-			case 'g':
-				ret = "signature";
-				return;
-			case 'a':
-				ret = "array";
-				return;
-			case 'v':
-				ret = "variant";
-				return;
+	if(len == 1 && basic_signature_char_to_string(sig[0], ret))
+		return;
+	/* return unknown */
+	ret = sig;
+}
+
+static String& signature_to_scheme(ArgSignatureList &lst, String &ret) {
+	/* if there are no arguments, do nothing */
+	if(lst.empty()) return ret;
+
+	String basic_type;
+	ArgSignatureListIt it = lst.begin(), ite = lst.end();
+	bool list_start = false;
+
+	for(; it != ite; ++it) {
+		/* skip returning values */
+		if((*it)->direction == DIRECTION_OUT) continue;
+
+		/* for cases when we have only out type, but not in */
+		if(!list_start) {
+			ret = " '(";
+			list_start = true;
+		}
+
+		for(const char *ptr = (*it)->sig; ptr && *ptr; ptr++) {
+			if(*ptr == 'a')
+				ret += ":array '(";
+			else if(*ptr == '(' || *ptr == 'r')
+				ret += ":struct '(";
+			else if(*ptr == '{' || *ptr == 'e')
+				ret += ":dict '(";
+			else if(*ptr == ')' || *ptr == '}') {
+				ret += ")";
+				/* end of containers */
+			} else if(basic_signature_char_to_string(*ptr, basic_type)) {
+				ret += ":";
+				ret += basic_type;
+				ret +=  EDELIB_DBUS_EXPLORER_DEFAULT_VALUE_TEMPLATE;
+			}
+
+			ret += " ";
 		}
 	}
 
-	ret = sig;
+	/* append ending parenthesis, checking to not leave empty spaces */
+	if(list_start) {
+		int len = ret.length();
+
+		if(len > 1 && ret[len - 1] == ' ')
+			ret[len - 1] = ')';
+		else
+			ret += ')';
+	}
+
+	return ret;
 }
 
 ArgSignature::ArgSignature() : sig(NULL), name(NULL), access(NULL), direction(DIRECTION_NONE) { }
@@ -90,7 +146,7 @@ ArgSignature::~ArgSignature() {
 	if(access) free(access);
 }
 
-Entity::Entity() : tp(ENTITY_NONE), name(NULL), path(NULL), interface(NULL) { }
+Entity::Entity() : tp(ENTITY_NONE), name(NULL), path(NULL), interface(NULL), service(NULL) { }
 
 Entity::~Entity() {
 	if(name) free(name);
@@ -112,6 +168,10 @@ void Entity::set_path(const char *p) {
 
 void Entity::set_interface(const char *i) {
 	interface = edelib_strndup(i, MAX_STRSZ);
+}
+
+void Entity::set_service(const char *s) {
+	service = edelib_strndup(s, MAX_STRSZ);
 }
 
 void Entity::append_arg(const char *n, const char *type, ArgDirection direction, const char *access) {
@@ -210,8 +270,22 @@ bool Entity::get_prototype_as_scheme(char *buf, int bufsz) {
 	E_DEBUG("%i %i %s\n", tp, args.size(), get_name());
 
 	if(tp == ENTITY_SIGNAL) {
+		ret.printf("(dbus-signal \"%s\" \"%s\" \"%s\"", get_path(), get_interface(), get_name());
 		if(args.empty()) {
-			ret.printf("(dbus-signal \"%s\" \"%s\" \"%s\")", get_path(), get_interface(), get_name());
+			ret += ")";
+		} else {
+			String scm_params;
+			signature_to_scheme(args, scm_params);
+			ret += scm_params;
+		}
+	} else if(tp == ENTITY_METHOD) {
+		ret.printf("(dbus-call \"%s\" \"%s\" \"%s\" \"%s\"", get_service(), get_path(), get_interface(), get_name());
+		if(args.empty())
+			ret += ")";
+		else {
+			String scm_params;
+			signature_to_scheme(args, scm_params);
+			ret += scm_params;
 		}
 	}
 

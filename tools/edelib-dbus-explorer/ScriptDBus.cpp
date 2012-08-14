@@ -25,6 +25,8 @@
 #include <edelib/EdbusData.h>
 #include <edelib/EdbusList.h>
 #include <edelib/EdbusDict.h>
+#include <edelib/EdbusObjectPath.h>
+#include <edelib/EdbusDict.h>
 
 #include "ScriptDBus.h"
 
@@ -33,6 +35,8 @@ EDELIB_NS_USING(EdbusMessage)
 EDELIB_NS_USING(EdbusData)
 EDELIB_NS_USING(EdbusObjectPath)
 EDELIB_NS_USING(EdbusList)
+EDELIB_NS_USING(EdbusDict)
+EDELIB_NS_USING(EdbusObjectPath)
 EDELIB_NS_USING(EdbusDict)
 EDELIB_NS_USING(EDBUS_TYPE_INVALID)
 
@@ -55,11 +59,15 @@ do {											   \
 #define LOCAL_SCHEME_RETURN_IF_NOT_CONNECTED(s)	\
 	LOCAL_SCHEME_RETURN_IF_FAIL(s, (curr_con && *curr_con && (*curr_con)->connected()), "Not connected to bus")
 
+/* forward declaration */
+template <typename T>
+static bool edbus_container_params_from_list(scheme *s, pointer args, T &msg);
+
 /* this could be a part of edelib scheme */
 static int list_length(scheme *s, pointer args) {
 	int n = 0;
 	pointer tmp = args;
-	while(tmp != s->NIL) {
+	while(tmp != s->NIL && edelib_scheme_is_pair(s, tmp)) {
 		tmp = edelib_scheme_pair_cdr(s, tmp);
 		n++;
 	}
@@ -128,19 +136,47 @@ static bool edbus_data_from_pair(scheme *s, pointer type, pointer val, EdbusData
 		return false;
 	}
 
+	if(STR_CMP(sym, ":object-path")) {
+		if(edelib_scheme_is_string(s, val)) {
+			char *sv = edelib_scheme_string_value(s, val);
+			if(EdbusObjectPath::valid_path(sv)) {
+				EdbusObjectPath o;
+				o.append(sv);
+				ret = o;
+				return true;
+			}
+
+			LOCAL_SCHEME_ERROR(s, "Wrong format of object path. The object path must be in '/foo/baz' form");
+			return false;
+		}
+	}
+
 	if(STR_CMP(sym, ":array")) {
-		if(edelib_scheme_is_vector(s, val)) {
-			LOCAL_SCHEME_ERROR(s, "Not implemented yet");
+		/* as array we are accepting list so we can explicitly set types inside of it */
+		if(edelib_scheme_is_pair(s, val)) {
+			EdbusList lst(true);
+			if(edbus_container_params_from_list(s, val, lst)) {
+				ret = lst;
+				return true;
+			}
+
+			LOCAL_SCHEME_ERROR(s, "Unable to fill the array; probably some argument is missing the type");
 			return false;
 		}
 
-		LOCAL_SCHEME_ERROR(s, "Type marked as array but the value is not vector");
+		LOCAL_SCHEME_ERROR(s, "Type marked as array but the value is not in list form");
 		return false;
 	}
 
-	if(STR_CMP(sym, ":list")) {
+	if(STR_CMP(sym, ":list") || STR_CMP(sym, ":struct")) {
 		if(edelib_scheme_is_pair(s, val)) {
-			LOCAL_SCHEME_ERROR(s, "Not implemented yet");
+			EdbusList lst(false);
+			if(edbus_container_params_from_list(s, val, lst)) {
+				ret = lst;
+				return true;
+			}
+
+			LOCAL_SCHEME_ERROR(s, "Unable to fill the list; probably some argument is missing the type");
 			return false;
 		}
 
@@ -148,7 +184,60 @@ static bool edbus_data_from_pair(scheme *s, pointer type, pointer val, EdbusData
 		return false;
 	}
 
-	return true;
+	if(STR_CMP(sym, ":variant")) {
+		LOCAL_SCHEME_ERROR(s, "Variant type is not yet supported.");
+		return false;
+	}
+
+	/* dict is in form: '((:type key :type value) ...) */
+	if(STR_CMP(sym, ":dict")) {
+		if(edelib_scheme_is_pair(s, val)) {
+			EdbusDict dict;
+			pointer kv;
+
+			for(pointer it = val; it != s->NIL; it = edelib_scheme_pair_cdr(s, it)) {
+				kv = edelib_scheme_pair_car(s, it);
+
+				/* assure we have correct number of elements */
+				if(list_length(s, kv) != 4) {
+					LOCAL_SCHEME_ERROR(s, "Bad format of dictionary. It must be in form '((:type key :type value) ...)");
+					return false;
+				}
+
+				/* key key/value types and values from sublist */
+				pointer key_type, key_val, val_type, val_val;
+				key_type = edelib_scheme_pair_car(s, kv); kv = edelib_scheme_pair_cdr(s, kv);
+				key_val  = edelib_scheme_pair_car(s, kv); kv = edelib_scheme_pair_cdr(s, kv);
+				val_type = edelib_scheme_pair_car(s, kv); kv = edelib_scheme_pair_cdr(s, kv);
+				val_val  = edelib_scheme_pair_car(s, kv);
+
+				EdbusData dict_key;
+				if(!edbus_data_from_pair(s, key_type, key_val, dict_key)) {
+					LOCAL_SCHEME_ERROR(s, "Unable to construct dictionary key");
+					return false;
+				}
+
+				EdbusData dict_val;
+				if(!edbus_data_from_pair(s, val_type, val_val, dict_val)) {
+					LOCAL_SCHEME_ERROR(s, "Unable to construct dictionary value");
+					return false;
+				}
+
+				dict.append(dict_key, dict_val);
+			}
+
+			if(dict.size() < 1)
+				E_WARNING(E_STRLOC ": Empty dictionary; message could be malformed\n");
+				
+			ret = EdbusData::from_dict(dict);
+			return true;
+		}
+
+		LOCAL_SCHEME_ERROR(s, "Wrong format of dictionary. Dictionary must be in list form.");
+		return false;
+	}
+
+	return false;
 }
 
 #define RETURN_FROM_EDBUS_TO_SCHEME_AS_INT(scm, object, type)	\
@@ -248,8 +337,14 @@ static pointer edbus_data_to_scheme_object(scheme *s, EdbusData &data) {
 	return s->F;
 }
 
-/* accept list in form '(:int32 3 :string 4 :bool 5 ...) and construct EdbusMessage from it */
-static bool edbus_message_params_from_list(scheme *s, pointer args, EdbusMessage &msg) {
+/*
+ * Accept list in form '(:int32 3 :string 4 :bool 5 ...) and construct EdbusMessage/EdbusList from it.
+ * This is intentionally template, since EdbusMessage and EdbusList does not have the same parent in class hierarchy
+ * but both are providing 'operator<<' members for adding elements: in case of EdbusMessage, it will construct method
+ * arguments and in case of EdbusList it will append list/array specific elements.
+ */
+template <typename T>
+static bool edbus_container_params_from_list(scheme *s, pointer args, T &msg) {
 	int len = list_length(s, args);
 
 	if(E_UNLIKELY(len < 1)) {
@@ -346,7 +441,7 @@ pointer script_bus_method_call(scheme *s, pointer args) {
 	args = edelib_scheme_pair_cdr(s, args);
 	if(args != s->NIL && ((params = edelib_scheme_pair_car(s, args)) != s->NIL)) {
 		/* fail if we can't get arguments */
-		if(!edbus_message_params_from_list(s, params, msg))
+		if(!edbus_container_params_from_list(s, params, msg))
 			return s->F;
 	}
 
@@ -372,12 +467,6 @@ void script_dbus_load(scheme *s, EdbusConnection **con) {
 "Send DBus signal with given parameters. Parameters are object path, interface\n\
 and signal name. DBus signals does not return value so this function will return\n\
 either #t or #f depending if signal successfully sent.");
-
-	/*
-	EDELIB_SCHEME_DEFINE2(s, script_bus_get_property, "dbus-get-property",
-"Return value of named property on given interface. If failed to fetch property value\n\
-return #f.");
-	*/
 
 	EDELIB_SCHEME_DEFINE2(s, script_bus_method_call, "dbus-call",
 "Call DBus method with given arguments. This call will wait for reply and return result as scheme object.");
