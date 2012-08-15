@@ -133,7 +133,7 @@ static void session_bus_cb(Fl_Widget*, void*) {
 	bus_connection->disconnect();
 
 	if(!bus_connection->connect(EDBUS_SESSION)) {
-		alert(_("Unable to connect to session bus. Is dbus daemon running?"));
+		alert(_("Unable to connect to session bus. Is DBus daemon running?"));
 		return;
 	}
 
@@ -148,7 +148,7 @@ static void system_bus_cb(Fl_Widget*, void*) {
 	bus_connection->disconnect();
 
 	if(!bus_connection->connect(EDBUS_SYSTEM)) {
-		alert(_("Unable to connect to system bus. Is dbus daemon running?"));
+		alert(_("Unable to connect to system bus. Is DBus daemon running?"));
 		return;
 	}
 

@@ -222,7 +222,23 @@ static void send_to_editor_cb(Fl_Widget*, void *s) {
 }
 
 static void describe_in_editor_cb(Fl_Widget*, void *s) {
-	//ObjectTree *self = (ObjectTree*)s;
+	ObjectTree *self = (ObjectTree*)s;
+
+	Fl_Tree_Item *titem = self->first_selected_item();
+
+	if(!titem || !titem->user_data()) return;
+
+	Entity *en = (Entity*)titem->user_data();
+	Fl_Text_Buffer *ebuf = self->get_editor_buffer();
+
+	E_RETURN_IF_FAIL(ebuf != NULL);
+
+	char buf[EDELIB_DBUS_EXPLORER_DEFAULT_SCRIPT_EVAL_BUFSIZE];
+
+	ebuf->append("\n;; ");
+	if(en->get_prototype(buf, sizeof(buf)))
+		ebuf->append(buf);
+	ebuf->append("\n");
 }
 
 ObjectTree::ObjectTree(int X, int Y, int W, int H, const char *l) : Fl_Tree(X, Y, W, H, l), editor_buf(NULL), action_menu(NULL) {
@@ -235,6 +251,8 @@ ObjectTree::ObjectTree(int X, int Y, int W, int H, const char *l) : Fl_Tree(X, Y
 
 void ObjectTree::introspect(const char *service, EdbusConnection *c) {
 	clear();
+	/* fix scrollbar position, since Fl_Tree doesn't do this */
+	_vscroll->value(0);
 
 	/* first we start with '/', as root object, since all services implement this one */
 	EdbusMessage  m;
