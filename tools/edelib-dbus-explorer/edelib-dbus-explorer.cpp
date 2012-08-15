@@ -63,6 +63,13 @@ static void disconnect_cb(Fl_Widget*, void*);
 static void about_cb(Fl_Widget*, void*);
 static void save_cb(Fl_Widget*, void*);
 static void load_cb(Fl_Widget*, void*);
+static void editor_undo_cb(Fl_Widget*, void*);
+static void editor_copy_cb(Fl_Widget*, void*);
+static void editor_paste_cb(Fl_Widget*, void*);
+static void editor_select_all_cb(Fl_Widget*, void*);
+static void evaluate_cb(Fl_Widget*, void*);
+static void evaluate_and_print_cb(Fl_Widget*, void*);
+static void macro_expand_cb(Fl_Widget*, void*);
 
 static MenuItem menu_[] = {
 	{_("&File"), 0,  0, 0, 64, FL_NORMAL_LABEL, 0},
@@ -71,9 +78,20 @@ static MenuItem menu_[] = {
 	{_("System Bus"), 0,  system_bus_cb, 0, 0, FL_NORMAL_LABEL, 0},
 	{0,0,0,0,0,0,0,0,0},
 	{_("Disconnect"), 0,  disconnect_cb, 0, 128, FL_NORMAL_LABEL, 0},
-	{_("Load..."), 0,  load_cb, 0, 0, FL_NORMAL_LABEL, 0},
-	{_("Save As..."), 0,  save_cb, 0, 128, FL_NORMAL_LABEL, 0},
-	{_("&Quit"), 0x40071,  quit_cb, 0, 0, FL_NORMAL_LABEL, 0},
+	{_("Load..."), FL_COMMAND + 'o', load_cb, 0, 0, FL_NORMAL_LABEL, 0},
+	{_("Save As..."), FL_COMMAND + 's', save_cb, 0, 128, FL_NORMAL_LABEL, 0},
+	{_("&Quit"), 0x40071, quit_cb, 0, 0, FL_NORMAL_LABEL, 0},
+	{0,0,0,0,0,0,0,0,0},
+	{_("&Edit"), 0, 0, 0, 64, FL_NORMAL_LABEL, 0},
+	{_("&Undo"), FL_COMMAND + 'u', editor_undo_cb , 0, 128, FL_NORMAL_LABEL, 0},
+	{_("&Copy"), FL_COMMAND + 'c', editor_copy_cb , 0, 0, FL_NORMAL_LABEL, 0},
+	{_("&Paste"), FL_COMMAND + 'p', editor_paste_cb, 0, 128, FL_NORMAL_LABEL, 0},
+	{_("&Select All"), FL_COMMAND + 'a', editor_select_all_cb, 0, 0, FL_NORMAL_LABEL, 0},
+	{0,0,0,0,0,0,0,0,0},
+	{_("&Run"), 0,  0, 0, 64, FL_NORMAL_LABEL, 0},
+	{_("&Evaluate"), FL_SHIFT + FL_Enter,  evaluate_cb, 0, 0, FL_NORMAL_LABEL, 0},
+	{_("E&valuate And Print"), FL_ALT + FL_Enter,  evaluate_and_print_cb, 0, 128, FL_NORMAL_LABEL, 0},
+	{_("&Macro expand"), 0, macro_expand_cb, 0, 0, FL_NORMAL_LABEL, 0},
 	{0,0,0,0,0,0,0,0,0},
 	{_("&Help"), 0,  0, 0, 64, FL_NORMAL_LABEL, 0},
 	{_("&About"), 0,  about_cb, 0, 0, FL_NORMAL_LABEL, 0},
@@ -185,6 +203,34 @@ static void load_cb(Fl_Widget*, void*) {
 	char *path = fl_file_chooser(_("Load shell content"), LOAD_SAVE_PATTERN, 0, 0);
 	if(path && script_editor->buffer()->loadfile(path) != 0)
 		alert(_("Failed to load file from '%s'"), path);
+}
+
+static void editor_undo_cb(Fl_Widget*, void*) {
+	script_editor->undo_content();
+}
+
+static void editor_copy_cb(Fl_Widget*, void*) {
+	script_editor->copy_content();
+}
+
+static void editor_paste_cb(Fl_Widget*, void*) {
+	script_editor->paste_content();
+}
+
+static void editor_select_all_cb(Fl_Widget*, void*) {
+	script_editor->select_all();
+}
+
+static void evaluate_cb(Fl_Widget*, void*) {
+	script_editor->eval_selection(false);
+}
+
+static void evaluate_and_print_cb(Fl_Widget*, void*) {
+	script_editor->eval_selection(true);
+}
+
+static void macro_expand_cb(Fl_Widget*, void*) {
+	script_editor->eval_selection(true, true);
 }
 
 int main(int argc, char **argv) {

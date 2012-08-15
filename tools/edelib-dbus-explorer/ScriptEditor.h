@@ -29,12 +29,17 @@ class ScriptEditor : public EDELIB_NS_PREPEND(SchemeEditor) {
 private:
 	scheme *sc;
 	int    template_pos;
-	void eval_selection(void);
 	void search_template_word_and_highlight(void);
 public:
 	ScriptEditor(int X, int Y, int W, int H, const char *l = 0);
 	~ScriptEditor();
 	void init_scripting(EDELIB_NS_PREPEND(EdbusConnection) **con);
+	void undo_content(void);
+	void copy_content(void);
+	void paste_content(void);
+	void select_all(void);
+
+	void eval_selection(bool print = false, bool macroexpand = false);
 	virtual int handle(int e);
 };
 

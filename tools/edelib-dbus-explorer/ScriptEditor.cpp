@@ -23,6 +23,7 @@
 #include <edelib/EdbusConnection.h>
 #include <edelib/Debug.h>
 #include <edelib/Missing.h>
+#include <edelib/String.h>
 
 #include "ScriptEditor.h"
 #include "ScriptDBus.h"
@@ -30,6 +31,7 @@
 
 EDELIB_NS_USING(SchemeEditor)
 EDELIB_NS_USING(EdbusConnection)
+EDELIB_NS_USING(String)
 
 static char eval_buf[EDELIB_DBUS_EXPLORER_DEFAULT_SCRIPT_EVAL_BUFSIZE];
 
@@ -43,6 +45,18 @@ ScriptEditor::ScriptEditor(int X, int Y, int W, int H, const char *l) : SchemeEd
 
 ScriptEditor::~ScriptEditor() {
 	if(sc) edelib_scheme_deinit(sc);
+}
+
+void ScriptEditor::search_template_word_and_highlight(void) {
+	if(!buffer()->search_forward(template_pos, EDELIB_DBUS_EXPLORER_DEFAULT_VALUE_TEMPLATE, &template_pos, 1)) {
+		template_pos = 0;
+		return;
+	}
+
+	int len = edelib_strnlen(EDELIB_DBUS_EXPLORER_DEFAULT_VALUE_TEMPLATE, 128);
+	buffer()->select(template_pos, template_pos + len);
+
+	template_pos += len;
 }
 
 void ScriptEditor::init_scripting(EdbusConnection **con) {
@@ -77,7 +91,23 @@ void ScriptEditor::init_scripting(EdbusConnection **con) {
 	buffer()->append(eval_buf);
 }
 
-void ScriptEditor::eval_selection(void) {
+void ScriptEditor::undo_content(void) {
+	Fl_Text_Editor::kf_undo(0, this);
+}
+
+void ScriptEditor::copy_content(void) {
+	Fl_Text_Editor::kf_copy(0, this);
+}
+
+void ScriptEditor::paste_content(void) {
+	Fl_Text_Editor::kf_paste(0, this);
+}
+
+void ScriptEditor::select_all(void) {
+	Fl_Text_Editor::kf_select_all(0, this);
+}
+
+void ScriptEditor::eval_selection(bool print, bool macroexpand) {
 	char *copy = NULL;
 
 	if(buffer()->selected()) {
@@ -92,23 +122,33 @@ void ScriptEditor::eval_selection(void) {
 	memset(eval_buf, 0, sizeof(eval_buf));
 	edelib_scheme_set_output_port_string(sc, eval_buf, eval_buf + sizeof(eval_buf));
 
-	sc->print_flag = 1;
-	edelib_scheme_load_string(sc, copy);
-	free(copy);
+	if(print) {
+		String buf = "(display ";
 
-	buffer()->append(eval_buf);
-}
+		/* made intentionally that macro expansion only works when 'print' is set to true */
+		if(macroexpand)
+			buf += "(macro-expand '";
+		buf += copy;
 
-void ScriptEditor::search_template_word_and_highlight(void) {
-	if(!buffer()->search_forward(template_pos, EDELIB_DBUS_EXPLORER_DEFAULT_VALUE_TEMPLATE, &template_pos, 1)) {
-		template_pos = 0;
-		return;
+		if(macroexpand)
+			buf += ')';
+
+		buf += ')';
+		free(copy);
+
+		edelib_scheme_load_string(sc, buf.c_str());
+
+		/* tokenize thing so we can append comments */
+		for(char *tok = strtok(eval_buf, "\n"); tok; tok = strtok(NULL, "\n")) {
+			buffer()->append("\n;; ");
+			buffer()->append(tok);
+			buffer()->append("\n");
+		}
+	} else {
+		edelib_scheme_load_string(sc, copy);
+		free(copy);
+		buffer()->append(eval_buf);
 	}
-
-	int len = edelib_strnlen(EDELIB_DBUS_EXPLORER_DEFAULT_VALUE_TEMPLATE, 128);
-	buffer()->select(template_pos, template_pos + len);
-
-	template_pos += len;
 }
 
 int ScriptEditor::handle(int e) {
@@ -118,6 +158,11 @@ int ScriptEditor::handle(int e) {
 		   (Fl::event_shift() && Fl::event_key(FL_Enter)))
 		{
 			eval_selection();
+			return 1;
+		}
+
+		if(Fl::event_alt() && Fl::event_key(FL_Enter)) {
+			eval_selection(true);
 			return 1;
 		}
 
