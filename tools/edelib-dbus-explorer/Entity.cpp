@@ -267,8 +267,12 @@ bool Entity::get_prototype_as_scheme(char *buf, int bufsz) {
 		} else {
 			String scm_params;
 			signature_to_scheme(args, scm_params);
-			ret += ' ';
-			ret += scm_params;
+
+			if(!scm_params.empty()) {
+				ret += ' ';
+				ret += scm_params;
+			}
+
 			ret += ')';
 		}
 	} else if(tp == ENTITY_METHOD) {
@@ -278,8 +282,12 @@ bool Entity::get_prototype_as_scheme(char *buf, int bufsz) {
 		else {
 			String scm_params;
 			signature_to_scheme(args, scm_params);
-			ret += ' ';
-			ret += scm_params;
+
+			if(!scm_params.empty()) {
+				ret += ' ';
+				ret += scm_params;
+			}
+
 			ret += ')';
 		}
 	}

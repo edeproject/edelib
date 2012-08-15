@@ -35,6 +35,14 @@ EDELIB_NS_USING(String)
 
 static char eval_buf[EDELIB_DBUS_EXPLORER_DEFAULT_SCRIPT_EVAL_BUFSIZE];
 
+/* macro for writing call elements without explicit quoting and list-ing */
+static const char *scheme_dbus_call_macro =
+"(add-macro-doc \"dbus-call\" \"Call DBus method with given arguments. This call will wait for reply and return result as scheme object.\") \
+(define-macro (dbus-call service path interface name . args) \
+  `(if (empty? ',args) \
+     (dbus-call-raw ,service ,path ,interface ,name) \
+	 (dbus-call-raw ,service ,path ,interface ,name ',args)))";
+
 ScriptEditor::ScriptEditor(int X, int Y, int W, int H, const char *l) : SchemeEditor(X, Y, W, H, l), sc(NULL), template_pos(0) {
 	textsize(12);
 
@@ -71,14 +79,7 @@ void ScriptEditor::init_scripting(EdbusConnection **con) {
 	 * NOTE: EdbusConnection here can be NULL, depending if connection was initialized or not
 	 */
 	script_dbus_load(sc, con);
-
-	FILE *fd = fopen("edelib-dbus-explorer.ss", "r");
-	if(!fd) {
-		E_WARNING(E_STRLOC ": Unable to load 'edelib-dbus-explorer.ss'\n");
-	} else {
-		edelib_scheme_load_file(sc, fd);
-		fclose(fd);
-	}
+	edelib_scheme_load_string(sc, (char*)scheme_dbus_call_macro);
 
 	object_color(6, "#314e6c");
 	object_color(1, "#826647");
@@ -87,7 +88,7 @@ void ScriptEditor::init_scripting(EdbusConnection **con) {
 ";; This is edelib script editor and interactive shell.\n"
 ";; Type some expression and press SHIFT-Enter to evaluate it.\n");
 
-	/* append whatever was dumped from loaded file above */
+	/* append whatever was reported from above evaluation(s) */
 	buffer()->append(eval_buf);
 }
 
