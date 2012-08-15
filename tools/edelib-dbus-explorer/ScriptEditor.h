@@ -40,6 +40,7 @@ public:
 	void select_all(void);
 
 	void eval_selection(bool print = false, bool macroexpand = false);
+	void indent_selection(void);
 	virtual int handle(int e);
 };
 

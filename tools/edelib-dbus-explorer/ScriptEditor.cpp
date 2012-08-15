@@ -152,6 +152,9 @@ void ScriptEditor::eval_selection(bool print, bool macroexpand) {
 	}
 }
 
+void ScriptEditor::indent_selection(void) {
+}
+
 int ScriptEditor::handle(int e) {
 	/* catch shortcut before we enter into SchemeEditor */
 	if(e == FL_KEYBOARD) {
