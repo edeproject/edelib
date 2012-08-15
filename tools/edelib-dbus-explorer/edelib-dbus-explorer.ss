@@ -17,3 +17,10 @@
 ;; along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 ;; custom scheme code loaded when explorer is started
+
+;; dbus-call-raw has explicit parameters as list and this macro will implicitly convert remaining parameters to list
+(add-macro-doc "dbus-call" "Call DBus method with given arguments. This call will wait for reply and return result as scheme object.")
+(define-macro (dbus-call service path interface name . args)
+  `(if (empty? ',args)
+     (dbus-call-raw ,service ,path ,interface ,name)
+	 (dbus-call-raw ,service ,path ,interface ,name ',args)))

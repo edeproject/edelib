@@ -93,25 +93,25 @@ static String& signature_to_scheme(ArgSignatureList &lst, String &ret) {
 
 	String basic_type;
 	ArgSignatureListIt it = lst.begin(), ite = lst.end();
-	bool list_start = false;
+	bool args_start = false;
 
 	for(; it != ite; ++it) {
 		/* skip returning values */
 		if((*it)->direction == DIRECTION_OUT) continue;
 
 		/* for cases when we have only out type, but not in */
-		if(!list_start) {
-			ret = " '(";
-			list_start = true;
+		if(!args_start) {
+			ret = " ";
+			args_start = true;
 		}
 
 		for(const char *ptr = (*it)->sig; ptr && *ptr; ptr++) {
 			if(*ptr == 'a')
-				ret += ":array (";
+				ret += ":array '(";
 			else if(*ptr == '(' || *ptr == 'r')
-				ret += ":struct (";
+				ret += ":struct '(";
 			else if(*ptr == '{' || *ptr == 'e')
-				ret += ":dict (";
+				ret += ":dict '(";
 			else if(*ptr == ')' || *ptr == '}') {
 				ret += ")";
 				/* end of containers */
@@ -121,21 +121,13 @@ static String& signature_to_scheme(ArgSignatureList &lst, String &ret) {
 				ret += ' ';
 				ret += EDELIB_DBUS_EXPLORER_DEFAULT_VALUE_TEMPLATE;
 			}
-
-			ret += " ";
 		}
+
+		ret += ' ';
 	}
 
-	/* append ending parenthesis, checking to not leave empty spaces */
-	if(list_start) {
-		int len = ret.length();
-
-		if(len > 1 && ret[len - 1] == ' ')
-			ret[len - 1] = ')';
-		else
-			ret += ')';
-	}
-
+	/* clear ending spaces */
+	ret.trim();
 	return ret;
 }
 

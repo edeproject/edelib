@@ -71,8 +71,10 @@ void ScriptEditor::init_scripting(EdbusConnection **con) {
 
 	buffer()->append(
 ";; This is edelib script editor and interactive shell.\n"
-";; Type some expression and press SHIFT-Enter to evaluate it;\n"
-";; the result will be visible inside editor.\n");
+";; Type some expression and press SHIFT-Enter to evaluate it.\n");
+
+	/* append whatever was dumped from loaded file above */
+	buffer()->append(eval_buf);
 }
 
 void ScriptEditor::eval_selection(void) {
@@ -90,6 +92,7 @@ void ScriptEditor::eval_selection(void) {
 	memset(eval_buf, 0, sizeof(eval_buf));
 	edelib_scheme_set_output_port_string(sc, eval_buf, eval_buf + sizeof(eval_buf));
 
+	sc->print_flag = 1;
 	edelib_scheme_load_string(sc, copy);
 	free(copy);
 

@@ -56,8 +56,18 @@ do {											   \
 	}											   \
 } while(0)
 
-#define LOCAL_SCHEME_RETURN_IF_NOT_CONNECTED(s)	\
-	LOCAL_SCHEME_RETURN_IF_FAIL(s, (curr_con && *curr_con && (*curr_con)->connected()), "Not connected to bus")
+/*
+ * Somehow things goes bad when LOCAL_SCHEME_RETURN_IF_FAIL is used with this call(s)
+ * as this macro is often called in the beginning of the function, causing crash due
+ * bad free() inside interpreter gc. Not sure how to fix it, so for now it will return only #f
+ * and let editor handle things when are not connected.
+ */
+#define LOCAL_SCHEME_RETURN_IF_NOT_CONNECTED(s)							\
+do {																	\
+	if(E_LIKELY(curr_con && *curr_con && (*curr_con)->connected())) { }	\
+	else return (s)->F;													\
+}																		\
+while(0)
 
 /* forward declaration */
 template <typename T>
@@ -468,6 +478,6 @@ void script_dbus_load(scheme *s, EdbusConnection **con) {
 and signal name. DBus signals does not return value so this function will return\n\
 either #t or #f depending if signal successfully sent.");
 
-	EDELIB_SCHEME_DEFINE2(s, script_bus_method_call, "dbus-call",
-"Call DBus method with given arguments. This call will wait for reply and return result as scheme object.");
+	EDELIB_SCHEME_DEFINE2(s, script_bus_method_call, "dbus-call-raw",
+"Call DBus method with given arguments in list form. Use 'dbus-call' instead of this function.");
 }
