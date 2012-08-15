@@ -329,12 +329,13 @@ static pointer edbus_data_to_scheme_object(scheme *s, EdbusData &data) {
 		EdbusDict v = data.to_dict();	
 		EdbusDict::const_iterator it = v.begin(), ite = v.end();
 
-		pointer key, val, kv_pair = s->NIL, ret = s->NIL;
+		pointer key, val, kv_pair, ret = s->NIL;
 		for(; it != ite; ++it) {
 			key = edbus_data_to_scheme_object(s, (EdbusData&)(it->key));
 			val = edbus_data_to_scheme_object(s, (EdbusData&)(it->value));
 
 			/* add them in reverse order so we don't have to reverse it */
+			kv_pair = s->NIL;
 			kv_pair = edelib_scheme_cons(s, val, kv_pair);
 			kv_pair = edelib_scheme_cons(s, key, kv_pair);
 

@@ -267,6 +267,7 @@ bool Entity::get_prototype_as_scheme(char *buf, int bufsz) {
 		} else {
 			String scm_params;
 			signature_to_scheme(args, scm_params);
+			ret += ' ';
 			ret += scm_params;
 			ret += ')';
 		}
@@ -277,6 +278,7 @@ bool Entity::get_prototype_as_scheme(char *buf, int bufsz) {
 		else {
 			String scm_params;
 			signature_to_scheme(args, scm_params);
+			ret += ' ';
 			ret += scm_params;
 			ret += ')';
 		}
