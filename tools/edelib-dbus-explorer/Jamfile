@@ -22,23 +22,25 @@ if $(DBUS_LIBS) {
 	rule GenHelp {
 		LocalDepends $(<) : $(>) ;
 		GenHelp1 $(<) : $(>) ;
+
+		MakeLocate $(<) : $(LOCATE_TARGET) ;
+		MakeLocate $(>) : $(SEARCH_SOURCE) ;
 	}
 
 	actions piecemeal GenHelp1 {
-		cat $(>) | ./gen-help.sh > $(<) ;
+		cat $(>) | $(>:D)/gen-help.sh > $(<) ;
 	}
 
 	MakeTest edelib-dbus-explorer : edelib-dbus-explorer.cpp
-  									ScriptEditor.cpp
-  									ObjectTree.cpp
-  									Entity.cpp	
-  									ScriptDBus.cpp
-  								  : -ledelib_dbus $(FLTK_LIBS) -ledelib $(DBUS_LIBS) ;
+									ScriptEditor.cpp
+									ObjectTree.cpp
+									Entity.cpp	
+									ScriptDBus.cpp
+								  : -ledelib_dbus $(FLTK_LIBS) -ledelib $(DBUS_LIBS) ;
 
 	LocalDepends edelib-dbus-explorer : Help.h ;
 	GenHelp Help.h : edelib-dbus-explorer.txt ;
 	Clean clean : Help.h ;
 
 	InstallProgram $(bindir) : edelib-dbus-explorer ;
-	 
 }
