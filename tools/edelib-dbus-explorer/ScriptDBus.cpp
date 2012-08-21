@@ -30,6 +30,7 @@
 
 #include "ScriptDBus.h"
 #include "ScriptEditor.h"
+#include "Help.h"
 
 EDELIB_NS_USING(EdbusConnection)
 EDELIB_NS_USING(EdbusMessage)
@@ -474,43 +475,8 @@ pointer script_bus_method_call(scheme *s, pointer args) {
 }
 
 static pointer script_bus_help(scheme *s, pointer args) {
-	curr_editor->append_result("\n\n"
-"Introduction\n"
-"============\n\n"
-"edelib-dbus-explorer is handy tool for exploring, inspecting and calling DBus\n"
-"services, their methods, signals and properties. Before you start using it, make\n"
-"sure to familiarize yourself with DBus (http://www.freedesktop.org/wiki/Software/dbus)\n"
-"at least on basic level.\n"
-"\n"
-"To start using it, first connect to either session or service bus. To do so, from\n"
-"the menu choose File -> Connect To -> (Session Bus | Service Bus), and you will be shown\n"
-"with all available services on given connection. After selecting service, you will\n"
-"get service objects and interfaces with methods.\n"
-"\n"
-"Editor and laguage basics\n"
-"=========================\n\n"
-"The text you are reading now is in so called 'script editor'. This is place where you can\n"
-"write and evaluate scheme code; simply pointing cursor to open or closed parenthesis, you\n"
-"will get highlighted evaluate-able region. Pressing SHIFT-Enter will evaluate it and print\n"
-"result if the function have printable method. To evaluate and print any value, you can use ALT-Enter\n"
-"\n"
-"To see it in action, select below example and press ALT-Enter:\n"
-"\n"
-" (: 1 + 2)\n"
-"\n"
-"or maybe:\n"
-"\n"
-" (println \"Hello world\")\n"
-"\n"
-"you will see results immediately.\n"
-"\n"
-"Many of scheme functions are self-documentable, so to here is example how to use it (as above\n"
-"examples, just select it and evaluate it):\n"
-"\n"
-" (doc 'println)\n"
-"\n"
-);
-
+	curr_editor->append_result("\n");
+	curr_editor->append_result(help_content);
 	return s->T;
 }
 
