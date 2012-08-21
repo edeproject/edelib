@@ -29,6 +29,7 @@ class ScriptEditor : public EDELIB_NS_PREPEND(SchemeEditor) {
 private:
 	scheme *sc;
 	int    template_pos;
+	bool   eval_result_insert; /* will append result or insert them at the end of line */
 	void search_template_word_and_highlight(void);
 public:
 	ScriptEditor(int X, int Y, int W, int H, const char *l = 0);
@@ -42,6 +43,9 @@ public:
 	void eval_selection(bool print = false, bool macroexpand = false);
 	void indent_selection(void);
 	virtual int handle(int e);
+
+	void result_insert(bool i) { eval_result_insert = i; }
+	void append_result(const char *r);
 };
 
 #endif

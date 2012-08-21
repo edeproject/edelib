@@ -43,7 +43,7 @@ static const char *scheme_dbus_call_macro =
      (dbus-call-raw ,service ,path ,interface ,name) \
 	 (dbus-call-raw ,service ,path ,interface ,name ',args)))";
 
-ScriptEditor::ScriptEditor(int X, int Y, int W, int H, const char *l) : SchemeEditor(X, Y, W, H, l), sc(NULL), template_pos(0) {
+ScriptEditor::ScriptEditor(int X, int Y, int W, int H, const char *l) : SchemeEditor(X, Y, W, H, l), sc(NULL), template_pos(0), eval_result_insert(false) {
 	textsize(12);
 
 #if FL_MAJOR_VERSION >= 1 && FL_MINOR_VERSION >= 3
@@ -67,6 +67,15 @@ void ScriptEditor::search_template_word_and_highlight(void) {
 	template_pos += len;
 }
 
+void ScriptEditor::append_result(const char *r) {
+	if(eval_result_insert) {
+		Fl_Text_Editor::kf_move(FL_End, this);
+		insert(r);
+	} else {
+		buffer()->append(r);
+	}
+}
+
 void ScriptEditor::init_scripting(EdbusConnection **con) {
 	E_RETURN_IF_FAIL(sc == NULL);
 
@@ -81,15 +90,21 @@ void ScriptEditor::init_scripting(EdbusConnection **con) {
 	script_dbus_load(sc, con);
 	edelib_scheme_load_string(sc, (char*)scheme_dbus_call_macro);
 
+	script_dbus_setup_help(sc, this);
+
 	object_color(6, "#314e6c");
 	object_color(1, "#826647");
 
-	buffer()->append(
+	append_result(
 ";; This is edelib script editor and interactive shell.\n"
-";; Type some expression and press SHIFT-Enter to evaluate it.\n");
+";; Type some expression and press SHIFT-Enter to evaluate it.\n"
+";; To get help, type '(help)' and evaluate it with SHIFT-Enter.\n");
 
 	/* append whatever was reported from above evaluation(s) */
-	buffer()->append(eval_buf);
+	append_result(eval_buf);
+
+	/* make all evaluation results inline */
+	result_insert(true);
 }
 
 void ScriptEditor::undo_content(void) {
@@ -141,14 +156,14 @@ void ScriptEditor::eval_selection(bool print, bool macroexpand) {
 
 		/* tokenize thing so we can append comments */
 		for(char *tok = strtok(eval_buf, "\n"); tok; tok = strtok(NULL, "\n")) {
-			buffer()->append("\n;; ");
-			buffer()->append(tok);
-			buffer()->append("\n");
+			append_result("\n;; ");
+			append_result(tok);
+			append_result("\n");
 		}
 	} else {
 		edelib_scheme_load_string(sc, copy);
 		free(copy);
-		buffer()->append(eval_buf);
+		append_result(eval_buf);
 	}
 }
 

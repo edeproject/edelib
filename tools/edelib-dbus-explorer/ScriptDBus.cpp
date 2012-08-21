@@ -29,6 +29,7 @@
 #include <edelib/EdbusDict.h>
 
 #include "ScriptDBus.h"
+#include "ScriptEditor.h"
 
 EDELIB_NS_USING(EdbusConnection)
 EDELIB_NS_USING(EdbusMessage)
@@ -41,6 +42,7 @@ EDELIB_NS_USING(EdbusDict)
 EDELIB_NS_USING(EDBUS_TYPE_INVALID)
 
 static EdbusConnection **curr_con = NULL;
+static ScriptEditor     *curr_editor = NULL;
 
 #define STR_CMP(s1, s2) (strcmp((s1), (s2)) == 0)
 
@@ -238,7 +240,7 @@ static bool edbus_data_from_pair(scheme *s, pointer type, pointer val, EdbusData
 
 			if(dict.size() < 1)
 				E_WARNING(E_STRLOC ": Empty dictionary; message could be malformed\n");
-				
+
 			ret = EdbusData::from_dict(dict);
 			return true;
 		}
@@ -326,7 +328,7 @@ static pointer edbus_data_to_scheme_object(scheme *s, EdbusData &data) {
 
 	/* dictionary is represented as list of list, like: '((key val) (key val) ...) so we can use assoc */
 	if(data.is_dict()) {
-		EdbusDict v = data.to_dict();	
+		EdbusDict v = data.to_dict();
 		EdbusDict::const_iterator it = v.begin(), ite = v.end();
 
 		pointer key, val, kv_pair, ret = s->NIL;
@@ -415,7 +417,7 @@ pointer script_bus_signal(scheme *s, pointer args) {
 	msg.create_signal(edelib_scheme_string_value(s, path),
 					  edelib_scheme_string_value(s, interface),
 					  edelib_scheme_string_value(s, name));
-	
+
 	if((*curr_con)->send(msg)) return s->T;
 	return s->F;
 }
@@ -471,6 +473,47 @@ pointer script_bus_method_call(scheme *s, pointer args) {
 	return s->F;
 }
 
+static pointer script_bus_help(scheme *s, pointer args) {
+	curr_editor->append_result("\n\n"
+"Introduction\n"
+"============\n\n"
+"edelib-dbus-explorer is handy tool for exploring, inspecting and calling DBus\n"
+"services, their methods, signals and properties. Before you start using it, make\n"
+"sure to familiarize yourself with DBus (http://www.freedesktop.org/wiki/Software/dbus)\n"
+"at least on basic level.\n"
+"\n"
+"To start using it, first connect to either session or service bus. To do so, from\n"
+"the menu choose File -> Connect To -> (Session Bus | Service Bus), and you will be shown\n"
+"with all available services on given connection. After selecting service, you will\n"
+"get service objects and interfaces with methods.\n"
+"\n"
+"Editor and laguage basics\n"
+"=========================\n\n"
+"The text you are reading now is in so called 'script editor'. This is place where you can\n"
+"write and evaluate scheme code; simply pointing cursor to open or closed parenthesis, you\n"
+"will get highlighted evaluate-able region. Pressing SHIFT-Enter will evaluate it and print\n"
+"result if the function have printable method. To evaluate and print any value, you can use ALT-Enter\n"
+"\n"
+"To see it in action, select below example and press ALT-Enter:\n"
+"\n"
+" (: 1 + 2)\n"
+"\n"
+"or maybe:\n"
+"\n"
+" (println \"Hello world\")\n"
+"\n"
+"you will see results immediately.\n"
+"\n"
+"Many of scheme functions are self-documentable, so to here is example how to use it (as above\n"
+"examples, just select it and evaluate it):\n"
+"\n"
+" (doc 'println)\n"
+"\n"
+);
+
+	return s->T;
+}
+
 void script_dbus_load(scheme *s, EdbusConnection **con) {
 	curr_con = con;
 
@@ -481,4 +524,11 @@ either #t or #f depending if signal successfully sent.");
 
 	EDELIB_SCHEME_DEFINE2(s, script_bus_method_call, "dbus-call-raw",
 "Call DBus method with given arguments in list form. Use 'dbus-call' instead of this function.");
+}
+
+void script_dbus_setup_help(scheme *s, ScriptEditor *editor) {
+	curr_editor = editor;
+
+	EDELIB_SCHEME_DEFINE2(s, script_bus_help, "help",
+"Display detail help about edelib-dbus-explorer usage and programming.");
 }

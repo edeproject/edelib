@@ -24,8 +24,10 @@
 
 /* scheme bindings for DBus */
 struct scheme;
+class  ScriptEditor;
 
 void script_dbus_load(scheme *s, EDELIB_NS_PREPEND(EdbusConnection) **con);
+void script_dbus_setup_help(scheme *s, ScriptEditor *editor);
 
 #endif
 
