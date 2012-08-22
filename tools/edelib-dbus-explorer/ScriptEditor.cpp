@@ -82,7 +82,7 @@ void ScriptEditor::init_scripting(EdbusConnection **con) {
 
 	sc = edelib_scheme_init();
 	edelib_scheme_set_input_port_file(sc, stdin);
-	edelib_scheme_set_output_port_string(sc, eval_buf, eval_buf + sizeof(eval_buf));
+	edelib_scheme_set_output_port_string(sc, eval_buf, eval_buf + sizeof(eval_buf) - 1);
 
 	/*
 	 * init dbus binding
@@ -137,7 +137,7 @@ void ScriptEditor::eval_selection(bool print, bool macroexpand) {
 	if(!copy) return;
 		
 	memset(eval_buf, 0, sizeof(eval_buf));
-	edelib_scheme_set_output_port_string(sc, eval_buf, eval_buf + sizeof(eval_buf));
+	edelib_scheme_set_output_port_string(sc, eval_buf, eval_buf + sizeof(eval_buf) - 1);
 
 	if(print) {
 		String buf = "(display ";
