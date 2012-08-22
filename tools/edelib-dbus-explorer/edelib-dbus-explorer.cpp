@@ -49,6 +49,9 @@ EDELIB_NS_USING(EdbusMessage)
 EDELIB_NS_USING(EdbusList)
 EDELIB_NS_USING_LIST(2, (EDBUS_SESSION, EDBUS_SYSTEM))
 
+#define PROGRAM_LABEL   "edelib DBus Explorer"
+#define PROGRAM_VERSION "0.1"
+
 /* on which bus we are connected */
 #define CONNECTED_BUS_NONE    0
 #define CONNECTED_BUS_SESSION 1
@@ -185,7 +188,7 @@ static void disconnect_cb(Fl_Widget*, void*) {
 }
 
 static void about_cb(Fl_Widget*, void*) {
-	message("edelib DBus Explorer v0.1");
+	message(PROGRAM_LABEL " v" PROGRAM_VERSION);
 }
 
 static void browser_cb(Fl_Browser *b, void*) {
@@ -238,7 +241,7 @@ int main(int argc, char **argv) {
 
 	bus_connection = NULL;
 
-	win = new Fl_Double_Window(600, 505, _("DBus Explorer"));
+	win = new Fl_Double_Window(600, 505, PROGRAM_LABEL);
 	win->begin();
 		MenuBar *menu_bar = new MenuBar(0, 0, 600, 25);
 		menu_bar->menu(menu_);
