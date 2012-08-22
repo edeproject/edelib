@@ -38,7 +38,7 @@ EDELIB_NS_BEGIN
  *
  * Inspired from <a href="http://seriss.com/people/erco/fltk/#Animate">Erco's animate example</a>.
  */
-class AnimateBox : public Fl_Box {
+class EDELIB_API AnimateBox : public Fl_Box {
 private:
 	float                     draw_rate;
 	int                       flags;

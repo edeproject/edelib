@@ -43,7 +43,7 @@ struct ThemeLoader_P;
  * Also, ThemeLoader will load client for XSETTINGS protocol (via XSettingsClient), giving the single place
  * for accessing common visual elements either using theme files or XSETTINGS protocol.
  */
-class ThemeLoader {
+class EDELIB_API ThemeLoader {
 private:
 	ThemeLoader_P *priv;
 

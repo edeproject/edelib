@@ -40,7 +40,7 @@ struct EdbusIntrospImpl;
  *
  * DBus introspection is best described on http://dbus.freedesktop.org/doc/dbus-specification.html#introspection-format.
  */
-class EdbusIntrospection {
+class EDELIB_API EdbusIntrospection {
 private:
 	EdbusIntrospImpl *impl;
 	void dispose(void);
@@ -87,4 +87,6 @@ public:
 
 EDELIB_NS_END
 #endif
- 
+
+EDELIB_DBUS_DESCRIBE_SERVICE(
+);

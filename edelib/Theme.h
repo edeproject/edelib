@@ -45,7 +45,7 @@ typedef void (*ThemeErrorHandler)(const char *str, void *data);
  *
  * This class should not be used directly to load themes; ThemeLoader should be used for that.
  */
-class Theme {
+class EDELIB_API Theme {
 private:
 	Theme_P           *priv;
 	E_DISABLE_CLASS_COPY(Theme)

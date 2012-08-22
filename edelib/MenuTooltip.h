@@ -36,7 +36,7 @@ EDELIB_NS_BEGIN
  * MenuTooltip is used internally by MenuItem class, so you should not use it directly; use Fl_Tooltip instead. Also
  * MenuTooltip will use the same preferences as Fl_Tooltip, like background color, delay time, color and etc.
  */
-class MenuTooltip {
+class EDELIB_API MenuTooltip {
 private:
 	static Fl_Widget *widget_;
 	static void exit_(Fl_Widget*);

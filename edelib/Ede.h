@@ -36,7 +36,7 @@ EDELIB_NS_BEGIN
  *
  * When this class is used (via EDE_APPLICATION), it must be linked with libedelib_gui (and dependencies), as will load GUI specific code.
  */
-class ApplicationBootstrap {
+class EDELIB_API ApplicationBootstrap {
 private:
 	int flags;
 public:

@@ -38,7 +38,7 @@ EDELIB_NS_BEGIN
  *
  * This class was greatly inspired by KTempFile from kdelibs because I had no clue how to model it ;)
  */
-class TempFile {
+class EDELIB_API TempFile {
 private:
 	int     fd;
 	int     errno_err;

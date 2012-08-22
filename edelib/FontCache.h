@@ -42,7 +42,7 @@ struct FontCache_P;
  * FontInfo is structure used to store information in cache database. Database is represented in key/value form
  * (actualy it is sdbm powered) where each key is font name and each value FontInfo structure.
  */
-struct FontInfo {
+struct EDELIB_API FontInfo {
 	/** Face name with encoded style; usable only for FLTK. */
 	char face[EDELIB_FONT_CACHE_FACE_LEN];
 	/** All available sizes for this font. */
@@ -68,7 +68,7 @@ struct FontInfo {
  *
  * \todo complete
  */
-class FontCache {
+class EDELIB_API FontCache {
 private:
 	FontCache_P *priv;
 	E_DISABLE_CLASS_COPY(FontCache)
@@ -133,7 +133,7 @@ public:
  * Function that will initialize FontCache object, load database from standard cache directory and find given 
  * font name. If fails, it will set default values.
  */
-bool font_cache_find(const char *face, Fl_Font &f, int &s, Fl_Font df = FL_HELVETICA, int ds = 12);
+EDELIB_API bool font_cache_find(const char *face, Fl_Font &f, int &s, Fl_Font df = FL_HELVETICA, int ds = 12);
 
 EDELIB_NS_END
 #endif

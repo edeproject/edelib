@@ -67,7 +67,7 @@ struct EdbusErrorImpl;
  * \class EdbusError
  * \brief A class representing D-Bus error
  */
-class EdbusError {
+class EDELIB_API EdbusError {
 private:
 	EdbusErrorImpl* impl;
 	void dispose(void);

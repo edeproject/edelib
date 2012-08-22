@@ -47,7 +47,7 @@ EDELIB_NS_BEGIN
  * The second is how SchemeEditor will use <i>Fl_Text_Editor::add_modify_callback</i> internally to match parenthesis,
  * so if you overwrite it, editor will not highlight them any more.
  */
-class SchemeEditor : public Fl_Text_Editor {
+class EDELIB_API SchemeEditor : public Fl_Text_Editor {
 private:
 	Fl_Text_Buffer *stylebuf, *textbuf;
 	bool pmatch;

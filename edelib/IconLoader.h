@@ -81,7 +81,7 @@ enum IconLoaderOptions {
  * will correctly update icon paths and redraw widgets. When Window class is used, it will automatically call 
  * reload() when theme was changed, so there is no need to call it manually.
  */
-class IconLoader {
+class EDELIB_API IconLoader {
 private:
 	static IconLoader* pinstance;
 
