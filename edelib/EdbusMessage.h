@@ -128,13 +128,13 @@ public:
 	 * until you call one of the <em>create_</em> members. Until that, message
 	 * is marked as invalid and EdbusConnection will refuse to send it
 	 */
-	EdbusMessage();
+	EdbusMessage() : dm(NULL) { }
 
 	/**
 	 * Create an EdbusMessage from DBusMessage. This is used to simplify
 	 * internals and you should not use it directly
 	 */
-	EdbusMessage(DBusMessage* msg);
+	EdbusMessage(DBusMessage* msg) { from_dbus_message(msg); }
 
 	/**
 	 * Clears internal data

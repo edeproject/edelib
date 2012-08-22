@@ -2,7 +2,7 @@
  * $Id$
  *
  * D-BUS stuff
- * Copyright (c) 2008 edelib authors
+ * Copyright (c) 2008-2012 edelib authors
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -468,6 +468,13 @@ static void from_dbus_iter_to_edbusdata_type(DBusMessageIter* iter, EdbusData& d
 		data = EdbusData::from_uint64(v);
 		return;
 	} 
+
+	if(dtype == DBUS_TYPE_DOUBLE) {
+		double v;
+		dbus_message_iter_get_basic(iter, &v);
+		data = EdbusData::from_double(v);
+		return;
+	}
 	
 	if(dtype == DBUS_TYPE_STRING) {
 		/* TODO: strings are UTF-8 encoded */
@@ -583,16 +590,8 @@ static void from_dbus_iter_to_edbusdata_type(DBusMessageIter* iter, EdbusData& d
 		data = EdbusData::from_struct(s);
 		return;
 	}
-
-	E_ASSERT(0 && "Got some unknown type from D-Bus ???");
-}
-
-
-EdbusMessage::EdbusMessage() : dm(NULL) {
-}
-
-EdbusMessage::EdbusMessage(DBusMessage* msg) : dm(NULL) {
-	from_dbus_message(msg);
+	
+	E_FATAL(E_STRLOC ": Got some unknown type from DBus (%i)???\n", dtype);
 }
 
 EdbusMessage::~EdbusMessage() {
