@@ -87,6 +87,3 @@ public:
 
 EDELIB_NS_END
 #endif
-
-EDELIB_DBUS_DESCRIBE_SERVICE(
-);
