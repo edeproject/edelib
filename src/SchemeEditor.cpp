@@ -659,8 +659,6 @@ SchemeEditor::SchemeEditor(int X, int Y, int W, int H, const char *l) : Fl_Text_
 
 	style_init(textbuf, stylebuf);
 	add_key_binding(FL_Enter, FL_TEXT_EDITOR_ANY_STATE, (Fl_Text_Editor::Key_Func)indent_cb);
-
-	selection_color(FL_GRAY - 9);
 }
 
 void SchemeEditor::highlight_parens(int s, int e) {
@@ -699,7 +697,6 @@ int SchemeEditor::handle(int e) {
 
 		if(strchr(EDITOR_PARENS_CLOSE, ch)) {
 			int deep = 0;
-
 			/* go backward and search matching open one */
 			for(int p = pos; p >= 0; p--) {
 				if(strchr(EDITOR_PARENS_CLOSE, BUFFER_CHAR_AT(buffer(), p))) {
@@ -720,7 +717,6 @@ int SchemeEditor::handle(int e) {
 
 		if(strchr(EDITOR_PARENS_OPEN, ch)) {
 			int deep = 0;
-
 			/* go forward and search matching one */
 			for(int p = pos; p < buffer()->length(); p++) {
 				if(strchr(EDITOR_PARENS_OPEN, BUFFER_CHAR_AT(buffer(), p))) {

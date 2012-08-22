@@ -45,6 +45,7 @@ static const char *scheme_dbus_call_macro =
 
 ScriptEditor::ScriptEditor(int X, int Y, int W, int H, const char *l) : SchemeEditor(X, Y, W, H, l), sc(NULL), template_pos(0), eval_result_insert(false) {
 	textsize(12);
+	selection_color(FL_GRAY - 9);
 
 #if FL_MAJOR_VERSION >= 1 && FL_MINOR_VERSION >= 3
 	wrap_mode(Fl_Text_Display::WRAP_AT_BOUNDS, w());
