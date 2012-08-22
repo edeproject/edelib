@@ -58,7 +58,9 @@ enum EdbusErrorType {
 	EDBUS_ERROR_USER_DEFINED          ///< user defined error
 };
 
+#ifndef SKIP_DOCS
 struct EdbusErrorImpl;
+#endif
 
 /**
  * \ingroup dbus

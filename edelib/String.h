@@ -275,7 +275,7 @@ public:
 	 *   if(strcmp(s.c_str(), "my smart string") == 0)
 	 *     ...
 	 * \endcode
-	 * */
+	 */
 	const char* c_str(void)  { return sdata->chars; }
 
 	/** Return data formated as c-like string */
@@ -285,7 +285,7 @@ public:
 	 * Retrun pointer to internal buffer 
 	 *
 	 * Do \b not use this function as input for C functions.
-	 * */
+	 */
 	const char* data(void) const  { return sdata->chars; }
 
 	/** Retrun size of character data */

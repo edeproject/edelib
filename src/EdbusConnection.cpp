@@ -2,7 +2,7 @@
  * $Id$
  *
  * D-BUS stuff
- * Copyright (c) 2008 edelib authors
+ * Copyright (c) 2008-2012 edelib authors
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -55,18 +55,18 @@ struct EdbusConnImpl {
 	EdbusCallback   method_call_cb;
 	void*           method_call_cb_data;
 
-	ObjectPathList object_list;
+	ObjectPathList  object_list;
 
 	/* 
 	 * only used when setup_listener_with_fltk() is called
 	 * TODO: can WatchList be replaced with DBusWatchList ?
 	 */
-	WatchList*      watch_list;
-	DBusTimeout*    timeout;
+	WatchList*     watch_list;
+	DBusTimeout*   timeout;
 
 	/* so we can know how many times  add_signal_match()/add_method_match() was called */
-	unsigned int       signal_matches;
-	unsigned int       method_matches;
+	unsigned int   signal_matches;
+	unsigned int   method_matches;
 };
 
 static void copy_error(DBusError* e, EdbusConnImpl* impl) {

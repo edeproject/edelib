@@ -42,7 +42,8 @@ static Fl_Text_Display::Style_Table_Entry styletable[] = {     // Style table
 	{ FL_DARK_RED,   FL_COURIER,        FL_NORMAL_SIZE }, // E - Directives
 	{ FL_DARK_RED,   FL_COURIER_BOLD,   FL_NORMAL_SIZE }, // F - Types
 	{ FL_BLUE,       FL_COURIER_BOLD,   FL_NORMAL_SIZE }, // G - Keywords
-	{ FL_DARK_GREEN, FL_COURIER,        FL_NORMAL_SIZE }  // H - Parenthesis
+	{ FL_DARK_GREEN, FL_COURIER,        FL_NORMAL_SIZE }, // H - Parenthesis
+	{ FL_DARK_RED,   FL_COURIER_BOLD,   FL_NORMAL_SIZE }  // I - Highlighted Parenthesis
 };
 
 static const char *code_keywords[] = {
@@ -185,10 +186,10 @@ static const char *code_keywords[] = {
 	"fold-left",
 	"foldr",
 	"fold-right",
+	"for-each",
 	"for",
 	"force",
 	"forced",
-	"for-each",
 	"full-path",
 	"gc",
 	"gcd",
@@ -609,10 +610,12 @@ static int indent_cb(int key, SchemeEditor *e) {
 		e->buffer()->remove_selection();
 	}
 
-	int pos = e->insert_position();
-	int start = e->line_start(pos);
-	char *text = e->buffer()->text_range(start, pos);
-	char *ptr;
+	int pos, start;
+	char *text, *ptr;
+
+	pos = e->insert_position();
+	start = e->line_start(pos);
+	text = e->buffer()->text_range(start, pos);
 
 	for (ptr = text; isspace(*ptr); ptr ++)
 		;
@@ -632,7 +635,7 @@ static int indent_cb(int key, SchemeEditor *e) {
 
 	e->show_insert_position();
 	e->set_changed();
-	if (e->when()&FL_WHEN_CHANGED) e->do_callback();
+	if(e->when() & FL_WHEN_CHANGED) e->do_callback();
 
 	free(text);
 	return 1;
@@ -640,6 +643,7 @@ static int indent_cb(int key, SchemeEditor *e) {
 
 SchemeEditor::SchemeEditor(int X, int Y, int W, int H, const char *l) : Fl_Text_Editor(X, Y, W, H, l) {
 	pmatch = true;
+
 	/* setup buffers */
 	textbuf = new Fl_Text_Buffer();
 	stylebuf = new Fl_Text_Buffer();
@@ -655,6 +659,16 @@ SchemeEditor::SchemeEditor(int X, int Y, int W, int H, const char *l) : Fl_Text_
 
 	style_init(textbuf, stylebuf);
 	add_key_binding(FL_Enter, FL_TEXT_EDITOR_ANY_STATE, (Fl_Text_Editor::Key_Func)indent_cb);
+
+	selection_color(FL_GRAY - 9);
+}
+
+void SchemeEditor::highlight_parens(int s, int e) {
+	buffer()->highlight(s, e);
+}
+
+void SchemeEditor::unhighlight_parens(void) {
+	buffer()->unhighlight();
 }
 
 void SchemeEditor::textsize(int s) {
@@ -671,14 +685,12 @@ void SchemeEditor::textsize(int s) {
 
 int SchemeEditor::handle(int e) {
 	int ret = Fl_Text_Editor::handle(e);
-
-	if(!pmatch)
-		return ret;
+	if(!pmatch) return ret;
 
 	if(e == FL_KEYBOARD || e == FL_PUSH) {
 		if(!buffer()) return ret;
 		
-		buffer()->unhighlight();
+		unhighlight_parens();
 
 		int pos = insert_position() - 1;
 		if(pos < 0) return ret;
@@ -699,7 +711,7 @@ int SchemeEditor::handle(int e) {
 					deep--;
 
 					if(deep == 0) {
-						buffer()->highlight(p, pos + 1);
+						highlight_parens(p, pos + 1);
 						return ret;
 					}
 				}
@@ -720,7 +732,7 @@ int SchemeEditor::handle(int e) {
 					deep--;
 
 					if(deep == 0) {
-						buffer()->highlight(pos, p + 1);
+						highlight_parens(pos, p + 1);
 						return ret;
 					}
 				}

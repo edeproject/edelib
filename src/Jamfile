@@ -111,6 +111,7 @@ SOURCE_DBUS =
 	EdbusData.cpp
 	EdbusDict.cpp
 	EdbusError.cpp
+	EdbusIntrospection.cpp
 	EdbusList.cpp
 	EdbusMessage.cpp
 	EdbusObjectPath.cpp ;

@@ -24,6 +24,9 @@ InstallFile      [ FDirName $(libdir) pkgconfig ] : [ FFileName $(TOP) edelib-gu
 InstallFile      [ FDirName $(libdir) pkgconfig ] : [ FFileName $(TOP) edelib-gui-no-images.pc ] ;
 InstallFile      [ FDirName $(libdir) pkgconfig ] : [ FFileName $(TOP) edelib-dbus.pc ] ;
 
+
+MakeTest foo : foo.cpp : -ledelib_dbus -ledelib $(FLTK_LIBS_FULL) $(DBUS_LIBS) ;
+
 SubInclude TOP src ;
 SubInclude TOP sslib ;
 SubInclude TOP test ;

@@ -51,6 +51,9 @@ class SchemeEditor : public Fl_Text_Editor {
 private:
 	Fl_Text_Buffer *stylebuf, *textbuf;
 	bool pmatch;
+
+	void highlight_parens(int start, int end);
+	void unhighlight_parens(void);
 public:
 	/** Create widget at given position with given size. */
 	SchemeEditor(int X, int Y, int W, int H, const char *l = 0);
