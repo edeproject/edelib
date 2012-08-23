@@ -21,22 +21,38 @@ SubDir TOP tools edelib-dbus-explorer ;
 if $(DBUS_LIBS) {
 	rule GenHelp {
 		LocalDepends $(<) : $(>) ;
-		GenHelp1 $(<) : $(>) ;
 
 		MakeLocate $(<) : $(LOCATE_TARGET) ;
 		MakeLocate $(>) : $(SEARCH_SOURCE) ;
+
+		GenHelp1 $(<) : $(>) ;
 	}
 
 	actions piecemeal GenHelp1 {
-		cat $(>) | $(>:D)/gen-help.sh > $(<) ;
+		cat $(>) | $(TOP)/tools/edelib-dbus-explorer/gen-help.sh > $(<) ;
 	}
 
-	MakeTest edelib-dbus-explorer : edelib-dbus-explorer.cpp
-									ScriptEditor.cpp
-									ObjectTree.cpp
-									Entity.cpp	
-									ScriptDBus.cpp
-								  : -ledelib_dbus $(FLTK_LIBS) -ledelib $(DBUS_LIBS) ;
+
+	if $(HAVE_FL_TREE) != 1 {
+		# older that FLTK 1.3.0 does not have Tree widget
+		FL_TREE_SRC = Fl_Tree.cpp
+					  Fl_Tree_Item_Array.cpp
+			  		  Fl_Tree_Item.cpp
+					  Fl_Tree_Prefs.cpp ;
+
+		FL_TREE_SRC = missing/$(FL_TREE_SRC) ;
+		PROGRAM_FLAGS = $(FLTK_CFLAGS) -I$(TOP)/tools/edelib-dbus-explorer/missing ;
+	}
+
+	SRC = $(FL_TREE_SRC)
+		  edelib-dbus-explorer.cpp
+		  ScriptEditor.cpp
+		  ObjectTree.cpp
+		  Entity.cpp	
+		  ScriptDBus.cpp ;
+
+	ObjectC++Flags $(SRC) : $(PROGRAM_FLAGS) ;
+	MakeTest edelib-dbus-explorer : $(SRC) : -ledelib_dbus $(FLTK_LIBS) -ledelib $(DBUS_LIBS) ;
 
 	LocalDepends edelib-dbus-explorer : Help.h ;
 	GenHelp Help.h : edelib-dbus-explorer.txt ;

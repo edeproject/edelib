@@ -131,9 +131,12 @@ void ThemeLoader::apply_common_gui_elements(void) {
 			IconLoader::reload(buf);
 	}
 
+	/* global scrollbar size is until 1.1.10 */
+#if (FL_MAJOR_VERSION >= 1) && (FL_MINOR_VERSION >= 1) && (FL_PATCH_VERSION >= 10)
 	if(t->get_item("ede", "scrollbar_width", sh, (long)Fl::scrollbar_size())) {
 		Fl::scrollbar_size((int)sh);
 	}
+#endif
 
 	if(t->get_item("ede", "font", buf, sizeof(buf))) {
 		Fl_Font f;

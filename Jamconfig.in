@@ -80,5 +80,8 @@ SCHEME_FLAGS ?= "@SCHEME_FLAGS@" ;
 DMALLOC_LIBC   ?= "@DMALLOC_LIBC@" ;
 DMALLOC_LIBCXX ?= "@DMALLOC_LIBCXX@" ;
 
+# check if we have Fl_Tree
+HAVE_FL_TREE ?= @HAVE_FL_TREE@ ;
+
 # do not touch this
 JAMCONFIG_READ = "yes" ;

@@ -40,7 +40,10 @@ class TooltipWin : public Fl_Menu_Window {
 public:
 	TooltipWin() : Fl_Menu_Window(0, 0) {
 		clear_border();
+
+#if (FL_MAJOR_VERSION >= 1) && (FL_MINOR_VERSION >= 3)
 		set_tooltip_window();
+#endif
 		end();
 	}
 

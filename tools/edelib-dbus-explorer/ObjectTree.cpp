@@ -124,7 +124,7 @@ static void scan_object(EdbusConnection *conn, EdbusMessage &msg, const char *se
 			/* append methods, signals and properties */
 			TiXmlNode *sel;
 			char buf2[256];
-			Fl_Image *icon;
+			Fl_Pixmap *icon;
 			EntityType et;
 
 			for(sel = el->FirstChildElement(); sel; sel = sel->NextSibling()) {
@@ -243,7 +243,9 @@ static void describe_in_editor_cb(Fl_Widget*, void *s) {
 
 ObjectTree::ObjectTree(int X, int Y, int W, int H, const char *l) : Fl_Tree(X, Y, W, H, l), editor_buf(NULL), action_menu(NULL) {
 	showroot(0);
+#if (FL_MAJOR_VERSION >= 1) && (FL_MINOR_VERSION >= 3)
 	item_labelbgcolor(color());
+#endif
 
 	action_menu = new MenuButton(0, 0, 0, 0);
 	action_menu->menu(menu_);
@@ -251,8 +253,11 @@ ObjectTree::ObjectTree(int X, int Y, int W, int H, const char *l) : Fl_Tree(X, Y
 
 void ObjectTree::introspect(const char *service, EdbusConnection *c) {
 	clear();
+
+#if (FL_MAJOR_VERSION >= 1) && (FL_MINOR_VERSION >= 3)
 	/* fix scrollbar position, since Fl_Tree doesn't do this */
 	_vscroll->value(0);
+#endif
 
 	/* first we start with '/', as root object, since all services implement this one */
 	EdbusMessage  m;
@@ -280,7 +285,7 @@ int ObjectTree::handle(int ev) {
 
 			if(Fl::event_button() == FL_RIGHT_MOUSE) {
 				deselect_all();
-				select((Fl_Tree_Item*) clicked, 1);
+				select((Fl_Tree_Item*) clicked);
 
 				/* by default popup() does not call callbacks */
 				const MenuItem * m = action_menu->menu()->popup(Fl::event_x(), Fl::event_y());
