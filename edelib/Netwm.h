@@ -226,9 +226,11 @@ char *netwm_window_get_title(Window win);
 
 /**
  * \ingroup wm
- * Return window icon set with _NET_WM_ICON property.
+ * Return window icon set with _NET_WM_ICON property. Since application can have multiple icons, with this function
+ * you can set desired size to be returned, via <i>requested_width</i>. If icon with requested size wasn't found, it will
+ * return the first one.
  */
-Fl_RGB_Image *netwm_window_get_icon(Window win);
+Fl_RGB_Image *netwm_window_get_icon(Window win, unsigned int requested_width = 0);
 
 /**
  * \ingroup wm

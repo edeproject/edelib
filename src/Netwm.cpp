@@ -583,7 +583,41 @@ char *netwm_window_get_title(Window win) {
 	return ret;
 }
 
-Fl_RGB_Image *netwm_window_get_icon(Window win) {
+/*
+ * Search for best icon in icon array and return offset in array; if not found matching size, use the first one.
+ * Image data is stored in form: [wh...w x h.....wh...w x h.....]
+ */
+static long *find_best_icon(long *data, int n, unsigned int req_w, unsigned int *rw, unsigned int *rh) {
+	E_RETURN_VAL_IF_FAIL(n > 3, NULL);
+
+	/* default values; we are sure we have at least 3 elements */
+	*rw = (unsigned int)data[0];
+	*rh = (unsigned int)data[1];
+	long *ret = (data + 2);
+
+	/* if we are not interested in searching offset */
+	if(req_w == 0) return ret;
+
+	unsigned int W, H;
+
+	for(int i = 0; i + 2 < n;) {
+		W = data[i++];
+		H = data[i++];
+
+		if(W == req_w) {
+			*rw = W;
+			*rh = H;
+			return (data + i);
+		}
+
+		i += W * H;
+	}
+
+	/* nothing found */
+	return ret;
+}
+
+Fl_RGB_Image *netwm_window_get_icon(Window win, unsigned int requested_width) {
 	E_RETURN_VAL_IF_FAIL(win >= 0, 0);
 	init_atoms_once();
 
@@ -591,46 +625,31 @@ Fl_RGB_Image *netwm_window_get_icon(Window win) {
 	int  format;
 	unsigned long n, extra;
 	unsigned char *prop = 0;
-	long len = 2;
 
 	int status = XGetWindowProperty(fl_display, win,
-			_XA_NET_WM_ICON, 0L, len, False, XA_CARDINAL, &real, &format, &n, &extra, (unsigned char**)&prop);
+			_XA_NET_WM_ICON, 0L, 0x7fffffff, False, XA_CARDINAL, &real, &format, &n, &extra, (unsigned char**)&prop);
 
-	if((status != Success) || (real != XA_CARDINAL)) {
-		E_WARNING(E_STRLOC ": Failed to get icon dimensions (status: %i is_cardinal: %i)\n", (status == Success), (real == XA_CARDINAL));
+	if((status != Success) || (real != XA_CARDINAL) || (n <= 2)) {
 		if(prop) XFree(prop);
 		return 0;
 	}
 
-	long *data = (long*)prop;
 	unsigned int width, height;
 
-	width  = data[0];
-	height = data[1];
-	XFree(prop);
-
-	len += width * height;
-
-	format = 0;
-	prop   = 0;
-	real   = 0;
-
-	status = XGetWindowProperty(fl_display, win,
-			_XA_NET_WM_ICON, 0L, len, False, XA_CARDINAL, &real, &format, &n, &extra, (unsigned char**)&prop);
-
-	if((status != Success) || (real != XA_CARDINAL)) {
-		E_WARNING(E_STRLOC ": Failed to get icon data (status: %i is_cardinal: %i)\n", (status == Success), (real == XA_CARDINAL));
+	long *data = find_best_icon((long*)prop, n, requested_width, &width, &height);
+	/* assure nothing have failed */
+	if(data == NULL) {
 		if(prop) XFree(prop);
 		return 0;
 	}
 
-	data = (long*)prop;
+	long len = width * height;
+	unsigned char *img_data, *ptr;
+	int pixel;
 
-	unsigned char *img_data = new unsigned char[width * height * 4];
-	unsigned char *ptr = img_data;
-	int            pixel;
+	ptr = img_data = new unsigned char[width * height * 4];
 
-	for(int i = 2; i < len; i++) {
+	for(int i = 0; i < len; i++) {
 		pixel = data[i];
 
 		*ptr++ = pixel >> 16 & 0xff;
@@ -643,7 +662,6 @@ Fl_RGB_Image *netwm_window_get_icon(Window win) {
 
 	Fl_RGB_Image *img = new Fl_RGB_Image(img_data, width, height, 4);
 	img->alloc_array = 1;
-
 	return img;
 }
 
