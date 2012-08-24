@@ -35,14 +35,6 @@ EDELIB_NS_USING(String)
 
 static char eval_buf[EDELIB_DBUS_EXPLORER_DEFAULT_SCRIPT_EVAL_BUFSIZE];
 
-/* macro for writing call elements without explicit quoting and list-ing */
-static const char *scheme_dbus_call_macro =
-"(add-macro-doc \"dbus-call\" \"Call DBus method with given arguments. This call will wait for reply and return result as scheme object.\") \
-(define-macro (dbus-call service path interface name . args) \
-  `(if (empty? ',args) \
-     (dbus-call-raw ,service ,path ,interface ,name) \
-	 (dbus-call-raw ,service ,path ,interface ,name ',args)))";
-
 ScriptEditor::ScriptEditor(int X, int Y, int W, int H, const char *l) : SchemeEditor(X, Y, W, H, l), sc(NULL), template_pos(0), eval_result_insert(false) {
 	textsize(12);
 	selection_color(FL_GRAY - 9);
@@ -89,8 +81,6 @@ void ScriptEditor::init_scripting(EdbusConnection **con) {
 	 * NOTE: EdbusConnection here can be NULL, depending if connection was initialized or not
 	 */
 	script_dbus_load(sc, con);
-	edelib_scheme_load_string(sc, (char*)scheme_dbus_call_macro);
-
 	script_dbus_setup_help(sc, this);
 
 	object_color(6, "#314e6c");

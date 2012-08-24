@@ -21,6 +21,7 @@
 #define __EDELIB_DBUS_EXPLORER_SCRIPT_DBUS_H__
 
 #include <edelib/EdbusConnection.h>
+#include <edelib/String.h>
 
 /* scheme bindings for DBus */
 struct scheme;
@@ -29,6 +30,13 @@ class  ScriptEditor;
 void script_dbus_load(scheme *s, EDELIB_NS_PREPEND(EdbusConnection) **con);
 void script_dbus_setup_help(scheme *s, ScriptEditor *editor);
 
+/* so we can query 'readable' value without duplicating the code */
+bool script_dbus_get_property_value(scheme *s,
+									const char *service,
+									const char *object,
+									const char *interface,
+									const char *prop,
+									EDELIB_NS_PREPEND(String) &ret);
 #endif
 
 

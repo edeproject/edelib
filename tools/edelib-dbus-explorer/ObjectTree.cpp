@@ -27,6 +27,7 @@
 #include <edelib/MenuItem.h>
 #include <edelib/Nls.h>
 #include <edelib/String.h>
+#include <edelib/Missing.h>
 
 #include "ObjectTree.h"
 #include "ScriptEditor.h"
@@ -47,12 +48,16 @@ EDELIB_NS_USING(String)
 #define STR_CMP_VALUE(o, s) (strcmp((o)->Value(), (s)) == 0)
 
 static char tooltip_buf[128];
+
 static void send_to_editor_cb(Fl_Widget*, void*);
 static void describe_in_editor_cb(Fl_Widget*, void*);
+static void copy_entity_name_cb(Fl_Widget*, void*);
+static void copy_entity_name_cb(Fl_Widget*, void*);
 
 static MenuItem menu_[] = {
 	{_("&Send to editor"), 0, send_to_editor_cb, 0},
-	{_("&Describe"), 0, describe_in_editor_cb, 0},
+	{_("&Describe"), 0, describe_in_editor_cb, 0, 128},
+	{_("&Copy"), 0, copy_entity_name_cb, 0},
 	{0}
 };
 
@@ -239,6 +244,16 @@ static void describe_in_editor_cb(Fl_Widget*, void *s) {
 	if(en->get_prototype(buf, sizeof(buf)))
 		ebuf->append(buf);
 	ebuf->append("\n");
+}
+
+static void copy_entity_name_cb(Fl_Widget*, void *s) {
+	ObjectTree *self = (ObjectTree*)s;
+
+	Fl_Tree_Item *titem = self->first_selected_item();
+	if(!titem) return;
+
+	const char *str = titem->label();
+	if(str) Fl::copy(str, edelib_strnlen(str, 128), 1);
 }
 
 ObjectTree::ObjectTree(int X, int Y, int W, int H, const char *l) : Fl_Tree(X, Y, W, H, l), editor_buf(NULL), action_menu(NULL) {

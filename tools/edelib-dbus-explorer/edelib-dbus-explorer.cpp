@@ -144,7 +144,7 @@ static void list_bus_names(EdbusConnection *c, Fl_Hold_Browser *browser) {
 		if(it->to_string()[0] == ':') continue;
 		browser->add(it->to_string());
 
-#if (FLTK_MAJOR >= 1) && (FLTK_MINOR >= 3)
+#if (FL_MAJOR_VERSION >= 1) && (FL_MINOR_VERSION >= 3)
 		browser->icon(browser->size(), &image_service);
 	}
 

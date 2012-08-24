@@ -32,6 +32,7 @@
 #include "ScriptEditor.h"
 #include "Help.h"
 
+EDELIB_NS_USING(String)
 EDELIB_NS_USING(EdbusConnection)
 EDELIB_NS_USING(EdbusMessage)
 EDELIB_NS_USING(EdbusData)
@@ -44,6 +45,8 @@ EDELIB_NS_USING(EDBUS_TYPE_INVALID)
 
 static EdbusConnection **curr_con = NULL;
 static ScriptEditor     *curr_editor = NULL;
+
+static bool dbus_binding_loaded = false;
 
 #define STR_CMP(s1, s2) (strcmp((s1), (s2)) == 0)
 
@@ -139,6 +142,10 @@ static bool edbus_data_from_pair(scheme *s, pointer type, pointer val, EdbusData
 	}
 
 	if(STR_CMP(sym, ":string")) {
+		if(edelib_scheme_is_symbol(s, val)) {
+			E_DEBUG("XXXXX we got symbol\n");
+		}
+
 		if(edelib_scheme_is_string(s, val)) {
 			char *sv = edelib_scheme_string_value(s, val);
 			ret = EdbusData::from_string(sv);
@@ -490,6 +497,28 @@ either #t or #f depending if signal successfully sent.");
 
 	EDELIB_SCHEME_DEFINE2(s, script_bus_method_call, "dbus-call-raw",
 "Call DBus method with given arguments in list form. Use 'dbus-call' instead of this function.");
+
+	const char *scheme_code =
+"(add-macro-doc \"dbus-call\" \"Call DBus method with given arguments. This call will wait for reply and return result as scheme object.\") \
+(define-macro (dbus-call service path interface name . args) \
+  `(if (empty? ',args) \
+     (dbus-call-raw ,service ,path ,interface ,name) \
+	 (dbus-call-raw ,service ,path ,interface ,name ',args))) \
+\
+(add-doc \"dbus-property-list\" \"List all properties on given service, object path and interface.\") \
+(define (dbus-property-list service path interface) \
+  (dbus-call-raw service path \"org.freedesktop.DBus.Properties\" \"GetAll\" (list ':string interface))) \
+\
+(add-doc \"dbus-property-set\" \"On given service, object path and interface, set property with value.\") \
+(define (dbus-property-set service path interface property value) \
+  (dbus-call-raw service path \"org.freedesktop.DBus.Properties\" \"Set\" (list ':string interface ':string property ':variant value))) \
+\
+(add-doc \"dbus-property-get\" \"Get value from given service, object path and interface.\") \
+(define (dbus-property-get service path interface property) \
+  (dbus-call-raw service path \"org.freedesktop.DBus.Properties\" \"Get\" (list ':string interface ':string property)))";	\
+
+	edelib_scheme_load_string(s, (char*)scheme_code);
+	dbus_binding_loaded = true;
 }
 
 void script_dbus_setup_help(scheme *s, ScriptEditor *editor) {
@@ -497,4 +526,29 @@ void script_dbus_setup_help(scheme *s, ScriptEditor *editor) {
 
 	EDELIB_SCHEME_DEFINE2(s, script_bus_help, "help",
 "Display detail help about edelib-dbus-explorer usage and programming.");
+}
+
+bool script_dbus_get_property_value(scheme *s, const char *service, const char *object, const char *interface, const char *prop, String &ret) {
+	E_RETURN_VAL_IF_FAIL(dbus_binding_loaded == true, false);
+
+	pointer args = s->NIL;
+	/* first construct last argument and cons from the end, so we do not have to reverse the list */
+	String arg = ":string ";
+	arg += prop;
+
+	args = edelib_scheme_cons(s, edelib_scheme_mk_string(s, arg.c_str()), args);
+	args = edelib_scheme_cons(s, edelib_scheme_mk_string(s, interface), args);
+	args = edelib_scheme_cons(s, edelib_scheme_mk_string(s, object), args);
+	args = edelib_scheme_cons(s, edelib_scheme_mk_string(s, service), args);
+
+	pointer result, call;
+
+	call = edelib_scheme_cons(s, edelib_scheme_mk_symbol(s, "dbus-property-get"), args);
+	result = edelib_scheme_eval(s, call);
+
+	if(result != s->T && edelib_scheme_is_string(s, result))
+		return false;
+
+	ret = edelib_scheme_string_value(s, result);
+	return true;
 }
