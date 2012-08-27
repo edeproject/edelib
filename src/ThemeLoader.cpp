@@ -95,7 +95,6 @@ void ThemeLoader::apply_common_gui_elements(void) {
 	E_RETURN_IF_FAIL(priv->curr_theme);
 
 	char          buf[128];
-	long          sh;
 	unsigned char r, g, b;
 
 	Theme *t = priv->curr_theme;
@@ -132,7 +131,8 @@ void ThemeLoader::apply_common_gui_elements(void) {
 	}
 
 	/* global scrollbar size is until 1.1.10 */
-#if (FL_MAJOR_VERSION >= 1) && (FL_MINOR_VERSION >= 1) && (FL_PATCH_VERSION >= 10)
+#if (FL_MAJOR_VERSION >= 1) && ((FL_MINOR_VERSION >= 3) || ((FL_MINOR_VERSION >= 1) && (FL_PATCH_VERSION >= 10)))
+	long sh;
 	if(t->get_item("ede", "scrollbar_width", sh, (long)Fl::scrollbar_size())) {
 		Fl::scrollbar_size((int)sh);
 	}
