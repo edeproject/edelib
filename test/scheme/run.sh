@@ -6,7 +6,7 @@ ret=0
 
 run_file() {
 	tmp_file=".out"
-	$bin $1 | tee -a $tmp_file
+	$bin $1 | awk -F'=!=' '{ printf("%-90s %s\n", $1, $2) }' | tee -a $tmp_file
 
 	grep FAILED $tmp_file 1> /dev/null
 	[ "x$?" = "x0" ] && ret=1
