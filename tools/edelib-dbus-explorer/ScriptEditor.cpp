@@ -124,7 +124,8 @@ void ScriptEditor::eval_selection(bool print, bool macroexpand) {
 		copy = buffer()->highlight_text();
 	}
 
-	if(!copy) return;
+	if(!copy || edelib_strnlen(copy, EDELIB_DBUS_EXPLORER_DEFAULT_SCRIPT_EVAL_BUFSIZE) < 1)
+		return;
 		
 	memset(eval_buf, 0, sizeof(eval_buf));
 	edelib_scheme_set_output_port_string(sc, eval_buf, eval_buf + sizeof(eval_buf) - 1);

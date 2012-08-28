@@ -65,6 +65,7 @@ static void system_bus_cb(Fl_Widget*, void*);
 static void disconnect_cb(Fl_Widget*, void*);
 static void about_cb(Fl_Widget*, void*);
 static void save_cb(Fl_Widget*, void*);
+static void save_as_cb(Fl_Widget*, void*);
 static void load_cb(Fl_Widget*, void*);
 static void editor_undo_cb(Fl_Widget*, void*);
 static void editor_copy_cb(Fl_Widget*, void*);
@@ -82,7 +83,8 @@ static MenuItem menu_[] = {
 	{0,0,0,0,0,0,0,0,0},
 	{_("Disconnect"), 0,  disconnect_cb, 0, 128, FL_NORMAL_LABEL, 0},
 	{_("Load..."), FL_COMMAND + 'o', load_cb, 0, 0, FL_NORMAL_LABEL, 0},
-	{_("Save As..."), FL_COMMAND + 's', save_cb, 0, 128, FL_NORMAL_LABEL, 0},
+	{_("Save..."), FL_COMMAND + 's', save_cb, 0, 0, FL_NORMAL_LABEL, 0},
+	{_("Save As..."), 0, save_as_cb, 0, 128, FL_NORMAL_LABEL, 0},
 	{_("&Quit"), 0x40071, quit_cb, 0, 0, FL_NORMAL_LABEL, 0},
 	{0,0,0,0,0,0,0,0,0},
 	{_("&Edit"), 0, 0, 0, 64, FL_NORMAL_LABEL, 0},
@@ -109,13 +111,14 @@ static ObjectTree *method_browser;
 static ScriptEditor *script_editor;
 static int connection_bus_type;
 static EdbusConnection *bus_connection;
+static const char *saved_content;
 
 static void quit_cb(Fl_Widget*, void*) {
 	if(ask(_("You are going to quit application. Please select 'Yes' to continue or 'No' to cancel this dialog."))) 
 		win->hide();
 }
 
-static void list_bus_names(EdbusConnection *c, Fl_Hold_Browser *browser) {
+static void list_bus_names(EdbusConnection *c, Fl_Hold_Browser *browser, bool show_all = false) {
 	browser->clear();
 
 	EdbusMessage m, reply;
@@ -141,7 +144,7 @@ static void list_bus_names(EdbusConnection *c, Fl_Hold_Browser *browser) {
 			continue;
 		}
 
-		if(it->to_string()[0] == ':') continue;
+		if(!show_all && it->to_string()[0] == ':') continue;
 		browser->add(it->to_string());
 
 #if (FL_MAJOR_VERSION >= 1) && (FL_MINOR_VERSION >= 3)
@@ -202,9 +205,21 @@ static void browser_cb(Fl_Browser *b, void*) {
 }
 
 static void save_cb(Fl_Widget*, void*) {
-	char *path = fl_file_chooser(_("Save shell content"), LOAD_SAVE_PATTERN, 0, 0);
-	if(path && script_editor->buffer()->savefile(path) != 0)
+	save_as_cb(0, (void*)saved_content);
+}
+
+static void save_as_cb(Fl_Widget*, void *saved) {
+	char *path = (char*)saved;
+
+	if(!path)
+		path = fl_file_chooser(_("Save shell content"), LOAD_SAVE_PATTERN, 0, 0);
+
+	if(!path) return;
+
+	if(script_editor->buffer()->savefile(path) != 0)
 		alert(_("Failed to save file as '%s'"), path);
+	else
+		saved_content = (const char*)path;
 }
 
 static void load_cb(Fl_Widget*, void*) {
@@ -245,6 +260,7 @@ int main(int argc, char **argv) {
 	EDE_APPLICATION("edelib-dbus-explorer");
 
 	bus_connection = NULL;
+	saved_content = NULL;
 
 	win = new Fl_Double_Window(600, 505, PROGRAM_LABEL);
 	win->begin();
