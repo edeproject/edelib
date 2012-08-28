@@ -135,4 +135,7 @@
 (test-equal "repeatedly #2" (repeatedly 10 (lambda () 1))
                             '(1 1 1 1 1 1 1 1 1 1))
 
+(test-equal "zip" (zip '(1 2 3) '(a b c) '(d e f))
+                  '((1 a d) (2 b e) (3 c f)))
+
 (run-all-tests "sslib Tests")

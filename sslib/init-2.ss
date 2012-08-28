@@ -595,6 +595,10 @@ number of times before, or call (shuffle lst) different times within each call."
               forms)
        ,gx)))
 
+(add-doc "zip" "Zip lists, e.g. (zip '(1 2 3) '(a b c)) => '((1 a) (2 b) (3 c))")
+(define (zip list1 . lists)
+  (apply map list list1 lists))
+
 ;;; interpreter specific stuff
 
 (defun edelib-scheme-objects ()
