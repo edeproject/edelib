@@ -17,7 +17,6 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Tile.H>
 #include <FL/Fl_Hold_Browser.H>
 #include <FL/Fl_Output.H>
@@ -30,6 +29,7 @@
 #include <edelib/MenuBar.h>
 #include <edelib/Ede.h>
 #include <edelib/MessageBox.h>
+#include <edelib/Window.h>
 
 #include <edelib/EdbusConnection.h>
 #include <edelib/EdbusMessage.h>
@@ -39,6 +39,7 @@
 #include "ObjectTree.h"
 #include "icons.h"
 
+EDELIB_NS_USING_AS(Window, AppWindow)
 EDELIB_NS_USING(MenuItem)
 EDELIB_NS_USING(MenuBar)
 EDELIB_NS_USING(ask)
@@ -105,7 +106,7 @@ static MenuItem menu_[] = {
 };
 
 static Fl_Output *status_bar;
-static Fl_Double_Window *win;
+static AppWindow *win;
 static Fl_Hold_Browser *service_browser;
 static ObjectTree *method_browser;
 static ScriptEditor *script_editor;
@@ -262,7 +263,7 @@ int main(int argc, char **argv) {
 	bus_connection = NULL;
 	saved_content = NULL;
 
-	win = new Fl_Double_Window(600, 505, PROGRAM_LABEL);
+	win = new AppWindow(600, 505, PROGRAM_LABEL);
 	win->begin();
 		MenuBar *menu_bar = new MenuBar(0, 0, 600, 25);
 		menu_bar->menu(menu_);

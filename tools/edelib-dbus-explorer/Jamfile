@@ -52,7 +52,7 @@ if $(DBUS_LIBS) {
 		  ScriptDBus.cpp ;
 
 	ObjectC++Flags $(SRC) : $(PROGRAM_FLAGS) ;
-	MakeTest edelib-dbus-explorer : $(SRC) : -ledelib_dbus $(FLTK_LIBS) -ledelib $(DBUS_LIBS) ;
+	MakeTest edelib-dbus-explorer : $(SRC) : -ledelib_dbus -ledelib_gui $(FLTK_LIBS_FULL) -ledelib $(DBUS_LIBS) ;
 
 	LocalDepends edelib-dbus-explorer : Help.h ;
 	GenHelp Help.h : edelib-dbus-explorer.txt ;

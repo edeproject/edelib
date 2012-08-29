@@ -21,6 +21,7 @@
 #include <edelib/Missing.h>
 #include <edelib/Debug.h>
 #include <edelib/String.h>
+
 #include "Entity.h"
 #include "Default.h"
 
@@ -202,6 +203,7 @@ bool Entity::get_prototype(char *buf, int bufsz) {
 			if(args.size() != 1) {
 				E_WARNING(E_STRLOC ": Property should have only one type, but got '%i'. Using first one only...\n", args.size());
 			} else {
+
 				ArgSignatureListIt it = args.begin();
 				signature_to_readable((*it)->sig, ret);
 
@@ -210,9 +212,8 @@ bool Entity::get_prototype(char *buf, int bufsz) {
 
 				/* write kind of access */
 				if((*it)->access) {
-					ret += " [access: ";
+					ret += " access: ";
 					ret += (*it)->access;
-					ret += ']';
 				}
 			}
 		} else {
@@ -305,6 +306,9 @@ bool Entity::get_prototype_as_scheme(char *buf, int bufsz) {
 
 			ret += ')';
 		}
+	} else {
+		/* property */
+		ret.printf("(dbus-property-get \"%s\" \"%s\" \"%s\" \"%s\")", get_service(), get_path(), get_interface(), get_name());
 	}
 
 	if(!ret.empty()) {

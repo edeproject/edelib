@@ -41,6 +41,7 @@ EDELIB_NS_USING(EdbusList)
 EDELIB_NS_USING(EdbusDict)
 EDELIB_NS_USING(EdbusObjectPath)
 EDELIB_NS_USING(EdbusDict)
+EDELIB_NS_USING(EdbusVariant)
 EDELIB_NS_USING(EDBUS_TYPE_INVALID)
 
 static EdbusConnection **curr_con = NULL;
@@ -51,29 +52,30 @@ static bool dbus_binding_loaded = false;
 #define STR_CMP(s1, s2) (strcmp((s1), (s2)) == 0)
 
 /* TODO: find better way to handle this, or add edelib_scheme_error inside Scheme.h */
-#define LOCAL_SCHEME_ERROR(scm, str) scheme_load_string(scm, "(error " #str ")");
-
-#define LOCAL_SCHEME_RETURN_IF_FAIL(scm, expr, str)\
-do {											   \
-	if(E_LIKELY(expr)) { }						   \
-	else {										   \
-		LOCAL_SCHEME_ERROR(scm, str);			   \
-		return scm->F;							   \
-	}											   \
+#define LOCAL_SCHEME_ERROR(scm, str) do {                       \
+    E_ASSERT(curr_editor != NULL && "You have NULL editor???"); \
+    String ss = "\n;; Error: ";                                 \
+    ss += str;                                                  \
+    curr_editor->append_result(ss.c_str());                     \
 } while(0)
 
-/*
- * Somehow things goes bad when LOCAL_SCHEME_RETURN_IF_FAIL is used with this call(s)
- * as this macro is often called in the beginning of the function, causing crash due
- * bad free() inside interpreter gc. Not sure how to fix it, so for now it will return only #f
- * and let editor handle things when are not connected.
- */
-#define LOCAL_SCHEME_RETURN_IF_NOT_CONNECTED(s)							\
-do {																	\
-	if(E_LIKELY(curr_con && *curr_con && (*curr_con)->connected())) { }	\
-	else return (s)->F;													\
-}																		\
-while(0)
+#define LOCAL_SCHEME_RETURN_IF_FAIL(scm, expr, str)\
+do {                                               \
+    if(E_LIKELY(expr)) { }                         \
+    else {                                         \
+        LOCAL_SCHEME_ERROR(scm, str);              \
+        return scm->F;                             \
+    }                                              \
+} while(0)
+
+#define LOCAL_SCHEME_RETURN_IF_NOT_CONNECTED(s)                         \
+do {                                                                    \
+    if(E_LIKELY(curr_con && *curr_con && (*curr_con)->connected())) { } \
+    else {                                                              \
+        LOCAL_SCHEME_ERROR(s, "Not connected.");                        \
+        return s->F;                                                    \
+    }                                                                   \
+} while(0)
 
 /* forward declaration */
 template <typename T>
@@ -200,12 +202,30 @@ static bool edbus_data_from_pair(scheme *s, pointer type, pointer val, EdbusData
 			return false;
 		}
 
-		LOCAL_SCHEME_ERROR(s, "Type marked as list but the value is not list");
+		LOCAL_SCHEME_ERROR(s, "Type marked as list but the value is not a list");
 		return false;
 	}
 
+	/* we will handle variant as we handle dict sublist, so '(:variant (:int32 3)) will describe it */
 	if(STR_CMP(sym, ":variant")) {
-		LOCAL_SCHEME_ERROR(s, "Variant type is not yet supported.");
+		if(edelib_scheme_is_pair(s, val) && list_length(s, val) == 2) {
+			pointer p = val, var_type, var_val;
+
+			var_type = edelib_scheme_pair_car(s, p);
+			p = edelib_scheme_pair_cdr(s, p);
+			var_val = edelib_scheme_pair_car(s, p);
+
+			EdbusVariant variant;
+			if(!edbus_data_from_pair(s, var_type, var_val, variant.value)) {
+				LOCAL_SCHEME_ERROR(s, "Unble to construct variant value");
+				return false;
+			}
+
+			ret = EdbusData::from_variant(variant);
+			return true;
+		}
+
+		LOCAL_SCHEME_ERROR(s, "Type marked as variant, but the value is not a list. It must be in form: ':variant (type value)'");
 		return false;
 	}
 
@@ -515,7 +535,15 @@ either #t or #f depending if signal successfully sent.");
 \
 (add-doc \"dbus-property-get\" \"Get value from given service, object path and interface.\") \
 (define (dbus-property-get service path interface property) \
-  (dbus-call-raw service path \"org.freedesktop.DBus.Properties\" \"Get\" (list ':string interface ':string property)))";	\
+  (dbus-call-raw service path \"org.freedesktop.DBus.Properties\" \"Get\" (list ':string interface ':string property))) \
+\
+(define (dbus-make-array type . values) \
+  (cons ':array \
+         (-> (repeatedly (length values) (lambda () type)) \
+             (zip values) \
+             flatten \
+             list))) \
+";
 
 	edelib_scheme_load_string(s, (char*)scheme_code);
 	dbus_binding_loaded = true;
@@ -526,29 +554,4 @@ void script_dbus_setup_help(scheme *s, ScriptEditor *editor) {
 
 	EDELIB_SCHEME_DEFINE2(s, script_bus_help, "help",
 "Display detail help about edelib-dbus-explorer usage and programming.");
-}
-
-bool script_dbus_get_property_value(scheme *s, const char *service, const char *object, const char *interface, const char *prop, String &ret) {
-	E_RETURN_VAL_IF_FAIL(dbus_binding_loaded == true, false);
-
-	pointer args = s->NIL;
-	/* first construct last argument and cons from the end, so we do not have to reverse the list */
-	String arg = ":string ";
-	arg += prop;
-
-	args = edelib_scheme_cons(s, edelib_scheme_mk_string(s, arg.c_str()), args);
-	args = edelib_scheme_cons(s, edelib_scheme_mk_string(s, interface), args);
-	args = edelib_scheme_cons(s, edelib_scheme_mk_string(s, object), args);
-	args = edelib_scheme_cons(s, edelib_scheme_mk_string(s, service), args);
-
-	pointer result, call;
-
-	call = edelib_scheme_cons(s, edelib_scheme_mk_symbol(s, "dbus-property-get"), args);
-	result = edelib_scheme_eval(s, call);
-
-	if(result != s->T && edelib_scheme_is_string(s, result))
-		return false;
-
-	ret = edelib_scheme_string_value(s, result);
-	return true;
 }

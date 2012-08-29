@@ -34,7 +34,9 @@ private:
 public:
 	ScriptEditor(int X, int Y, int W, int H, const char *l = 0);
 	~ScriptEditor();
-	void init_scripting(EDELIB_NS_PREPEND(EdbusConnection) **con);
+	void    init_scripting(EDELIB_NS_PREPEND(EdbusConnection) **con);
+	scheme *get_scripting(void) { return sc; }
+
 	void undo_content(void);
 	void copy_content(void);
 	void paste_content(void);
