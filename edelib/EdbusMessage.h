@@ -114,27 +114,27 @@ private:
 	E_DISABLE_CLASS_COPY(EdbusMessage)
 public:
 	/**
-	 * Declare EdbusMessage iterator
+	 * Declare EdbusMessage iterator.
 	 */
 	typedef list<EdbusData>::iterator iterator;
 
 	/**
-	 * Declare EdbusMessage const iterator
+	 * Declare EdbusMessage const iterator.
 	 */
 	typedef list<EdbusData>::const_iterator const_iterator;
 
 	/**
 	 * Create an empty EdbusMessage object. Nothing will be allocated
 	 * until you call one of the <em>create_</em> members. Until that, message
-	 * is marked as invalid and EdbusConnection will refuse to send it
+	 * is marked as invalid and EdbusConnection will refuse to send it.
 	 */
 	EdbusMessage() : dm(NULL) { }
 
 	/**
 	 * Create an EdbusMessage from DBusMessage. This is used to simplify
-	 * internals and you should not use it directly
+	 * internals and you should not use it directly.
 	 */
-	EdbusMessage(DBusMessage* msg) { from_dbus_message(msg); }
+	EdbusMessage(DBusMessage* msg);
 
 	/**
 	 * Clears internal data

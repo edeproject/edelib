@@ -28,6 +28,7 @@
 #include <edelib/Nls.h>
 #include <edelib/String.h>
 #include <edelib/Missing.h>
+#include <edelib/StrUtil.h>
 
 #include "ObjectTree.h"
 #include "ScriptEditor.h"
@@ -40,6 +41,7 @@ EDELIB_NS_USING(EdbusMessage)
 EDELIB_NS_USING(MenuItem)
 EDELIB_NS_USING(MenuButton)
 EDELIB_NS_USING(String)
+EDELIB_NS_USING(str_ends)
 
 #define INTROSPECTABLE_INTERFACE "org.freedesktop.DBus.Introspectable"
 #define INTROSPECTABLE_METHOD    "Introspect"
@@ -88,6 +90,7 @@ static void scan_object(EdbusConnection *conn, EdbusMessage &msg, const char *se
 
 	doc.Parse(it->to_string());
 	TiXmlNode *el = doc.FirstChild("node");
+	if(!el) return;
 
 	for(el = el->FirstChildElement(); el; el = el->NextSibling()) {
 		/* we have subobjects */
@@ -174,30 +177,40 @@ static void scan_object(EdbusConnection *conn, EdbusMessage &msg, const char *se
 				} else {
 					TiXmlNode *argsnode;
 					for(argsnode = sel->FirstChildElement(); argsnode; argsnode = argsnode->NextSibling()) {
-						if(!STR_CMP_VALUE(argsnode, "arg")) {
-							E_WARNING(E_STRLOC ": Expecting 'arg' node, but got '%s'. Skipping...\n", argsnode->Value());
-							continue;
+						if(STR_CMP_VALUE(argsnode, "arg")) {
+							/* arguments */
+							const char *argstype, *argsname, *argsdirection;
+							ArgDirection dir = DIRECTION_NONE;
+
+							argstype = argsnode->ToElement()->Attribute("type");
+							if(!argstype) continue;
+
+							argsname = argsnode->ToElement()->Attribute("name");
+							if(!argsname) continue;
+
+							/* it is fine to not have direction, which means it is only a method */
+							argsdirection = argsnode->ToElement()->Attribute("direction");
+							if(argsdirection) {
+								if(STR_CMP(argsdirection, "in"))
+									dir = DIRECTION_IN;
+								else if(STR_CMP(argsdirection, "out"))
+									dir = DIRECTION_OUT;
+							}
+
+							en->append_arg(argsname, argstype, dir);
+						} else if(STR_CMP_VALUE(argsnode, "annotation")) {
+							const char *annoname, *argsval;
+
+							annoname = argsnode->ToElement()->Attribute("name");
+							/* allow whatever annotation name ending with '.DocString' to be supported (e.g. org.gtk.GDBus.DocString or org.equinoxproject.DBus.DocString) */
+							if(!str_ends(annoname, ".DocString")) {
+								E_WARNING(E_STRLOC ": We are supporting now only DocString annotations. Skipping '%s'...\n", annoname);
+								continue;
+							}
+
+							argsval = argsnode->ToElement()->Attribute("value");
+							if(argsval) en->set_doc(argsval);
 						}
-
-						const char *argstype, *argsname, *argsdirection;
-						ArgDirection dir = DIRECTION_NONE;
-
-						argstype = argsnode->ToElement()->Attribute("type");
-						if(!argstype) continue;
-
-						argsname = argsnode->ToElement()->Attribute("name");
-						if(!argsname) continue;
-
-						/* it is fine to not have direction, which means it is only a method */
-						argsdirection = argsnode->ToElement()->Attribute("direction");
-						if(argsdirection) {
-							if(STR_CMP(argsdirection, "in"))
-								dir = DIRECTION_IN;
-							else if(STR_CMP(argsdirection, "out"))
-								dir = DIRECTION_OUT;
-						}
-
-						en->append_arg(argsname, argstype, dir);
 					}
 				}
 
@@ -309,6 +322,7 @@ int ObjectTree::handle(int ev) {
 			} else {
 				e->get_prototype(tooltip_buf, sizeof(tooltip_buf));
 
+				Fl_Tooltip::current(this);
 				Fl::belowmouse(this);
 				/*
 				 * I will never understaind how 'entity_area()' works, as obviously y coordinate always
@@ -317,6 +331,8 @@ int ObjectTree::handle(int ev) {
 				Fl_Tooltip::enter_area(this, clicked->x(), clicked->y() - 50, clicked->w(), clicked->h(), tooltip_buf);
 			}
 		}
+	} else if(ev == FL_LEAVE) {
+		Fl_Tooltip::current(NULL);
 	}
 
 	return Fl_Tree::handle(ev);

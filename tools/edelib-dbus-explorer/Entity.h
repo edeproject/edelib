@@ -56,14 +56,15 @@ typedef EDELIB_NS_PREPEND(list<ArgSignature*>::iterator) ArgSignatureListIt;
  */
 class Entity {
 private:
-	EntityType       tp;
-	char             *name;
-	char             *path;
-	char             *interface;
-	char             *service;
+	EntityType tp;
+	char       *name;
+	char       *path;
+	char       *interface;
+	char       *service;
+	char       *doc;
 	ArgSignatureList args;
 public:
-	Entity();
+	Entity() : tp(ENTITY_NONE), name(NULL), path(NULL), interface(NULL), service(NULL), doc(NULL) { }
 	~Entity();
 
 	void       set_type(EntityType t) { tp = t; }
@@ -80,6 +81,9 @@ public:
 
 	void  set_service(const char *s);
 	char *get_service(void) { return service; }
+
+	void  set_doc(const char *s);
+	char *get_doc(void) { return doc; }
 
 	void append_arg(const char *name, const char *type, ArgDirection direction, const char *access = NULL);
 

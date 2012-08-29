@@ -139,12 +139,12 @@ ArgSignature::~ArgSignature() {
 	if(access) free(access);
 }
 
-Entity::Entity() : tp(ENTITY_NONE), name(NULL), path(NULL), interface(NULL), service(NULL) { }
-
 Entity::~Entity() {
 	if(name) free(name);
 	if(path) free(path);
 	if(interface) free(interface);
+	if(service) free(service);
+	if(doc) free(doc);
 
 	ArgSignatureListIt it = args.begin(), ite = args.end();
 	for(; it != ite; it = args.erase(it))
@@ -152,19 +152,28 @@ Entity::~Entity() {
 }
 
 void Entity::set_name(const char *n) {
+	E_RETURN_IF_FAIL(name == NULL);
 	name = edelib_strndup(n, MAX_STRSZ);
 }
 
 void Entity::set_path(const char *p) {
+	E_RETURN_IF_FAIL(path == NULL);
 	path = edelib_strndup(p, MAX_STRSZ);
 }
 
 void Entity::set_interface(const char *i) {
+	E_RETURN_IF_FAIL(interface == NULL);
 	interface = edelib_strndup(i, MAX_STRSZ);
 }
 
 void Entity::set_service(const char *s) {
+	E_RETURN_IF_FAIL(service == NULL);
 	service = edelib_strndup(s, MAX_STRSZ);
+}
+
+void Entity::set_doc(const char *s) {
+	E_RETURN_IF_FAIL(doc == NULL);
+	doc = edelib_strndup(s, MAX_STRSZ);
 }
 
 void Entity::append_arg(const char *n, const char *type, ArgDirection direction, const char *access) {
@@ -248,6 +257,12 @@ bool Entity::get_prototype(char *buf, int bufsz) {
 	}
 
 	if(!ret.empty()) {
+		/* append documentation if have */
+		if(get_doc()) {
+			ret += "\n";
+			ret += get_doc();
+		}
+
 		edelib_strlcpy(buf, ret.c_str(), bufsz);
 		return true;
 	}

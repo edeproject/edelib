@@ -32,6 +32,16 @@ EDELIB_NS_BEGIN
 
 /**
  * \ingroup dbus
+ * \def EDBUS_INTROSPECTION_DTD
+ * This macro is DTD header for DBus introspection XML. Useful only if you are going to construct own
+ * introspection XML reply.
+ */
+#define EDBUS_INTROSPECTION_DTD \
+	"<!DOCTYPE node PUBLIC \"-//freedesktop//DTD D-BUS Object Introspection 1.0//EN\" \n" \
+	"\"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd\">\n\n"
+
+/**
+ * \ingroup dbus
  * \enum EdbusConnectionType
  * \brief Represents connection either to system or session bus
  */
@@ -280,13 +290,11 @@ public:
 	 * if none object was added, other objects receiving data will be reported here too.
 	 *
 	 * \note This function only stores pointer to the string, so <em>make sure</em> it is in static memory
-	 * \todo remove it?
 	 */
 	void register_object(const char* path);
 
 	/**
 	 * Unregister already registered object.
-	 * \todo remove it?
 	 */
 	void unregister_object(const char* path);
 

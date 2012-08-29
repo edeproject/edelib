@@ -594,6 +594,11 @@ static void from_dbus_iter_to_edbusdata_type(DBusMessageIter* iter, EdbusData& d
 	E_FATAL(E_STRLOC ": Got some unknown type from DBus (%i)???\n", dtype);
 }
 
+
+EdbusMessage::EdbusMessage(DBusMessage* msg) : dm(NULL) {
+	from_dbus_message(msg);
+}
+
 EdbusMessage::~EdbusMessage() {
 	if(!dm)
 		return;
@@ -604,15 +609,14 @@ EdbusMessage::~EdbusMessage() {
 
 #define CREATE_OR_CLEAR(m)                      \
 do {                                            \
-	if(!m) {                                    \
-		m = new EdbusMessageImpl;               \
-		m->msg = NULL;                          \
-	} else {                                    \
-		/* destroy previously create message */ \
-		clear_all();                            \
-	}                                           \
+    if(!m) {                                    \
+        m = new EdbusMessageImpl;               \
+        m->msg = NULL;                          \
+    } else {                                    \
+        /* destroy previously create message */ \
+        clear_all();                            \
+    }                                           \
 } while(0)
-
 
 void EdbusMessage::from_dbus_message(DBusMessage* m) {
 	CREATE_OR_CLEAR(dm);
