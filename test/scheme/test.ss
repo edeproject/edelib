@@ -51,7 +51,7 @@
   )
 
   (for-each printer *registered-tests*)
-  (test-print "\nTotal tests: " ntests " executed in " (edelib-clock-diff *tests-ending-time* *tests-starting-time*) " .sec\n")
+  (test-print "\nTotal tests: " ntests " executed in " (edelib-clock-diff *tests-ending-time* *tests-starting-time*) " sec.\n")
   (test-print "Passed: " *tests-passed* "\n")
   (test-print "Failed: " *tests-failed* "\n\n")
 )
