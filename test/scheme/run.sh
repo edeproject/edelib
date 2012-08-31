@@ -1,6 +1,6 @@
 #!/bin/sh 
 
-export EDELIB_SCHEME_INIT="../../sslib/init.ss:../../sslib/init-2.ss:../../sslib/theme.ss"
+export EDELIB_SCHEME_INIT="../../sslib/init.ss:../../sslib/init-2.ss"
 bin="../../tools/edelib-script/edelib-script"
 ret=0
 
@@ -18,5 +18,6 @@ run_file unittest.ss
 run_file r5rs.ss
 run_file edelib.ss
 run_file sslib.ss
+run_file tiny-clos.ss
 
 exit $ret

@@ -1,5 +1,4 @@
 (load "test.ss")
-(load "../../sslib/init-2.ss")
 
 (test-equal "infix" (: 2 + (3 - 4)) 1)
 (test-equal "infix #2" (: 1000 - 1000) 0)

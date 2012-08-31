@@ -3,6 +3,7 @@
 ;;
 
 (load "test.ss")
+(load "../../sslib/theme.ss")
 
 (test-equal "translation char" _"This is some text" "This is some text")
 (test-equal "utf-8 chars" "Ја могу да једем стакло. " "Ја могу да једем стакло. ")
