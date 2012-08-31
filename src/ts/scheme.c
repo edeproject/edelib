@@ -493,7 +493,6 @@ static int num_eq(num a, num b) {
 	return ret;
 }
 
-
 static int num_gt(num a, num b) {
 	int ret;
 	int is_fixnum=a.is_fixnum && b.is_fixnum;
@@ -642,7 +641,7 @@ static pointer _get_cell(scheme *sc, pointer a, pointer b) {
 			|| sc->free_cell == sc->NIL) {
 			/* if only a few recovered, get more to avoid fruitless gc's */
 			if (!alloc_cellseg(sc,1) && sc->free_cell == sc->NIL) {
-				sc->no_memory=1;
+				sc->no_memory = 1;
 				return sc->sink;
 			}
 		}
@@ -682,31 +681,29 @@ static pointer reserve_cells(scheme *sc, int n) {
 static pointer get_consecutive_cells(scheme *sc, int n) {
 	pointer x;
 
-	if(sc->no_memory) {
-		return sc->sink;
-	}
+	if(sc->no_memory) return sc->sink;
   
 	/* Are there any cells available? */
-	x=find_consecutive_cells(sc,n);
-	if (x == sc->NIL) {
-		/* If not, try gc'ing some */
-		gc(sc, sc->NIL, sc->NIL);
-		x=find_consecutive_cells(sc,n);
-		if (x == sc->NIL) {
-			/* If there still aren't, try getting more heap */
-			if (!alloc_cellseg(sc,1)) {
-				sc->no_memory=1;
-				return sc->sink;
-			}
-		}
-		x=find_consecutive_cells(sc,n);
-		if (x == sc->NIL) {
-			/* If all fail, report failure */
-			sc->no_memory=1;
-			return sc->sink;
-		}
+	x = find_consecutive_cells(sc,n);
+	if (x != sc->NIL) return x;
+
+	/* If not, try gc'ing some */
+	gc(sc, sc->NIL, sc->NIL);
+	x = find_consecutive_cells(sc,n);
+	if (x != sc->NIL) return x;
+
+	/* If there still aren't, try getting more heap */
+	if (!alloc_cellseg(sc,1)) {
+		sc->no_memory=1;
+		return sc->sink;
 	}
-	return (x);
+
+	x = find_consecutive_cells(sc,n);
+	if (x != sc->NIL) return x;
+
+	/* If all fail, report failure */
+	sc->no_memory = 1;
+	return sc->sink;
 }
 
 static int count_consecutive_cells(pointer x, int needed) {
@@ -1225,7 +1222,8 @@ static void gc(scheme *sc, pointer a, pointer b) {
 
 	/* mark variables a, b */
 	mark(a);
-	mark(b);
+	/* Sanel: a and b can be the same somehow :S */
+	if(a != b) mark(b);
 
 	/* garbage collect */
 	clrmark(sc->NIL);
@@ -1257,7 +1255,7 @@ static void gc(scheme *sc, pointer a, pointer b) {
   
 	if (sc->gc_verbose) {
 		char msg[80];
-		snprintf(msg,80,"done: %ld cells were recovered.\n", sc->fcells);
+		snprintf(msg, sizeof(msg), "done: %ld, cells were recovered.\n", sc->fcells);
 		putstr(sc,msg);
 	}
 }
