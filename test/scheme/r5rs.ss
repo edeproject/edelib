@@ -374,6 +374,7 @@
 (test-equal "#151 (apply append)" '() (apply append '(())))
 (test-equal "#152 (append '())"   '() (append '()))
 (test-equal "#153 (append 3)"     3 (append 3))
+(test-equal "#154 (reverse '())"  '() (reverse '()))
 
 
 (run-all-tests "R5RS Tests (without math)")
