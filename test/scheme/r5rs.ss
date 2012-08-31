@@ -222,7 +222,7 @@
 
 ;(test-equal "#81" 256 (string->number "100" 16))
 
-(test-equal "#82" 100 (string->number "1e2"))
+(test-equal "#82" 100.0 (string->number "1e2"))
 
 (test-equal "#83" #f (not 3))
 
@@ -370,6 +370,10 @@
 (test-equal "#149" 3 (force (delay (+ 1 2))))
 
 (test-equal "#150" '(3 3) (let ((p (delay (+ 1 2)))) (list (force p) (force p))))
+
+(test-equal "#151 (apply append)" '() (apply append '(())))
+(test-equal "#152 (append '())"   '() (append '()))
+(test-equal "#153 (append 3)"     3 (append 3))
 
 
 (run-all-tests "R5RS Tests (without math)")

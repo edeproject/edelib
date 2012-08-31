@@ -6,16 +6,20 @@
 
 (define *tests-passed* 0)
 (define *tests-failed* 0)
+(define *tests-starting-time* 0)
 
 (define (test-print . args)
   (for-each display args))
 
 ;; check if 'expected' == 'received'
 (define (test-equal name expected received)
+  (if (= *tests-starting-time* 0)
+    (set! *tests-starting-time* (edelib-clock)))
+
   (cond
     ((equal? expected received)
 	 (set! *tests-passed* (+ 1 *tests-passed*))
-	 (set! *registered-tests* (cons (list name #t) *registered-tests*)) )
+	 (set! *registered-tests* (cons (list name #t) *registered-tests*)))
     (else
 	 (set! *tests-failed* (+ 1 *tests-failed*))
 	 (set! *registered-tests* (cons (list name #f) *registered-tests*))
@@ -25,9 +29,10 @@
   (test-equal name expected (apply func args)))
 
 (define (run-all-tests title)
-  (set! *registered-tests* (reverse *registered-tests*))
+  (define *tests-ending-time* (edelib-clock))
   (define i 1)
   (define ntests (length *registered-tests*))
+  (set! *registered-tests* (reverse *registered-tests*))
 
   (test-print "* " title "\n")
 
@@ -46,7 +51,7 @@
   )
 
   (for-each printer *registered-tests*)
-  (test-print "\nTotal tests: " ntests "\n")
+  (test-print "\nTotal tests: " ntests " executed in " (edelib-clock-diff *tests-ending-time* *tests-starting-time*) " .sec\n")
   (test-print "Passed: " *tests-passed* "\n")
   (test-print "Failed: " *tests-failed* "\n\n")
 )

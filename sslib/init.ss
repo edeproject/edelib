@@ -30,6 +30,10 @@
 (define (cdddar x) (cdr (cdr (cdr (car x)))))
 (define (cddddr x) (cdr (cdr (cdr (cdr x)))))
 
+;;;; Utility to ease macro creation
+(define (macro-expand form)
+  ((eval (get-closure-code (eval (car form)))) form))
+
 (macro (unless form)
   `(if (not ,(cadr form)) (begin ,@(cddr form))))
 

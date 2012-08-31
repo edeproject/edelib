@@ -22,6 +22,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <limits.h>
+#include <time.h>
 
 #include <edelib/Missing.h>
 #include <edelib/Scheme.h>
@@ -31,6 +32,28 @@
 
 /* where to find init files if they are not given */
 #define EDELIB_SCHEME_DEFAULT_LIB_PATH EDELIB_INSTALL_PREFIX "/lib/edelib/sslib"
+
+/* expose clock and clock-diff for function timings */
+static pointer edelib_scheme_clock(scheme *s, pointer args) {
+	clock_t c = clock();
+	return edelib_scheme_mk_double(s, (double)c);
+}
+
+static pointer edelib_scheme_clock_diff(scheme *s, pointer args) {
+	pointer a, b;
+	a = edelib_scheme_pair_car(s, args);
+	E_RETURN_VAL_IF_FAIL(a != s->NIL, s->F);
+	E_RETURN_VAL_IF_FAIL(edelib_scheme_is_double(s, a), s->F);
+
+	args = edelib_scheme_pair_cdr(s, args);
+
+	b = edelib_scheme_pair_car(s, args);
+	E_RETURN_VAL_IF_FAIL(b != s->NIL, s->F);
+	E_RETURN_VAL_IF_FAIL(edelib_scheme_is_double(s, b), s->F);
+
+	double d = (double)((edelib_scheme_double_value(s, a) - edelib_scheme_double_value(s, b)) / CLOCKS_PER_SEC);
+	return edelib_scheme_mk_double(s, d);
+}
 
 scheme *edelib_scheme_init(void) {
 	scheme *s;
@@ -45,6 +68,9 @@ scheme *edelib_scheme_init(void) {
 
 	sym = edelib_scheme_mk_symbol(s, "*edelib-version*");
 	edelib_scheme_define(s, EDELIB_SCHEME_GLOBAL_ENV(s), sym, edelib_scheme_mk_string(s, EDELIB_VERSION));
+
+	EDELIB_SCHEME_DEFINE(s, edelib_scheme_clock, "edelib-clock");
+	EDELIB_SCHEME_DEFINE(s, edelib_scheme_clock_diff, "edelib-clock-diff");
 
 	/* load init files; it is a list of files separated with ':' */
 	char *paths = getenv("EDELIB_SCHEME_INIT");

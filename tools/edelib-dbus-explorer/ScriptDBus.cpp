@@ -82,7 +82,7 @@ template <typename T>
 static bool edbus_container_params_from_list(scheme *s, pointer args, T &msg);
 
 /* this could be a part of edelib scheme */
-static int list_length(scheme *s, pointer args) {
+static int list_len(scheme *s, pointer args) {
 	int n = 0;
 	pointer tmp = args;
 	while(tmp != s->NIL && edelib_scheme_is_pair(s, tmp)) {
@@ -208,7 +208,7 @@ static bool edbus_data_from_pair(scheme *s, pointer type, pointer val, EdbusData
 
 	/* we will handle variant as we handle dict sublist, so '(:variant (:int32 3)) will describe it */
 	if(STR_CMP(sym, ":variant")) {
-		if(edelib_scheme_is_pair(s, val) && list_length(s, val) == 2) {
+		if(edelib_scheme_is_pair(s, val) && list_len(s, val) == 2) {
 			pointer p = val, var_type, var_val;
 
 			var_type = edelib_scheme_pair_car(s, p);
@@ -239,7 +239,7 @@ static bool edbus_data_from_pair(scheme *s, pointer type, pointer val, EdbusData
 				kv = edelib_scheme_pair_car(s, it);
 
 				/* assure we have correct number of elements */
-				if(list_length(s, kv) != 4) {
+				if(list_len(s, kv) != 4) {
 					LOCAL_SCHEME_ERROR(s, "Bad format of dictionary. It must be in form '((:type key :type value) ...)");
 					return false;
 				}
@@ -386,7 +386,7 @@ static pointer edbus_data_to_scheme_object(scheme *s, EdbusData &data) {
  */
 template <typename T>
 static bool edbus_container_params_from_list(scheme *s, pointer args, T &msg) {
-	int len = list_length(s, args);
+	int len = list_len(s, args);
 
 	if(E_UNLIKELY(len < 1)) {
 		LOCAL_SCHEME_ERROR(s, "Arguments and their types are not specified.");
@@ -426,7 +426,7 @@ static bool edbus_container_params_from_list(scheme *s, pointer args, T &msg) {
 pointer script_bus_signal(scheme *s, pointer args) {
 	LOCAL_SCHEME_RETURN_IF_NOT_CONNECTED(s);
 
-	int len = list_length(s, args);
+	int len = list_len(s, args);
 	LOCAL_SCHEME_RETURN_IF_FAIL(s, (len == 3 || len == 4), "Expecting at least 3 and max 4 arguments");
 
 	pointer path, interface, name;
@@ -453,7 +453,7 @@ pointer script_bus_signal(scheme *s, pointer args) {
 pointer script_bus_method_call(scheme *s, pointer args) {
 	LOCAL_SCHEME_RETURN_IF_NOT_CONNECTED(s);
 
-	int len = list_length(s, args);
+	int len = list_len(s, args);
 	LOCAL_SCHEME_RETURN_IF_FAIL(s, (len >= 4), "Expecting at least 4 arguments");
 
 	pointer service, path, interface, name, params;

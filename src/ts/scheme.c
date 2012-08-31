@@ -3465,15 +3465,15 @@ static pointer opexe_4(scheme *sc, enum scheme_opcodes op) {
 			s_return(sc,list_star(sc,sc->args));
 
 		case OP_APPEND:     /* append */
-			if(sc->args==sc->NIL) {
+			if(sc->args == sc->NIL)
 				s_return(sc,sc->NIL);
-			}
-			x=car(sc->args);
-			if(cdr(sc->args)==sc->NIL) {
-				s_return(sc,sc->args);
-			}
+
+			x = car(sc->args);
+			if(cdr(sc->args) == sc->NIL)
+				s_return(sc,x);
+
 			for (y = cdr(sc->args); y != sc->NIL; y = cdr(y)) {
-				x=append(sc,x,car(y));
+				x = append(sc,x,car(y));
 			}
 			s_return(sc,x);
 
