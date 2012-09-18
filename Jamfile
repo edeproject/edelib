@@ -18,7 +18,6 @@
 
 SubDir TOP ;
 
-InstallDirectory [ FDirName $(includedir) ] : [ FDirName $(TOP) edelib ] ;
 InstallFile      [ FDirName $(libdir) pkgconfig ] : [ FFileName $(TOP) edelib.pc ] ;
 InstallFile      [ FDirName $(libdir) pkgconfig ] : [ FFileName $(TOP) edelib-gui.pc ] ;
 InstallFile      [ FDirName $(libdir) pkgconfig ] : [ FFileName $(TOP) edelib-gui-no-images.pc ] ;
@@ -27,6 +26,7 @@ if $(DBUS_LIBS) {
 	InstallFile [ FDirName $(libdir) pkgconfig ] : [ FFileName $(TOP) edelib-dbus.pc ] ;
 }
 
+SubInclude TOP edelib ;
 SubInclude TOP src ;
 SubInclude TOP sslib ;
 SubInclude TOP test ;
