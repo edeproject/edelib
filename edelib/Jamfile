@@ -19,34 +19,35 @@
 SubDir TOP edelib ;
 
 HEADERS =
-	Missing.h
-	Debug.h
-	Scheme.h
-	Color.h
 	ColorDb.h
+	Color.h
+	Config.h
 	DateTime.h
+	Debug.h
 	DesktopFile.h
 	Directory.h
 	File.h
 	FileTest.h
+	Functional.h
 	IconTheme.h
 	Listener.h
+	List.h
 	MimeType.h
+	Missing.h
+	Namespace.h
 	Nls.h
 	Pty.h
 	PtyProcess.h
 	Regex.h
 	Resource.h
 	Run.h
+	Scheme.h
 	Sipc.h
-	StrUtil.h
 	String.h
+	StrUtil.h
 	TempFile.h
 	TiXml.h
 	Util.h
-	Namespace.h
-	List.h
-	Functional.h
 	Version.h
 	for-each-macro.h
 	edelib-config.h
@@ -82,9 +83,9 @@ HEADERS_GUI =
 	XSettingsManager.h ;
 
 HEADERS_TS =
-	ts/opdefines.h
 	ts/scheme.h
-	ts/scheme-private.h ;
+	ts/scheme-private.h
+	ts/opdefines.h ;
 
 EDELIB_INCLUDE_DIR = [ FDirName $(includedir) edelib ] ;
 
