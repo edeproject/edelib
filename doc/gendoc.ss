@@ -28,6 +28,7 @@
 
 (define (doc->doxygen)
   (let1 sorted (doc-data-sorted)
+    (println "/** \\page edelibscriptfunctions edelib-script functions")
     ;; generate TOC first
 	(println "<ul>")
 
@@ -47,6 +48,8 @@
 		  (println (vector-ref x 2))
 		  (println "<p>" descr "</p><br/>")
 		  (println "<hr/>")))
-	  sorted ) ) )
+	  sorted)
+
+    (println "*/") ) )
 
 (doc->doxygen)

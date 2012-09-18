@@ -3739,14 +3739,14 @@ static pointer opexe_5(scheme *sc, enum scheme_opcodes op) {
 				if(x==sc->F) {
 					Error_0(sc,"Error reading string");
 				}
-	#if USE_GETTEXT
+#if USE_GETTEXT
 				trans_str = gettext(strvalue(x));
 				if(trans_str != strvalue(x)) {
 					sc->free(strvalue(x));				   
 					strlength(x) = utf8_strlen(trans_str);
 					strvalue(x) = store_string(sc, strlength(x), trans_str, 0);
 				}
-	#endif
+#endif
 				setimmutable(x);
 				s_return(sc,x);
 			case TOK_SHARP: {
