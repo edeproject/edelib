@@ -171,17 +171,20 @@ String dir_home(void) {
 		return p;
 
 	/*
-	 * Fallback, read passwd structure, firstly acquiring it with
-	 * _SC_GETPW_R_SIZE_MAX, then with our own size.
+	 * Fallback, read passwd structure, firstly acquiring it with _SC_GETPW_R_SIZE_MAX, then with our own size.
 	 * 
 	 * Note that valgrind will report leak here, with this message:
 	 *   __nss_database_lookup (in /lib/tls/libc-2.3.5.so)
 	 *   getpwuid_r@@GLIBC_2.1.2 (in /lib/tls/libc-2.3.5.so)
-	 * This looks like a leak in glibc.
+	 *
+	 * This looks like a leak in some glibc versions.
 	 */
-	long buffsz = sysconf(_SC_GETPW_R_SIZE_MAX);
-	if(buffsz < 0)
-		buffsz = 1024;
+	long buffsz = 1024;
+
+#ifdef _SC_GETPW_R_SIZE_MAX
+	long b = sysconf(_SC_GETPW_R_SIZE_MAX);
+	if(b > 0) buffsz = b;
+#endif
 
 	struct passwd pwd_str;
 	struct passwd* pw = NULL;
