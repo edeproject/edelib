@@ -14,9 +14,9 @@ UT_FUNC(ThemeTestReader, "Test Theme reader")
 	UT_VERIFY( t.load("theme.et") == true );
 	UT_VERIFY( t.loaded() == true );
 
-	UT_VERIFY( STR_EQUAL(t.author(), "John Foo <john@foo.com>") );
-	UT_VERIFY( STR_EQUAL(t.name(), "Demo") );
-	UT_VERIFY( STR_EQUAL(t.sample_image(), "img.jpg") );
+	UT_VERIFY( t.author() && STR_EQUAL(t.author(), "John Foo <john@foo.com>") );
+	UT_VERIFY( t.name() && STR_EQUAL(t.name(), "Demo") );
+	UT_VERIFY( t.sample_image() && STR_EQUAL(t.sample_image(), "img.jpg") );
 
 	char buf[64];
 	long lval;
