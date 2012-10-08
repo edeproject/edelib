@@ -127,29 +127,6 @@ int config_getline(char** buf, int* len, FILE* f) {
 	return i;
 }
 
-/* 
- * A hash function from Dr.Dobbs Journal.
- * Althought, author is claiming it is collision free,
- * explicit string comparisons should be maded, after
- * matching hash is found
- */
-static unsigned int do_hash(const char* key, int keylen) {
-	unsigned hash ;
-	int i;
-
-	for (i = 0, hash = 0; i < keylen ;i++) {
-		hash += (long)key[i] ;
-		hash += (hash<<10);
-		hash ^= (hash>>6) ;
-	}
-
-	hash += (hash <<3);
-	hash ^= (hash >>11);
-	hash += (hash <<15);
-
-	return hash ;
-}
-
 /*
  * scan section in [section]
  * returned value is terminated with '\0'
@@ -214,7 +191,7 @@ ConfigSection::ConfigSection(const char* n) {
 
 	snamelen = strlen(n);
 	sname = strdup(n);
-	shash = do_hash(sname, snamelen);
+	shash = str_hash(sname, snamelen);
 }
 
 ConfigSection::~ConfigSection() {
@@ -246,7 +223,7 @@ void ConfigSection::add_entry(const char* key, const char* value) {
 		e->valuelen = strlen(value);
 		e->key      = strdup(key);
 		e->value    = strdup(value);
-		e->hash     = do_hash(e->key, e->keylen);
+		e->hash     = str_hash(e->key, e->keylen);
 
 		E_ASSERT(e->key != NULL);
 		E_ASSERT(e->value != NULL);
@@ -264,8 +241,7 @@ void ConfigSection::add_entry(const char* key, const char* value) {
 void ConfigSection::remove_entry(const char* key) {
 	E_ASSERT(key != NULL);
 
-	int klen = strlen(key);
-	unsigned int hh = do_hash(key, klen);
+	unsigned int hh = str_hash(key);
 	EntryListIter it = entry_list.begin();
 
 	for(; it != entry_list.end(); ++it) {
@@ -278,8 +254,7 @@ void ConfigSection::remove_entry(const char* key) {
 ConfigEntry* ConfigSection::find_entry(const char* key) {
 	E_ASSERT(key != NULL);
 
-	int klen = strlen(key);
-	unsigned int hh = do_hash(key, klen);
+	unsigned int hh = str_hash(key);
 	EntryListIter it = entry_list.begin(), it_end = entry_list.end();
 
 	for (; it != it_end; ++it) {
@@ -460,8 +435,8 @@ ConfigSection* Config::add_section(const char* section) {
  */
 ConfigSection* Config::find_section(const char* section) {
 	E_ASSERT(section != NULL);
-	int slen = strlen(section);
-	unsigned int hh = do_hash(section, slen);
+
+	unsigned int hh = str_hash(section);
 
 	// check if we have cached section
 	if (cached && cached->shash == hh && (strncmp(cached->sname, section, cached->snamelen) == 0))

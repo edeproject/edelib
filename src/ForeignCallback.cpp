@@ -21,6 +21,7 @@
 #include <string.h>
 #include <edelib/ForeignCallback.h>
 #include <edelib/List.h>
+#include <edelib/StrUtil.h>
 #include <FL/x.H>
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
@@ -40,24 +41,6 @@ typedef list<ForeignCallbackInfo>::iterator CallbackListIt;
 
 static Atom         _XA_EDELIB_FOREIGN_CALLBACK = 0;
 static CallbackList callback_list;
-
-/* FIXME: also in Config.cpp */
-static unsigned int do_hash(const char *key, int keylen) {
-	unsigned hash ;
-	int      i;
-
-	for (i = 0, hash = 0; i < keylen ;i++) {
-		hash += (long)key[i] ;
-		hash += (hash<<10);
-		hash ^= (hash>>6) ;
-	}
-
-	hash += (hash <<3);
-	hash ^= (hash >>11);
-	hash += (hash <<15);
-
-	return hash ;
-}
 
 static void init_foreign_callback_atom_once(void) {
 	if(!_XA_EDELIB_FOREIGN_CALLBACK)
@@ -122,7 +105,7 @@ void foreign_callback_add(Fl_Window *win, const char *id, ForeignCallback cb, vo
 	foreign_callback_remove(cb);
 
 	ForeignCallbackInfo fc;
-	fc.hash_id = do_hash(id, strlen(id));
+	fc.hash_id = str_hash(id);
 	fc.cb = cb;
 	fc.data = data;
 
@@ -164,7 +147,7 @@ void foreign_callback_call(const char *id) {
 	if(!nchildren)
 		return;
 
-	id_hash = do_hash(id, strlen(id));
+	id_hash = str_hash(id);
 
 	for(unsigned int i = 0; i < nchildren; i++) {
 		if(children[i] != root)

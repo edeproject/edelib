@@ -1,6 +1,7 @@
 #include <edelib/StrUtil.h>
 #include <edelib/List.h>
 #include <string.h>
+#include <stdio.h>
 #include "UnitTest.h"
 
 EDELIB_NS_USE
@@ -59,7 +60,11 @@ UT_FUNC(strtest, "Test strutil")
 	UT_VERIFY( str_ends("sample/path////", "/") == true );
 	UT_VERIFY( str_ends("sample/path////aa", "/aa") == true );
 	UT_VERIFY( str_ends("/aa", "/aa") == true );
-	UT_VERIFY( str_ends("/aa", "/aaaaa") == false);
+	UT_VERIFY( str_ends("/aa", "/aaaaa") == false );
+
+	UT_VERIFY( str_hash("this is foo") == 362178160 );
+	UT_VERIFY( str_hash("this is foo", 3) != str_hash("this is foo") );
+	UT_VERIFY( str_hash("") == 0 );
 }
 
 UT_FUNC(stringtok, "Test stringtok")

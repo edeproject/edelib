@@ -22,6 +22,7 @@
 #include <string.h>
 #include <edelib/Debug.h>
 #include <edelib/StrUtil.h>
+#include <edelib/Missing.h>
 
 EDELIB_NS_BEGIN
 
@@ -71,8 +72,7 @@ unsigned char* str_tolower(unsigned char* str) {
 	E_ASSERT(str != NULL);
 
 	unsigned char* ptr = str;
-	while(*ptr)
-	{
+	while(*ptr) {
 		*ptr = tolower(*ptr);
 		ptr++;
 	}
@@ -83,8 +83,7 @@ unsigned char* str_toupper(unsigned char* str) {
 	E_ASSERT(str != NULL);
 
 	unsigned char* ptr = str;
-	while(*ptr)
-	{
+	while(*ptr) {
 		*ptr = toupper(*ptr);
 		ptr++;
 	}
@@ -106,12 +105,30 @@ bool str_ends(const char* str, const char* test) {
 
 	const char* p = str + len - 1;
 	const char* tp = test + tlen - 1;
-	for(; tlen; p--, tp--, tlen--)
-	{
+	for(; tlen; p--, tp--, tlen--) {
 		if(*p != *tp)
 			return false;
 	}
 	return true;
+}
+
+unsigned int str_hash(const char* str, unsigned int len) {
+	E_ASSERT(str != NULL);
+
+	if(len < 1) len = strlen(str);
+
+	unsigned int hash = 0, i = 0;
+	for (; i < len; i++) {
+		hash += (long)str[i] ;
+		hash += (hash << 10);
+		hash ^= (hash >> 6) ;
+	}
+
+	hash += (hash << 3);
+	hash ^= (hash >> 11);
+	hash += (hash << 15);
+
+	return hash ;
 }
 
 EDELIB_NS_END

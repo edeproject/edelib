@@ -60,6 +60,15 @@ EDELIB_API unsigned char* str_toupper(unsigned char* str);
 EDELIB_API bool str_ends(const char* str, const char* test);
 
 /**
+ * Compute hash from given string.
+ *
+ * \return computed hash number
+ * \param str is input C string
+ * \param len is length of <i>str</i>; if set to 0, <i>str_hash()</i> will compute string length using <i>strlen</i>.
+ */
+EDELIB_API unsigned int str_hash(const char* str, unsigned int len = 0);
+
+/**
  * A generic String tokenizer (or spliter), similar to stringtok, but works on
  * given container (container that have push_back()). 
  *
