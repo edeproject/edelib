@@ -1,7 +1,7 @@
 #
-# $Id$
+# $Id: Jamfile 3362 2012-08-08 14:41:11Z karijes $
 #
-# Copyright (c) 2005-2011 edelib authors
+# Copyright (c) 2005-2012 edelib authors
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -16,14 +16,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this library. If not, see <http://www.gnu.org/licenses/>.
 
-SubDir TOP tools ;
+SubDir TOP tools colors ;
 
-InstallProgram $(bindir) : edelib-catchsegv ;
-InstallProgram $(bindir) : edelib-mk-indextheme ;
-InstallProgram $(bindir) : edelib-convert-icontheme ;
-
-SubInclude TOP tools edelib-script ;
-SubInclude TOP tools edelib-dbus-introspect ;
-SubInclude TOP tools edelib-dbus-explorer ;
-SubInclude TOP tools edelib-update-font-cache ;
-SubInclude TOP tools colors ;
+COLOR_DIR = [ FDirName $(datadir) edelib colors ] ;
+InstallFile $(COLOR_DIR) : rgb.txt ;
