@@ -34,6 +34,7 @@ static const char *x11_rgb[] = {
 	"/etc/X11/rgb.txt",
 	"/usr/share/X11/rgb.txt",
 	"/usr/local/share/X11/rgb.txt",
+	"/usr/pkg/X11R6/lib/X11",
 	EDELIB_INSTALL_PREFIX "/share/edelib/colors/rgb.txt",
 	0
 };
