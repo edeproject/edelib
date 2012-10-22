@@ -124,12 +124,15 @@ void UnitTest::verify(bool condition, const char* condstr, const char* fname, un
 }
 
 void UnitTest::execute(void) {
-
+#ifdef EDELIB_HAVE_RTTI
 	try {
 		run();
 	} catch (...) {
 		add_message("Unknown exception caught!");
 	}
+#else
+	run();
+#endif
 }
 
 UnitTestSuite::UnitTestSuite() : ntests(0), tlist(NULL) {}

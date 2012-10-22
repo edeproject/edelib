@@ -17,7 +17,7 @@ dnl You should have received a copy of the GNU Lesser General Public License
 dnl along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 AC_DEFUN([EDELIB_DBUS], [
-	AC_ARG_ENABLE(dbus, [  --disable-dbus          disable D-BUS support],,[enable_dbus=yes])
+	AC_ARG_ENABLE(dbus, AC_HELP_STRING([--disable-dbus], [disable D-BUS support (default=no)]),,[enable_dbus=yes])
 	if test "$enable_dbus" = yes; then
 
 		EDELIB_PKG_CHECK_MODULES(DBUS, [dbus-1 >= 1.0], [have_dbus=yes], [have_dbus=no])

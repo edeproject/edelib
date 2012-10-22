@@ -19,7 +19,7 @@ dnl along with this library. If not, see <http://www.gnu.org/licenses/>.
 dnl Set --enable-nls option, with checking of additional functions
 AC_DEFUN([EDELIB_NLS], [
 	AC_MSG_CHECKING(whether NLS is requested)
-	AC_ARG_ENABLE(nls, [  --disable-nls           disable locale support],,enable_nls=yes)
+	AC_ARG_ENABLE(nls, AC_HELP_STRING([--disable-nls],[disable locale support (default=no)]),,enable_nls=yes)
 	if eval "test $enable_nls = yes"; then
 		AC_MSG_RESULT(yes)
 

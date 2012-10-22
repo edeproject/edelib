@@ -18,7 +18,7 @@ dnl You should have received a copy of the GNU Lesser General Public License
 dnl along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 AC_DEFUN([EDELIB_LARGEFILE], [
-	AC_ARG_ENABLE(largefile, [  --enable-largefile      enable large file support],,[enable_largefile=no])
+	AC_ARG_ENABLE(largefile, AC_HELP_STRING([--enable-largefile],[enable large file support (default=no)]),,[enable_largefile=no])
 	LARGEFILE=""
 
 	if test "$enable_largefile" = yes; then

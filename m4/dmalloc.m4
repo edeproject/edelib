@@ -17,7 +17,7 @@ dnl You should have received a copy of the GNU Lesser General Public License
 dnl along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 AC_DEFUN([EDELIB_DMALLOC], [
-	AC_ARG_WITH(dmalloc_path, [  --with-dmalloc-path=[DIR]    link edelib agains dmalloc])
+	AC_ARG_WITH(dmalloc_path, AC_HELP_STRING([--with-dmalloc-path=[DIR]], [link edelib agains dmalloc]))
 
 	if test "x$with_dmalloc_path" != "x"; then
 		DMALLOC_LIBC="-L$with_dmalloc_path/lib -ldmalloc"

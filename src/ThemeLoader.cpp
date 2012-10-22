@@ -33,6 +33,13 @@
 #include <edelib/XSettingsClient.h>
 #include <edelib/FontCache.h>
 
+#ifdef EDELIB_HAVE_RTTI
+# include <FL/Fl_Browser_.H>
+# include <FL/Fl_Input_.H>
+# include <FL/Fl_Menu_.H>
+# include <FL/Fl_Text_Display.H>
+#endif
+
 extern int FL_NORMAL_SIZE;
 
 EDELIB_NS_BEGIN
@@ -82,6 +89,50 @@ static void xsettings_cb(const char* name,
 						 void* data) 
 { }
 
+#ifdef EDELIB_HAVE_RTTI
+#define TRY_UPDATE_TEXTSIZE(klass, o, sz)		\
+do {											\
+	klass *obj = dynamic_cast<klass*>(o);		\
+	if(obj) {									\
+		obj->textsize(sz);						\
+		continue;								\
+	}											\
+} while(0)
+
+static void update_fonts_on_group(Fl_Group *g, int sz) {
+	int n = g->children();
+	if(!n) return;
+
+	Fl_Widget *o;
+
+	for(int i = 0; i < n; i++) {
+		o = g->child(i);
+		if(dynamic_cast<Fl_Group*>(o))
+			update_fonts_on_group((Fl_Group*)o, sz);
+
+		o->labelsize(sz);
+
+		TRY_UPDATE_TEXTSIZE(Fl_Browser_, o, sz);
+		TRY_UPDATE_TEXTSIZE(Fl_Input_, o, sz);
+		TRY_UPDATE_TEXTSIZE(Fl_Menu_, o, sz);
+		TRY_UPDATE_TEXTSIZE(Fl_Text_Display, o, sz);
+	}
+}
+#endif /* EDELIB_HAVE_RTTI */
+
+/*
+ * update fonts by scanning widgets top-down; this could be a slow as we
+ * must use RTTI here, since FLTK provides incomplete RTTI support :S
+ */
+static void update_fonts(int sz) {
+#ifdef EDELIB_HAVE_RTTI
+	for(Fl_Window *i = Fl::first_window(); i; i = Fl::next_window(i))
+		update_fonts_on_group(i, sz);
+#else
+	Fl::redraw();
+#endif
+}
+
 ThemeLoader::ThemeLoader() : priv(NULL) {
 	priv = new ThemeLoader_P;
 }
@@ -125,6 +176,11 @@ void ThemeLoader::apply_common_gui_elements(void) {
 			Fl::foreground(r, g, b);
 	}
 
+	if(t->get_item("ede", "selection_color", buf, sizeof(buf))) {
+		if(figure_color(cb, buf, r, g, b))
+			Fl::set_color(FL_SELECTION_COLOR, r, g, b);
+	}
+
 	if(t->get_item("ede", "icon_theme", buf, sizeof(buf))) {
 		if(IconLoader::inited())
 			IconLoader::reload(buf);
@@ -145,9 +201,9 @@ void ThemeLoader::apply_common_gui_elements(void) {
 		font_cache_find(buf, f, fs, FL_HELVETICA, 12);
 
 		Fl::set_font(FL_HELVETICA, f);
-		/* TODO: works only if window was shown after this call */
+		/* for future shown windows */
 		FL_NORMAL_SIZE = fs;
-		Fl::redraw();
+		update_fonts(FL_NORMAL_SIZE);
 	}
 }
 

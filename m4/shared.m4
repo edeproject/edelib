@@ -19,7 +19,7 @@ dnl along with this library. If not, see <http://www.gnu.org/licenses/>.
 dnl Add --enable-shared option
 dnl Also the bone of this code is based from FLTK's configure.in script
 AC_DEFUN([EDELIB_SHARED], [
-	AC_ARG_ENABLE(shared, [  --enable-shared         enable shared library],,enable_shared=no)
+	AC_ARG_ENABLE(shared, AC_HELP_STRING([--enable-shared], [enable shared library (default=no)]),,enable_shared=no)
 	if test "$enable_shared" = no; then
 		dnl for jam
 		SHARED=0

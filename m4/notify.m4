@@ -132,7 +132,7 @@ dnl Checks for the file system notification support.
 dnl First will be checked for inotify, then as fallback for FAM/Gamin
 dnl if was given --enable-fam-only, only FAM/Gamin will be used
 AC_DEFUN([EDELIB_NOTIFY], [
-	AC_ARG_ENABLE(fam_only, [  --enable-fam-only       use FAM regardless of what kernel-level systems are available],
+	AC_ARG_ENABLE(fam_only, AC_HELP_STRING([--enable-fam-only], [use FAM regardless of what kernel-level systems are available (default=no)]),
 		[enable_fam_only=yes], [enable_fam_only=no])
 
 	dnl this must be global since 'have_fam' is visible only inside if/fi block
