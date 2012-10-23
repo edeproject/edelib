@@ -7,7 +7,7 @@ echo "# edelib"
 echo "#######################"
 
 ./run_tests
-[ "x$?" == "x1" ] && ret=1
+test "x$?" = "x1" && ret=1
 
 echo ""
 echo "#######################"
@@ -15,10 +15,10 @@ echo "# scheme"
 echo "#######################"
 
 cd scheme && ./run.sh
-[ "x$?" == "x1" ] && ret=1
+test "x$?" = "x1" && ret=1
 
 # write something at the bottom
-if [ "x$ret" == "x0" ]; then
+if test "x$ret" = "x0"; then
 	echo "All tests passed."
 else
 	echo "Some of tests failed!!!"
