@@ -55,7 +55,7 @@ enum IconContext {
 	ICON_CONTEXT_MISC              ///< Misc icons (gnome themes usually)
 };
 
-class IconThemePrivate;
+struct IconThemePrivate;
 
 /**
  * \class IconTheme

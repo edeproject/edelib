@@ -61,7 +61,7 @@ enum EdbusDataType {
 struct EdbusDataPrivate;
 #endif
 
-class  EdbusDict;
+struct EdbusDict;
 class  EdbusList;
 struct EdbusVariant;
 

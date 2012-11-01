@@ -42,7 +42,7 @@ enum ConfigErrors {
 
 class Config;
 class ConfigSection;
-class ConfigEntry;
+struct ConfigEntry;
 
 #ifndef SKIP_DOCS
 typedef list<ConfigEntry*> EntryList;

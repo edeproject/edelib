@@ -109,8 +109,7 @@ static void write_int(int fd, int val) {
 	E_RETURN_IF_FAIL(fd != -1);
 
 	char* buf = (char*)&val;
-	int bufsz = sizeof(val);
-	unsigned int count;
+	int bufsz = sizeof(val), count = 0;
 
 	while(bufsz > 0) {
 		count = write(fd, buf, bufsz);

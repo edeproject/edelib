@@ -27,7 +27,7 @@
 struct scheme;
 
 EDELIB_NS_BEGIN
-class Theme_P;
+struct Theme_P;
 
 #ifndef SKIP_DOCS
 typedef void (*ThemeErrorHandler)(const char *str, void *data);

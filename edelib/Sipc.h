@@ -26,8 +26,8 @@
 EDELIB_NS_BEGIN
 
 #ifndef SKIP_DOCS
-class SipcServerPrivate;
-class SipcClientPrivate;
+struct SipcServerPrivate;
+struct SipcClientPrivate;
 #endif
 
 

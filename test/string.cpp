@@ -251,7 +251,8 @@ UT_FUNC(StringReplace, "Test string replace1")
 	UT_VERIFY( s.length() == 0 );
 }
 
-#include <string>
+#ifndef __clang__
+# include <string>
 UT_FUNC(StringComparison, "Test std::string comparison")
 {
 	String s;
@@ -275,7 +276,7 @@ UT_FUNC(StringComparison, "Test std::string comparison")
 	UT_VERIFY( s.substr(6) == stmp );
 
 	std::string s2;
-#if 0
+
 	s1.clear();
 	s2.clear();
 	String ss;
@@ -301,13 +302,13 @@ UT_FUNC(StringComparison, "Test std::string comparison")
 
 	s1.clear();
 	s2.clear();
-#endif
 
 	s1.assign("Sample string", 5);
 	s2.assign("Sample string", 5);
 
 	UT_VERIFY( s1 == s2.c_str() );
 }
+#endif
 
 UT_FUNC(StringEmptyAppend, "Test string empty append")
 {

@@ -28,7 +28,7 @@ class Fl_Widget;
 
 EDELIB_NS_BEGIN
 
-class IconLoaderItem;
+struct IconLoaderItem;
 
 /**
  * \enum IconLoaderOptions
