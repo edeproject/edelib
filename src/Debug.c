@@ -64,7 +64,7 @@ static void internal_logger(int type, const char *domain, const char *msg) {
 	}
 }
 
-void edelib_error_mesage_handler_install(EdelibErrorHandlerType m) {
+void edelib_error_message_handler_install(EdelibErrorHandlerType m) {
 	do_log = m;
 }
 

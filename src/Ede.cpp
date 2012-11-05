@@ -65,7 +65,7 @@ ApplicationBootstrap::ApplicationBootstrap(const char *name, const char *path) :
 	if(flags & EDE_BOOTSTRAP_SYSLOG) {
 		setlogmask(LOG_UPTO (LOG_INFO));
 		openlog("ede", LOG_CONS | LOG_PID, LOG_USER);
-		edelib_error_mesage_handler_install(syslog_logger);
+		edelib_error_message_handler_install(syslog_logger);
 	}
 }
 

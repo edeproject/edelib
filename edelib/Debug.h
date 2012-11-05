@@ -50,7 +50,7 @@ typedef enum {
 /** 
  * Installs handler for error messages
  */
-EDELIB_API void edelib_error_mesage_handler_install(void (*)(int t, const char* domain, const char* msg));
+EDELIB_API void edelib_error_message_handler_install(void (*)(int t, const char* domain, const char* msg));
 
 /**
  * \def E_LOG_DOMAIN
