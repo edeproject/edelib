@@ -59,6 +59,7 @@
 #define TOK_USCORE  13
 
 #define BACKQUOTE '`'
+#define DELIMITERS "()[]\";\v\t\n\r "
 
 /*
  *  Basic memory allocation units
@@ -363,7 +364,7 @@ static pointer mk_closure(scheme *sc, pointer c, pointer e);
 static pointer mk_continuation(scheme *sc, pointer d);
 static pointer reverse(scheme *sc, pointer a);
 static pointer reverse_in_place(scheme *sc, pointer term, pointer list);
-static pointer append(scheme *sc, pointer a, pointer b);
+static pointer revappend(scheme *sc, pointer a, pointer b);
 static int list_length(scheme *sc, pointer a);
 static int eqv(pointer a, pointer b);
 static void dump_stack_mark(scheme *);
@@ -1885,6 +1886,19 @@ static pointer reverse_in_place(scheme *sc, pointer term, pointer list) {
 	return (result);
 }
 
+/* append list -- produce new list (in reverse order) */
+static pointer revappend(scheme *sc, pointer a, pointer b) {
+	pointer result = a, p = b;
+	while (is_pair(p)) {
+		result = cons(sc, car(p), result);
+		p = cdr(p);
+	}
+
+	if (p == sc->NIL)
+		return result;
+	return sc->F; /* signal an error */
+}
+
 /* append list -- produce new list */
 static pointer append(scheme *sc, pointer a, pointer b) {
 	pointer p = b, q;
@@ -2431,7 +2445,6 @@ static pointer opexe_0(scheme *sc, enum scheme_opcodes op) {
 		s_return(sc,mk_closure(sc, x, y));
 
 	case OP_QUOTE:      /* quote */
-		x=car(sc->code);
 		s_return(sc,car(sc->code));
 
 	case OP_DEF0:  /* define */
@@ -2873,7 +2886,8 @@ static pointer opexe_2(scheme *sc, enum scheme_opcodes op) {
 		s_return(sc, mk_real(sc, ceil(rvalue(x))));
 
 	case OP_TRUNCATE : {
-		double rvalue_of_x ;
+		double rvalue_of_x;
+
 		x=car(sc->args);
 		rvalue_of_x = rvalue(x) ;
 		if (rvalue_of_x > 0) {
@@ -3410,17 +3424,21 @@ static pointer opexe_4(scheme *sc, enum scheme_opcodes op) {
 			s_return(sc,list_star(sc,sc->args));
 
 		case OP_APPEND:     /* append */
-			if(sc->args == sc->NIL)
-				s_return(sc,sc->NIL);
+			x = sc->NIL;
+			y = sc->args;
 
-			x = car(sc->args);
-			if(cdr(sc->args) == sc->NIL)
-				s_return(sc,x);
+			if (y == x) s_return(sc, x);
 
-			for (y = cdr(sc->args); y != sc->NIL; y = cdr(y)) {
-				x = append(sc,x,car(y));
+			/* cdr() in the while condition is not a typo. If car()
+			   is used (append '() 'a) will return the wrong result. */
+			while (cdr(y) != sc->NIL) {
+				x = revappend(sc, x, car(y));
+				y = cdr(y);
+				if (x == sc->F)
+					Error_0(sc, "non-list argument to append");
 			}
-			s_return(sc,x);
+		
+			s_return(sc, reverse_in_place(sc, car(y), x));
 
 #if USE_PLIST
 		case OP_PUT:        /* put */
@@ -3662,7 +3680,7 @@ static pointer opexe_5(scheme *sc, enum scheme_opcodes op) {
 				sc->tok = token(sc);
 				s_goto(sc,OP_RDSEXPR);
 			case TOK_ATOM:
-				s_return(sc,mk_atom(sc, readstr_upto(sc, "()[];\t\n\r ")));
+				s_return(sc,mk_atom(sc, readstr_upto(sc, DELIMITERS)));
 			case TOK_DQUOTE:
 				x=readstrexp(sc);
 				if(x==sc->F) {
@@ -3695,7 +3713,7 @@ static pointer opexe_5(scheme *sc, enum scheme_opcodes op) {
 				}
 			}
 			case TOK_SHARP_CONST:
-				if ((x = mk_sharp_const(sc, readstr_upto(sc, "()[];\t\n\r "))) == sc->NIL) {
+				if ((x = mk_sharp_const(sc, readstr_upto(sc, DELIMITERS))) == sc->NIL) {
 					Error_0(sc,"undefined sharp expression");
 				} else {
 					s_return(sc,x);

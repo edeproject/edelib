@@ -72,17 +72,23 @@
 (define (succ x) (+ x 1))
 (define (pred x) (- x 1))
 
-(define (gcd a b)
-  (let ((aa (abs a))
-        (bb (abs b)))
-    (if (= bb 0)
-      aa
-      (gcd bb (remainder aa bb)))))
-
-(define (lcm a b)
-  (if (or (= a 0) (= b 0)) 
+(define (gcd . a)
+  (if (null? a)
     0
-    (abs (* (quotient a (gcd a b)) b))))
+    (let ((aa (abs (car a)))
+          (bb (abs (cadr a))))
+      (if (= bb 0)
+        aa
+        (gcd bb (remainder aa bb)) ))))
+
+(define (lcm . a)
+  (if (null? a)
+    1
+	(let ((aa (abs (car a)))
+		  (bb (abs (cadr a))))
+	  (if (or (= aa 0) (= bb 0))
+	    0
+		(abs (* (quotient aa (gcd aa bb)) bb)) ))))
 
 (define call/cc call-with-current-continuation)
 
