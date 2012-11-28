@@ -501,7 +501,7 @@ static void from_dbus_iter_to_edbusdata_type(DBusMessageIter* iter, EdbusData& d
 
 			/* check type of array entries */
 			if(dbus_message_iter_get_arg_type(&array_iter) == DBUS_TYPE_INVALID) {
-				E_WARNING(E_STRLOC ": invalid in dict array!?");
+				E_WARNING(E_STRLOC ": invalid type in dict array??\n");
 
 				/* if fails, construct empty dict */
 				EdbusDict empty;
