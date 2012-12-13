@@ -46,11 +46,11 @@ struct EDELIB_API FontInfo {
 	/** Face name with encoded style; usable only for FLTK. */
 	char face[EDELIB_FONT_CACHE_FACE_LEN];
 	/** All available sizes for this font. */
-	int  sizes[64];
+	int sizes[64];
 	/** Actual number of sizes in <em>sizes</em> array. */
-	int  nsizes;
+	int nsizes;
 	/** Type of font; coresponds to FLTK nomenclature (FL_NORMAL, FL_BOLD, FL_ITALIC and FL_BOLD_ITALIC). */
-	int  type;
+	int type;
 };
 
 /**
@@ -76,7 +76,7 @@ public:
 	/** Constructor. */
 	FontCache() : priv(NULL) {}
 
-	/** Destructor; closes any remaining database handlers. */
+	/** Destructor; close all database handlers. */
 	~FontCache() { clear(); }
 
 	/** 
@@ -99,6 +99,12 @@ public:
 	 * and size.
  	 */
 	bool find(const char *n, Fl_Font &font, int &size);
+
+	/**
+	 * Try to find given FontInfo object for given name. This function will not register it as FLTK font, as other
+	 * <i>find()</i> method. Returns NULL if name wasn't found.
+	 */
+	FontInfo *find(const char *n, int &size);
 
 	/**
 	 * This function can be used to iterate all fonts, where on each font will be called callback. Fonts will not be

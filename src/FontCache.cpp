@@ -22,6 +22,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include <edelib/FontCache.h>
 #include <edelib/Directory.h>
 #include <edelib/StrUtil.h>
@@ -70,6 +71,8 @@ public:
 	}
 
 	unsigned int size(void) const { return fonts.size(); }
+	StrListIt begin(void) { return fonts.begin(); }
+	StrListIt end(void)   { return fonts.end(); }
 };
 
 struct FontCache_P {
@@ -79,6 +82,14 @@ struct FontCache_P {
 
 /* internal holder for registered name inside FLTK */
 static FontHolder static_font_names;
+
+/* compare strings ignoring leading spaces */
+static int strscmp(const char *s1, const char *s2) {
+	while(isspace(*s1) && *s1) s1++;
+	while(isspace(*s2) && *s2) s2++;
+
+	return strcmp(s1, s2);
+}
 
 static bool have_size(FontInfo *fi, int sz) {
 	for(int i = 0; i < fi->nsizes; i++) {
@@ -97,7 +108,12 @@ static bool parse_font(const char *font, char *ret, int &sz, int maxlen) {
 	char *pos = (char*)font + len - 1;
 	int  i;
 
-	for(i = len; *pos >= '0' && *pos <= '9' && i >= 0; pos--, i--)
+	/* strip ending spaces */
+	for(i = len; isspace(*pos) && i >= 0; pos--, i--)
+		;
+
+	/* get number */
+	for(; *pos >= '0' && *pos <= '9' && i >= 0; pos--, i--)
 		;
 
 	/* we don't have font size; default it to 12 */
@@ -106,11 +122,14 @@ static bool parse_font(const char *font, char *ret, int &sz, int maxlen) {
 		edelib_strlcpy(nbuf, "12", sizeof(nbuf));
 	} else {
 		edelib_strlcpy(nbuf, pos + 1, sizeof(nbuf));
-		len = pos - font;
 	}
 
+	/* strip possible multiple spaces between font name and font size */
+	for(; isspace(*pos) && i >= 0; pos--, i--)
+		;
+
 	/* include space for '\0' */
-	len++;
+	len = pos - font + 2;
 
 	/* nothing valuable found */
 	E_RETURN_VAL_IF_FAIL(len > 0, false);
@@ -193,16 +212,16 @@ int FontCache::count(void) const {
 	return priv->count;
 }
 
-bool FontCache::find(const char *n, Fl_Font &font, int &font_size) {
-	E_RETURN_VAL_IF_FAIL(priv->db != NULL, false);
-	E_RETURN_VAL_IF_FAIL(n != NULL, false);
+FontInfo *FontCache::find(const char *n, int &size) {
+	E_RETURN_VAL_IF_FAIL(priv->db != NULL, NULL);
+	E_RETURN_VAL_IF_FAIL(n != NULL, NULL);
 
 	char face[EDELIB_FONT_CACHE_FACE_LEN];
 	int  facesz;
 	
 	if(!parse_font(n, face, facesz, FONT_CACHE_FACE_LEN_WITH_SIZE)) {
 		E_WARNING(E_STRLOC ": Unable to parse '%s' as valid font name\n", n);
-		return false;
+		return NULL;
 	}
 
 	/* ignore case for font name */
@@ -216,21 +235,63 @@ bool FontCache::find(const char *n, Fl_Font &font, int &font_size) {
 	key.dsize = edelib_strnlen(face, EDELIB_FONT_CACHE_FACE_LEN);
 
 	val = sdbm_fetch(priv->db, key);
-	if(!val.dptr) {
-		E_WARNING(E_STRLOC ": Font face '%s' not found\n", face);
-	   	return false;
-	}
+	if(val.dptr == NULL) return NULL;
 
-	FontInfo *fi = (FontInfo*)val.dptr;
+	size = facesz;
+	return (FontInfo*)val.dptr;
+}
+
+bool FontCache::find(const char *n, Fl_Font &font, int &font_size) {
+	int facesz = 0;
+	FontInfo *fi = find(n, facesz);
+
+	E_RETURN_VAL_IF_FAIL(fi != NULL, false);
 
 	if(!have_size(fi, facesz)) {
-		E_WARNING(E_STRLOC ": Font size '%i' not found\n", facesz);
+		E_WARNING(E_STRLOC ": font size '%i' not found\n", facesz);
 		return false;
 	} 
+
+	/*
+	 * First check if if FLTK already has this font; to find that out, FLTK
+	 * allocates FL_FREE_FONT - 1 fonts with some default font names so we check
+	 * there first.
+	 *
+	 * FL_FREE_FONT is not increased when new fonts are registered via Fl::set_font().
+	 *
+	 * Also note usage of 'strscmp'; FLTK for some fonts will leave leading space, e.g.
+	 * ' sans', but will be 'Bsans' or 'Isans' for bold/italic variants.
+	 */
+	for(int i = 0; i < FL_FREE_FONT; i++) {
+		if(strscmp(fi->face, Fl::get_font(i)) == 0) {
+			font = i;
+			font_size = facesz;
+
+			E_DEBUG(E_STRLOC ": FLTK already has '%s' registered as '%i'\n", fi->face, font);
+			return true;
+		}
+	}
+
+	/* now try to see if it exists in our static storage */
+	StrListIt it = static_font_names.begin(), ite = static_font_names.end();
+	for(int i = FL_FREE_FONT; it != ite; ++it, i++) {
+		E_DEBUG("'%s' == '%s'\n", fi->face, (*it)->c_str());
+
+		if(strscmp(fi->face, (*it)->c_str()) == 0) {
+			font = i;
+			font_size = facesz;
+
+			E_DEBUG(E_STRLOC ": font '%s' found as '%i'\n", fi->face, font);
+			return true;
+		}
+	}
+
 	
 	const char *sf = static_font_names.append(fi->face);
-	font = (Fl_Font)(FL_FREE_FONT + static_font_names.size());
+	font = (Fl_Font)(FL_FREE_FONT + static_font_names.size() - 1);
 	font_size = facesz;
+
+	E_DEBUG(E_STRLOC ": registering '%s' as '%i'\n", sf, font);
 
 	/* register it under this index */
 	Fl::set_font(font, sf);
@@ -241,15 +302,15 @@ void FontCache::for_each_font(void (*func) (const char *, FontInfo *, void *), v
 	E_RETURN_IF_FAIL(priv->db != NULL);
 	E_RETURN_IF_FAIL(func != NULL);
 
-	datum     key, val;
-	FontInfo  *fi;
-	char      n[EDELIB_FONT_CACHE_FACE_LEN];
-	int       len;
+	datum    key, val;
+	FontInfo *fi;
+	char     n[EDELIB_FONT_CACHE_FACE_LEN];
+	int      len;
 
 	for(key = sdbm_firstkey(priv->db); key.dptr != NULL; key = sdbm_nextkey(priv->db)) {
 		val = sdbm_fetch(priv->db, key);
 		if(E_UNLIKELY(!val.dptr)) {
-			E_WARNING(E_STRLOC ": Got nonexisting value\n");
+			E_WARNING(E_STRLOC ": got nonexisting value\n");
 			continue;
 		}
 
