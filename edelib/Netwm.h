@@ -240,9 +240,10 @@ Window netwm_window_get_active(void);
 
 /**
  * \ingroup wm
- * Try to focus or raise given window.
+ * Try to focus or raise given window. <i>source</i> must be set to 1 if request comes from application, and 2 when it comes
+ * from pager. By default, source is 0 so it (by specification) indicates using older specification version.
  */
-void netwm_window_set_active(Window win);
+void netwm_window_set_active(Window win, int source = 0);
 
 /**
  * \ingroup wm
@@ -266,9 +267,6 @@ void wm_window_ede_restore(Window win);
  * \ingroup wm
  * Set window state to one of NetwmStateValue values. Value will be set, removed or toggled
  * according to NetwmStateAction action.
- *
- * Contrary to wm_window_set_state(), you can't fetch once set state, as the state is send 
- * as message, not set as window property.
  */
 void netwm_window_set_state(Window win, NetwmStateValue val, NetwmStateAction action);
 

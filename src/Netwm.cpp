@@ -686,7 +686,7 @@ Window netwm_window_get_active(void) {
 	return (Window)ret;
 }
 
-void netwm_window_set_active(Window win) {
+void netwm_window_set_active(Window win, int source) {
 	init_atoms_once();	
 
 	XEvent xev;
@@ -698,7 +698,7 @@ void netwm_window_set_active(Window win) {
 	xev.xclient.display = fl_display;
 	xev.xclient.message_type = _XA_NET_ACTIVE_WINDOW;
 	xev.xclient.format = 32;
-	xev.xclient.data.l[0] = (long)win;
+	xev.xclient.data.l[0] = (long)source;
 	xev.xclient.data.l[1] = CurrentTime;
 	xev.xclient.data.l[2] = 0;
 
