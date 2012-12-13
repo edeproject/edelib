@@ -143,7 +143,7 @@ scheme *edelib_scheme_init(void);
 
 /**
  * \ingroup scheme
- * Construct a new list by prepending <i>a</i> element in </i>b</i> list. Element can be any scheme object.
+ * Construct a new list by prepending <i>a</i> element in <i>b</i> list. Element can be any scheme object.
  */
 #define edelib_scheme_cons(sc, a, b) _cons((sc), a, b, 0)	 
 
