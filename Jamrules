@@ -110,6 +110,7 @@ rule SymLink
 # for building. <libraries> should be in form '-lfoo'
 rule LinkAgainst
 {
+	#LINKLIBS on $(1) = -pg [ on $(1) return $(LINKLIBS) ] $(2) ;
 	LINKLIBS on $(1) = [ on $(1) return $(LINKLIBS) ] $(2) ;
 }
 

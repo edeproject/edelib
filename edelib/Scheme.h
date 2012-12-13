@@ -135,15 +135,58 @@ scheme *edelib_scheme_init(void);
  */
 #define edelib_scheme_set_output_port_string scheme_set_output_port_string 
 
-/* try to avoid vpr by using function like macros */
-#define edelib_scheme_gensym(sc)                 (sc)->vptr->gensym(sc)
-#define edelib_scheme_cons(sc, a, b)             _cons((sc), a, b, 0)	 
-#define edelib_scheme_immutable_cons(sc, a, b)   _cons((sc), a, b, 1)
-#define edelib_scheme_reserve_cells(sc, n)       (sc)->vptr->reserve_cells(sc, n)
-#define edelib_scheme_mk_int(sc, num)            (sc)->vptr->mk_integer(sc, num)
-#define edelib_scheme_mk_double(sc, num)         (sc)->vptr->mk_real(sc, num)
-#define edelib_scheme_mk_symbol(sc, sym)         (sc)->vptr->mk_symbol(sc, sym)
-#define edelib_scheme_mk_string(sc, str)         (sc)->vptr->mk_string(sc, str)
+/**
+ * \ingroup scheme
+ * Generate unique symbol on every invocation. This is mostly useful inside macros.
+ */
+#define edelib_scheme_gensym(sc) (sc)->vptr->gensym(sc)
+
+/**
+ * \ingroup scheme
+ * Construct a new list by prepending <i>a</i> element in </i>b</i> list. Element can be any scheme object.
+ */
+#define edelib_scheme_cons(sc, a, b) _cons((sc), a, b, 0)	 
+
+/**
+ * \ingroup scheme
+ * Same as <i>edelib_scheme_cons</i>, except immutable list is created.
+ */
+#define edelib_scheme_immutable_cons(sc, a, b) _cons((sc), a, b, 1)
+
+/**
+ * \ingroup scheme
+ * Reserve given number of cells.
+ */
+#define edelib_scheme_reserve_cells(sc, n) (sc)->vptr->reserve_cells(sc, n)
+
+/**
+ * \ingroup scheme
+ * Convert integer to scheme number.
+ */
+#define edelib_scheme_mk_int(sc, num) (sc)->vptr->mk_integer(sc, num)
+
+/**
+ * \ingroup scheme
+ * Convert double to scheme number.
+ */
+#define edelib_scheme_mk_double(sc, num) (sc)->vptr->mk_real(sc, num)
+
+/**
+ * \ingroup scheme
+ * Make scheme symbol.
+ */
+#define edelib_scheme_mk_symbol(sc, sym) (sc)->vptr->mk_symbol(sc, sym)
+
+/**
+ * \ingroup scheme
+ * Convert C string to scheme string.
+ */
+#define edelib_scheme_mk_string(sc, str) (sc)->vptr->mk_string(sc, str)
+
+/**
+ * \ingroup scheme
+ * Convert C string to counted scheme string.
+ */
 #define edelib_scheme_mk_string_counted(sc, str) (sc)->vptr->mk_counted_string(sc, str)
 #define edelib_scheme_mk_character(sc, c)        (sc)->vptr->mk_character(sc, c)
 #define edelib_scheme_mk_vector(sc, len)         (sc)->vptr->mk_vector(sc, len) 
@@ -166,19 +209,19 @@ scheme *edelib_scheme_init(void);
 #define edelib_scheme_vector_elem_set(sc, vec, i, newel) (sc)->vptr->set_vector_elem(vec, i, newel) 
 #define edelib_scheme_is_port(sc, p)      (sc)->vptr->is_port(p) 
 #define edelib_scheme_is_pair(sc, p)      (sc)->vptr->is_pair(p) 
-#define edelib_scheme_pair_car(sc, p)      (sc)->vptr->pair_car(p) 
-#define edelib_scheme_pair_cdr(sc, p)      (sc)->vptr->pair_cdr(p) 
-#define edelib_scheme_car_set(sc, p, q)      (sc)->vptr->set_car(p, q)
-#define edelib_scheme_cdr_set(sc, p, q)      (sc)->vptr->set_cdr(p, q)
-#define edelib_scheme_is_symbol(sc, p)       (sc)->vptr->is_symbol(p) 
-#define edelib_scheme_symname(sc, p)         (sc)->vptr->symname(p)
-#define edelib_scheme_is_syntax(sc, p)         (sc)->vptr->is_syntax(p)
-#define edelib_scheme_syntaxname(sc, p)        (sc)->vptr->syntaxname(p) 
-#define edelib_scheme_is_proc(sc, p)         (sc)->vptr->is_proc(p)
-#define edelib_scheme_is_macro(sc, p)         (sc)->vptr->is_macro(p)
-#define edelib_scheme_is_foreign(sc, p)        (sc)->vptr->is_foreign(p) 
-#define edelib_scheme_closure_code(sc, p)         (sc)->vptr->closure_code(p)
-#define edelib_scheme_closure_env(sc, p)         (sc)->vptr->closure_env(p)
+#define edelib_scheme_pair_car(sc, p)     (sc)->vptr->pair_car(p) 
+#define edelib_scheme_pair_cdr(sc, p)     (sc)->vptr->pair_cdr(p) 
+#define edelib_scheme_car_set(sc, p, q)   (sc)->vptr->set_car(p, q)
+#define edelib_scheme_cdr_set(sc, p, q)   (sc)->vptr->set_cdr(p, q)
+#define edelib_scheme_is_symbol(sc, p)    (sc)->vptr->is_symbol(p) 
+#define edelib_scheme_symname(sc, p)      (sc)->vptr->symname(p)
+#define edelib_scheme_is_syntax(sc, p)    (sc)->vptr->is_syntax(p)
+#define edelib_scheme_syntaxname(sc, p)   (sc)->vptr->syntaxname(p) 
+#define edelib_scheme_is_proc(sc, p)      (sc)->vptr->is_proc(p)
+#define edelib_scheme_is_macro(sc, p)     (sc)->vptr->is_macro(p)
+#define edelib_scheme_is_foreign(sc, p)   (sc)->vptr->is_foreign(p) 
+#define edelib_scheme_closure_code(sc, p) (sc)->vptr->closure_code(p)
+#define edelib_scheme_closure_env(sc, p)  (sc)->vptr->closure_env(p)
   
 #define edelib_scheme_is_continuation(sc, p) (sc)->vptr->is_continuation(p)
 #define edelib_scheme_is_promise(sc, p)      (sc)->vptr->is_promise(p)

@@ -12,23 +12,25 @@ extern "C" {
 /*
  * Default values for #define'd symbols
  */
+
 #define USE_INTERFACE 1
 #define USE_MATH 0
+#define INLINE inline
 
 /* If used as standalone interpreter */
-#ifndef STANDALONE      
+#ifndef STANDALONE
 # define STANDALONE 0
 #endif
 
-#ifndef _MSC_VER 
-# define USE_STRCASECMP 1 
+#ifndef _MSC_VER
+# define USE_STRCASECMP 1
 # ifndef USE_STRLWR
-#   define USE_STRLWR 1 
+#   define USE_STRLWR 1
 # endif
 # define SCHEME_EXPORT
-#else 
-# define USE_STRCASECMP 0 
-# define USE_STRLWR 0 
+#else
+# define USE_STRCASECMP 0
+# define USE_STRLWR 0
 # ifdef _SCHEME_SOURCE
 #  define SCHEME_EXPORT __declspec(dllexport)
 # else
@@ -57,6 +59,7 @@ extern "C" {
 #if USE_DL
 # define USE_INTERFACE 1
 #endif
+
 
 #ifndef USE_MATH         /* If math support is needed */
 # define USE_MATH 1
@@ -111,8 +114,8 @@ extern "C" {
 # define USE_INTERFACE 0
 #endif
 
-#ifndef USE_GETTEXT
-# define USE_GETTEXT 0
+#ifndef SHOW_ERROR_LINE   /* Show error line in file */
+# define SHOW_ERROR_LINE 1
 #endif
 
 typedef struct scheme scheme;
@@ -140,15 +143,13 @@ void scheme_set_input_port_string(scheme *sc, char *start, char *past_the_end);
 SCHEME_EXPORT void scheme_set_output_port_file(scheme *sc, FILE *fin);
 void scheme_set_output_port_string(scheme *sc, char *start, char *past_the_end);
 SCHEME_EXPORT void scheme_load_file(scheme *sc, FILE *fin);
+SCHEME_EXPORT void scheme_load_named_file(scheme *sc, FILE *fin, const char *filename);
 SCHEME_EXPORT void scheme_load_string(scheme *sc, const char *cmd);
-/* void scheme_apply0(scheme *sc, const char *procname); */
-void scheme_set_external_data(scheme *sc, void *p);
-SCHEME_EXPORT void scheme_define(scheme *sc, pointer env, pointer symbol, pointer value);
-
-/* Sanel: added from the latest cvs code */
 SCHEME_EXPORT pointer scheme_apply0(scheme *sc, const char *procname);
 SCHEME_EXPORT pointer scheme_call(scheme *sc, pointer func, pointer args);
 SCHEME_EXPORT pointer scheme_eval(scheme *sc, pointer obj);
+void scheme_set_external_data(scheme *sc, void *p);
+SCHEME_EXPORT void scheme_define(scheme *sc, pointer env, pointer symbol, pointer value);
 
 typedef pointer (*foreign_func)(scheme *, pointer);
 
@@ -159,9 +160,12 @@ pointer mk_symbol(scheme *sc, const char *name);
 pointer gensym(scheme *sc);
 pointer mk_string(scheme *sc, const char *str);
 pointer mk_counted_string(scheme *sc, const char *str, int len);
+pointer mk_empty_string(scheme *sc, int len, char fill);
 pointer mk_character(scheme *sc, int c);
 pointer mk_foreign_func(scheme *sc, foreign_func f);
 void putstr(scheme *sc, const char *s);
+int list_length(scheme *sc, pointer a);
+int eqv(pointer a, pointer b);
 
 
 #if USE_INTERFACE
@@ -181,7 +185,7 @@ struct scheme_interface {
   pointer (*mk_foreign_func)(scheme *sc, foreign_func f);
   void (*putstr)(scheme *sc, const char *s);
   void (*putcharacter)(scheme *sc, int c);
-  
+
   int (*is_string)(pointer p);
   char *(*string_value)(pointer p);
   int (*is_number)(pointer p);
@@ -192,13 +196,15 @@ struct scheme_interface {
   int (*is_real)(pointer p);
   int (*is_character)(pointer p);
   long (*charvalue)(pointer p);
+  int (*is_list)(scheme *sc, pointer p);
   int (*is_vector)(pointer p);
+  int (*list_length)(scheme *sc, pointer vec);
   long (*vector_length)(pointer vec);
   void (*fill_vector)(pointer vec, pointer elem);
   pointer (*vector_elem)(pointer vec, int ielem);
   pointer (*set_vector_elem)(pointer vec, int ielem, pointer newel);
   int (*is_port)(pointer p);
-  
+
   int (*is_pair)(pointer p);
   pointer (*pair_car)(pointer p);
   pointer (*pair_cdr)(pointer p);
@@ -207,7 +213,7 @@ struct scheme_interface {
 
   int (*is_symbol)(pointer p);
   char *(*symname)(pointer p);
-  
+
   int (*is_syntax)(pointer p);
   int (*is_proc)(pointer p);
   int (*is_foreign)(pointer p);
@@ -227,9 +233,29 @@ struct scheme_interface {
 };
 #endif
 
+#if !STANDALONE
+typedef struct scheme_registerable
+{
+  foreign_func  f;
+  char *        name;
+}
+scheme_registerable;
+
+void scheme_register_foreign_func_list(scheme * sc,
+                                       scheme_registerable * list,
+                                       int n);
+
+#endif /* !STANDALONE */
+
 #ifdef __cplusplus
 }
 #endif
 
 #endif
 
+
+/*
+Local variables:
+c-file-style: "k&r"
+End:
+*/

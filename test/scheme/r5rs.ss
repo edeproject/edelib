@@ -162,7 +162,7 @@
 
 (test-equal "#51" 4 (max 3 4))
 
-(test-equal "#52" 4 (max 3.9 4))
+(test-equal "#52" 4.0 (max 3.9 4))
 
 (test-equal "#53" 7 (+ 3 4))
 
