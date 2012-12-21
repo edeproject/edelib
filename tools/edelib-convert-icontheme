@@ -24,8 +24,9 @@ import sys, stat
 SIZES        = ["16x16", "22x22", "32x32", "48x48", "64x64", "128x128"]
 PROGRAM_NAME = "edelib-convert-icontheme"
 
-inkscape_path = None
-rsvg_path     = None
+inkscape_path     = None
+rsvg_path         = None
+rsvg_convert_path = None
 
 def find_binary(name):
 	"""Find named binary in $PATH"""
@@ -49,6 +50,11 @@ def find_converter():
 	cpath = find_binary("rsvg")
 	if cpath:
 		rsvg_path = cpath
+		return True
+
+	cpath = find_binary("rsvg-convert")
+	if cpath:
+		rsvg_convert_path = cpath
 		return True
 
 	return False
@@ -98,6 +104,8 @@ def visit(arg, dirname, names):
 				cmd = "%s -e %s -w %s -h %s %s" % (inkscape_path, dsticon, w, h, srcicon)
 			elif rsvg_path:
 				cmd = "%s -w %s -h %s %s %s" % (rsvg_path, w, h, srcicon, dsticon)
+			elif rsvg_convert_path:
+				cmd = "%s -w %s -h %s -o %s %s" % (rsvg_convert_path, w, h, dsticon, srcicon)
 
 			print "Making %s..." % dsticon
 			if os.system(cmd) != 0:
