@@ -17,6 +17,7 @@
 ;; along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 ;; uncomment these for different scheme implementations
+
 ;(define-macro (define-with-return . form)
 ;  `(define ,(car form)
 ;       (call/cc (lambda (return) ,@(cdr form)))))
@@ -126,14 +127,14 @@ single expression (e.g. as '(+ 1 2 3)' but not multiple one, e.g. '(+ 1 2 3) (+ 
 (add-doc "first" "Return first element from the list. If list is empty, contrary to 'car' it will only return #f.")
 (define (first lst)
   (if (or (null? lst)
-		  (not lst))
+          (not lst))
     #f
     (car lst)))
 
 (add-doc "rest" "Return list without first element. Same as 'cdr' except it will return #f when list is empty.")
 (define (rest lst)
   (if (or (null? lst)
-		  (not lst))
+          (not lst))
     #f
     (cdr lst)))
 
@@ -159,36 +160,6 @@ single expression (e.g. as '(+ 1 2 3)' but not multiple one, e.g. '(+ 1 2 3) (+ 
   (println foo))")
 (define-macro (let1 a b . body)
   `(let ([,a ,b])
-     ,@body))
-
-(add-macro-doc "let2" "Same as 'let1' but creates two variables.")
-(define-macro (let2 a b c d . body)
-  `(let* ([,a ,b]
-          [,c ,d])
-     ,@body))
-
-(add-macro-doc "let3" "Same as 'let1' but creates three variables.")
-(define-macro (let3 a b c d e f . body)
-  `(let* ([,a ,b]
-          [,c ,d]
-          [,e ,f])
-     ,@body))
-
-(add-macro-doc "let4" "Same as 'let1' but creates four variables.")
-(define-macro (let4 a b c d e f g h . body)
-  `(let* ([,a ,b]
-          [,c ,d]
-          [,e ,f]
-          [,g ,h])
-     ,@body))
-
-(add-macro-doc "let5" "Same as 'let1' but creates five variables.")
-(define-macro (let5 a b c d e f g h i j . body)
-  `(let* ([,a ,b]
-          [,c ,d]
-          [,e ,f]
-          [,g ,h]
-          [,i ,j])
      ,@body))
 
 (add-macro-doc "letn" "Allow unlimited number of bindings to be created in single form, like in Clojure.
@@ -398,8 +369,8 @@ provides foldr which is more like foldl."
 
 (defun partition (n lst)
   "Partition list on sublists where each sublist have n items."
-  (let2 s (take n lst)
-        l (length s)
+  (let* ([s (take n lst)]
+         [l (length s)])
     (if (= n l)
       (cons s (partition n (drop n lst)))
       (list) ) ) )
@@ -444,10 +415,10 @@ calls with the same parameters. Can speed up often called functions."
 (add-macro-doc "lazy" "Return lazy function with value caching. Calling that function (without parameters) will
 realize sequence caching return value.")
 (define-macro (lazy . body)
-  (let2 forced (gensym)
-        value  (gensym)
-    `(let2 ,forced #f
-           ,value  #f
+  (let ([forced (gensym)]
+        [value  (gensym)])
+    `(let ([,forced #f]
+           [,value  #f])
        (lambda ()
          (unless ,forced
            (set! ,value (begin ,@body))
@@ -492,9 +463,9 @@ realize sequence caching return value.")
 
     (if (= 0 (length lst))
       lowest-i
-      (let3 key  (first lst)
-            val  (assq key *edelib-scheme-precedence-table*)
-            prec (if val (cadr val) #f)
+      (let* ([key  (first lst)]
+             [val  (assq key *edelib-scheme-precedence-table*)]
+             [prec (if val (cadr val) #f)])
         (if (and prec
                  (<= prec lowest-prec))
           (loop (+ i 1) (rest lst) i prec)
@@ -507,11 +478,11 @@ realize sequence caching return value.")
     [else
       (let1 lowest (find-lowest-precedence lst)
         (if lowest
-          (let5 lsp (split-at lowest lst)
-                hd  (car  lsp)
-                tl  (cadr lsp)
-                op  (car tl)
-                tl  (cdr tl)
+          (let* ([lsp (split-at lowest lst)]
+                 [hd  (car  lsp)]
+                 [tl  (cadr lsp)]
+                 [op  (car tl)]
+                 [tl  (cdr tl)])
             (list op
                   (infix->prefix hd)
                   (infix->prefix tl) ) )
@@ -527,8 +498,8 @@ realize sequence caching return value.")
     (let loop ([i 0]
                [j (modulo (random-next) len)])
       (when (< i len)
-        (let2 tmp1 (vector-ref vec i)
-              tmp2 (vector-ref vec j)
+        (let ([tmp1 (vector-ref vec i)]
+              [tmp2 (vector-ref vec j)])
           (vector-set! vec j tmp1)
           (vector-set! vec i tmp2)
 
@@ -549,8 +520,8 @@ number of times before, or call (shuffle lst) different times within each call."
 
 (defun list-as-string (lst)
   "Convert list to string."
-  (let2 len (length lst)
-        ret "("
+  (let ([len (length lst)]
+        [ret "("])
       
     (define (str-append! s add-space)
       (set! ret (string-append ret s))

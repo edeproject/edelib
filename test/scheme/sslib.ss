@@ -7,29 +7,11 @@
                      (+ a 1))
                    4)
 
-(test-equal "let2" (let2 a 3
-                         b 4
-                     (+ a b))
-                   7)
-
-(test-equal "let3" (let3 a 1
-                         b 3
-                         c 100
-                     (* a b c))
-                   300)
-
-(test-equal "let4" (let4 a 1
-                         b a
-                         c b
-                         d c
-                     (+ a b c d))
-                   4)
-
-(test-equal "let5" (let5 a 1
-                         b (+ a 1)
-                         c 1
-                         d (+ a b c)
-                         e a
+(test-equal "letn" (letn [a 1
+                          b (+ a 1)
+                          c 1
+                          d (+ a b c)
+                          e a]
                      (+ a b c d e))
                    9)
 
