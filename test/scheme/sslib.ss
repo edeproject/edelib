@@ -119,4 +119,13 @@
 (test-equal "zip" (zip '(1 2 3) '(a b c) '(d e f))
                   '((1 a d) (2 b e) (3 c f)))
 
+(test-equal "juxt" ((juxt max min) 14 35 -7 46 98)
+                   '(98 -7))			
+
+(test-equal "juxt #2" ((juxt + - *) 2 3)
+                      '(5 -1 6))			
+
+(test-equal "juxt #3" ((juxt string-length string->list) "demo")
+                      '(4 (#\d #\e #\m #\o)))	
+
 (run-all-tests "sslib Tests")

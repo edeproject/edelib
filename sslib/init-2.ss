@@ -570,6 +570,15 @@ number of times before, or call (shuffle lst) different times within each call."
 (define (zip list1 . lists)
   (apply map list list1 lists))
 
+(add-doc "juxt" "Takes a set of functions and returns a juxtapoisition of those
+functions. Example: ((juxt + -) 2 3) => ((+ 2 3) (- 2 3)) => (5 -1).")
+(define (juxt . funcs)
+  (lambda args
+	(map
+	  (lambda (f)
+		(apply f args))
+	  funcs)))
+
 ;;; interpreter specific stuff
 
 (defun edelib-scheme-objects ()
