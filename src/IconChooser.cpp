@@ -2,7 +2,7 @@
  * $Id$
  *
  * Icon chooser
- * Copyright (c) 2005-2007 edelib authors
+ * Copyright (c) 2005-2012 edelib authors
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,12 +21,10 @@
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl.H>
 #include <FL/Fl_Button.H>
-#include <FL/Fl_Input.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Shared_Image.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_File_Chooser.H>
-#include <FL/Fl_Progress.H>
 #include <FL/fl_draw.H>
 
 #include <edelib/IconChooser.h>
@@ -36,6 +34,7 @@
 #include <edelib/Nls.h>
 #include <edelib/Debug.h>
 #include <edelib/StrUtil.h>
+#include <edelib/Missing.h>
 
 /* max icon sizes */
 #define MAX_ICON_W  128
@@ -46,60 +45,62 @@
 
 EDELIB_NS_BEGIN
 
+typedef list<String> StringList;
+typedef list<String>::iterator StringListIt;
+
 class IconBox : public Fl_Button {
 private: 
 	bool sel;
-	Fl_Color corig;
-	String iconpth;
-	char* iconname;
+	char *icon_name;
+	String icon_path;
+	Fl_Color orig_color;
+
 public:
-	IconBox(int x, int y, int w, int h, const char* l=0);
+	IconBox(int x, int y, int w, int h, const char *l = 0);
 	~IconBox();
 
-	void set_icon_path(const String& s);
-	const String& icon_path(void) const { return iconpth; }
-	bool selected(void) { return sel; }
+	void set_icon_name_and_path(const String& s);
+	const String& get_icon_path(void) const { return icon_path; }
 
+	bool selected(void) { return sel; }
 	int handle(int event);
 };
 
-IconBox::IconBox(int X, int Y, int W, int H, const char* l) : Fl_Button(X, Y, W, H, l) {
+IconBox::IconBox(int X, int Y, int W, int H, const char *l) : Fl_Button(X, Y, W, H, l) {
 	box(FL_FLAT_BOX);
-	corig = color();
-	iconpth = "";
+	orig_color = color();
+	icon_name = NULL;
 	sel = false;
-	iconname = NULL;
 }
 
-IconBox::~IconBox() { 
-	free(iconname);
+IconBox::~IconBox() {
+	if(icon_name) free(icon_name);
 }
 
-void IconBox::set_icon_path(const String& s) {
-	char* ptr;
+void IconBox::set_icon_name_and_path(const String& s) {
+	char *ptr;
 	int W = 0, H = 0, len;
 
-	iconpth.assign(s);
+	icon_path.assign(s);
 
 	/* get basename without extension */
 	ptr = (char*)strrchr(s.c_str(), E_DIR_SEPARATOR);
-	if(ptr) {
-		ptr += 1;
-		char* ptr2 = strrchr(ptr, '.');
-		if(ptr2)
-			*ptr2 = '\0';
+	if(ptr && *ptr++) {
+		char *e = strrchr(ptr, '.');
+		if(e) *e = '\0';
 	} else {
 		ptr = (char*)_("(unknown)");
 	}
 
-	iconname = strdup(ptr);
-	len = strlen(iconname);
+	/* keep max icon name 64 bytes */
+	icon_name = edelib_strndup(ptr, 64);
+	len = edelib_strnlen(icon_name, 64);
 
-	fl_measure(iconname, W, H);
+	fl_measure(icon_name, W, H);
 
 	if(W > w() && len > 10) {
 		/* copy as label so we can modify it */
-		copy_label(iconname);
+		copy_label(icon_name);
 		ptr = (char*)(label() + 10);
 
 		/* end label string with '...' */
@@ -108,11 +109,12 @@ void IconBox::set_icon_path(const String& s) {
 		*(ptr - 2) = '.';
 		*(ptr - 3) = '.';
 	} else {
-		label(iconname);
+		/* no need to copy it, use just pointer */
+		label(icon_name);
 	}
 
 	align(FL_ALIGN_INSIDE);
-	tooltip(iconname);
+	tooltip(icon_name);
 }
 
 /*
@@ -122,71 +124,76 @@ void IconBox::set_icon_path(const String& s) {
 int IconBox::handle(int event) {
 	switch(event) {
 		case FL_FOCUS:
-			corig = color();
+			orig_color = color();
 			color(selection_color());
 			redraw();
 			sel = true;
 			return 1;
 		case FL_UNFOCUS:
-			color(corig);
+			color(orig_color);
 			redraw();
 			sel = false;
 			return 1;
 		case FL_PUSH:
 			take_focus();
-			// double-click
+			/* double-click */
 			if(Fl::event_clicks())
 				do_callback();
 			return 1;
 		case FL_RELEASE:
 			return 1;
 		default:
-			return Fl_Button::handle(event);
+			break;
 	}
-	return 1;
+
+	return Fl_Button::handle(event);
 }
 
 class IconChooser : public Fl_Double_Window {
 private:
-	String ret;
-	String start;
+	String ret, start;
+	bool browsed_icon; /* user manually found icon */
 
-	Fl_Input* path;
-	Fl_Button* bbrowse;
-	Fl_Button* bok;
-	Fl_Button* bcancel;
-	Fl_Progress* progress;
-	ExpandableGroup* icongrp;
+	Fl_Button *bbrowse, *bok, *bcancel;
+	ExpandableGroup *icon_group;
 
 public:
 	IconChooser();
-	~IconChooser();
-	void load(const char* dir);
-	void load_from_list(list<String>& lst);
+
+	void load_from_list(StringList &lst);
 	bool find_focused(void);
 
-	String get_ret(void)    { return ret; }
-	String& get_start(void) { return start; }
+	void load(const char *dir);
+	void load(IconSizes sz, IconContext ctx);
+
+	void set_browsed_icon(const char *ic) {
+		browsed_icon = true;
+		ret = ic;
+	}
+
+	String& get_ret(void) { return ret; }
+	bool is_browsed_icon(void) { return browsed_icon; }
 };
 
-static void cancel_cb(Fl_Widget*, void* w) {
-	IconChooser* ic = (IconChooser*)w;
+static void cancel_cb(Fl_Widget*, void *w) {
+	IconChooser *ic = (IconChooser*)w;
 	ic->hide();
 }
 
-static void ok_cb(Fl_Widget*, void* w) {
-	IconChooser* ic = (IconChooser*)w;
+static void ok_cb(Fl_Widget*, void *w) {
+	IconChooser *ic = (IconChooser*)w;
 	if(ic->find_focused())
 		ic->hide();
 }
 
-static void browse_cb(Fl_Widget*, void* w) {
-	IconChooser* ic = (IconChooser*)w;
+static void browse_cb(Fl_Widget*, void *w) {
+	IconChooser *ic = (IconChooser*)w;
 
-	const char* dd = fl_dir_chooser(_("Choose icon directory..."), ic->get_start().c_str(), false);
-	if(!dd)
-		return;
-	ic->load(dd);
+	const char *path = fl_file_chooser(_("Choose icon..."), "*.png\t*.jpg\t*.xpm\t*", NULL);
+	if(!path) return;
+
+	ic->set_browsed_icon(path);
+	ic->hide(); /* hide dialog */
 }
 
 /*
@@ -194,28 +201,26 @@ static void browse_cb(Fl_Widget*, void* w) {
  * are double-clicked get focus automatically, this forwarding to ok_cb(), who checks what child is
  * focused, is valid
  */
-void iconbox_cb(Fl_Widget*, void* w) {
+void iconbox_cb(Fl_Widget*, void *w) {
 	ok_cb(NULL, w);
 }
 
-IconChooser::IconChooser() : Fl_Double_Window(355, 305, _("Choose icon...")), ret("") {
+IconChooser::IconChooser() : Fl_Double_Window(355, 305, _("Choose icon")) {
+	browsed_icon = false;
 	begin();
-	path = new Fl_Input(10, 10, 240, 25);
-	bbrowse = new Fl_Button(255, 10, 90, 25, _("&Browse..."));
-	bbrowse->callback(browse_cb, this);
+
+	icon_group = new ExpandableGroup(10, 10, 335, 250);
+	icon_group->box(FL_DOWN_BOX);
+	icon_group->color(FL_BACKGROUND2_COLOR);
+	icon_group->end();
 
 	/* invisible resizable box */
-	Fl_Box* ibox = new Fl_Box(15, 160, 115, 95);
+	Fl_Box* ibox = new Fl_Box(115, 170, 35, 80);
 	resizable(ibox);
 
-	icongrp = new ExpandableGroup(10, 40, 335, 220);
-	icongrp->box(FL_DOWN_BOX);
-	icongrp->color(FL_WHITE);
-	icongrp->end();
-
-	progress = new Fl_Progress(10, 270, 125, 25);
-	progress->minimum(0);
-	progress->hide();
+	bbrowse = new Fl_Button(10, 270, 90, 25, _("&Browse..."));
+	bbrowse->callback(browse_cb, this);
+	bbrowse->tooltip(_("Manually browse for desired icon"));
 
 	bok = new Fl_Button(160, 270, 90, 25, _("&OK"));
 	bok->callback(ok_cb, this);
@@ -223,42 +228,24 @@ IconChooser::IconChooser() : Fl_Double_Window(355, 305, _("Choose icon...")), re
 	bcancel->callback(cancel_cb, this);
 
 	end();
+	set_modal();
 }
 
-IconChooser::~IconChooser() { }
+void IconChooser::load_from_list(StringList &lst) {
+	E_RETURN_IF_FAIL(lst.size() > 0);
 
-void IconChooser::load(const char* dir) {
-	/* copy directory name to input box and internal String so it can be reused later */
-	path->value(dir);
-	start = dir;
+	Fl_Shared_Image *img = NULL;
+	int imax_w = 0, imax_h = 0, iw, ih;
 
-	list<String> lst;
-	if(!dir_list(dir, lst, true))
-		return;
-
-	load_from_list(lst);
-}
-
-void IconChooser::load_from_list(list<String>& lst) {
-	if(lst.empty())
-		return;
-
-	Fl_Shared_Image* img = NULL;
-	int imax_w = 0;
-	int imax_h = 0;
-	int iw, ih;
-	bool show_progress = false;
-
-	list<String>::iterator it = lst.begin(), it_end = lst.end();
+	StringListIt it = lst.begin(), ite= lst.end();
 
 	/*
 	 * lst_info contains coresponding indexes with list<String> so we can deduce what
 	 * files to skip (not readable image or dimensions greater than allowed); skippable are marked as 0
 	 */
-	int* lst_info = new int[lst.size()];
-	for(int n = 0; it != it_end; ++it, n++){
+	int *lst_info = new int[lst.size()];
+	for(int n = 0; it != ite; ++it, ++n) {
 		img = Fl_Shared_Image::get((*it).c_str());
-
 		if(!img) {
 			lst_info[n] = 0;
 			continue;
@@ -278,25 +265,10 @@ void IconChooser::load_from_list(list<String>& lst) {
 	}
 
 	/* clear potential content of ExpandableGroup */
-	if(icongrp->children())
-		icongrp->clear();
+	icon_group->clear();
 
-	if(lst.size() > 10) {
-		show_progress = true;
-		progress->minimum(0);
-		progress->maximum(lst.size());
-		progress->show();
-	}
-
-	if(imax_w < 64) 
-		imax_w = 64;
-	else
-		imax_w += 10;
-
-	if(imax_h < 64) 
-		imax_h = 64;
-	else
-		imax_h += 10;
+	imax_w = (imax_w < 64) ? 64 : imax_w + 10;
+	imax_h = (imax_h < 64) ? 64 : imax_h + 10;
 
 	imax_w += 5;
 	imax_h += 5;
@@ -305,58 +277,74 @@ void IconChooser::load_from_list(list<String>& lst) {
 	 * focus_index() is only valid on childs before we show them and that is what we need 
 	 * so other childs don't mess it when they are added
 	 */
-	//icongrp->focus(child(0));
-	icongrp->set_visible_focus();
-
-	IconBox* preview;
+	icon_group->set_visible_focus();
+	
+	IconBox *preview;
 	it = lst.begin();
 
-	for(int n = 0; it != it_end; ++it, n++) {
+	for(int n = 0; it != ite; ++it, ++n) {
 		img = Fl_Shared_Image::get((*it).c_str());
 
 		if(img && lst_info[n] == 1) {
 			preview = new IconBox(0, 0, imax_w, imax_h);
-			preview->set_icon_path((*it));
+			preview->set_icon_name_and_path(*it);
 
 			/* use background/selection from ExpandableGroup */
-			preview->color(icongrp->color());
-			preview->selection_color(icongrp->color());
-
-			if(show_progress)
-				progress->value(int((n * 100) / int(progress->maximum())));
+			preview->color(icon_group->color());
+			preview->selection_color(icon_group->color());
 
 			preview->image(img);
 			preview->callback(iconbox_cb, this);
-			icongrp->add(preview);
+			icon_group->add(preview);
 
-			Fl::check();
+			/* allow window to receive events every 10th icon */
+			if((n % 10) == 0) Fl::check();
 		}
 	}
 
-	progress->hide();
 	delete [] lst_info;
 }
 
 bool IconChooser::find_focused(void) {
-	IconBox* ib;
-	for(int n = 0; n < icongrp->children(); n++) {
-		ib = (IconBox*)icongrp->child(n);
+	IconBox *b;
+	for(int n = 0; n < icon_group->children(); n++) {
+		b = (IconBox*)icon_group->child(n);
 
-		if(ib->selected()) {
-			ret.assign(ib->icon_path());
+		if(b->selected()) {
+			ret.assign(b->get_icon_path());
 			return true;
 		}
 	}
+
 	return false;
 }
 
-String icon_chooser(const char* dir) {
+void IconChooser::load(const char *dir) {
+	E_ASSERT(dir != NULL);
+
+	StringList lst;
+	if(!dir_list(dir, lst, true))
+		return;
+
+	load_from_list(lst);
+}
+
+void IconChooser::load(IconSizes sz, IconContext ctx) {
+	E_RETURN_IF_FAIL(IconLoader::inited() == true);
+
+	StringList lst;
+	const IconTheme *t = IconLoader::theme();
+
+	t->query_icons(lst, sz, ctx);
+	load_from_list(lst);
+}
+
+String icon_chooser(const char *dir) {
 	E_ASSERT(dir != NULL);
 
 	IconChooser ic;
 	ic.load(dir);
 
-	ic.set_modal();
 	ic.show();
 	while(ic.visible())
 		Fl::wait();
@@ -364,25 +352,34 @@ String icon_chooser(const char* dir) {
 	return ic.get_ret();
 }
 
-String icon_chooser(IconSizes sz, IconContext ctx) {
+String icon_chooser(IconSizes sz, IconContext ctx, bool always_full_path, bool *outside_theme_ret) {
 	IconChooser ic;
+	ic.load(sz, ctx);
 
-	if(IconLoader::inited()) {
-		list<String> all;
-
-		const IconTheme* t = IconLoader::theme();
-		E_ASSERT(t != NULL && "IconLoader loaded, but IconTheme object NULL");
-
-		t->query_icons(all, sz, ctx);
-		ic.load_from_list(all);
-	}
-
-	ic.set_modal();
 	ic.show();
 	while(ic.visible())
 		Fl::wait();
 
-	return ic.get_ret();
+	if(outside_theme_ret)
+		*outside_theme_ret = ic.is_browsed_icon();
+
+	String &ret = ic.get_ret();
+
+	if(!always_full_path && !ic.is_browsed_icon() && ret.length() > 0) {
+		char *p, *e;
+		p = (char*)strrchr(ret.c_str(), E_DIR_SEPARATOR);
+
+		if(!p || !(*p++))
+			p = (char*)ret.c_str();
+
+		/* now remove extension */
+		e = (char*)strrchr((const char*)p, '.');
+		if(e) *e = '\0';
+
+		return String(p);
+	}
+
+	return ret;
 }
 
 EDELIB_NS_END

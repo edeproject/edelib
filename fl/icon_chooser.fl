@@ -1,23 +1,20 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0108 
+version 1.0300 
 header_name {.h} 
 code_name {.cxx}
 Function {} {open
 } {
   Fl_Window {} {
     label {Choose icon} open
-    xywh {610 271 355 305} type Double resizable visible
+    xywh {496 272 355 305} type Double resizable visible
   } {
-    Fl_Input {} {
-      xywh {10 10 240 25}
-    }
+    Fl_Group {} {
+      xywh {10 10 335 250} box DOWN_BOX color 7
+    } {}
     Fl_Button {} {
       label {&Browse...}
-      xywh {255 10 90 25}
+      xywh {10 270 90 25}
     }
-    Fl_Group {} {open
-      xywh {10 40 335 220} box DOWN_BOX color 7
-    } {}
     Fl_Button {} {
       label {&OK}
       xywh {160 270 90 25}
@@ -26,12 +23,8 @@ Function {} {open
       label {&Cancel}
       xywh {255 270 90 25}
     }
-    Fl_Progress {} {
-      label label
-      xywh {10 270 125 25} labelsize 14
-    }
     Fl_Box {} {selected
-      xywh {15 160 115 95} labelsize 14 resizable
+      xywh {115 170 35 80} resizable
       code0 {/* invisible resizable box */}
     }
   }

@@ -15,6 +15,8 @@ EDELIB_NS_USING(file_test)
 EDELIB_NS_USING(icon_chooser)
 EDELIB_NS_USING(FILE_TEST_IS_DIR)
 
+using namespace edelib;
+
 Fl_Box* image_box;
 
 void close_cb(Fl_Widget*, void* w) {
@@ -28,7 +30,7 @@ void run_cb(Fl_Widget*, void*) {
 	if(!file_test(dd, FILE_TEST_IS_DIR))
 		printf("Directory %s does not exists, continuing...\n", dd);
 
-	String r = icon_chooser(dd);
+	String r = icon_chooser(ICON_SIZE_MEDIUM, ICON_CONTEXT_ANY, true);
 
 	if(!r.empty()) {
 		image_box->image(Fl_Shared_Image::get(r.c_str()));
