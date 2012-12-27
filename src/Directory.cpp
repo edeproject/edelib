@@ -46,24 +46,24 @@ EDELIB_NS_BEGIN
 bool dir_exists(const char* name) {
 	E_ASSERT(name != NULL);
 	struct stat s;
-	if(stat(name, &s) != 0)
-		return false;
+
+	E_RETURN_VAL_IF_FAIL(stat(name, &s) == 0, false);
 	return (access(name, F_OK) == 0) && S_ISDIR(s.st_mode);
 }
 
 bool dir_readable(const char* name) {
 	E_ASSERT(name != NULL);
 	struct stat s;
-	if(stat(name, &s) != 0)
-		return false;
+
+	E_RETURN_VAL_IF_FAIL(stat(name, &s) == 0, false);
 	return (access(name, R_OK) == 0) && S_ISDIR(s.st_mode);
 }
 
 bool dir_writeable(const char* name) {
 	E_ASSERT(name != NULL);
 	struct stat s;
-	if(stat(name, &s) != 0)
-		return false;
+
+	E_RETURN_VAL_IF_FAIL(stat(name, &s) == 0, false);
 	return (access(name, W_OK) == 0) && S_ISDIR(s.st_mode);
 }
 
@@ -123,7 +123,6 @@ bool dir_create_with_parents(const char* name, int perm) {
 
 bool dir_remove(const char* name) {
 	E_ASSERT(name != NULL);
-
 	return (rmdir(name) == 0);
 }
 
@@ -134,9 +133,9 @@ bool dir_rename(const char* from, const char* to) {
 	return (rename(from, to) == 0);
 }
 
-// stolen from coreutils (cp,mv) package
-static struct dirent* readdir_ignoring_dots(DIR* dirp) {
-	struct dirent* dp = NULL;
+/* stolen from coreutils (cp,mv) package */
+static struct dirent *readdir_ignoring_dots(DIR *dirp) {
+	struct dirent *dp = NULL;
 
 	while(1) {
 		dp = readdir(dirp);
@@ -150,12 +149,11 @@ static struct dirent* readdir_ignoring_dots(DIR* dirp) {
 bool dir_empty(const char* name) {
 	E_ASSERT(name != NULL);
 
-	DIR* dirp = opendir(name);
-	if(dirp == NULL)
-		return false;
+	DIR *dirp = opendir(name);
+	E_RETURN_VAL_IF_FAIL(dirp != NULL, false);
 
 	errno = 0;
-	struct dirent* dp = readdir_ignoring_dots(dirp);
+	struct dirent *dp = readdir_ignoring_dots(dirp);
 	int saved_errno = errno;
 
 	closedir(dirp);
@@ -167,8 +165,7 @@ bool dir_empty(const char* name) {
 
 String dir_home(void) {
 	char* p = getenv("HOME");
-	if(p)
-		return p;
+	if(E_LIKELY(p)) return p;
 
 	/*
 	 * Fallback, read passwd structure, firstly acquiring it with _SC_GETPW_R_SIZE_MAX, then with our own size.
@@ -179,83 +176,70 @@ String dir_home(void) {
 	 *
 	 * This looks like a leak in some glibc versions.
 	 */
-	long buffsz = 1024;
+	long bufsz = 1024;
 
 #ifdef _SC_GETPW_R_SIZE_MAX
 	long b = sysconf(_SC_GETPW_R_SIZE_MAX);
-	if(b > 0) buffsz = b;
+	if(b > 0) bufsz = b;
 #endif
 
-	struct passwd pwd_str;
-	struct passwd* pw = NULL;
-
-	char* buff = new char[buffsz];
-	int err = getpwuid_r(getuid(), &pwd_str, buff, buffsz, &pw);
+	struct passwd pwd_str, *pw = NULL;
+	char *buf = new char[bufsz];
+	int err = getpwuid_r(getuid(), &pwd_str, buf, bufsz, &pw);
 
 	if(err) {
-		delete [] buff;
+		delete [] buf;
 		return "";
 	}
 
 	E_ASSERT(pw != NULL);
 
 	String ret = pw->pw_dir;
-	delete [] buff;
+	delete [] buf;
 
 	return ret;
 }
 
 String dir_current(void) {
-	char buff[PATH_MAX];
-	if(getcwd(buff, PATH_MAX))
-		return buff;
-	else
-		return "";
+	char buf[PATH_MAX];
+	return getcwd(buf, PATH_MAX) ? buf : "";
 }
 
-bool dir_list(const char* dir, list<String>& lst, bool full_path, bool show_hidden, bool show_dots) {
-	DIR* dirp = opendir(dir);
-	if(!dirp)
-		return false;
+bool dir_list(const char *dir, list<String> &lst, bool full_path, bool show_hidden, bool show_dots) {
+	E_ASSERT(dir != NULL);
 
-	// make sure list is empty
+	DIR *dirp = opendir(dir);
+	E_RETURN_VAL_IF_FAIL(dirp != NULL, false);
+
+	/* make sure the list is empty */
 	lst.clear();
 
-	dirent* dp;
-	while((dp = readdir(dirp)) != NULL) {
+	String dirstr, tmp;
+	if(full_path) {
+		/* resolve full name if given folder in form: './file' */
+		dirstr = (dir[0] == '.' && dir[1] == '\0') ? dir_current() : dir;
+
+		if(!str_ends(dirstr.c_str(), E_DIR_SEPARATOR_STR))
+			dirstr += E_DIR_SEPARATOR_STR;
+	}
+
+	for(dirent *dp = readdir(dirp); dp != NULL; dp = readdir(dirp)) {
 		if(!show_hidden && dp->d_name[0] == '.' && !DOT_OR_DOTDOT(dp->d_name))
 			continue;
+
 		if(!show_dots && DOT_OR_DOTDOT(dp->d_name))
 			continue;
-		lst.push_back(dp->d_name);
+
+		if(full_path) {
+			tmp = dirstr;
+			tmp += dp->d_name;
+			lst.push_back(tmp);
+		} else {
+			lst.push_back(dp->d_name);
+		}
 	}
 
 	lst.sort();
-
-	// no full_path requested, just quit since we have sorted items
-	if(!full_path) {
-		closedir(dirp);
-		return true;
-	}
-
-	String dirstr;
-	if(strcmp(dir, ".") == 0)
-		dirstr = dir_current();
-	else
-		dirstr = dir;
-
-	// make full path from items
-	if(!str_ends(dirstr.c_str(), E_DIR_SEPARATOR_STR))
-		dirstr += E_DIR_SEPARATOR_STR;
-
-	String tmp;
-	list<String>::iterator it = lst.begin(), it_end = lst.end();
-	for(; it != it_end; ++it) {
-		tmp = *it;
-		*it = dirstr;
-		*it += tmp;
-	}
-
 	closedir(dirp);
 	return true;
 }

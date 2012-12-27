@@ -237,7 +237,7 @@ void IconChooser::load_from_list(StringList &lst) {
 	Fl_Shared_Image *img = NULL;
 	int imax_w = 0, imax_h = 0, iw, ih;
 
-	StringListIt it = lst.begin(), ite= lst.end();
+	StringListIt it = lst.begin(), ite = lst.end();
 
 	/*
 	 * lst_info contains coresponding indexes with list<String> so we can deduce what
