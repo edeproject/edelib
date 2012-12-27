@@ -45,6 +45,8 @@
 
 # ifdef USE_EXECUNIX
 
+#include <unistd.h>
+
 # ifdef OS_OS2
 # define USE_EXECNT
 # include <process.h>
