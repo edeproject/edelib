@@ -249,10 +249,10 @@ AC_OUTPUT([
  edelib/Version.h
  doc/Doxyfile
  Jamconfig
- edelib.pc
- edelib-gui.pc
- edelib-gui-no-images.pc
- edelib-dbus.pc
+ pc/edelib.pc
+ pc/edelib-gui.pc
+ pc/edelib-gui-no-images.pc
+ pc/edelib-dbus.pc
  po/update-messages.sh
 ])
 
