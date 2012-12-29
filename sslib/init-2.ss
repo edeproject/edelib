@@ -29,11 +29,58 @@
 ;  `(if ,s
 ;    (begin ,@body)))
 
+;;; moduly system
+
+(define-macro (module name exports . forms)
+  `(begin
+    (define ,name
+       (apply (lambda () ,@forms (current-environment))))
+    ,@(map (lambda (v)
+			 `(define ,v (eval (quote ,v) ,name)))
+		   exports)))
+
+(define-macro (import module-name)
+  `(load (string-append (symbol->string (quote ,module-name)) ".ss")))
+
+(module init-2
+		(add-doc-generic
+		 add-doc
+		 add-macro-doc 
+		 add-var-doc
+		 find-doc
+		 doc
+		 add-to-include-path
+		 remove-from-include-path
+		 include
+		 eval-string
+		 first rest second
+		 print println
+		 empty?
+		 let1 letn
+		 if-not when-not if= if-not=
+		 defvar defun
+		 for while
+		 -> ->>
+		 nth
+		 sort-with-operator sort sort-vector
+		 filter range
+		 fold-right fold-left
+		 take drop split-at partition flatten
+		 repeatedly compose
+		 lazy replace-all
+		 infix->prefix :
+		 shuffle-vector! shuffle
+		 list-as-string vector-as-string
+		 doto zip juxt
+		 edelib-scheme-objects)
+
 ;;; documentation system
 
 ;; each element will be in form (vector <func name> <doc> <type>))
 ;; where <type> can be in form "function" "variable" or "macro"
 (define *doc-data* '())
+
+(define *edelib-scheme-init2-start* (edelib-clock))
 
 (define (add-doc-generic func str type)
   (set! *doc-data* (cons (vector func str type) *doc-data*)))
@@ -168,7 +215,7 @@ All bindings can be used in the next one, as 'let*' is used for the final constr
   `(let* ,(partition 2 form)
      ,@body))
 
-(add-macro-doc "if-not" "Same as (if (not x)).")
+;(add-macro-doc "if-not" "Same as (if (not x)).")
 (define-macro (if-not p . body)
   `(if (not ,p)
      ,@body))
@@ -250,8 +297,7 @@ or
        ,@body
        (loop) )))
 
-(add-macro-doc "->" "Clojure thrush form, where expression is threaded
-through the forms. The code:
+(add-macro-doc "->" "Clojure thrush form, where expression is threaded through the forms. The code:
   (-> 10 (+ 20) (- 30))
 is equivalent to:
   (- (+ 10 20) 30)")
@@ -262,8 +308,7 @@ is equivalent to:
       `(,(car form) ,x ,@(cdr form))
       (list form x) )))
 
-(add-macro-doc "->>" "Same as '->' except x is inserted as last item in
-form, and so on, like:
+(add-macro-doc "->>" "Same as '->' except x is inserted as last item in form, and so on, like:
   (->> (range 1 10) (map inc))
 is the same as:
   (map inc (range 1 10))")
@@ -274,9 +319,9 @@ is the same as:
       `(,(car form) ,@(cdr form) ,x)
       (list form x) )))
 
-(defun nth (n collection)
-  "Returns index 'n' at given collection. Collection can be list, vector or string. In case of vector
-or string, access is in constant time. For list, it is linear."
+(add-doc "nth" "Returns index 'n' at given collection. Collection can be list, vector or string. In case of vector
+or string, access is in constant time. For list, it is linear.")
+(define (nth n collection)
   (cond
     [(list? collection)
      (if (>= n (length collection))
@@ -293,8 +338,8 @@ or string, access is in constant time. For list, it is linear."
     [else
       (error _"Unknown collection type") ]))
 
-(defun sort-with-operator (lst op)
-  "Sort given list 'lst' using insertion sort. 'op' is operator used for comparison."
+(add-doc "sort-with-operator" "Sort given list 'lst' using insertion sort. 'op' is operator used for comparison.")
+(define (sort-with-operator lst op)
   (define (insert n lst)
     (cond
       [(empty? lst) (cons n lst)]
@@ -308,16 +353,16 @@ or string, access is in constant time. For list, it is linear."
     '()
     (insert (car lst) (sort-with-operator (cdr lst) op)) ) )
 
-(defun sort (lst)
-  "Sort list using < operator."
+(add-doc "sort" "Sort list using < operator.")
+(define (sort lst)
   (sort-with-operator lst <))
 
-(defun sort-vector (v)
-  "Sort vector."
+(add-doc "sort-vector" "Sort vector.")
+(define (sort-vector v)
   (->> v vector->list sort list->vector))
 
-(defun filter (pred seq)
-  "Filter sequence with given predicate."
+(add-doc "filter" "Filter sequence with given predicate.")
+(define (filter pred seq)
   (cond
     [(null? seq) '()]
     [(pred (car seq))
@@ -326,57 +371,56 @@ or string, access is in constant time. For list, it is linear."
     [else
       (filter pred (cdr seq)) ]))
 
-(defun range (s e)
-  "Create range starting from s and ending with e - 1."
+(add-doc "range" "Create range starting from s and ending with e - 1.")
+(define (range s e)
   (let loop ([s s]
              [e e])
     (if (>= s e)
       (list)
       (cons s (loop (+ 1 s) e)) )))
 
-(defun fold-right (f x lst)
-  "Implementation of scheme's foldr function. Tinyscheme already
-provides foldr which is more like foldl."
+(add-doc "fold-right" "Implementation of scheme's foldr function. Tinyscheme already provides foldr which is more like foldl.")
+(define (fold-right f x lst)
   (if (null? lst)
     x
     (f (car lst) (fold-right f x (cdr lst))) ))
 
-(defun fold-left (f x lst)
-  "Implementation of scheme's foldl."
+(add-doc "fold-left" "Implementation of scheme's foldl.")
+(define (fold-left f x lst)
   (if (null? lst)
     x
     (fold-left f (f x (car lst)) (cdr lst)) ))
 
-(defun take (n lst)
-  "Take n elements from given list."
+(add-doc "take" "Take n elements from given list.")
+(define (take n lst)
   (if (or (equal? lst '())
           (<= n 0))
     (list)
     (cons (car lst)
           (take (- n 1) (cdr lst)) ) ) )
 
-(defun drop (n lst)
-  "Return new list without first n elements."
+(add-doc "drop" "Return new list without first n elements.")
+(define (drop n lst)
   (if (or (equal? lst '())
           (<= n 0))
     lst
     (drop (- n 1) (cdr lst)) ) ) 
 
-(defun split-at (n lst)
-  "Split given list on two sublists from position n."
+(add-doc "split-at" "Split given list on two sublists from position n.")
+(define (split-at n lst)
   (list (take n lst)
         (drop n lst)))
 
-(defun partition (n lst)
-  "Partition list on sublists where each sublist have n items."
+(add-doc "partition" "Partition list on sublists where each sublist have n items.")
+(define (partition n lst)
   (let* ([s (take n lst)]
          [l (length s)])
     (if (= n l)
       (cons s (partition n (drop n lst)))
       (list) ) ) )
 
-(defun flatten (lst)
-  "Return flat list of all nested sublists."
+(add-doc "flatten" "Return flat list of all nested sublists.")
+(define (flatten lst)
   (if (list? lst)
     (cond
       [(null? lst) lst]
@@ -387,28 +431,15 @@ provides foldr which is more like foldl."
       [else
         (cons (car lst) (flatten (cdr lst))) ])))
 
-(defun repeatedly (n func)
-  "Call func n times and return the list of collected results."
+(add-doc "repeatedly" "Call func n times and return the list of collected results.")
+(define (repeatedly n func)
   (let loop ()
     (if (<= n 0)
       (list)
       (cons (func) (repeatedly (- n 1) func)) ) ) )
 
-(defun memoize (func)
-  "Returns memoized function. This is a function that will keep cached results among
-calls with the same parameters. Can speed up often called functions."
-  (let1 memo '()
-    (lambda args
-      (let1 cached (assoc args memo)
-        (if cached
-          (cadr cached)
-          (let1 result (apply func args)
-            (set! memo
-                  (cons (list args result) memo))
-            result ))))))
-
-(defun compose (f g)
-  "Returns a function which is composition of functions f and g."
+(add-doc "compose" "Returns a function which is composition of functions f and g.")
+(define (compose f g)
   (lambda args
     (f (apply g args))))
 
@@ -425,8 +456,8 @@ realize sequence caching return value.")
            (set! ,forced #t))
          ,value ))))
 
-(defun replace-all (what to lst)
-  "Replace all occurences of 'what' into 'to' in given list. Returns new list with replaced values."
+(add-doc "replace-all" "Replace all occurences of 'what' into 'to' in given list. Returns new list with replaced values.")
+(define (replace-all what to lst)
   (if (null? lst)
     '()
     (cons (if (equal? what (car lst))
@@ -452,7 +483,7 @@ realize sequence caching return value.")
     (*  70)
     (mod 80)))
 
-;; latest entry in *edelib-scheme-precedence-table*
+;;; latest entry in *edelib-scheme-precedence-table*
 (define *edelib-scheme-precedence-table-max* 80)
 
 (define (find-lowest-precedence lst)
@@ -492,7 +523,7 @@ realize sequence caching return value.")
 (define-macro (: . body)
   (infix->prefix body))
 
-;; Fisher-Yates shuffle using 'random-next' from init.ss
+;;; Fisher-Yates shuffle using 'random-next' from init.ss
 (define (shuffle-vector! vec)
   (let1 len (vector-length vec)
     (let loop ([i 0]
@@ -507,10 +538,10 @@ realize sequence caching return value.")
                 (modulo (random-next) len) ) ) ) ) 
     vec) )
 
-(defun shuffle (lst)
-  "Return new shuffled list. Note how this function uses 'random-next' where
+(add-doc "shuffle" "Return new shuffled list. Note how this function uses 'random-next' where
 initial state will likely be the same every time, so either call (random-next) unspecified
-number of times before, or call (shuffle lst) different times within each call."
+number of times before, or call (shuffle lst) different times within each call.")
+(define (shuffle lst)
   (->> lst
        list->vector
        shuffle-vector!
@@ -518,8 +549,8 @@ number of times before, or call (shuffle lst) different times within each call."
 
 ;;; to string conversions
 
-(defun list-as-string (lst)
-  "Convert list to string."
+(add-doc "list-as-string" "Convert list to string.")
+(define (list-as-string lst)
   (let ([len (length lst)]
         [ret "("])
       
@@ -552,8 +583,8 @@ number of times before, or call (shuffle lst) different times within each call."
     ret
 ) )
 
-(defun vector-as-string (vec)
-  "Convert vector to string."
+(add-doc "vector-as-string" "Convert vector to string.")
+(define (vector-as-string vec)
   (string-append "#" (->> (vector->list vec) list-as-string)))
 
 (define-macro (doto x . forms)
@@ -581,6 +612,11 @@ functions. Example: ((juxt + -) 2 3) => ((+ 2 3) (- 2 3)) => (5 -1).")
 
 ;;; interpreter specific stuff
 
-(defun edelib-scheme-objects ()
-  "Return list of currently existing objects inside interpreter."
+(add-doc "edelib-scheme-objects" "Return list of currently existing objects inside interpreter.")
+(define (edelib-scheme-objects)
   (map car (oblist)))
+
+
+(println "Stated in: " (edelib-clock-diff (edelib-clock) *edelib-scheme-init2-start*))
+
+) ;; module
