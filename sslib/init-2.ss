@@ -80,7 +80,7 @@
 ;; where <type> can be in form "function" "variable" or "macro"
 (define *doc-data* '())
 
-(define *edelib-scheme-init2-start* (edelib-clock))
+;(define *edelib-scheme-init2-start* (edelib-clock))
 
 (define (add-doc-generic func str type)
   (set! *doc-data* (cons (vector func str type) *doc-data*)))
@@ -617,6 +617,6 @@ functions. Example: ((juxt + -) 2 3) => ((+ 2 3) (- 2 3)) => (5 -1).")
   (map car (oblist)))
 
 
-(println "Stated in: " (edelib-clock-diff (edelib-clock) *edelib-scheme-init2-start*))
+;(println "Started in: " (edelib-clock-diff (edelib-clock) *edelib-scheme-init2-start*))
 
 ) ;; module
