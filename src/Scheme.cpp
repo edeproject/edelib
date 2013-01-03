@@ -109,7 +109,7 @@ scheme *edelib_scheme_init(void) {
 		}
 
 		if(!found_files)
-			E_WARNING(E_STRLOC ": EDELIB_SCHEME_INIT wasn't set. Interpreter will load without init files\n");
+			E_WARNING(E_STRLOC ": EDELIB_SCHEME_INIT wasn't set. Interpreter will be loaded without init files\n");
 	}
 
 	return s;

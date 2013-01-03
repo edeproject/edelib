@@ -34,12 +34,15 @@
 EDELIB_NS_BEGIN
 
 struct NetwmCallbackData {
-	NetwmCallback  cb;
-	void		   *data;
+	NetwmCallback cb;
+	void		  *data;
 };
 
 typedef list<NetwmCallbackData> CbList;
 typedef list<NetwmCallbackData>::iterator CbListIt;
+
+typedef list<NetwmStateValue> NetwmStateList;
+typedef list<NetwmStateValue>::iterator NetwmStateListIt;
 
 static CbList callback_list;
 static int    input_selected = 0;
@@ -105,8 +108,7 @@ static short atoms_inited = 0;
 static short xevent_added = 0;
 
 static void init_atoms_once(void) {
-	if(atoms_inited)
-		return;
+	if(atoms_inited) return;
 
 	REGISTER_ATOM(_XA_NET_WORKAREA,                     "_NET_WORKAREA");
 
@@ -197,8 +199,8 @@ static int xevent_handler(int e) {
 			Window xid = fl_xevent->xproperty.window;
 
 			/* TODO: locking here */
-			CbListIt it = callback_list.begin(), it_end = callback_list.end();
-			for(; it != it_end; ++it) {
+			CbListIt it = callback_list.begin(), ite = callback_list.end();
+			for(; it != ite; ++it) {
 				/* execute callback */
 				(*it).cb(action, xid, (*it).data);
 			}
@@ -236,8 +238,8 @@ void netwm_callback_remove(NetwmCallback cb) {
 	if(callback_list.empty())
 		return;
 
-	CbListIt it = callback_list.begin(), it_end = callback_list.end();
-	while(it != it_end) {
+	CbListIt it = callback_list.begin(), ite = callback_list.end();
+	while(it != ite) {
 		if(cb == (*it).cb) {
 			it = callback_list.erase(it);
 		} else {
@@ -314,7 +316,7 @@ void netwm_workspace_change(int n) {
 	xev.xclient.data.l[0] = (long)n;
 	xev.xclient.data.l[1] = CurrentTime;
 
-	XSendEvent (fl_display, root_win, False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+	XSendEvent(fl_display, root_win, False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
 	XSync(fl_display, True);
 }
 
@@ -443,7 +445,6 @@ int netwm_window_get_type(Window win) {
 	else if(type == _XA_NET_WM_WINDOW_TYPE_UTILITY)       return NETWM_WINDOW_TYPE_UTILITY;
 	else if(type == _XA_NET_WM_WINDOW_TYPE_SPLASH)        return NETWM_WINDOW_TYPE_SPLASH;
 	else if(type == _XA_NET_WM_WINDOW_TYPE_DIALOG)        return NETWM_WINDOW_TYPE_DIALOG;
-
 	else if(type == _XA_NET_WM_WINDOW_TYPE_DROPDOWN_MENU) return NETWM_WINDOW_TYPE_DROPDOWN_MENU;
 	else if(type == _XA_NET_WM_WINDOW_TYPE_POPUP_MENU)    return NETWM_WINDOW_TYPE_POPUP_MENU;
 	else if(type == _XA_NET_WM_WINDOW_TYPE_TOOLTIP)       return NETWM_WINDOW_TYPE_TOOLTIP;
@@ -789,41 +790,18 @@ void netwm_window_set_state(Window win, NetwmStateValue val, NetwmStateAction ac
 		Atom av;
 
 		switch(val) {
-			case NETWM_STATE_MODAL:
-				av = _XA_NET_WM_STATE_MODAL;
-				break;
-			case NETWM_STATE_STICKY:
-				av = _XA_NET_WM_STATE_STICKY;
-				break;
-			case NETWM_STATE_MAXIMIZED_VERT:
-				av = _XA_NET_WM_STATE_MAXIMIZED_VERT;
-				break;
-			case NETWM_STATE_MAXIMIZED_HORZ:
-				av = _XA_NET_WM_STATE_MAXIMIZED_HORZ;
-				break;
-			case NETWM_STATE_SHADED:
-				av = _XA_NET_WM_STATE_SHADED;
-				break;
-			case NETWM_STATE_SKIP_TASKBAR:
-				av = _XA_NET_WM_STATE_SKIP_TASKBAR;
-				break;
-			case NETWM_STATE_SKIP_PAGER:
-				av = _XA_NET_WM_STATE_SKIP_PAGER;
-				break;
-			case NETWM_STATE_HIDDEN:
-				av = _XA_NET_WM_STATE_HIDDEN;
-				break;
-			case NETWM_STATE_FULLSCREEN:
-				av = _XA_NET_WM_STATE_FULLSCREEN;
-				break;
-			case NETWM_STATE_ABOVE:
-				av = _XA_NET_WM_STATE_ABOVE;
-				break;
-			case NETWM_STATE_BELOW:
-				av = _XA_NET_WM_STATE_BELOW;
-				break;
-			case NETWM_STATE_DEMANDS_ATTENTION:
-				av = _XA_NET_WM_STATE_DEMANDS_ATTENTION;
+			case NETWM_STATE_MODAL:             av = _XA_NET_WM_STATE_MODAL; break;
+			case NETWM_STATE_STICKY:            av = _XA_NET_WM_STATE_STICKY; break;
+			case NETWM_STATE_MAXIMIZED_VERT:    av = _XA_NET_WM_STATE_MAXIMIZED_VERT; break;
+			case NETWM_STATE_MAXIMIZED_HORZ:    av = _XA_NET_WM_STATE_MAXIMIZED_HORZ; break;
+			case NETWM_STATE_SHADED:            av = _XA_NET_WM_STATE_SHADED; break;
+			case NETWM_STATE_SKIP_TASKBAR:      av = _XA_NET_WM_STATE_SKIP_TASKBAR; break;
+			case NETWM_STATE_SKIP_PAGER:        av = _XA_NET_WM_STATE_SKIP_PAGER; break;
+			case NETWM_STATE_HIDDEN:            av = _XA_NET_WM_STATE_HIDDEN; break;
+			case NETWM_STATE_FULLSCREEN:        av = _XA_NET_WM_STATE_FULLSCREEN; break;
+			case NETWM_STATE_ABOVE:             av = _XA_NET_WM_STATE_ABOVE; break;
+			case NETWM_STATE_BELOW:             av = _XA_NET_WM_STATE_BELOW; break;
+			case NETWM_STATE_DEMANDS_ATTENTION: av = _XA_NET_WM_STATE_DEMANDS_ATTENTION; break;
 			default:
 				E_WARNING(E_STRLOC ": Bad Netwm state: %i\n", action);
 				return;
@@ -833,9 +811,62 @@ void netwm_window_set_state(Window win, NetwmStateValue val, NetwmStateAction ac
 		xev.xclient.data.l[2] = 0;
 	}
 
-	XSendEvent (fl_display, RootWindow(fl_display, fl_screen), False, 
-			SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+	XSendEvent(fl_display, RootWindow(fl_display, fl_screen), False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
 	XSync(fl_display, True);
+}
+
+bool netwm_window_get_all_states(Window win, list<NetwmStateValue> &ret) {
+	init_atoms_once();	
+
+	Atom real;
+	int format;
+	unsigned long n, extra;
+	unsigned char* prop = 0;
+
+	int status = XGetWindowProperty(fl_display, win,
+									_XA_NET_WM_STATE, 0L, sizeof(Atom), False, _XA_WM_STATE, &real, &format, &n, &extra,
+									(unsigned char**)&prop);
+
+	if(status != Success || !prop)
+		return false;
+
+	Atom val, *data = (Atom*)prop;
+	NetwmStateValue st;
+
+	for(unsigned long i = 0; i < n; i++) {
+		val = data[i];
+		if(val ==_XA_NET_WM_STATE_MODAL)                   st = NETWM_STATE_MODAL;
+		else if(val == _XA_NET_WM_STATE_STICKY)            st = NETWM_STATE_STICKY;
+		else if(val == _XA_NET_WM_STATE_MAXIMIZED_VERT)    st = NETWM_STATE_MAXIMIZED_VERT;
+		else if(val == _XA_NET_WM_STATE_MAXIMIZED_HORZ)    st = NETWM_STATE_MAXIMIZED_HORZ;
+		else if(val == _XA_NET_WM_STATE_SHADED)            st = NETWM_STATE_SHADED;
+		else if(val == _XA_NET_WM_STATE_SKIP_TASKBAR)      st = NETWM_STATE_SKIP_TASKBAR;
+		else if(val == _XA_NET_WM_STATE_SKIP_PAGER)        st = NETWM_STATE_SKIP_PAGER;
+		else if(val == _XA_NET_WM_STATE_HIDDEN)            st = NETWM_STATE_HIDDEN;
+		else if(val == _XA_NET_WM_STATE_FULLSCREEN)        st = NETWM_STATE_FULLSCREEN;
+		else if(val == _XA_NET_WM_STATE_ABOVE)             st = NETWM_STATE_ABOVE;
+		else if(val == _XA_NET_WM_STATE_BELOW)             st = NETWM_STATE_BELOW;
+		else if(val == _XA_NET_WM_STATE_DEMANDS_ATTENTION) st = NETWM_STATE_DEMANDS_ATTENTION;
+		else continue;
+
+		ret.push_back(st);
+	}
+
+	XFree(prop);
+	return ret.size() > 0;
+}
+
+bool netwm_window_have_state(Window win, NetwmStateValue val) {
+	NetwmStateList lst;
+	E_RETURN_VAL_IF_FAIL(netwm_window_get_all_states(win, lst), false);
+
+	NetwmStateListIt it = lst.begin(), ite = lst.end();
+	for(; it != ite; ++it) {
+		if(*it == val)
+			return true;
+	}
+
+	return false;
 }
 
 WmStateValue wm_window_get_state(Window win) {

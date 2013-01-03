@@ -25,6 +25,8 @@
 #include <FL/Fl_Image.H>
 #include <FL/x.H>
 
+#include "List.h"
+
 EDELIB_NS_BEGIN
 
 /**
@@ -62,7 +64,6 @@ enum {
 	NETWM_WINDOW_TYPE_UTILITY,           ///< window as utility window
 	NETWM_WINDOW_TYPE_SPLASH,            ///< splash window
 	NETWM_WINDOW_TYPE_DIALOG,            ///< dialog window
-
 	NETWM_WINDOW_TYPE_DROPDOWN_MENU,     ///< dropdown menu window (part of 1.4)
 	NETWM_WINDOW_TYPE_POPUP_MENU,        ///< popup window (part of 1.4)
 	NETWM_WINDOW_TYPE_TOOLTIP,           ///< tooltip (part of 1.4)
@@ -76,10 +77,10 @@ enum {
  * State of the window. These values represent old ICCCM standard.
  */
 enum WmStateValue {
-	WM_WINDOW_STATE_NONE      = -1,   ///< window state couldn't be determined
-	WM_WINDOW_STATE_WITHDRAW  = 0,    ///< withdraw state
-	WM_WINDOW_STATE_NORMAL    = 1,    ///< window is visible
-	WM_WINDOW_STATE_ICONIC    = 3     ///< window is hidden
+	WM_WINDOW_STATE_NONE     = -1,   ///< window state couldn't be determined
+	WM_WINDOW_STATE_WITHDRAW = 0,    ///< withdraw state
+	WM_WINDOW_STATE_NORMAL   = 1,    ///< window is visible
+	WM_WINDOW_STATE_ICONIC   = 3     ///< window is hidden
 };
 
 /**
@@ -269,6 +270,18 @@ void wm_window_ede_restore(Window win);
  * according to NetwmStateAction action.
  */
 void netwm_window_set_state(Window win, NetwmStateValue val, NetwmStateAction action);
+
+/**
+ * \ingroup wm
+ * Get all window states. Returns false if wasn't able to retrieve window state.
+ */
+bool netwm_window_get_all_states(Window win, list<NetwmStateValue> &ret);
+
+/**
+ * \ingroup wm
+ * Check if window has given state. Returns false if not.
+ */
+bool netwm_window_have_state(Window win, NetwmStateValue val);
 
 /**
  * \ingroup wm
