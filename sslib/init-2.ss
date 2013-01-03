@@ -559,6 +559,11 @@ number of times before, or call (shuffle lst) different times within each call."
       (if add-space
         (set! ret (string-append ret " "))))
 
+    (define (str-trim-right!)
+      (let ([len (string-length ret)])
+        (if (>= len 2)
+          (set! ret (substring ret 0 (- len 1))))))
+
     (let loop ([lst lst])
       (for-each (lambda (x)
                   (cond
@@ -576,9 +581,10 @@ number of times before, or call (shuffle lst) different times within each call."
                     [(atom? x) (str-append! (atom->string x) #t)]
                     [else
                       (error "Unknown type in 'list->string'. Got:" x) ] ) )
-                lst ) )
+                lst))
 
     ;; close everything
+	(str-trim-right!)
     (str-append! ")" #f)
     ret
 ) )
