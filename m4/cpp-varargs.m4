@@ -37,6 +37,7 @@ AC_DEFUN([EDELIB_CPP_VARARGS], [
 			ac_wno_variadic_macros="-Wno-variadic-macros"
 
 			saved_CXXFLAGS="$CXXFLAGS"
+			CXXFLAGS="$CXXFLAGS $ac_wno_variadic_macros"
 
 			AC_MSG_CHECKING([whether _AC_LANG compiler supports $wno_variadic_macros])
 			AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])], [ac_have_wno_variadic_macros=yes], [ac_have_wno_variadic_macros=no])
