@@ -126,7 +126,7 @@ static void size_cb(Fl_Widget*, long) {
 	 * we already have current_font, maybe it would not be bad to add explicit font
 	 * registration from FontInfo inside FontCache class.
 	 */
-	if(font_cache->find(face_buf, picked_font, picked_size)) {
+	if(font_cache->find(face_buf, (Fl_Font&)picked_font, picked_size)) {
 		preview_input->textfont(picked_font);
 		preview_input->textsize(picked_size);
 		preview_input->redraw();

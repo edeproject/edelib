@@ -53,7 +53,7 @@ static void load_theme_cb(Fl_Widget*, void*) {
 
 	char buf[128];
 	if(ThemeLoader::global()->theme()->get_item("ede", "sample", buf, sizeof(buf)))
-		printf("evaluated => %s\n", buf);
+		E_DEBUG(E_STRLOC ": evaluated => %s\n", buf);
 }
 
 int main(int argc, char **argv) {
