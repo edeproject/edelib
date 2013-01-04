@@ -65,12 +65,7 @@ struct ThemeLoader_P {
 };
 
 /* if color starts with '#', assume it it html color; otherwise it is from ColorDb database */
-static bool figure_color(ColorDb *db,
-						 const char *buf, 
-						 unsigned char &r, 
-						 unsigned char &g,
-						 unsigned char &b)
-{
+static bool figure_color(ColorDb *db, const char *buf, unsigned char &r, unsigned char &g, unsigned char &b) {
 	if(buf[0] == '#') {
 		color_html_to_rgb(buf, r, g, b);
 	} else {
@@ -83,10 +78,7 @@ static bool figure_color(ColorDb *db,
 	return true;
 }
 
-static void xsettings_cb(const char* name, 
-						 XSettingsAction action,
-						 XSettingsSetting* setting, 
-						 void* data) 
+static void xsettings_cb(const char* name, XSettingsAction action, XSettingsSetting* setting, void* data) 
 { }
 
 #ifdef EDELIB_HAVE_RTTI
@@ -120,10 +112,7 @@ static void update_fonts_on_group(Fl_Group *g, int sz) {
 }
 #endif /* EDELIB_HAVE_RTTI */
 
-/*
- * update fonts by scanning widgets top-down; this could be a slow as we
- * must use RTTI here, since FLTK provides incomplete RTTI support :S
- */
+/* update fonts by scanning widgets top-down; this can be a slow without RTTI */
 static void update_fonts(int sz) {
 #ifdef EDELIB_HAVE_RTTI
 	for(Fl_Window *i = Fl::first_window(); i; i = Fl::next_window(i))
