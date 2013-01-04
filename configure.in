@@ -50,27 +50,35 @@ AC_PATH_PROG(DOXYGEN, doxygen)
 EDELIB_PROG_JAM
 
 EDELIB_COMPILER_VENDOR
+EDELIB_CPP_VARARGS
+
 case $ac_compiler_vendor in 
 	"gcc")
-	SANITY_FLAGS="-Wall -pedantic -Wshadow"
+	DEVELOPER_FLAGS="-Wall"
+
+	dnl older gcc's doesn't support -Wno-variadic-macros option
+	if test "x$ac_have_wno_variadic_macros" = "xyes"; then
+	   DEVELOPER_FLAGS="$DEVELOPER_FLAGS -pedantic -Wshadow $ac_wno_variadic_macros"
+	fi
+
 	DEBUG_FLAGS="-D_DEBUG"
 	OPTIM_FLAGS="-O2"
 	DISABLE_RTTI_FLAGS="-fno-rtti -fno-exceptions"	
 	;;
 	"sun")
-	SANITY_FLAGS="+w2"
+	DEVELOPER_FLAGS="+w2"
 	DEBUG_FLAGS="-D_DEBUG"
 	OPTIM_FLAGS="-xO3"
 	;;
 	*)
-	SANITY_FLAGS=""
+	DEVELOPER_FLAGS=""
 	DEBUG_FLAGS="-D_DEBUG"
 	OPTIM_FLAGS=""
 	;;
 esac
 
-CFLAGS="-DHAVE_CONFIG_H $SANITY_FLAGS $user_cflags"
-CXXFLAGS="-DHAVE_CONFIG_H $SANITY_FLAGS $user_cxxflags"
+CFLAGS="-DHAVE_CONFIG_H $user_cflags"
+CXXFLAGS="-DHAVE_CONFIG_H $user_cxxflags"
 
 dnl libraries, even static one, on amd64 should be compiled with '-fPIC'
 host_machine=`uname -m`
@@ -100,7 +108,6 @@ AC_CHECK_HEADER(util.h, AC_DEFINE(HAVE_UTIL_H, 1, [Define to 1 if you have util.
 dnl xdgmimcache.c
 AC_CHECK_FUNC(mmap, AC_DEFINE(HAVE_MMAP, 1, [Define to 1 if you have mmap()]))
 
-EDELIB_CPP_VARARGS
 EDELIB_DATETIME
 EDELIB_X11
 EDELIB_NOTIFY
@@ -162,8 +169,8 @@ else
 	CXXFLAGS="$CXXFLAGS $DEBUG_FLAGS"
 fi
 
-CFLAGS="$CFLAGS $LARGEFILE"
-CXXFLAGS="$CXXFLAGS $LARGEFILE"
+CFLAGS="$CFLAGS $LARGEFILE $DEVELOPER_FLAGS"
+CXXFLAGS="$CXXFLAGS $LARGEFILE $DEVELOPER_FLAGS"
 
 dnl this is issued from buildbot so edelib can be used from local directory
 if test -n "$EDELIB_USE_LOCALDIR"; then

@@ -34,8 +34,20 @@ AC_DEFUN([EDELIB_CPP_VARARGS], [
 
 		dnl g++ will warn for variadic macros in pedantic mode
 		if test "$GCC" = yes; then
-			CFLAGS="-Wno-variadic-macros $CFLAGS"
-			CXXFLAGS="-Wno-variadic-macros $CXXFLAGS"
+			ac_wno_variadic_macros="-Wno-variadic-macros"
+
+			saved_CXXFLAGS="$CXXFLAGS"
+
+			AC_MSG_CHECKING([whether _AC_LANG compiler supports $wno_variadic_macros])
+			AC_COMPILE_IFELSE([AC_LANG_PROGRAM([])], [ac_have_wno_variadic_macros=yes], [ac_have_wno_variadic_macros=no])
+
+			if test "x$ac_have_wno_variadic_macros" = "xyes"; then
+				AC_MSG_RESULT([yes])
+			else
+				AC_MSG_RESULT([no])
+			fi
+
+			CXXFLAGS="$saved_CXXFLAGS"
 		fi
 	else
 		AC_MSG_RESULT(no)
