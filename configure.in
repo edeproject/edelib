@@ -265,5 +265,5 @@ cd sslib
 cd ..
 
 echo ""
-echo "Now run jam."
+echo "Now run 'jam' command."
 echo ""
