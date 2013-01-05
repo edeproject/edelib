@@ -2,7 +2,7 @@
  * $Id$
  *
  * Run external program
- * Copyright (c) 2005-2007 edelib authors
+ * Copyright (c) 2005-2013 edelib authors
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -37,49 +37,30 @@ enum {
 };
 
 /**
- * Executes given program. Path for the program can be specified or not, but
- * for case when is not specified, environment PATH should contain a path
- * where is executable placed.
+ * Executes the given program until it completes. If full path to the executable was given, it will be directly called; if not,
+ * PATH environment variable should contain a path where executable is placed.
  *
- * If parameter <em>wait</em> is set to true (default), this function will wait
- * untill started program is not exited; in that case will return code from
- * started program. On other hand, will just run program (will not check if program
- * can be run or not) and return 0, which is default value for succesfull execution.
+ * Please note how some programs run without parameters (but internaly are executed via shell) can set <em>errno</em> to 2 which
+ * is usually interpreted as ENOENT (or program does not exists); for examle <em>tar</em> is known for this.
  *
- * \return 0 if starting and quitting program went fine; otherwise return one of
- * above codes, or errno value for not checked codes
- * \param cmd is commad to be executed with optional full path and parameters
- * \param wait if is true (default) function will not exit until program exists
- * \deprecated in a favor of run_sync() and run_async()
+ * \return 0 if starting and quitting program went fine; otherwise return one of RUN_* codes or errno value for not checked codes
+ * \param fmt is printf-like formatted string
  */
-EDELIB_API int run_program(const char* cmd, bool wait = true) EDELIB_DEPRECATED;
+EDELIB_API int run_sync(const char *fmt, ...);
 
 /**
- * Same as run_program(), but run printf-like constructed command
- * \deprecated in a favor of run_sync() and run_async()
+ * Same as run_sync(), except it will run command without blocking.
  */
-EDELIB_API int run_program_fmt(bool wait, const char* fmt, ...) EDELIB_DEPRECATED;
+EDELIB_API int run_async(const char *fmt, ...);
 
 /**
- * Executes the given program. If full path to the executable was given, it will be 
- * directly called; if not, PATH environment variable should contain a path where
- * executable is placed.
+ * Run program without blocking, but return successfully started child PID value.
  *
- * \note Some programs that exists and are run without parameters (but internaly are executed 
- * via shell) could set <em>errno</em> to 2 which is usually interpreted as ENOENT (or 
- * program does not exists); for examle <em>tar</em> is known for this. Solution? Rewrite that tar!!!
- *
- * This function will run a command and wait until it finishes.
- * \return 0 if starting and quitting program went fine; otherwise return one of
- * above codes, or errno value for not checked codes
- * \param fmt is printf-like formated string
+ * \return the same values as run_sync()
+ * \param child_pid if not NULL will be set PID value of started child
+ * \param fmt is printf-like formatted string
  */
-EDELIB_API int run_sync(const char* fmt, ...);
-
-/**
- * Same as run_sync(), except it will run command without blocking
- */
-EDELIB_API int run_async(const char* fmt, ...);
+EDELIB_API int run_async_with_pid(int *child_pid, const char *fmt, ...);
 
 EDELIB_NS_END
 #endif

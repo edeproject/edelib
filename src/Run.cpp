@@ -46,7 +46,7 @@
 #include <edelib/Missing.h>
 #include <edelib/Debug.h>
 
-#define CMD_BUF_SIZE 128
+#define CMD_BUFSZ 128
 
 EDELIB_NS_BEGIN
 
@@ -436,51 +436,46 @@ static int fork_child_sync(const char* cmd) {
 	return ret;
 }
 
-int run_program(const char* cmd, bool wait) {
-	if(wait)
-		return fork_child_sync(cmd);
-	else
-		return fork_child_async(cmd, 0);
-}
+static int run_internal(bool async, int *child_pid, const char *fmt, va_list args) {
+	E_ASSERT(fmt != NULL);
 
-int run_program_fmt(bool wait, const char* fmt, ...) {
-	char buf[CMD_BUF_SIZE];
-	va_list ap;
+	char buf[CMD_BUFSZ];
+	vsnprintf(buf, sizeof(buf), fmt, args);
 
-	va_start(ap, fmt);
-	vsnprintf(buf, sizeof(buf), fmt, ap);
-	va_end(ap);
-
-	if(wait)
-		return fork_child_sync(buf);
-	else
-		return fork_child_async(buf, 0);
+	return async ? fork_child_async(buf, child_pid) : fork_child_sync(buf);
 }
 
 int run_sync(const char* fmt, ...) {
-	E_ASSERT(fmt != NULL);
+	int ret;
+	va_list args;
 
-	char buf[CMD_BUF_SIZE];
-	va_list ap;
+	va_start(args, fmt);
+	ret = run_internal(false, 0, fmt, args);
+	va_end(args);
 
-	va_start(ap, fmt);
-	vsnprintf(buf, sizeof(buf), fmt, ap);
-	va_end(ap);
-
-	return fork_child_sync(buf);
+	return ret;
 }
 
-int run_async(const char* fmt, ...) {
-	E_ASSERT(fmt != NULL);
+int run_async_with_pid(int *child_pid, const char *fmt, ...) {
+	int ret;
+	va_list args;
 
-	char buf[CMD_BUF_SIZE];
-	va_list ap;
+	va_start(args, fmt);
+	ret = run_internal(true, child_pid, fmt, args);
+	va_end(args);
 
-	va_start(ap, fmt);
-	vsnprintf(buf, sizeof(buf), fmt, ap);
-	va_end(ap);
+	return ret;
+}
 
-	return fork_child_async(buf, 0);
+int run_async(const char *fmt, ...) {
+	int ret;
+	va_list args;
+
+	va_start(args, fmt);
+	ret = run_internal(true, NULL, fmt, args);
+	va_end(args);
+
+	return ret;
 }
 
 EDELIB_NS_END
