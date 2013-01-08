@@ -37,42 +37,34 @@ EDELIB_NS_BEGIN
  * \class ExpandableGroup
  * \brief A group with applied layout on childs.
  *
- * ExpandableGroup is group where all childs are placed
- * next to each other. Resizing this group will dynamically
- * reorder childs position so they fit into group height.
- * Because of this, childs x() and y() values are ignored.
+ * ExpandableGroup is group where all childs are placed next to each other. Resizing this group will dynamically
+ * reorder childs position so they fit into group height. Because of this, childs x() and y() values are ignored.
  *
- * Starting position for the first child is x = 10, y = 10, and spacing
- * between each added child is 10 px.
+ * Starting position for the first child is x = 10, y = 10, and spacing between each added child is 10 px.
  *
- * Childs before be put in, <b>must</b> be allocated with <em>new</em>;
- * destructor on them will be called automatically.
+ * Childs before be put in, <b>must</b> be allocated with <em>new</em>; destructor on them will be called automatically.
  *
  * \note All childs have to have the same height, so reordering can be correctly computed
  */
 
 class EDELIB_API ExpandableGroup : public Fl_Group {
 private:
+	int scroll_w;
 	int px, py;
 	int sval, sval_curr, sval_old;
 	int area_x, area_y, area_w, area_h;
 
-	Fl_Scrollbar*  vscrollbar;
+	Fl_Scrollbar *vscrollbar;
 
 	void reposition_childs(void);
 	void fix_scrollbar_order(void);
-	static void draw_clip(void* d, int X, int Y, int W, int H);
+	static void draw_clip(void *d, int X, int Y, int W, int H);
 
 public:
 	/**
 	 * Constructs an empty group.
 	 */
-	ExpandableGroup(int x, int y, int w, int h, const char* l=0);
-
-	/**
-	 * Clear data and call destructor on widgets.
-	 */
-	~ExpandableGroup();
+	ExpandableGroup(int x, int y, int w, int h, const char *l = 0);
 
 #ifndef SKIP_DOCS
 	virtual void draw(void);

@@ -48,33 +48,85 @@ EDELIB_NS_BEGIN
 typedef list<String> StringList;
 typedef list<String>::iterator StringListIt;
 
+class IconChooser;
+
 class IconBox : public Fl_Button {
 private: 
-	bool sel;
-	char *icon_name;
-	String icon_path;
-	Fl_Color orig_color;
+	char    *icon_name;
+	String   icon_path;
+	Fl_Color saved_color;
+	IconChooser *chooser;
 
 public:
 	IconBox(int x, int y, int w, int h, const char *l = 0);
 	~IconBox();
 
+	void set_chooser(IconChooser *c) { chooser = c; }
+	void select_only_me(void);
 	void set_icon_name_and_path(const String& s);
 	const String& get_icon_path(void) const { return icon_path; }
-
-	bool selected(void) { return sel; }
 	int handle(int event);
+};
+
+class IconChooser : public Fl_Double_Window {
+private:
+	friend class IconBox;
+
+	String ret, start;
+	bool browsed_icon;  /* user manually found icon */
+
+	IconBox   *current; /* currently selected */
+	Fl_Button *bbrowse, *bok, *bcancel;
+
+	ExpandableGroup *icon_group;
+
+public:
+	IconChooser();
+
+	void load_from_list(StringList &lst);
+	bool find_focused(void);
+
+	void load(const char *dir);
+	void load(IconSizes sz, IconContext ctx);
+
+	void set_browsed_icon(const char *ic) {
+		browsed_icon = true;
+		ret = ic;
+	}
+
+	String& get_ret(void) { return ret; }
+	bool is_browsed_icon(void) { return browsed_icon; }
 };
 
 IconBox::IconBox(int X, int Y, int W, int H, const char *l) : Fl_Button(X, Y, W, H, l) {
 	box(FL_FLAT_BOX);
-	orig_color = color();
 	icon_name = NULL;
-	sel = false;
+	selection_color(FL_SELECTION_COLOR);
 }
 
 IconBox::~IconBox() {
 	if(icon_name) free(icon_name);
+}
+
+/*
+ * not very smart, but avoids IconChooser cluttering; this will set on all children
+ * value(0) except current one, so FLTK can draw selection box only on this
+ */
+void IconBox::select_only_me(void) {
+	if(value() == 1) return; /* prevent call on double click */
+
+	Fl_Group *p = parent();
+	IconBox *o;
+
+	for(int i = 0; i < p->children(); i++) {
+		o = (IconBox*)p->child(i);
+		o->value(0);
+
+		if(o == this) {
+			o->value(1);
+			chooser->current = this; /* so we don't have to iterate and search value(1)-ed box */
+		}
+	}
 }
 
 void IconBox::set_icon_name_and_path(const String& s) {
@@ -117,63 +169,20 @@ void IconBox::set_icon_name_and_path(const String& s) {
 	tooltip(icon_name);
 }
 
-/*
- * FIXME: icon will loose focus if is selected then press OK, which will take focus from it.
- * In this case, nothing will be returned; double-click works as expected.
- */
 int IconBox::handle(int event) {
 	switch(event) {
-		case FL_FOCUS:
-			orig_color = color();
-			color(selection_color());
-			redraw();
-			sel = true;
-			return 1;
-		case FL_UNFOCUS:
-			color(orig_color);
-			redraw();
-			sel = false;
-			return 1;
 		case FL_PUSH:
 			take_focus();
+			select_only_me();
+
 			/* double-click */
 			if(Fl::event_clicks())
 				do_callback();
 			return 1;
-		case FL_RELEASE:
-			return 1;
-		default:
-			break;
 	}
 
 	return Fl_Button::handle(event);
 }
-
-class IconChooser : public Fl_Double_Window {
-private:
-	String ret, start;
-	bool browsed_icon; /* user manually found icon */
-
-	Fl_Button *bbrowse, *bok, *bcancel;
-	ExpandableGroup *icon_group;
-
-public:
-	IconChooser();
-
-	void load_from_list(StringList &lst);
-	bool find_focused(void);
-
-	void load(const char *dir);
-	void load(IconSizes sz, IconContext ctx);
-
-	void set_browsed_icon(const char *ic) {
-		browsed_icon = true;
-		ret = ic;
-	}
-
-	String& get_ret(void) { return ret; }
-	bool is_browsed_icon(void) { return browsed_icon; }
-};
 
 static void cancel_cb(Fl_Widget*, void *w) {
 	IconChooser *ic = (IconChooser*)w;
@@ -196,17 +205,15 @@ static void browse_cb(Fl_Widget*, void *w) {
 	ic->hide(); /* hide dialog */
 }
 
-/*
- * This callback is called when is double-clicked on icon box inside icon list; since all childs when
- * are double-clicked get focus automatically, this forwarding to ok_cb(), who checks what child is
- * focused, is valid
- */
+/* this callback is called when is double-clicked on icon box inside icon list */
 void iconbox_cb(Fl_Widget*, void *w) {
 	ok_cb(NULL, w);
 }
 
 IconChooser::IconChooser() : Fl_Double_Window(355, 305, _("Choose icon")) {
 	browsed_icon = false;
+	current = NULL;
+
 	begin();
 
 	icon_group = new ExpandableGroup(10, 10, 335, 250);
@@ -289,12 +296,12 @@ void IconChooser::load_from_list(StringList &lst) {
 			preview = new IconBox(0, 0, imax_w, imax_h);
 			preview->set_icon_name_and_path(*it);
 
-			/* use background/selection from ExpandableGroup */
+			/* use background from ExpandableGroup */
 			preview->color(icon_group->color());
-			preview->selection_color(icon_group->color());
 
 			preview->image(img);
 			preview->callback(iconbox_cb, this);
+			preview->set_chooser(this);
 			icon_group->add(preview);
 
 			/* allow window to receive events every 10th icon */
@@ -306,17 +313,9 @@ void IconChooser::load_from_list(StringList &lst) {
 }
 
 bool IconChooser::find_focused(void) {
-	IconBox *b;
-	for(int n = 0; n < icon_group->children(); n++) {
-		b = (IconBox*)icon_group->child(n);
-
-		if(b->selected()) {
-			ret.assign(b->get_icon_path());
-			return true;
-		}
-	}
-
-	return false;
+	if(!current) return false;
+	ret = current->get_icon_path();
+	return true;
 }
 
 void IconChooser::load(const char *dir) {
