@@ -679,7 +679,7 @@ Window netwm_window_get_active(void) {
 			(unsigned char**)&prop);
 
 	if(status != Success || !prop)
-		return -1;
+		return (Window)-1; /* Window is int type */
 
 	int ret = int(*(long*)prop);
 	XFree(prop);
