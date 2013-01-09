@@ -1764,15 +1764,16 @@ static INLINE int skipspace(scheme *sc) {
 
 /* record it */
 #if SHOW_ERROR_LINE
-     sc->load_stack[sc->file_i].rep.stdio.curr_line += curr_line;
+     if (sc->load_stack[sc->file_i].kind & port_file)
+       sc->load_stack[sc->file_i].rep.stdio.curr_line += curr_line;
 #endif
 
      if(c!=EOF) {
-          backchar(sc,c);
-      return 1;
+       backchar(sc,c);
+       return 1;
+     } else { 
+       return EOF; 
      }
-     else
-       { return EOF; }
 }
 
 /* get token */
@@ -1805,7 +1806,7 @@ static int token(scheme *sc) {
              ;
 
 #if SHOW_ERROR_LINE
-           if(c == '\n')
+           if(c == '\n' && sc->load_stack[sc->file_i].kind & port_file)
              sc->load_stack[sc->file_i].rep.stdio.curr_line++;
 #endif
 
@@ -1833,7 +1834,7 @@ static int token(scheme *sc) {
                    ;
 
 #if SHOW_ERROR_LINE
-           if(c == '\n')
+           if(c == '\n' && sc->load_stack[sc->file_i].kind & port_file)
              sc->load_stack[sc->file_i].rep.stdio.curr_line++;
 #endif
 
@@ -2286,7 +2287,8 @@ static pointer _Error_1(scheme *sc, const char *s, pointer a) {
      char sbuf[STRBUFFSIZE];
 
      /* make sure error is not in REPL */
-     if(sc->load_stack[sc->file_i].rep.stdio.file != stdin) {
+     if(sc->load_stack[sc->file_i].kind & port_file &&
+        sc->load_stack[sc->file_i].rep.stdio.file != stdin) {
        int ln = sc->load_stack[sc->file_i].rep.stdio.curr_line;
        const char *fname = sc->load_stack[sc->file_i].rep.stdio.filename;
 
@@ -4108,7 +4110,7 @@ static pointer opexe_5(scheme *sc, enum scheme_opcodes op) {
                if (c != '\n')
                  backchar(sc,c);
 #if SHOW_ERROR_LINE
-               else
+               else if (sc->load_stack[sc->file_i].kind & port_file)
                   sc->load_stack[sc->file_i].rep.stdio.curr_line++;
 #endif
                sc->nesting_stack[sc->file_i]--;
@@ -4755,11 +4757,12 @@ void scheme_deinit(scheme *sc) {
   }
 
 #if SHOW_ERROR_LINE
-  fname = sc->load_stack[i].rep.stdio.filename;
-
-  for(i=0; i<sc->file_i; i++) {
-    if(fname)
-      sc->free(fname);
+  for(i=0; i<=sc->file_i; i++) {
+    if (sc->load_stack[sc->file_i].kind & port_file) {
+      fname = sc->load_stack[i].rep.stdio.filename;
+      if(fname)
+        sc->free(fname);
+    }
   }
 #endif
 }
