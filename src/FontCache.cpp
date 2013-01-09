@@ -263,8 +263,8 @@ bool FontCache::find(const char *n, Fl_Font &font, int &font_size) {
 	 * ' sans', but will be 'Bsans' or 'Isans' for bold/italic variants.
 	 */
 	for(int i = 0; i < FL_FREE_FONT; i++) {
-		if(strscmp(fi->face, Fl::get_font(i)) == 0) {
-			font = i;
+		if(strscmp(fi->face, Fl::get_font((Fl_Font)i)) == 0) {
+			font = (Fl_Font)i;
 			font_size = facesz;
 
 			E_DEBUG(E_STRLOC ": FLTK already has '%s' registered as '%i'\n", fi->face, font);
@@ -278,7 +278,7 @@ bool FontCache::find(const char *n, Fl_Font &font, int &font_size) {
 		E_DEBUG("'%s' == '%s'\n", fi->face, (*it)->c_str());
 
 		if(strscmp(fi->face, (*it)->c_str()) == 0) {
-			font = i;
+			font = (Fl_Font)i;
 			font_size = facesz;
 
 			E_DEBUG(E_STRLOC ": font '%s' found as '%i'\n", fi->face, font);
