@@ -44,6 +44,18 @@
 
 /**
  * \ingroup scheme
+ * Alias for internal scheme object.
+ */
+typedef scheme  edelib_scheme_t;
+
+/**
+ * \ingroup scheme
+ * Alias for internal pointer object.
+ */
+typedef pointer edelib_scheme_pointer_t;
+
+/**
+ * \ingroup scheme
  * Initialize scheme interpreter and returns scheme object. By default, it will try to search bootstrap files in builtin path
  * (depends on <i>--prefix</i> when <b>configure</b> script was run). This can be overridden by setting <i>EDELIB_SCHEME_INIT</i>
  * environment variable with explicitly given bootstrap files and their absolute path. The paths should be separated with <b>:</b>
@@ -68,6 +80,12 @@ scheme *edelib_scheme_init(void);
  * Load scheme source from file.
  */
 #define edelib_scheme_load_file scheme_load_file
+
+/**
+ * \ingroup scheme
+ * Load scheme source from file, but provide filename for error report.
+ */
+#define edelib_scheme_load_named_file scheme_load_named_file
 
 /**
  * \ingroup scheme

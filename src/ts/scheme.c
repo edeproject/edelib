@@ -2302,7 +2302,7 @@ static pointer _Error_1(scheme *sc, const char *s, pointer a) {
 #endif
 
 #if USE_ERROR_HOOK
-     x=find_slot_in_env(sc,sc->envir,hdl,1);
+    x = find_slot_in_env(sc,sc->envir,hdl,1);
     if (x != sc->NIL) {
          if(a!=0) {
                sc->code = cons(sc, cons(sc, sc->QUOTE, cons(sc,(a), sc->NIL)), sc->NIL);

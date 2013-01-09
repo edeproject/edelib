@@ -104,7 +104,7 @@ static void theme_p_init(Theme_P *t) {
 }
 
 static char *get_string_var(scheme *sc, const char *symbol) {
-	pointer x = scheme_eval(sc, mk_symbol(sc, symbol));
+	pointer x = edelib_scheme_eval(sc, mk_symbol(sc, symbol));
 
 	if(x != sc->NIL && sc->vptr->is_string(x))
 		return sc->vptr->string_value(x);
@@ -117,9 +117,9 @@ static pointer get_style_once(Theme_P *priv, scheme *sc, const char *style_name)
 	if(priv->cached_ret)
 		return priv->cached_ret;
 
-	pointer ret = scheme_eval(sc, 
-			_cons(sc, mk_symbol(sc, "theme.style-get"), 
-				_cons(sc, mk_string(sc, style_name), sc->NIL, 0), 0));
+	pointer ret = edelib_scheme_eval(sc, 
+			edelib_scheme_cons(sc, edelib_scheme_mk_symbol(sc, "theme.style-get"), 
+				edelib_scheme_cons(sc, edelib_scheme_mk_string(sc, style_name), sc->NIL)));
 
 	/* allow to call this function again if someting went wrong */
 	if(ret == sc->NIL || !sc->vptr->is_pair(ret))
@@ -232,7 +232,7 @@ bool Theme::load(const char *f) {
 	/* If returned name is the same as file, dirname wasn't found directory name in given path. */
 	if(strcmp(dir, f) != 0) {
 		pointer sym = mk_symbol(ss, "private:theme.search-path");
-		scheme_define(ss, ss->global_env, sym, mk_string(ss, dir));
+		edelib_scheme_define(ss, ss->global_env, sym, mk_string(ss, dir));
 		ss->vptr->setimmutable(sym);
 	}
 
@@ -247,7 +247,7 @@ bool Theme::load(const char *f) {
 		return false;
 	}
 
-	scheme_load_file(ss, fd);
+	edelib_scheme_load_named_file(ss, fd, f);
 	fclose(fd);
 
 	if(ss->no_memory) {
@@ -300,7 +300,7 @@ void Theme::prompt(void) {
 	init_interpreter();
 
 	printf("Theme console (edelib %s). Type \"(quit)\" to exit.", EDELIB_VERSION);
-	scheme_load_file(priv->sc, stdin);
+	edelib_scheme_load_file(priv->sc, stdin);
 }
 
 bool Theme::get_item(const char *style_name, const char *item_name, char *ret, unsigned int sz) {
@@ -385,7 +385,7 @@ bool Theme::get_item(const char *style_name, const char *item_name, long &ret, l
 		if(ss->vptr->is_symbol(item) && strcmp(item_name, ss->vptr->symname(item)) == 0) {
 #if THEME_EVAL_VALUE_PAIR
 			if(ss->vptr->is_pair(val))
-				val = scheme_eval(ss, val);
+				val = edelib_scheme_eval(ss, val);
 #endif
 			/* if it is not long, simply continue until find item with the long value */
 			if(ss->vptr->ivalue(val)) {
