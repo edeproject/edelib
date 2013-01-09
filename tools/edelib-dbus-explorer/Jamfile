@@ -19,17 +19,18 @@
 SubDir TOP tools edelib-dbus-explorer ;
 
 if $(DBUS_LIBS) {
+    GEN_HELP_SCRIPT = "$(LOCATE_SOURCE)/gen-help.sh" ;
+
 	rule GenHelp {
+		MakeLocate $(>) : $(LOCATE_SOURCE) ;
+		SEARCH on $(>) = $(SEARCH_SOURCE) ;
+
 		LocalDepends $(<) : $(>) ;
-
-		MakeLocate $(<) : $(LOCATE_TARGET) ;
-		MakeLocate $(>) : $(SEARCH_SOURCE) ;
-
 		GenHelp1 $(<) : $(>) ;
 	}
 
 	actions piecemeal GenHelp1 {
-		cat $(>) | $(TOP)/tools/edelib-dbus-explorer/gen-help.sh > $(<) ;
+		cat $(>) | $(GEN_HELP_SCRIPT) > $(<) ;
 	}
 
 	PROGRAM_FLAGS = $(FLTK_CFLAGS) -I$(TOP)/tools/edelib-dbus-explorer ;
