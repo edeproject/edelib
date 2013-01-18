@@ -18,12 +18,14 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdlib.h>
 #include <edelib/IconTheme.h>
 #include <edelib/Config.h>
 #include <edelib/Util.h>
 #include <edelib/StrUtil.h>
 #include <edelib/Directory.h>
 #include <edelib/FileTest.h>
+#include <edelib/Missing.h>
 
 EDELIB_NS_BEGIN
 
@@ -61,9 +63,9 @@ struct IconThemePrivate {
 };
 
 static void list_append(StrList& from, StrList& to) {
-	StrListIter it = from.begin(), it_end = from.end();
+	StrListIter it = from.begin(), ite = from.end();
 
-	for(; it != it_end; ++it)
+	for(; it != ite; ++it)
 		to.push_back(*it);
 }
 
@@ -88,9 +90,9 @@ static void init_base_dirs(StrList& dirs) {
 	StrList xdg_data_dirs;
 	system_data_dirs(xdg_data_dirs);
 
-	StrListIter it = xdg_data_dirs.begin(), it_end = xdg_data_dirs.end();
+	StrListIter it = xdg_data_dirs.begin(), ite = xdg_data_dirs.end();
 
-	for(; it != it_end; ++it) {
+	for(; it != ite; ++it) {
 		path = *it;
 		path += "/icons/";
 		dirs.push_back(path);
@@ -161,13 +163,12 @@ void IconTheme::load_theme(const char* name) {
 	}
 
 	/* no 'index.theme' was found; we should quit */
-	if(!found)
-		return;
+	if(!found) return;
 
-	char* tmp_buf = NULL;
-	unsigned int tmp_buflen;
+	char *saved, *dirs = NULL;
+	unsigned int dirs_len;
 
-	if(!c.get_allocated("Icon Theme", "Directories", &tmp_buf, tmp_buflen)) {
+	if(!c.get_allocated("Icon Theme", "Directories", &dirs, dirs_len)) {
 		E_WARNING(E_STRLOC ": bad: %s\n", c.strerror());
 		return;
 	}
@@ -184,41 +185,37 @@ void IconTheme::load_theme(const char* name) {
 	 *
 	 * For now Threshold is ignored
 	 */
-	StrList dl;
-	stringtok(dl, tmp_buf, ",");
-	delete [] tmp_buf;
 
 	/* used to load theme info and Context/Inherits */
-	char static_buf[1024];
+	char buf[1024];
 
 	/* load theme informations */
 	if(!priv->info_loaded) {
-		if(c.get_localized("Icon Theme", "Name", static_buf, sizeof(static_buf)))
-			priv->curr_theme_stylized = static_buf;
+		if(c.get_localized("Icon Theme", "Name", buf, sizeof(buf)))
+			priv->curr_theme_stylized = buf;
 
-		if(c.get_localized("Icon Theme", "Comment", static_buf, sizeof(static_buf)))
-			priv->curr_theme_descr = static_buf;
+		if(c.get_localized("Icon Theme", "Comment", buf, sizeof(buf)))
+			priv->curr_theme_descr = buf;
 
-		if(c.get("Icon Theme", "Example", static_buf, sizeof(static_buf)))
-			priv->curr_theme_example = static_buf;
+		if(c.get("Icon Theme", "Example", buf, sizeof(buf)))
+			priv->curr_theme_example = buf;
 
 		priv->info_loaded = true;
 	}
 
-	int         size = 0;
-	IconDirInfo dirinfo;
+	int         size;
 	IconContext context;
 	String      theme_subdir_path;
 
-	for(StrListIter it = dl.begin(); it != dl.end(); ++it) {
+	for(char *dl = strtok_r(dirs, ",", &saved); dl; dl = strtok_r(NULL, ",", &saved)) {
 		/* remove spaces */
-		(*it).trim();
+		str_trim(dl);
 
-		c.get((*it).c_str(), "Size", size, 0);
+		c.get(dl, "Size", size, 0);
 		size = check_size(size);
 
-		if(c.get((*it).c_str(), "Context", static_buf, sizeof(static_buf)))
-			context = figure_context(static_buf);
+		if(c.get(dl, "Context", buf, sizeof(buf)))
+			context = figure_context(buf);
 		else {
 			/* 'Context' key not found */
 			context = ICON_CONTEXT_ANY;
@@ -236,7 +233,7 @@ void IconTheme::load_theme(const char* name) {
 			theme_subdir_path = *dit;
 			theme_subdir_path += name;
 			theme_subdir_path += E_DIR_SEPARATOR_STR;
-			theme_subdir_path += *it;
+			theme_subdir_path += dl;
 
 			if(file_test(theme_subdir_path.c_str(), FILE_TEST_IS_DIR)) {
 				IconDirInfo inf;
@@ -249,6 +246,8 @@ void IconTheme::load_theme(const char* name) {
 			}
 		}
 	}
+
+	delete []dirs;
 	
 	/*
 	 * Now try to read Inherits key which represent parents; if not found, default should be 'hicolor';
@@ -258,8 +257,8 @@ void IconTheme::load_theme(const char* name) {
 	 *
 	 * They all must be scanned :(
 	 */
-	if(c.get("Icon Theme", "Inherits", static_buf, sizeof(static_buf)))
-		read_inherits(static_buf);
+	if(c.get("Icon Theme", "Inherits", buf, sizeof(buf)))
+		read_inherits(buf);
 	else {
 		/* prevent infinite recursion */
 		if(!priv->fallback_visited) {
@@ -270,15 +269,15 @@ void IconTheme::load_theme(const char* name) {
 }
 
 void IconTheme::read_inherits(const char* buf) {
-	StrList parents;
-	stringtok(parents, buf, ",");
+	char *ptr, *parents = edelib_strndup(buf, 256);
+	E_RETURN_IF_FAIL(parents != NULL);
 
-	StrListIter it = parents.begin(), it_end = parents.end();
-
-	for(; it != it_end; ++it) { 
-		(*it).trim();
-		load_theme((*it).c_str());
+	for(char *p = strtok_r(parents, ",", &ptr); p; p = strtok_r(NULL, ",", &ptr)) {
+		str_trim(p);
+		load_theme(p);
 	}
+
+	free(parents);
 }
 
 void IconTheme::load(const char* name) {
@@ -305,9 +304,7 @@ void IconTheme::clear(void) {
 
 String IconTheme::find_icon(const char* icon, IconSizes sz, IconContext ctx) {
 	E_ASSERT(priv != NULL && "Did you call load() before this function?");
-
-	if(priv->dirlist.empty())
-		return "";
+	E_RETURN_VAL_IF_FAIL(priv->dirlist.size() > 0, "");
 
 	String ret; ret.reserve(64);
 	bool has_extension = false;
@@ -321,10 +318,10 @@ String IconTheme::find_icon(const char* icon, IconSizes sz, IconContext ctx) {
 	}
 
 	/* check if icon has extension; this is error, but check that anyway */
-	DirListIter it = priv->dirlist.begin(), it_end = priv->dirlist.end();
+	DirListIter it = priv->dirlist.begin(), ite = priv->dirlist.end();
 
 	/* ICON_CONTEXT_ANY means context is ignored, but also means slower lookup since all entries are searched */
-	for(; it != it_end; ++it) {
+	for(; it != ite; ++it) {
 		if((*it).size == sz && ((*it).context == ctx || ctx == ICON_CONTEXT_ANY)) {
 			if(has_extension) {
 				ret = (*it).path;
@@ -373,7 +370,7 @@ String IconTheme::find_icon(const char* icon, IconSizes sz, IconContext ctx) {
 
 #if 0	
 	/* third chance, search through icon theme, ignoring the size and context */
-	for(it = priv->dirlist.begin(); it != it_end; ++it) {
+	for(it = priv->dirlist.begin(); it != ite; ++it) {
 		if(has_extension) {
 			ret = (*it).path;
 			ret += E_DIR_SEPARATOR_STR;
@@ -439,9 +436,9 @@ void IconTheme::query_icons(list<String>& lst, IconSizes sz, IconContext ctx) co
 		return;
 
 	StrList content;
-	DirListIter it = priv->dirlist.begin(), it_end = priv->dirlist.end();
+	DirListIter it = priv->dirlist.begin(), ite = priv->dirlist.end();
 
-	for(; it != it_end; ++it) {
+	for(; it != ite; ++it) {
 		if((*it).size == sz && ((*it).context == ctx || ctx == ICON_CONTEXT_ANY)) {
 			if(dir_list((*it).path.c_str(), content, true))
 				list_append(content, lst);
