@@ -107,17 +107,17 @@ def visit(arg, dirname, names):
 			elif rsvg_convert_path:
 				cmd = "%s -w %s -h %s -o %s %s" % (rsvg_convert_path, w, h, dsticon, srcicon)
 
-			print "Making %s..." % dsticon
+			print("Making %s..." % dsticon)
 			if os.system(cmd) != 0:
-				print "*** Failed to convert %s" % srcicon
+				print("*** Failed to convert %s" % srcicon)
 				return
 
 def convert(srcdir, dstdir):
 	os.path.walk(srcdir, visit, dstdir) 
 
 def help():
-	print "Usage: %s [svgdir] [dstdir]" % PROGRAM_NAME
-	print "Convert svg icon theme from [svgdir] to png equivalent one"
+	print("Usage: %s [svgdir] [dstdir]" % PROGRAM_NAME)
+	print("Convert svg icon theme from [svgdir] to png equivalent one")
 
 def main():
 	if len(sys.argv) != 3:
@@ -125,18 +125,18 @@ def main():
 		return
 
 	if not find_converter():
-		print "Unable to find either inkscape or rsvg. If you have installed one of them, please append "
-		print "location directory path to PATH environment."
+		print("Unable to find either inkscape or rsvg. If you have installed one of them, please append ")
+		print("location directory path to PATH environment.")
 		return
 
 	src = sys.argv[1]
 	dst = sys.argv[2]
 	if not dir_exists(src):
-		print "%s does not exists. What to convert?" % src
+		print("%s does not exists. What to convert?" % src)
 		return
 
 	if dir_exists(dst):
-		print "%s exists. Remove it or chose another name" % dst
+		print("%s exists. Remove it or chose another name" % dst)
 		return
 
 	convert(src, dst)

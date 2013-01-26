@@ -64,11 +64,11 @@ def extract_size(path):
 	return None
 
 def scan_dir(dir):
-	print "# Generated with %s\n" % PROGRAM_NAME
-	print "[Icon Theme]"
-	print "Name=%s" % dir
-	print "Comment=%s theme" % dir.capitalize()
-	print "# Inherits="
+	print("# Generated with %s\n" % PROGRAM_NAME)
+	print("[Icon Theme]")
+	print("Name=%s" % dir)
+	print("Comment=%s theme" % dir.capitalize())
+	print("# Inherits=")
 
 	# directory list for 'Directories'
 	dirs = []
@@ -102,16 +102,16 @@ def scan_dir(dir):
 
 	os.path.walk(dir, visitor, None)
 
-	print "Directories=%s" % ",".join(dirs)
+	print("Directories=%s" % ",".join(dirs))
 	
 	for k in icon_keys:
-		print "\n[%s]" % k.section
-		print "Size=%s" % k.size
-		print "Context=%s" % k.context
+		print("\n[%s]" % k.section)
+		print("Size=%s" % k.size)
+		print("Context=%s" % k.context)
 
 def help():
-	print "Usage: %s [dir]" % PROGRAM_NAME
-	print "Creates index.theme type file from the given directory where content is spit to the stdout"
+	print("Usage: %s [dir]" % PROGRAM_NAME)
+	print("Creates index.theme type file from the given directory where content is spit to the stdout")
 
 def main():
 	if len(sys.argv) != 2:
@@ -119,7 +119,7 @@ def main():
 	else:
 		dir = sys.argv[1]
 		if not dir_exists(dir):
-			print "%s does not exists or is not directory"
+			print("%s does not exists or is not directory")
 		else:
 			# go to location of given dir, so we could construct correct paths
 			parts = dir.split("/")
