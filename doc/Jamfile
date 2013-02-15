@@ -12,20 +12,18 @@ SubDir TOP doc ;
 
 rule MakeApiDocumentation 
 {
-	if $(DOXYGEN) {
-		LocalDepends docs : $(<) ;
-		LocalDepends $(<) : $(>) ;
-		LocalDepends all : docs ;
+	LocalDepends docs : $(<) ;
+	LocalDepends $(<) : $(>) ;
+	LocalDepends all : docs ;
 
-		NotFile docs ;
-		Always  docs ;
+	NotFile docs ;
+	Always  docs ;
 
-		MakeApiDocumentation1 $(<) : $(>) ;
-		Cleandir clean : $(<) ;
-	}
+	MakeApiDocumentation1 $(<) : $(>) ;
+	Cleandir clean : $(<) ;
 }
 
-# Strip directory path from (example: 'doc/Doxyfile') and
+# strip directory path from (example: 'doc/Doxyfile') and
 # go into it so DOXYGEN command can work
 actions piecemeal MakeApiDocumentation1
 {
@@ -33,11 +31,13 @@ actions piecemeal MakeApiDocumentation1
 	$(DOXYGEN) $(>:B) ;
 }
 
-MakeApiDocumentation [ FDirName $(SUBDIR) html ] : [ FFileName $(SUBDIR) Doxyfile ] ;
-
 InstallDocumentation [ FDirName $(docdir) $(EDELIB_DOCDIR) ] : [ FFileName $(TOP) README ] ;
 InstallDocumentation [ FDirName $(docdir) $(EDELIB_DOCDIR) ] : [ FFileName $(TOP) INSTALL ] ;
 InstallDocumentation [ FDirName $(docdir) $(EDELIB_DOCDIR) ] : [ FFileName $(TOP) COPYING ] ;
-InstallDirectory     [ FDirName $(docdir) $(EDELIB_DOCDIR) ] : [ FDirName $(SUBDIR) html ] ;
+
+if $(DOXYGEN) {
+	MakeApiDocumentation [ FDirName $(SUBDIR) html ] : [ FFileName $(SUBDIR) Doxyfile ] ;
+	InstallDirectory     [ FDirName $(docdir) $(EDELIB_DOCDIR) ] : [ FDirName $(SUBDIR) html ] ;
+}
 
 LocalClean distclean : Doxyfile ;
