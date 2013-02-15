@@ -23,13 +23,6 @@ rule MakeApiDocumentation
 		MakeApiDocumentation1 $(<) : $(>) ;
 		Cleandir clean : $(<) ;
 	}
-
-	# just return if doxygen is not found
-	# so we can build the rest
-	if ! $(DOXYGEN) {
-		Echo "doxygen is missing; skiping..." ;
-		return ;
-	}
 }
 
 # Strip directory path from (example: 'doc/Doxyfile') and
