@@ -4784,6 +4784,7 @@ void scheme_load_named_file(scheme *sc, FILE *fin, const char *filename) {
 
 #if SHOW_ERROR_LINE
   sc->load_stack[0].rep.stdio.curr_line = 0;
+  sc->load_stack[0].rep.stdio.filename = 0;
   if(fin!=stdin && filename)
     sc->load_stack[0].rep.stdio.filename = store_string(sc, strlen(filename), filename, 0);
 #endif
