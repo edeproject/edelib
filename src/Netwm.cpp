@@ -1,8 +1,8 @@
 /*
  * $Id$
  *
- * Functions for easier communication with window manager
- * Copyright (c) 2009 edelib authors
+ * Functions for easier communication with window managers
+ * Copyright (c) 2009-2013 edelib authors
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -66,6 +66,7 @@ static Atom _XA_NET_WM_WINDOW_TYPE_COMBO;
 static Atom _XA_NET_WM_WINDOW_TYPE_DND;
 
 static Atom _XA_NET_WM_STRUT;
+static Atom _XA_NET_WM_STRUT_PARTIAL;
 static Atom _XA_NET_NUMBER_OF_DESKTOPS;
 static Atom _XA_NET_CURRENT_DESKTOP;
 static Atom _XA_NET_DESKTOP_NAMES;
@@ -130,6 +131,7 @@ static void init_atoms_once(void) {
 	REGISTER_ATOM(_XA_NET_WM_WINDOW_TYPE_DND,           "_NET_WM_WINDOW_TYPE_DND");
 
 	REGISTER_ATOM(_XA_NET_WM_STRUT,                     "_NET_WM_STRUT");
+	REGISTER_ATOM(_XA_NET_WM_STRUT_PARTIAL,             "_NET_WM_STRUT_PARTIAL");
 	REGISTER_ATOM(_XA_NET_NUMBER_OF_DESKTOPS,           "_NET_NUMBER_OF_DESKTOPS");
 	REGISTER_ATOM(_XA_NET_CURRENT_DESKTOP,              "_NET_CURRENT_DESKTOP");
 	REGISTER_ATOM(_XA_NET_DESKTOP_NAMES,                "_NET_DESKTOP_NAMES");
@@ -288,8 +290,8 @@ int netwm_workspace_get_count(void) {
 	unsigned char* prop;
 
 	int status = XGetWindowProperty(fl_display, RootWindow(fl_display, fl_screen), 
-			_XA_NET_NUMBER_OF_DESKTOPS, 0L, 0x7fffffff, False, XA_CARDINAL, &real, &format, &n, &extra, 
-			(unsigned char**)&prop);
+									_XA_NET_NUMBER_OF_DESKTOPS, 0L, 0x7fffffff, False, XA_CARDINAL, &real, &format, &n, &extra, 
+									(unsigned char**)&prop);
 
 	if(status != Success || !prop)
 		return -1;
@@ -329,8 +331,8 @@ int netwm_workspace_get_current(void) {
 	unsigned char* prop;
 
 	int status = XGetWindowProperty(fl_display, RootWindow(fl_display, fl_screen), 
-			_XA_NET_CURRENT_DESKTOP, 0L, 0x7fffffff, False, XA_CARDINAL, &real, &format, &n, &extra, 
-			(unsigned char**)&prop);
+									_XA_NET_CURRENT_DESKTOP, 0L, 0x7fffffff, False, XA_CARDINAL, &real, &format, &n, &extra, 
+									(unsigned char**)&prop);
 
 	if(status != Success || !prop)
 		return -1;
@@ -417,7 +419,7 @@ void netwm_window_set_type(Window win, int t) {
 	}
 
 	XChangeProperty(fl_display, win, _XA_NET_WM_WINDOW_TYPE, XA_ATOM, 32, PropModeReplace, 
-			(unsigned char*)&type, sizeof(Atom));
+					(unsigned char*)&type, 1);
 }
 
 int netwm_window_get_type(Window win) {
@@ -429,8 +431,8 @@ int netwm_window_get_type(Window win) {
 	unsigned char* prop = 0;
 
 	int status = XGetWindowProperty(fl_display, win, 
-			_XA_NET_WM_WINDOW_TYPE, 0L, sizeof(Atom), False, XA_ATOM, &real, &format, &n, &extra, 
-			(unsigned char**)&prop);
+									_XA_NET_WM_WINDOW_TYPE, 0L, sizeof(Atom), False, XA_ATOM, &real, &format, &n, &extra, 
+									(unsigned char**)&prop);
 
 	if(status != Success || !prop)
 		return -1;
@@ -458,17 +460,30 @@ int netwm_window_get_type(Window win) {
 
 void netwm_window_set_strut(Window win, int left, int right, int top, int bottom) {
 	init_atoms_once();
-
 	/* TODO: should be longs */
-	long strut[4] = { left, right, top, bottom };
+	long strut[4] = {left, right, top, bottom};
 
 	XChangeProperty(fl_display, win, _XA_NET_WM_STRUT, XA_CARDINAL, 32, 
-			PropModeReplace, (unsigned char*)&strut, sizeof(long) * 4);
+					PropModeReplace, (unsigned char*)&strut, 4);
+}
+
+void netwm_window_set_strut_partial(Window win, int sizes[12]) {
+	init_atoms_once();
+	/* TODO: should be longs */
+	long *strutp = (long*)sizes;
+
+	XChangeProperty(fl_display, win, _XA_NET_WM_STRUT_PARTIAL, XA_CARDINAL, 32,
+					PropModeReplace, (unsigned char*)&strutp, 12);
 }
 
 void netwm_window_remove_strut(Window win) {
 	init_atoms_once();
 	XDeleteProperty(fl_display, win, _XA_NET_WM_STRUT);
+}
+
+void netwm_window_remove_strut_partial(Window win) {
+	init_atoms_once();
+	XDeleteProperty(fl_display, win, _XA_NET_WM_STRUT_PARTIAL);
 }
 
 int netwm_window_get_all_mapped(Window **windows) {
@@ -480,8 +495,8 @@ int netwm_window_get_all_mapped(Window **windows) {
 	unsigned char* prop = 0;
 
 	int status = XGetWindowProperty(fl_display, RootWindow(fl_display, fl_screen), 
-			_XA_NET_CLIENT_LIST, 0L, 0x7fffffff, False, XA_WINDOW, &real, &format, &n, &extra, 
-			(unsigned char**)&prop);
+									_XA_NET_CLIENT_LIST, 0L, 0x7fffffff, False, XA_WINDOW, &real, &format, &n, &extra, 
+									(unsigned char**)&prop);
 
 	if(status != Success || !prop)
 		return -1;
@@ -501,8 +516,8 @@ int netwm_window_get_workspace(Window win) {
 	unsigned char* prop = 0;
 
 	int status = XGetWindowProperty(fl_display, win, 
-			_XA_NET_WM_DESKTOP, 0L, 0x7fffffff, False, XA_CARDINAL, &real, &format, &n, &extra, 
-			(unsigned char**)&prop);
+									_XA_NET_WM_DESKTOP, 0L, 0x7fffffff, False, XA_CARDINAL, &real, &format, &n, &extra, 
+									(unsigned char**)&prop);
 
 	if(status != Success || !prop)
 		return -1;
@@ -547,8 +562,8 @@ char *netwm_window_get_title(Window win) {
 	unsigned char* prop = 0;
 
 	int status = XGetWindowProperty(fl_display, win, 
-			_XA_NET_WM_NAME, 0L, 0x7fffffff, False, _XA_UTF8_STRING , &real, &format, &n, &extra, 
-			(unsigned char**)&prop);
+									_XA_NET_WM_NAME, 0L, 0x7fffffff, False, _XA_UTF8_STRING , &real, &format, &n, &extra, 
+									(unsigned char**)&prop);
 
 	if(status == Success && prop) {
 		title = (char *)prop;
@@ -628,7 +643,7 @@ Fl_RGB_Image *netwm_window_get_icon(Window win, unsigned int requested_width) {
 	unsigned char *prop = 0;
 
 	int status = XGetWindowProperty(fl_display, win,
-			_XA_NET_WM_ICON, 0L, 0x7fffffff, False, XA_CARDINAL, &real, &format, &n, &extra, (unsigned char**)&prop);
+									_XA_NET_WM_ICON, 0L, 0x7fffffff, False, XA_CARDINAL, &real, &format, &n, &extra, (unsigned char**)&prop);
 
 	if((status != Success) || (real != XA_CARDINAL) || (n <= 2)) {
 		if(prop) XFree(prop);
@@ -675,8 +690,8 @@ Window netwm_window_get_active(void) {
 	unsigned char* prop = 0;
 
 	int status = XGetWindowProperty(fl_display, RootWindow(fl_display, fl_screen), 
-			_XA_NET_ACTIVE_WINDOW, 0L, sizeof(Atom), False, XA_WINDOW, &real, &format, &n, &extra, 
-			(unsigned char**)&prop);
+									_XA_NET_ACTIVE_WINDOW, 0L, sizeof(Atom), False, XA_WINDOW, &real, &format, &n, &extra, 
+									(unsigned char**)&prop);
 
 	if(status != Success || !prop)
 		return (Window)-1; /* Window is int type */
@@ -704,7 +719,7 @@ void netwm_window_set_active(Window win, int source) {
 	xev.xclient.data.l[2] = 0;
 
 	XSendEvent(fl_display, RootWindow(fl_display, fl_screen), False, 
-			SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+			   SubstructureRedirectMask | SubstructureNotifyMask, &xev);
 	XSync(fl_display, True);
 }
 
@@ -724,8 +739,8 @@ void netwm_window_maximize(Window win) {
 	xev.xclient.data.l[1] = _XA_NET_WM_STATE_MAXIMIZED_HORZ;
 	xev.xclient.data.l[2] = _XA_NET_WM_STATE_MAXIMIZED_VERT;
 
-	XSendEvent (fl_display, RootWindow(fl_display, fl_screen), False, 
-			SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+	XSendEvent(fl_display, RootWindow(fl_display, fl_screen), False, 
+			   SubstructureRedirectMask | SubstructureNotifyMask, &xev);
 	XSync(fl_display, True);
 }
 
@@ -744,8 +759,8 @@ void netwm_window_close(Window win) {
 	xev.xclient.data.l[0] = (long)win;
 	xev.xclient.data.l[1] = CurrentTime;
 
-	XSendEvent (fl_display, RootWindow(fl_display, fl_screen), False, 
-			SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+	XSendEvent(fl_display, RootWindow(fl_display, fl_screen), False, 
+			   SubstructureRedirectMask | SubstructureNotifyMask, &xev);
 	XSync(fl_display, True);
 }
 
@@ -764,8 +779,8 @@ void wm_window_ede_restore(Window win) {
 	xev.xclient.data.l[0] = _XA_EDE_WM_RESTORE_SIZE;
 	xev.xclient.data.l[1] = CurrentTime;
 
-	XSendEvent (fl_display, RootWindow(fl_display, fl_screen), False, 
-			SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+	XSendEvent(fl_display, RootWindow(fl_display, fl_screen), False, 
+			   SubstructureRedirectMask | SubstructureNotifyMask, &xev);
 	XSync(fl_display, True);
 }
 
@@ -878,8 +893,8 @@ WmStateValue wm_window_get_state(Window win) {
 	unsigned char* prop = 0;
 
 	int status = XGetWindowProperty(fl_display, win,
-			_XA_WM_STATE, 0L, sizeof(Atom), False, _XA_WM_STATE, &real, &format, &n, &extra, 
-			(unsigned char**)&prop);
+									_XA_WM_STATE, 0L, sizeof(Atom), False, _XA_WM_STATE, &real, &format, &n, &extra, 
+									(unsigned char**)&prop);
 
 	if(status != Success || !prop)
 		return WM_WINDOW_STATE_NONE;

@@ -196,9 +196,25 @@ void netwm_window_set_strut(Window win, int left, int right, int top, int bottom
 
 /**
  * \ingroup wm
+ * Resize area by setting offsets to each side and <em>win</em> will be outside that area. This function will
+ * use newer _NET_WM_STRUT_PARTIAL hint, which is highly likely to be supported by newer window managers.
+ *
+ * Array is in offset form: left, right, top, bottom,
+ * left_start_y, left_end_y, right_start_y, right_end_y, top_start_x, top_end_x, bottom_start_x, bottom_end_x.
+ */
+void netwm_window_set_strut_partial(Window win, int sizes[12]);
+
+/**
+ * \ingroup wm
  * Remove offset, previously set with <i>netwm_window_set_strut</i>. If offset not set, it will do nothing.
  */
 void netwm_window_remove_strut(Window win);
+
+/**
+ * \ingroup wm
+ * Remove offset, previously set with <i>netwm_window_set_strut_partial</i>. If offset not set, it will do nothing.
+ */
+void netwm_window_remove_strut_partial(Window win);
 
 /**
  * \ingroup wm
