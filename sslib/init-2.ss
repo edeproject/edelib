@@ -619,36 +619,36 @@ functions. Example: ((juxt + -) 2 3) => ((+ 2 3) (- 2 3)) => (5 -1).")
 (add-doc "format" "Allow string formatting. Implements SRFI-28.")
 (define (format format-string . args)
   (let ([buffer (open-output-string)])
-	(let loop ([format-list (string->list format-string)]
-			   [objects     args])
-	  (cond
-	    [(null? format-list)
-		 (get-output-string buffer)]
+    (let loop ([format-list (string->list format-string)]
+               [objects     args])
+      (cond
+        [(null? format-list)
+         (get-output-string buffer)]
 
-		[(char=? (car format-list) #\~)
-		 (if (null? (cdr format-list))
-		   (error 'format _"Incomplete escape sequence")
-		   (case (cadr format-list)
-			 [(#\a #\A)
-			  (if (null? objects)
-			    (error 'format _"No value to escape sequence")
-				(begin
-				  (display (car objects) buffer)
-				  (loop (cddr format-list) (cdr objects))))]
-			 [(#\s #\S)
-			  (if (null? objects)
-				(error 'format _"No value for escape sequence")
-				(begin
-				  (write (car objects) buffer)
-				  (loop (cddr format-list) (cdr objects))))]
-			 [(#\%)
-			  (newline buffer)
-			  (loop (cddr format-list) buffer)]
-			 [else
-			  (error 'format "Unrecognized escape sequence")]))]
-		[else
-		  (write-char (car format-list) buffer)
-		  (loop (cdr format-list) objects)]))))
+        [(char=? (car format-list) #\~)
+         (if (null? (cdr format-list))
+           (error 'format _"Incomplete escape sequence")
+           (case (cadr format-list)
+             [(#\a #\A)
+              (if (null? objects)
+                (error 'format _"No value to escape sequence")
+                (begin
+                  (display (car objects) buffer)
+                  (loop (cddr format-list) (cdr objects))))]
+             [(#\s #\S)
+              (if (null? objects)
+                (error 'format _"No value for escape sequence")
+                (begin
+                  (write (car objects) buffer)
+                  (loop (cddr format-list) (cdr objects))))]
+             [(#\%)
+              (newline buffer)
+              (loop (cddr format-list) buffer)]
+             [else
+              (error 'format "Unrecognized escape sequence")]))]
+        [else
+          (write-char (car format-list) buffer)
+          (loop (cdr format-list) objects)]))))
 
 ;;; interpreter specific stuff
 
