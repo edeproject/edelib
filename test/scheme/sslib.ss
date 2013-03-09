@@ -128,4 +128,13 @@
 (test-equal "juxt #3" ((juxt string-length string->list) "demo")
                       '(4 (#\d #\e #\m #\o)))	
 
+(test-equal "format #1" "This is sample string!" (format "This is sample string!"))
+(test-equal "format #2" "This is sample string!" (format "This is ~A string!" "sample"))
+(test-equal "format #3" "This is sample string!" (format "This is ~a string!" "sample"))
+(test-equal "format #4" "This is \"sample\" string!" (format "This is ~s string!" "sample"))
+(test-equal "format #5" "This is \"sample\" string!" (format "This is ~S string!" "sample"))
+(test-equal "format #6" "range: (1 2 3 4 5)" (format "range: ~a" (range 1 6)))
+(test-equal "format #7" "this string have vector: #(1 2 3) list: (1 2 3) string: \"xxx\" and newline\n"
+						(format "this ~A have vector: ~A list: ~A string: ~S and newline~%" "string" #(1 2 3) '(1 2 3) "xxx"))
+
 (run-all-tests "sslib Tests")
