@@ -29,50 +29,53 @@
 ;  `(if ,s
 ;    (begin ,@body)))
 
-;;; moduly system
+;;; module system
 
 (define-macro (module name exports . forms)
   `(begin
     (define ,name
        (apply (lambda () ,@forms (current-environment))))
     ,@(map (lambda (v)
-			 `(define ,v (eval (quote ,v) ,name)))
-		   exports)))
+             `(define ,v (eval (quote ,v) ,name)))
+           exports)))
 
 (define-macro (import module-name)
-  `(load (string-append (symbol->string (quote ,module-name)) ".ss")))
+  `(load 
+     (string-append
+       (symbol->string
+         (quote ,module-name)) ".ss")))
 
 (module init-2
-		(add-doc-generic
-		 add-doc
-		 add-macro-doc 
-		 add-var-doc
-		 find-doc
-		 doc
-		 add-to-include-path
-		 remove-from-include-path
-		 include
-		 eval-string
-		 first rest second
-		 print println
-		 empty?
-		 let1 letn
-		 if-not when-not if= if-not=
-		 defvar defun
-		 for while
-		 -> ->>
-		 nth
-		 sort-with-operator sort sort-vector
-		 filter range
-		 fold-right fold-left
-		 take drop split-at partition flatten
-		 repeatedly compose
-		 lazy replace-all
-		 infix->prefix :
-		 shuffle-vector! shuffle
-		 list-as-string vector-as-string
-		 doto zip juxt format
-		 edelib-scheme-objects)
+        (add-doc-generic
+         add-doc
+         add-macro-doc 
+         add-var-doc
+         find-doc
+         doc
+         add-to-include-path
+         remove-from-include-path
+         include
+         eval-string
+         first rest second
+         print println
+         empty?
+         let1 letn
+         if-not when-not if= if-not=
+         defvar defun
+         for while
+         -> ->>
+         nth
+         sort-with-operator sort sort-vector
+         filter range
+         fold-right fold-left
+         take drop split-at partition flatten
+         repeatedly compose
+         lazy replace-all
+         infix->prefix :
+         shuffle-vector! shuffle
+         list-as-string vector-as-string
+         doto zip juxt format
+         edelib-scheme-objects)
 
 ;;; documentation system
 
@@ -584,7 +587,7 @@ number of times before, or call (shuffle lst) different times within each call."
                 lst))
 
     ;; close everything
-	(str-trim-right!)
+    (str-trim-right!)
     (str-append! ")" #f)
     ret
 ) )
@@ -611,10 +614,10 @@ number of times before, or call (shuffle lst) different times within each call."
 functions. Example: ((juxt + -) 2 3) => ((+ 2 3) (- 2 3)) => (5 -1).")
 (define (juxt . funcs)
   (lambda args
-	(map
-	  (lambda (f)
-		(apply f args))
-	  funcs)))
+    (map
+      (lambda (f)
+        (apply f args))
+      funcs)))
 
 (add-doc "format" "Allow string formatting. Implements SRFI-28.")
 (define (format format-string . args)
@@ -643,9 +646,12 @@ functions. Example: ((juxt + -) 2 3) => ((+ 2 3) (- 2 3)) => (5 -1).")
                   (loop (cddr format-list) (cdr objects))))]
              [(#\%)
               (newline buffer)
-              (loop (cddr format-list) buffer)]
+              (loop (cddr format-list) objects)]
+             [(#\~)
+              (display "~" buffer)
+              (loop (cddr format-list) objects)]
              [else
-              (error 'format "Unrecognized escape sequence")]))]
+              (error 'format _"Unrecognized escape sequence")]))]
         [else
           (write-char (car format-list) buffer)
           (loop (cdr format-list) objects)]))))

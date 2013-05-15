@@ -396,7 +396,6 @@
 			  (getl initargs 'procedure))
 	       new)))))
 
-
 ;
 ; These are the real versions of slot-ref and slot-set!.  Because of the
 ; way the new slot access protocol works, with no generic call in line,
@@ -527,7 +526,6 @@
 						     'procedure)))
 
 
-
 ;
 ; These are the convenient syntax we expose to the base-level user.
 ;
@@ -547,8 +545,6 @@
       (make <method>
 	    'specializers specializers
 	    'procedure    procedure)))
-
-
 
 
 ;
@@ -577,8 +573,6 @@
 (define compute-methods               (make-generic))
 (define compute-method-more-specific? (make-generic))
 (define compute-apply-methods         (make-generic))
-
-
 
 
 ;

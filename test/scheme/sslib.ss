@@ -136,5 +136,8 @@
 (test-equal "format #6" "range: (1 2 3 4 5)" (format "range: ~a" (range 1 6)))
 (test-equal "format #7" "this string have vector: #(1 2 3) list: (1 2 3) string: \"xxx\" and newline\n"
 						(format "this ~A have vector: ~A list: ~A string: ~S and newline~%" "string" #(1 2 3) '(1 2 3) "xxx"))
+(test-equal "format #8" "this is ~" (format "this is ~~"))
+(test-equal "format #9" "this is ~~" (format "this is ~~~~" 123))
+(test-equal "format #10" "this is \n3" (format "this is ~%~A" 3))
 
 (run-all-tests "sslib Tests")
