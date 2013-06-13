@@ -22,11 +22,13 @@ if $(DBUS_LIBS) {
     GEN_HELP_SCRIPT = "$(LOCATE_SOURCE)/gen-help.sh" ;
 
 	rule GenHelp {
-		MakeLocate $(>) : $(LOCATE_SOURCE) ;
-		SEARCH on $(>) = $(SEARCH_SOURCE) ;
+		local t = [ FGristSourceFiles $(<) ] ;
+		LocalDepends $(t) : $(>) ;
 
-		LocalDepends $(<) : $(>) ;
-		GenHelp1 $(<) : $(>) ;
+		MakeLocate $(t) : $(LOCATE_SOURCE) ;
+		SEARCH on $(>) = $(SEARCH_SOURCE) ;
+		GenHelp1 $(t) : $(>) ;
+		LocalClean clean : $(t) ;
 	}
 
 	actions piecemeal GenHelp1 {
@@ -54,11 +56,8 @@ if $(DBUS_LIBS) {
 		  ScriptDBus.cpp ;
 
 	ObjectC++Flags $(SRC) : $(PROGRAM_FLAGS) ;
-	MakeTest edelib-dbus-explorer : $(SRC) : -ledelib_dbus -ledelib_gui $(FLTK_LIBS_FULL) -ledelib $(DBUS_LIBS) ;
+	MakeTest edelib-dbus-explorer : $(SRC) : -ledelib_dbus -ledelib_gui $(FLTK_LIBS_FULL) -ledelib $(DBUS_LIBS) -lX11 ;
 
-	LocalDepends edelib-dbus-explorer : Help.h ;
 	GenHelp Help.h : edelib-dbus-explorer.txt ;
-	Clean clean : Help.h ;
-
 	InstallProgram $(bindir) : edelib-dbus-explorer ;
 }
