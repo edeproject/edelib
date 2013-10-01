@@ -273,21 +273,14 @@ or
   (for i in \"this is sample string\"
     (println i))")     
 (define-macro (for var _ collection . body)
-  `(cond
-     [(list? ,collection)
-      (for-each (lambda (,var) 
-             ,@body) 
-           ,collection)]
-     [(vector? ,collection)
-      (for-each (lambda (,var)
-             ,@body)
-           (vector->list ,collection) )]
-     [(string? ,collection)
-      (for-each (lambda (,var)
-             ,@body)
-           (string->list ,collection) )]
-     [else
-       (throw "Unsupported type in 'for' loop") ]))
+  (let ([coll (gensym)])
+    `(let ([,coll ,collection])
+       (cond
+         [(list?   ,coll) (for-each (lambda (,var) ,@body) ,coll)]
+         [(vector? ,coll) (for-each (lambda (,var) ,@body) (vector->list ,coll))]
+         [(string? ,coll) (for-each (lambda (,var) ,@body) (string->list ,coll))]
+         [else
+          (throw "Unsupported type in 'for' loop")]))))
 
 (add-macro-doc "while" "Looping construct found in common languages. Example:
   (define i 0)
