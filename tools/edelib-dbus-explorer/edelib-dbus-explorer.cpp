@@ -293,6 +293,8 @@ int main(int argc, char **argv) {
 	disconnect_cb(0, 0);
 	win->callback(quit_cb);
 	win->show(argc, argv);
+	win->focus(script_editor);
+	ScriptEditor::kf_page_down(1, script_editor);
 
 	int ret = Fl::run();
 	delete bus_connection;

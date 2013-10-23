@@ -135,7 +135,7 @@ above in action, here are few examples with their descriptions:
 
   (dbus-call "my.service" "/my/service" "my.service.Interface" "DemoMember"
              :string "my string"
-			 :int32  4)
+             :int32  4)
 
 * call service with array of booleans
 
@@ -146,7 +146,7 @@ above in action, here are few examples with their descriptions:
 
   (dbus-call "my.service" "/my/service" "my.service.Interface" "DemoMember"
              :dict '((:string "key"  :int32 1)
-			         (:string "key2" :int32 3)))
+                     (:string "key2" :int32 3)))
 
 Generating calls
 ================
