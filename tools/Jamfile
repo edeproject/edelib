@@ -23,7 +23,6 @@ InstallProgram $(bindir) : edelib-mk-indextheme ;
 InstallProgram $(bindir) : edelib-convert-icontheme ;
 
 SubInclude TOP tools edelib-script ;
-SubInclude TOP tools edelib-dbus-introspect ;
 SubInclude TOP tools edelib-dbus-explorer ;
 SubInclude TOP tools edelib-update-font-cache ;
 SubInclude TOP tools colors ;
