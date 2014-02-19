@@ -1296,7 +1296,7 @@ static void gc(scheme *sc, pointer a, pointer b) {
     p = sc->cell_seg[i] + CELL_SEGSIZE;
     while (--p >= sc->cell_seg[i]) {
       if (is_mark(p)) {
-    clrmark(p);
+	clrmark(p);
       } else {
     /* reclaim cell */
         if (typeflag(p) != 0) {

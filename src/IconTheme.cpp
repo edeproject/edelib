@@ -2,7 +2,7 @@
  * $Id$
  *
  * Icon theme
- * Copyright (c) 2005-2009 edelib authors
+ * Copyright (c) 2005-2014 edelib authors
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -368,8 +368,8 @@ String IconTheme::find_icon(const char* icon, IconSizes sz, IconContext ctx) {
 		}
 	}
 
-#if 0	
-	/* third chance, search through icon theme, ignoring the size and context */
+#ifndef ICON_THEME_FAST
+	/* Third chance, search through icon theme, ignoring the size and context. Can be disabled to speed up things. */
 	for(it = priv->dirlist.begin(); it != ite; ++it) {
 		if(has_extension) {
 			ret = (*it).path;
