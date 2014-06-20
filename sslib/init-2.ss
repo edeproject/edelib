@@ -620,7 +620,6 @@ functions. Example: ((juxt + -) 2 3) => ((+ 2 3) (- 2 3)) => (5 -1).")
       (cond
         [(null? format-list)
          (get-output-string buffer)]
-
         [(char=? (car format-list) #\~)
          (if (null? (cdr format-list))
            (error 'format _"Incomplete escape sequence")

@@ -196,8 +196,9 @@ ConfigSection::ConfigSection(const char* n) {
 
 ConfigSection::~ConfigSection() {
 	EntryListIter it = entry_list.begin();
+	ConfigEntry *e;
 	for (; it != entry_list.end(); ++it) {
-		ConfigEntry* e = *it;
+		e = *it;
 		free(e->key);
 		free(e->value);
 		delete e;
@@ -443,8 +444,9 @@ ConfigSection* Config::find_section(const char* section) {
 		return cached;
 
 	SectionListIter it = section_list.begin(), it_end = section_list.end();
+	ConfigSection *cs;
 	for (; it != it_end; ++it) {
-		ConfigSection *cs = *it;
+		cs = *it;
 		if (cs->shash == hh && (strncmp(cs->sname, section, cs->snamelen) == 0)) {
 			cached = cs;
 			return cs;

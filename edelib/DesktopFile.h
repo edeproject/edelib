@@ -2,7 +2,7 @@
  * $Id$
  *
  * .desktop file reader and writer
- * Copyright (c) 2005-2007 edelib authors
+ * Copyright (c) 2005-2014 edelib authors
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,6 +23,7 @@
 
 #include "Config.h"
 #include "String.h"
+#include "List.h"
 
 EDELIB_NS_BEGIN
 
@@ -56,10 +57,7 @@ enum DesktopFileType {
  * extension. This is text file, readable with Config class. These files are
  * (ab)used to describe desktop icons, menu entries and etc.
  *
- * Current implementation conforms to http://www.freedesktop.org specification version
- * 1.0 with few exceptions (read, some sections are ignored). Those are:
- *   - StartupWMClass
- *   - Categories
+ * Current implementation conforms to http://www.freedesktop.org specification version 1.1.
  *
  * In case you want to create .desktop file from scratch, <em>make sure</em> you
  * call create_new() before you fill the data, so DesktopFile can setup mandatory data prior file saving, like:
@@ -213,8 +211,7 @@ public:
 	bool startup_notify(void);
 
 	/**
-	 * Get full value from <em>OnlyShowIn</em>. This value
-	 * will be in form: <em>foo;baz;</em>.
+	 * Get full value from <em>OnlyShowIn</em>. This value will be in form: <em>foo;baz;</em>.
 	 */
 	bool only_show_in(char* val, int len);
 

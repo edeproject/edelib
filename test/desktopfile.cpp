@@ -10,7 +10,7 @@
 EDELIB_NS_USE
 
 // write messy .desktop file intentionally :P
-const char* desktop_sample = "\
+static const char* desktop_sample = "\
 [Desktop Entry]\n                      \
    Type=Application\n                  \
    Hidden=False\n                      \

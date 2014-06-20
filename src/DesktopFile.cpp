@@ -25,7 +25,7 @@
 #include <edelib/Debug.h>
 #include <edelib/StrUtil.h>
 
-#define BUF_SIZE   256
+#define BUF_SIZE    256
 #define ENTRY_SECT  "Desktop Entry"
 
 EDELIB_NS_BEGIN
@@ -199,26 +199,19 @@ bool DesktopFile::path(char* val, int len) {
 	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, false);
 	E_RETURN_VAL_IF_FAIL(dtype == DESK_FILE_TYPE_APPLICATION, false);
 
-	if(!Config::get(ENTRY_SECT, "Path", val, len))
-		return false;
-	return true;
+	return Config::get(ENTRY_SECT, "Path", val, len);
 }
 
 bool DesktopFile::url(char* val, int len) {
 	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, false);
 	E_RETURN_VAL_IF_FAIL(dtype == DESK_FILE_TYPE_LINK, false);
 
-	if(!Config::get(ENTRY_SECT, "URL", val, len))
-		return false;
-	return true;
+	return Config::get(ENTRY_SECT, "URL", val, len);
 }
 
 bool DesktopFile::mime_type(char* val, int len) {
 	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, false);
-
-	if(!Config::get(ENTRY_SECT, "MimeType", val, len))
-		return false;
-	return true;
+	return Config::get(ENTRY_SECT, "MimeType", val, len);
 }
 
 bool DesktopFile::no_display(void) {
@@ -255,10 +248,7 @@ bool DesktopFile::startup_notify(void) {
 
 bool DesktopFile::only_show_in(char* val, int len) {
 	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, false);
-
-	if(!Config::get(ENTRY_SECT, "OnlyShowIn", val, len))
-		return false;
-	return true;
+	return Config::get(ENTRY_SECT, "OnlyShowIn", val, len);
 }
 
 bool DesktopFile::only_show_in(list<String>& lst) {
@@ -274,10 +264,7 @@ bool DesktopFile::only_show_in(list<String>& lst) {
 
 bool DesktopFile::not_show_in(char* val, int len) {
 	E_RETURN_VAL_IF_FAIL(errcode == DESK_FILE_SUCCESS, false);
-
-	if(!Config::get(ENTRY_SECT, "NotShowIn", val, len))
-		return false;
-	return true;
+	return Config::get(ENTRY_SECT, "NotShowIn", val, len);
 }
 
 bool DesktopFile::not_show_in(list<String>& lst) {
