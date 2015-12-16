@@ -1,7 +1,7 @@
 #
 # $Id$
 #
-# Copyright (c) 2005-2007 edelib authors
+# Copyright (c) 2005-2015 edelib authors
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -44,6 +44,7 @@ EXEMODE = 755 ;
 RMDIR   = "rm -R" ;
 COPYDIR = "cp -R" ;
 LINKCMD = "ln -s" ;
+MKDIR   = "mkdir -p" ;
 
 # variables used by jam directly
 # OPTIM is cleared so it don't collide with FLAGS
@@ -208,7 +209,7 @@ rule SharedLibraryFromObjects
 		LINKFLAGS on $(_l) = -h $(_l_so) -G [ on $(_l) return $(LINKFLAGS) ] ;
 	} else {
 		# let linker knows we are making shared library by adding -shared and -Wl,-soname libname.so flags
-		LINKFLAGS on $(_l) = -Wl,-soname,$(_l_so) -shared [ on $(_l) return $(LINKFLAGS) ] ;
++		LINKFLAGS on $(_l) = -shared [ on $(_l) return $(LINKFLAGS) ] ;
 	}
 
 	# make it
@@ -364,19 +365,19 @@ rule InstallSharedLibrary
 
 	# install .so by making symbolic link; first remove all those directory parts
   	# from variables (including grist)
-	o = $(s:G=) ;
-	o = $(o:D=) ;
-  	sh = $(sh:D=) ;
+	#o = $(s:G=) ;
+	#o = $(o:D=) ;
+	#sh = $(sh:D=) ;
 
-  	# mark it as not file since it is just a name (e.g. ln -s foo.so.2 <target>)
-  	NotFile $(o) ;
-    SymLink $(sh) : $(o) ;
+  	## mark it as not file since it is just a name (e.g. ln -s foo.so.2 <target>)
+	#NotFile $(o) ;
+	#SymLink $(sh) : $(o) ;
 
-  	# tell jam to put it in installation folder
-	MakeLocate $(sh) : $(dir) ;
+  	## tell jam to put it in installation folder
+	#MakeLocate $(sh) : $(dir) ;
 
-    LocalDepends install : $(sh) ;
-  	UninstallSharedLibrary1 uninstall : $(sh) ;
+	#LocalDepends install : $(sh) ;
+  	#UninstallSharedLibrary1 uninstall : $(sh) ;
 }
 
 actions InstallSharedLibrary1

@@ -48,8 +48,8 @@ static Fl_Hold_Browser *size_browser;
 static Fl_Hold_Browser *style_browser;
 static Fl_Int_Input *size_input;
 static Fl_Input *preview_input;
-static FontCache *font_cache;
-static FontInfo  *current_font;
+static FontCache *font_cache = NULL;
+static FontInfo  *current_font = NULL;
 
 static int picked_size;
 static int picked_font;
