@@ -15,7 +15,6 @@ extern "C" {
 
 #define USE_INTERFACE 1
 #define USE_MATH 0
-#define INLINE inline
 
 /* If used as standalone interpreter */
 #ifndef STANDALONE
