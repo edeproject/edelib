@@ -209,7 +209,7 @@ rule SharedLibraryFromObjects
 		LINKFLAGS on $(_l) = -h $(_l_so) -G [ on $(_l) return $(LINKFLAGS) ] ;
 	} else {
 		# let linker knows we are making shared library by adding -shared and -Wl,-soname libname.so flags
-+		LINKFLAGS on $(_l) = -shared [ on $(_l) return $(LINKFLAGS) ] ;
+		LINKFLAGS on $(_l) = -shared [ on $(_l) return $(LINKFLAGS) ] ;
 	}
 
 	# make it
