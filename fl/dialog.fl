@@ -1,0 +1,34 @@
+# data file for the FLTK User Interface Designer (FLUID)
+version 2.1000 
+header_name {.h} 
+code_name {.cxx} 
+gridx 5 
+gridy 5 
+snap 1
+Function {} {open
+} {
+  {fltk::Window} {} {open
+    xywh {408 394 365 125} resizable visible
+  } {
+    {fltk::InvisibleBox} {} {
+      xywh {10 10 70 70}
+      image {/home/sanel/blentavo/EDE/ede/datas/icons-48/shellscript.png}
+    }
+    {fltk::InvisibleBox} {} {
+      label {Seems you have changed some data} selected
+      xywh {90 25 265 25} align 165 box FLAT_BOX
+    }
+    {fltk::Group} {} {open
+      xywh {10 90 345 25}
+    } {
+      {fltk::Button} {} {
+        label {&Yes}
+        xywh {160 0 90 25}
+      }
+      {fltk::Button} {} {
+        label {&No}
+        xywh {255 0 90 25}
+      }
+    }
+  }
+} 

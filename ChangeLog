@@ -1,0 +1,2094 @@
+2011-08-04  Sanel <karijes@users.sourceforge.net>
+
+	*  m4/fltk.m4: removed warning if 1.3.x branch was detected
+
+2011-08-02  Sanel <karijes@users.sourceforge.net>
+
+	* src/WindowXid.cpp: support for FLTK 1.3.0; new ChangeLog entry after
+	almost a year!
+
+2010-09-09  Sanel <karijes@users.sourceforge.net>
+
+	* tools/edelib-catchsegv: added tool for dumping memory map of segfaulted
+	app
+
+2010-05-07  Sanel <karijes@users.sourceforge.net>
+
+	* src/tinyscheme/scheme.c:
+	* test/theme.cpp:
+	* test/theme-bad2.et: prevent crashes on malformed 'let'
+
+2010-03-28  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Nls.h
+	* src/Nls.cpp
+	* src/Jamfile: allow translation of edelib specific code; also let this
+	code use explicitly edelib domain for translation search
+	* edelib/Ede.h: EDE specific file for common macro(s); set FL_NORMAL_SIZE
+	to 12 by default
+
+2010-03-10  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Netwm.h:
+	* src/Netwm.cpp: report NETWM_CHANGED_WINDOW_ICON when icon gets changed
+	via _NET_WM_ICON message
+	* configure.in: amd64 requires '-fPIC' even if library is compiled as
+	static
+	* examples/efile.cpp: some warning reduction
+
+2010-03-07  Sanel <karijes@users.sourceforge.net>
+
+	* src/Netwm.cpp: fixed property fetching issues on 64-bit platform
+
+2010-02-25  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Netwm.h:
+	* src/Netwm.cpp: added netwm_window_set_state() and EWMH states, as generic
+	facility for setting window states; small code refactoring
+
+2010-02-18  Sanel <karijes@users.sourceforge.net>
+
+	* src/Netwm.cpp: use correct state for setting maximized state; by default
+	is toggled state for cases when maximization is issued on already
+	maximized window
+
+2010-02-16  Sanel <karijes@users.sourceforge.net>
+
+	* m4/compiler-name.m4: s/ac_compiler_name/ac_compiler_vendor and
+	s/EDELIB_COMPILER_NAME/EDELIB_COMPILER_VENDOR
+	* configure.in:
+	* Jamconfig.in: there is no need to set SUN_COMPILER variable when
+	SunStudio is used, now configure script will figure it out
+
+2010-02-15  Sanel <karijes@users.sourceforge.net>
+
+	* m4/fltk.m4: check if FLTK was compiled with XFT support
+
+2010-02-11  Sanel <karijes@users.sourceforge.net>
+
+	* src/Theme.cpp: some cleanup
+
+2010-02-04  Sanel <karijes@users.sourceforge.net>
+
+	* configure.in:
+	* Jamrules:
+	* po/update-message.sh.in: update-messages.sh will be filled with xgettext
+	path if available
+
+2010-02-03  Sanel <karijes@users.sourceforge.net>
+
+	* po/update-messages.sh:
+	* po/edelib.pot: default template file should be named edelib.pot
+	* Jamrules:
+	* Jamfile:
+	* po/Jamfile: modified MakeInstallPrivate so it can accept target
+	filename; added ability to install translated files in locale directory
+
+2010-02-02  Sanel <karijes@users.sourceforge.net>
+
+	* po/update-messages.sh:
+	* po/messages.pot: created directory for translations with accompanying files
+
+2010-01-19  Sanel <karijes@users.sourceforge.net>
+
+	* new entry in new year!!!
+	* src/DesktopFile.cpp: if localized keys are not found, fallback to
+	generic ones
+
+2009-12-18  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Config.h:
+	* src/Config.cpp: small refactoring
+
+2009-12-16  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Netwm.h: little change for netwm_window_is_manageable() doc
+
+2009-12-10  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Netwm.h:
+	* src/Netwm.cpp: some API refactoring, added netwm_window_get_type()
+
+2009-12-09  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Netwm.h:
+	* src/Netwm.cpp: attempt to put common wm code in one place
+
+2009-12-03  Sanel <karijes@users.sourceforge.net>
+
+	* src/tinyscheme/scheme.c: dump {} tokens; fixed so [] tokens can be
+	aliased with ()
+
+2009-12-02  Sanel <karijes@users.sourceforge.net>
+
+	* configure.in:
+	* edelib/DateTime.h:
+	* edelib/File.h:
+	* edelib/TableBase.h:
+	* src/DateTime.cpp:
+	* src/DesktopFile.cpp:
+	* src/EdbusMessage.cpp:
+	* src/File.cpp:
+	* src/IconChooser.cpp:
+	* src/IconTheme.cpp:
+	* src/MessageBox.cpp:
+	* src/PtyProcess.cpp:
+	* src/SevenSeg.cpp:
+	* src/TableBase.cpp:
+	* src/tinyscheme/scheme.c:
+	* test/UnitTest.cpp: added -Wshadow flag to prevent variable shadowing;
+	cleaned warnings
+
+2009-12-01  Sanel <karijes@users.sourceforge.net>
+
+	* src/tinyscheme/gen-c-string.sh: accept parameter and construct variable
+	name from parameter name
+
+2009-11-25  Sanel <karijes@users.sourceforge.net>
+
+	* examples/theme.cpp: s/Fl_Button.h/Fl_Button.H
+	* examples/Jamfile: let theme.cpp use FLTK_CFLAGS
+	* edelib/ForeignCallback.h: fixed example to match function changes
+
+2009-11-24  Sanel <karijes@users.sourceforge.net>
+
+	* src/tinyscheme/theme.scm: fix a typo in comment; additionally clarify
+	theme.style-get function
+	* examples/theme.cpp:
+	* examples/theme-sample: simple example of theming engine
+
+2009-11-20  Sanel <karijes@users.sourceforge.net>
+
+	* autogen.sh: emulate basic aclocal functionality so edelib does not
+	require whole automake package for this
+	* src/String.cpp:
+	* src/IconChooser.cpp: allow it to compile on gcc >= 4.4.1 due
+	introduction const safe C string function
+
+2009-11-17  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Missing.h:
+	* src/Missing.cpp: edelib_daemon() added since Solaris family does not
+	provides it at all
+	* edelib/Missing.h: separate these functions to different documentation
+	module
+	* test/run.cpp: do not use 'tar' without path or GNU version will be
+	selected on default OpenSolaris installation
+	* edelib/Missing.h: s/Missing function/Missing functions
+
+2009-11-16  Sanel <karijes@users.sourceforge.net>
+
+	* test/file.cpp:
+	* test/run.cpp:
+	* test/desktopfile.cpp: some #ifdef code to run pass tests on OpenSolaris
+	* test/file.cpp: removed commented code
+
+2009-11-13  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/ForeignCallback.h:
+	* src/ForeignCallback.cpp: additional data parameter for
+	foreign_callback_add(); also the order of parameters was changed
+	* edelib/Nls.h: some macro code formatting
+
+2009-11-12  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/IconLoader.h:
+	* src/IconLoader.cpp:
+	* src/xdgmime/xdgmimemagic.c:
+	* src/icons/unknown-*.xpm
+	* src/Run.cpp:
+	* src/MenuItem.cpp: fixed warnings found on gcc 4.3.2 and error with
+	PATH_MAX and signal() on OpenSolaris
+	* src/MenuButton.cpp: make it compiles on FLTK 1.1.7
+
+2009-11-10  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Window.h:
+	* src/Window.cpp: dump foreign callback code since separate implementation
+	was added
+
+2009-11-09  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/ForeignCallback.h:
+	* src/ForeignCallback.cpp: added foreign callback functions
+
+2009-11-04  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Theme.h:
+	* edelib/ThemeLoader.h:
+	* src/Theme.cpp:
+	* src/ThemeLoader.cpp:
+	* test/theme.cpp: theme loading using XDG paths is now in ThemeLoader
+	class, that will also load XSETTINGS code and apply commong theme elements
+	on FLTK tree. XSETTINGS code is not yet completed. Tests updated
+
+2009-11-02  Sanel <karijes@users.sourceforge.net>
+
+	* src/Theme.cpp: use .H for FLTK headers; spotted by Ralf and adb
+
+2009-10-16  Sanel <karijes@users.sourceforge.net>
+
+	* Jamconfig.in:
+	* Jamrules: add DESTDIR to prefix, instead modifying every install rule
+
+2009-10-13  Sanel <karijes@users.sourceforge.net>
+
+	* Jamrules: use DESTDIR if given (modified patch from José Romildo)
+
+2009-10-12  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/EdbusConnection.h:
+	* src/EdbusConnection.cpp: dumping method and signal matching tables since
+	they are not used; removed unneeded return value from disconnect(); added
+	error() member that will return EdbusError object, filled with received
+	error message
+
+2009-10-09  Sanel <karijes@users.sourceforge.net>
+
+	* src/Run.cpp: silent a warning
+
+2009-10-08  Sanel <karijes@users.sourceforge.net>
+
+	* === Released 2.0 beta ===
+
+2009-10-08  Sanel <karijes@users.sourceforge.net>
+
+	* m4/fltk.m4: pass checks for FLTK 1.1.10
+
+2009-10-07  Sanel <karijes@users.sourceforge.net>
+
+	* m4/largefile.m4:
+	* configure.in: --enable-largefile added, so code can be compiled with
+	large file support
+
+2009-10-05  Sanel <karijes@users.sourceforge.net>
+
+	* m4/fltk.m4: remove possible optimization flags; on NetBSD fltk-config
+	uses -O2 (stupid)
+
+2009-10-02  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/DesktopFile.h:
+	* src/DesktopFile.cpp:
+	* test/desktopfile.cpp: behaviour of exec() is now much more conformant to
+	The Desktop Entry Spec, returning full executable path without touching
+	the arguments (escaping and special variables are not implemented yet);
+	try_exec() now checks only if execuatable exists; tests updated
+	* src/File.cpp: used E_DIR_SEPARATOR
+
+2009-09-29  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Directory.h: newline at the end of the file or SunStudio 11 C++
+	compiler will crash
+
+2009-09-26  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/*.h: added EDELIB part to header protector 
+	* edelib/StrUtil.h: dumping isws() helper function; stringtok() will
+	now directly use strchr()
+	* m4/compiler-name.m4: macro for deducing compiler name
+
+2009-09-25  Sanel <karijes@users.sourceforge.net>
+
+	* Jamconfig.in:
+	* Jamrules: LIBS from configure should be used, not LDLIBS
+	* m4/various.m4: use only gcc specific flags for gcc
+	* Jamrules.in:
+	* Jamrules: moving STDLIB to Jamrules; some warning flags for SunStudio
+	* Jamconfig.in: use CFLAGS var name instead CCFLAGS, which caused jam to
+	skip given flags for C code
+	* src/tinyscheme/scheme.c: initialize/mark sink; this caused very strange
+	crashes on SunStudio
+	* m4/various.m4: use '-g' if gcc wasn't detected
+	* src/tinyscheme/scheme.c: fix a warnings
+
+2009-09-24  Sanel <karijes@users.sourceforge.net>
+
+	* m4/dbus.m4:
+	* src/EdbusConnection.cpp: dbus_watch_get_unix_fd() is marked as
+	deprecated in newer dbus versions
+
+2009-09-23  Sanel <karijes@users.sourceforge.net>
+
+	* src/MimeType.cpp:
+	* src/xdgmime/xdgmime.h:
+	* src/xdgmime/xdgmime.c: added xdg_mime_get_mime_type_for_file2() that
+	will always do stat() on target file; xdg_mime_get_mime_type_for_file()
+	code was reverted to original implementation
+	* test/mime.cpp: test for known crash on NetBSD, for previous xdgmime
+	changes (Bug 155); dumped icon name test against object file
+
+2009-09-21  Sanel <karijes@users.sourceforge.net>
+
+	* src/MenuItem.cpp: removed included stdio.h header; made submenu arrows
+	fixed size: looks much "normally"
+
+2009-09-18  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/IconLoader.h:
+	* src/IconLoader.cpp: use OR-ing to store settable options; much more
+	convinient and verbose
+
+2009-09-17  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/IconLoader.h:
+	* src/IconLoader.cpp: by default, return icon size as requested, even if
+	we are need to scale it
+
+2009-09-08  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/List.h: fix a bug when erase() would be called in the loop with
+	already assigned end() value
+	* test/list.cpp: test for above bug
+
+2009-09-07  Sanel <karijes@users.sourceforge.net>
+
+	* Jamrules: fix error value propagation to the shell
+
+2009-09-03  Sanel <karijes@users.sourceforge.net>
+
+	* configure.in: removed last change in this file 
+	* Jamrules: 'jam tests' will do necessary stuff to allow running tests
+	when edelib was compiled as shared library
+	* INSTALL:
+	* README: update, fixed some typos
+	* src/tinyscheme/init.scm: dumping IO code
+	* src/tinyscheme/init.scm.orig: orginal file that came with tinyscheme
+	* edelib/Resource.h:
+	* src/Resource.cpp: 
+	* test/resource.cpp: allow find_data() to have default prefix, as
+	find_config() too; added find_in_config_dir(); allow prefix to
+	have NULL value, so it can be ignored
+
+2009-09-02  Sanel <karijes@users.sourceforge.net>
+
+	* src/Theme.cpp: better code for checking if scheme stuff is loaded
+	* src/tinyscheme/scheme.c: set proper retcode value when illegal token was
+	found
+	* test/theme.cpp:
+	* test/theme-bad.et: test for special case where tinyscheme code had to be
+	modified
+	* src/tinyscheme/scheme.h: disable math facility
+	* src/tinyscheme/scheme.c: do not call malloc.h; FreeBSD does not like it
+	* configure.in: make libraries visible if edelib was compiled as shared
+	library when EDELIB_USE_LOCALDIR was set
+
+2009-09-01  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Theme.h:
+	* src/Theme.cpp: clear() made public; small fix with string type
+	recognition
+	* test/theme.cpp: added tests for theme
+
+2009-08-29  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/EdbusConnection.h:
+	* doc/DBus.dox: moving D-BUS info documentation in separate file
+	* edelib/edelib-global.h: E_SIGLETON_CLASS_* replaced with
+	E_CLASS_GLOBAL_*
+
+2009-08-28  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/edelib-global.h: added E_DISABLE_CLASS_COPY and changed *.h files
+	to use it
+	* edelib/Theme.h:
+	* src/Theme.cpp:
+	* src/tinyscheme/*: added theming stuff
+	* edelib/edelib-global.h: E_SIGLETON_CLASS_* macros added
+
+2009-08-18  Sanel <karijes@users.sourceforge.net>
+
+	* src/EdbusConnection.cpp: fixed implicit EdbusMessage creating; detected
+	by gcc-2.95.3 :)
+	* edelib/MessageBox.h: dumped wrongly placed doxygen tag
+	* edelib/edelib-global.h: added EDELIB_NS_PREPEND; redefine namespace if
+	external EDELIB_NS name was given
+	* src/Window.cpp:
+	* edelib/TiXml.h: use EDELIB_NS_PREPEND
+	* examples/egroup.cpp:
+	* examples/egroup2.cpp:
+	* examples/dirwatch.cpp:
+	* examples/icon_chooser.cpp: removed explicit namespace name usage
+
+2009-08-15  Sanel <karijes@users.sourceforge.net>
+
+	* test/abicheck.sh: added for the future for easier ABI changes tracking
+
+2009-08-11  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Directory.h: some documentation typo fix
+	* edelib/IconLoader.h:
+	* src/IconLoader.cpp: added builtin xpm icons and implemented
+	get_builtin_xpm_icon()
+
+2009-08-09  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/MessageBox.h:
+	* src/MessageBox.cpp: added set_icon_by_type() so icons could be set via
+	already known MessageBoxIconType values; it will use icon theme by default
+	and as fallback will use edelib internal ones
+
+2009-08-04  Sanel <karijes@users.sourceforge.net>
+
+	* m4/fltk.m4: allow checks for FLTK 1.3.x to be passed
+
+2009-07-31  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/EdbusConnection.h: completed documentation
+	* doc/todo.dox: removed one TODO
+	* edelib/List.h: made size_type public
+
+2009-07-21  Sanel <karijes@users.sourceforge.net>
+
+	* src/FontChooser.cpp: cosmetic changes
+	* doc/Doxyfile.in: examples directory is part of EXAMPLES_PATH
+	* edelib/edelib-global.h: added EDELIB_NS_USING_AS() and documented the
+	rest macros
+	* examples/menu.cpp: addopted to use EDELIB_NS_* macros
+
+2009-06-09  Sanel <karijes@users.sourceforge.net>
+
+	* src/IconLoader.cpp: lookup cache not only by icon name, but by size too;
+	this prevent issue where seen icon name (with random size) would be
+	returned for different requested sizes
+
+2009-06-08  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/TempFile.h:
+	* src/TempFile.cpp:
+	* test/temp_file.cpp: added class for unique temporary files
+	* edelib/TempFile.h:
+	* src/TempFile.cpp: added set_no_close() member; if set, destructor will
+	not close descriptors
+
+2009-06-07  Sanel <karijes@users.sourceforge.net>
+
+	* src/MenuItem.cpp: some Sun Studio quirks
+
+2009-06-06  Sanel <karijes@users.sourceforge.net>
+
+	* src/MenuItem.cpp: better way to determine icon and label positions; also
+	fixes issue when the label is too large so menu window could not correctly
+	recalculate own width
+	* examples/menu.cpp:
+	* examples/menu.fl: extending examples for corner cases
+
+2009-06-03  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/MenuItem.h:
+	* src/MenuItem.cpp: changes to allow images in menu items
+	* examples/menu.cpp: added some icons to test against
+	* examples/menu.cpp: extended a little bit
+
+2009-06-02  Sanel <karijes@users.sourceforge.net>
+
+	* examples/Jamfile: let menu.cpp gets FLTK include paths during
+	compilation
+
+2009-06-30  Sanel <karijes@users.sourceforge.net>
+
+	* Forking FLTK menu due it's inability to be extended; names are changed
+	and edelib namespace is used
+	* examples/menu.cpp: small demo
+	* Jamrules: remove edelib-gui.pc when 'jam distclean' given
+
+2009-06-08  Sanel <karijes@users.sourceforge.net>
+
+	* src/Window.cpp: added Fltk/Scheme key
+
+2009-05-15  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Window.h:
+	* src/Window.cpp: do not load icon theme when WIN_INIT_NONE was given
+	* src/IconTheme.cpp: removed some unneeded output
+
+2009-05-14  Sanel <karijes@users.sourceforge.net>
+
+	* all: split libedelib to libedelib and libedelib_gui
+	* edelib-gui.pc.in:
+	* configure.in:
+	* Jamfile: added edelib-gui.pc.in
+
+2009-05-11  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Regex.h:
+	* src/Regex.cpp:
+	* test/regex.cpp:
+	* examples/elinks.cpp: replaced GNU regex engine with pcre; updated tests
+	and elinks example
+	* examples/icon_chooser.cpp: let it use edelib::Window
+
+2009-04-22  Sanel <karijes@users.sourceforge.net>
+
+	* === Released 2.0 alpha ===
+
+2009-04-20  Sanel <karijes@users.sourceforge.net>
+
+	* src/StrUtil.cpp: some valgrind warning fixup
+	* src/rx/regex.h: __restrict_arr makes a lot of problems on NetBSD's gcc
+	4.1.2 so this part is replaced with updated code found somewere on the net
+	* test/mime.cpp: quick hack to prevent crashes on NetBSD, although better
+	solution should be find
+
+2009-04-18  Sanel <karijes@users.sourceforge.net>
+
+	* m4/pkg.m4: removed obsolete line
+	* m4/mime.m4: fix a bug with IFS, noticeable on ksh shell
+
+2009-04-17  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Config.h:
+	* src/Config.cpp:
+	* test/conf.cpp: removed usage of File class
+	* m4/pkg.m4: ksh hack
+
+2009-04-13  Sanel <karijes@users.sourceforge.net>
+
+	* m4/jam.m4: check if we have broken jam's that does not correctly use
+	return statement
+
+2009-04-12  Sanel <karijes@users.sourceforge.net>
+
+	* all: fixed some warnings generated by gcc's (>=4.3)
+	* edelib.pc.in:
+	* edelib-dbus.pc.in: dump URL key since it is not supported by older
+	pkg-config versions
+
+2009-04-10  Sanel <karijes@users.sourceforge.net>
+
+	* test/UnitTest.h:
+	* test/UnitTest.cpp:
+	* test/run_tests.cpp: removed CDash output; added '--silent' command line
+	option
+	* test/UnitTest.cpp: failed tests will be sent to stderr; better output
+	formatting
+	* Jamrules: let 'jam tests' run unit tests
+	* src/Debug.cpp: use fputs()
+	* configure.in: check if env EDELIB_USE_LOCALDIR was set; if true, see
+	local directory as install destination so .pc files can be called pointing
+	to this directory
+
+2009-04-09  Sanel <karijes@users.sourceforge.net>
+
+	* src/Run.cpp: BSD's keeps BSD definition in sys/param.h
+	* run-tests.sh: removed
+
+2009-04-08  Sanel <karijes@users.sourceforge.net>
+
+	* INSTALL: corrected environment variables
+	* m4/fltk.m4: remove unneeded comma
+	* src/Run.cpp: include needed headers for BSD systems
+
+2009-04-07  Sanel <karijes@users.sourceforge.net>
+
+	* test/UnitTest.h:
+	* test/UnitTest.cpp:
+	* test/run_tests.cpp: return 1 if tests failed or 0 if opposite
+	* run-tests.sh: added
+
+2009-04-02  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Color.h:
+	* src/Color.cpp: 
+	* test/color.cpp: color_html_to_rgb() and color_rgb_to_html() added with
+	tests
+
+2009-03-30  Sanel <karijes@users.sourceforge.net>
+
+	* INSTALL: small clarifications
+	* Jamrules: removed some vars used for playgrounds
+
+2009-03-28  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/EdbusData.h: fix error on sun compiler
+	* edelib/MessageBox.h:
+	* src/MessageBox.cpp:
+	* src/Run.cpp: fix warnings on sun compiler
+	* INSTALL: compiling on SunStudio
+	* edelib/FileTest.h: small changes in the doc
+	* src/Directory.cpp: dir_create_with_parents() needs file_test()
+	* edelib/*: documented macros
+
+2009-03-27  Sanel <karijes@users.sourceforge.net>
+
+	* src/IconChooser.cpp: some refactoring, use Fl_Double_Window
+	* edelib/IconChooser.h: todo how it needs to be rewritten
+	* edelib/FileTest.h:
+	* src/FileTest.cpp:
+	* test/file_test.cpp: added file_test() function with tests
+	* src/FileTest.cpp: use lstat() for links
+	* all: updated code to use file_test(); deprecated dir_*() and file_*()
+	functions that do the same job; removing unneeded checks before
+	file/directory open operations
+
+2009-03-25  Sanel <karijes@users.sourceforge.net>
+
+	* src/IconLoader.cpp: let get() check fallback icon too; some sanity
+	checks
+	* edelib/IconLoader.h: document get() behaviour
+	* edelib/IconLoader.h: document how to get image object
+	* src/IconLoader.cpp: remove previous image from Fl_Shared_Image cache
+	whem icon theme was reloaded; some stats output
+	* src/IconTheme.cpp: removed debug output when go in 'hicolor' theme
+	* edelib/String.h: small documentation revision
+	* edelib/String.h:
+	* src/String.cpp:
+	* test/string.cpp: added trim_left(), trim_right(), trim() function with
+	the tests
+	* src/IconTheme.cpp: updated to use trim() function
+	* edelib.pc.in: added edelibdocdir variable; it will have full path to
+	edelib documentation directory
+	* src/icon/*: updated to gtk icons
+	* src/MessageBox.cpp: use question icon where is needed
+
+2009-03-24  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/IconTheme.h: default_theme_name() added
+	* edelib/IconLoader.h: plain init() used default_theme_name()
+	* src/Window.cpp: DEFAULT_ICON_THEME replaced with default_theme_name()
+	* edelib/IconLoader.h:
+	* src/IconLoader.cpp: let IconLoader tries to directly load icon, then use
+	IconTheme
+	* src/IconLoader.cpp: removed checks if Fl_Shared_Image::get() fails;
+	image() will get NULL and widget will remove previous image, drawing
+	nothing; this behaviour is desired since image is not found anyway
+
+2009-03-23  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Window.h: small clarification about XSETTINGS callback;
+	documented XSETTINGS keys
+	* edelib/IconLoader.h:
+	* src/IconLoader.cpp: added parameter for widget redrawing in set()
+	* edelib/IconLoader.h: some documentation update
+	* src/MimeType.cpp: use new xdgmime's icon lookup feature in fetching icon
+	name, refactored icon fetcher to not use stringtok()
+	* src/MimeType.cpp: mark status as loaded when we have icon name
+
+2009-03-20  Sanel <karijes@users.sourceforge.net>
+
+	* src/ThreadableMember.h: removed; not used any more
+	* src/IconChooser.cpp: re-implemented loading via new IconLoader
+	* edelib/IconLoader.h: remove default parameters from hidden functions
+
+2009-03-19  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Window.h:
+	* src/Window.cpp:
+	* edelib/WindowXid.h:
+	* src/WindowXid.cpp: window_xid_create() moved to WindowXid.{h,cpp} for
+	easier maintenance
+	* edelib/IconLoader.h: documented caveats if IconLoader::reload() was used
+	when Window is used
+	* src/IconLoader.cpp: removing main() used for test code
+	* edelib/Window.h:
+	* src/Window.cpp: reimplemented previous settings stuff naming it as foreign
+	callbacks
+
+2009-03-17  Sanel <karijes@users.sourceforge.net>
+
+	* src/IconTheme.cpp: spec said $XDG_DATA_HOME/icons should be used too
+	* edelib/IconLoader.h: some documentation update
+
+2009-03-16  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/IconTheme.h:
+	* src/IconTheme.cpp: new code, new design, improved icon searching
+	* edelib/IconLoader.h:
+	* src/IconLoader.cpp: now this class actually loads icons, cache them and
+	displays inside widgets
+	* src/Window.cpp:
+	* src/IconChooser.cpp:
+	* test/xdg/icon-theme.cpp: updated because of these chages
+
+2009-03-10  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Pty.h:
+	* edelib/PtyProcess.h: added EDELIB_API exporter
+	* edelib/DirWatch.h: a little documentation revision
+
+2009-03-09  Sanel <karijes@users.sourceforge.net>
+
+	* src/xdgmime:
+	* src/Jamfile
+	* src/Jamfile
+	* configure.in:
+	* Jamconfig.in: updated xdgmime sources to the latest versions and changed
+	accompanying files to reflect that
+	* test/mime.cpp: added tests for caveats
+
+2009-03-08  Sanel <karijes@users.sourceforge.net>
+
+	* src/MessageBox.cpp: dumped DO_COPY() macro in a favor of edelib_strlcpy()
+
+2009-03-07  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/EdbusConnection.h: fixed a typo in enum name
+	* edelib/EdbusConnection.h:
+	* src/EdbusConnection.cpp: request_name() now follows policy issued with
+	second 'mode' parameter
+	* edelib/EdbusConnection.h: request_name() documentation update
+	* edelib/DesktopFile.h: todo about Exec special variables
+	* edelib/EdbusMessage.h: documentation fix
+	* src/MessageBox.cpp: do not call fl_register_images()
+
+2009-03-06  Sanel <karijes@users.sourceforge.net>
+
+	* test/string.cpp: removed unneeded stdio.h inclusion
+	* test/run.cpp: added tests for run_XXX functions
+	* edelib/Run.h: document some caveats
+	* src/Run.cpp: some refactoring, cleaning bad deallocation, misc
+	* test/run.cpp: explictitly say that running file is local or run commands
+	will search PATH for it
+	* src/EdbusMessage.cpp: removed some puts()/printf()'s and internal
+	from_edbusdata_type_to_dbus_type_string() will call E_FATAL() if end was
+	reached
+	* src/EdbusConnection.cpp: commenting debug messages output
+
+2009-03-05  Sanel <karijes@users.sourceforge.net>
+
+	* src/Run.cpp: reimlemented code for asynchronous process spawning, mainly
+	to prevent creating zombie processes; the code is inspired by Glib
+	implmenetation
+	* edelib/Run.h: added RUN_PIPE_FAILED flag
+
+2009-03-01  Sanel <karijes@users.sourceforge.net>
+
+	* m4/pkg.m4: imported modification from ede2 module, where spaces in
+	returned flags will be removed; also pkg-config is mandatory so it will
+	not continue if wasn't found, as was previously; XY_VERSION is set too
+	* m4/dbus.m4: removed checks if pkg-config wasn't found
+	* m4/*.m4:
+	* configure.in: s/EDELIB_CHECK_/EDELIB_; removed that CHECK part for
+	consistency
+	* m4/*.m4: removed 'eval' from 'if' statement
+	* doc/Doxyfile.in: hide scope names
+	* doc/Mainpage.dox: added as main page
+	* TODO: removed; all todo's are placed either in *.h or todo.dox files via
+	\todo tag so doxygen could do the better job
+	* edelib/Debug.h:
+	* src/Debug.cpp: message handler recoded
+	* edelib/MessageBox.h:
+	* src/MessageBox.cpp: themed_dialog_icons() and clear_dialog_icons() are
+	deprecated with set_themed_icons() and clear_themed_icons() from
+	MessageBox; some internal refactoring to use E_RETURN_XXX macros
+	* edelib/Regex.h: added todo for porting it on pcre backend
+	* m4/xlib.m4: remove AC_PATH_X since AC_PATH_XTRA already contains it
+
+2009-02-27  Sanel <karijes@users.sourceforge.net>
+
+	* tools/edelib-mime-find: added
+	* edelib/Pty.h:
+	* edelib/PtyProcess.h:
+	* src/Pty.cpp:
+	* src/PtyProcess.cpp: added Vedran's work on synchronous chat with
+	terminal programs
+	* configure.in: added checks for functions needed by PTY and PtyProcess
+	classes
+	* Window.h:
+	* Window.cpp: renamed create_window_xid() to window_xid_create(); better
+	control of icon theme loading/reloading
+
+2009-02-26  Sanel <karijes@users.sourceforge.net>
+
+	* m4/dbus.m4: removed obsolete code
+	* edelib/edelib-global.h: added EDELIB_DEPRECATED macro
+	* edelib/Run.h:
+	* src/Run.cpp: run_program() and run_program_fmt() marked as deprecated;
+	replacement is in run_sync() and run_async()
+
+2009-02-24  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Resource.h:
+	* src/Resource.cpp: save(), load() and find_conf() have additional prefix
+	parameter, as Vedran proposed, and it behaves as subdirectory of XDG
+	config dirs
+	* test/resource.cpp: updated tests
+	* src/String.cpp: fixed a crash when append() is called with empty string
+	* test/string.cpp: updated tests
+	* autogen.sh: code cleanup
+
+2009-02-23  Sanel <karijes@users.sourceforge.net>
+
+	* m4/stl.m4:
+	* m4/sound.m4:
+	* edelib/XSet.h:
+	* src/XSet.cpp: removed
+	* all-over-the-code: changed license to LGPL, coding standard rechecked
+	* COPYING: added file with LGPL license
+	* econfig.h: renamed to edelib-global.h
+	* src/Resource.cpp: now all files will be saved/read-from "ede" directory
+	as base directory if RESOURCE_DOMAIN_PREFIX wasn't given during compile
+	* test/resource.cpp: updated tests too
+
+2009-02-21  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Run.h:
+	* src/Run.cpp: removed 'root' option, a planned option for (possible)
+	running program as root, where password would be prompted with dialog;
+	planned to be implemeted as external program; also shell path will be
+	first read from $SHELL variable, then /bin/sh will be executed
+
+	* edelib/Run.h:
+	* src/Run.cpp: added run_program_fmt() for printf-like formatted command
+
+2009-02-19  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Resource.h:
+	* src/Resource.cpp: s/find_dir/find_data and changed concept; it should
+	seach through data directories and (now) will search anything, like
+	directory, file, etc.
+	* test/resource.cpp: updated tests
+	* src/Resource.cpp: refactored load() function
+
+2009-02-18  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Resource.h:
+	* src/Resource.cpp: added find_config() and find_dir() functions; they
+	will search for paths in XDG dirs, according to given search order
+	* test/resource.cpp: tests for find_config() and find_dir()
+
+2009-01-24  Sanel <karijes@users.sourceforge.net>
+
+	* Jamconfig.in: s/CFLAGS/CCFLAGS; jam uses CCFLAGS
+	* Jamrules: fixed GenLa action so it leaves comments
+	* Jamrules: small tweaks in SharedLibraryFromObjects rule
+	* test/Jamfile: let xsettings.cpp receive flags too
+
+2009-01-22  Sanel <karijes@users.sourceforge.net>
+
+	* configure.in:
+	* edelib/econfig.h: added HAVE_EDELIB_BASE_CONFIG_H so it can be included
+	only when edelib gets compiled so symbols in edelib/_conf.h don't collide
+	with ones in ede2 config.h or user one
+
+2009-01-20  Sanel <karijes@users.sourceforge.net>
+
+	* First edelib change in 2009 :)
+	* src/Config.cpp: fixed issue due retrieving double and float
+	numbers on different locales
+
+2008-12-29  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/List.h: removing comb_sort(); completed specialization code, but
+	not used yet; somehow it generates bigger code
+	* test/list.cpp: added test for sorting pointers and exposed current bug
+	in list::sort() method
+
+2008-10-07  Sanel <karijes@users.sourceforge.net>
+
+	* src/DateTime.cpp: remove assertions; besides they are unneeded,
+	day_name() would assert if day was larger than 7 (bad, I know)
+
+2008-10-06  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/econfig.h: seems that class visibility is working at gcc >= 4.0
+
+2008-10-05  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/List.h: de-templatized ListNode; this yields a smaller binary
+	files that uses list
+
+2008-10-04  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/econfig.h: E_EXPORT, E_NO_EXPORT and EDELIB_NO_API added
+	* edelib/econfig.h: EDELIB_API now on gcc is E_EXPORT
+	* edelib/EdbusData.h:
+	* edelib/EdbusObjectPath.h:
+	* edelib/EdbusDict.h:
+	* edelib/EdbusList.h:
+	* edelib/EdbusConnection.h:
+	* edelib/EdbusMessage.h:
+	* edelib/Regex.h:
+	* edelib/DesktopFile.h:
+	* edelib/Config.h:
+	* edelib/String.h:
+	* edelib/TiXml.h:
+	* edelib/FontChooser.h:
+	* edelib/DirWatch.h:
+	* edelib/SevenSeg.h:
+	* edelib/TableBase.h:
+	* edelib/XSettingsClient.h:
+	* edelib/XSettingsManager.h:
+	* edelib/XSettingsCommon.h:
+	* edelib/Sipc.h:
+	* edelib/MessageBox.h:
+	let public classes and functions use EDELIB_API
+
+2008-10-03  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Util.h:
+	* src/Util.cpp: removed build_dirname() and reimplemented build_filename()
+	to not use tokenizer
+	* test/util.cpp: tests update
+
+2008-10-02  Sanel <karijes@users.sourceforge.net>
+
+	* src/IconChooser.cpp: same issue as with ExpandableGroup.cpp was
+
+2008-10-01  Sanel <karijes@users.sourceforge.net>
+
+	* src/ExpanadableGroup.cpp: do not reorder childs if group is not shown
+	* src/IconTheme.cpp:
+	* src/XSettingsClient.cpp: s/EASSERT/E_ASSERT, s/EDEBUG/E_DEBUG,
+	s/EWARNING/E_WARNING
+	* src/Window.cpp: small code reordering
+	* TODO: entry
+	* edelib/Util.h:
+	* src/Util.cpp: build_filename() and build_dirname() should not contain
+	separator parameter
+	* test/util.cpp: updated tests
+
+2008-09-26  Sanel <karijes@users.sourceforge.net>
+
+	* Jamfile: SubInclude should come the last
+
+2008-09-24  Sanel <karijes@users.sourceforge.net>
+
+	* m4/dbus.m4: if disabled, don't leave spaces, jam doesn't like it
+	* configure.in: the same applies for FLTK; also fixed issue with CFLAGS
+	and CXXFLAGS where AC_PROG_CC and AC_PROG_CXX would secretly add 
+	'-O2' and '-g' flags
+	* m4/fltk.m4: added --with-fltk-path configure option to specify
+	alternative FLTK installation
+	* src/Resource.cpp: use temporary when substring is used or we will get a
+	junk as name
+
+2008-09-23  Sanel <karijes@users.sourceforge.net>
+
+	* src/String.cpp: chcpy() made static
+	* src/String.cpp, src/Run.cpp, src/Sipc.cpp, src/Resource.cpp: fix warnings from Sun's
+	compiler
+
+2008-09-22  Sanel <karijes@users.sourceforge.net>
+
+	* src/Jamfile, examples/Jamfile: let files depending on FLTK 
+	uses FLTK_CFLAGS
+	* Jamrules: STDLIB variable will contain '-l' flag in case it is placed in
+	non-standard path so search directories can be added (e.g. in case of
+	different compiler)
+
+2008-09-21  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Sipc.h: updated documentation
+	* test/mime.cpp: test for text/html mime now points to
+	test/perf/asciidoc.html instead to removed doc/footer.html
+	* TODO: added/removed entry
+	* Jamrules: let 'jam distclean' remove Doxyfile too
+	* doc/Doxyfile.in: now documentation should show correct include path
+
+2008-09-20  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/TableBase.h: updated documentation
+	* src/xdgmime/xdgmime.c: changed order of guessing so directories with
+	"extensions" or extension-like names in the name doesn't be recognized 
+	as files or unknown types e.g. '.kde', '.e' or '.emacs.d'
+
+2008-09-15  Sanel <karijes@users.sourceforge.net>
+
+	* TableBase.{h,cpp}: added TableBase based on Erco's Fl_Table widget
+	* examples/list_view.cpp: TableBase sample
+	* all: a massive fix of FLTK headers inclusion; recent reports shows that
+	some distros does not install FLTK correctly so only .H files are 
+	present, although .h symlinks should be created too
+
+2008-09-14  Sanel <karijes@users.sourceforge.net>
+
+	* Jamconfig.in, m4/initjamfile.m4: added localedir var
+
+2008-09-13  Sanel <karijes@users.sourceforge.net>
+
+	* Jamconfig.in, Jamrules, src/Jamrules: s/DBUSFLAGS/DBUS_CFLAGS,
+	s/DBUSLIBS/DBUS_LIBS
+	* m4/libxpm.m4: use LIBXPM_LIBS variable
+	* m4/notify.m4: use LIBFAM_LIBS variable
+	* all over: s/FLTKFLAGS/FLTK_CFLAGS, s/FLTKLIBS/FLTK_LIBS,
+	s/FLTKLIBS_FULL/FLTK_LIBS_FULL, s/DEBUGFLAGS/DEBUG_FLAGS,
+	s/OPTIMFLAGS/OPTIM_FLAGS, removing ALLFLAGS
+	* m4/notify.m4: remove unneeded newline in ./configure --help output
+	* m4/dbus.m4, src/Jamfile: added --disable-dbus and implement behaviour
+	through the code
+
+
+2008-09-12  Sanel <karijes@users.sourceforge.net>
+
+	* examples/Jamfile: added missing sipc_client.cpp and sipc_server.cpp
+	* examples/sipc_*.cpp: small output beautification
+	* edelib/Missing.h, src/Missing.c: implemented edelib_scandir() and edelib_alphasort()
+	* test/missing.c: edelib_scandir() and edelib_alphasort() test
+	* src/DesktopFile.cpp, src/FontChooser.cpp: NULL-ef few variables so when
+	compiled with optimizations, compiled does not report 'uninitialized'
+	stuff
+	* src/FontChooser.cpp: update for new debug macros
+	* src/rx/{regex_internal.h, regex.h}: added __extension__ to shut up warnings
+	* m4/mime.m4: dumped using '-z' for empty string testing; csh does not
+	understainds it
+
+2008-09-11  Sanel <karijes@users.sourceforge.net>
+
+	* Jamrules: Solaris (at least SunOS 2.7 with gcc 3.2) uses different
+	options for creating shared libraries
+	* Jamrules: modified MakeTest rule too to link against libxnet on Solaris 
+	when binaries are linked with shared edelib
+	* examples/: added sipc_server.cpp and sipc_client.cpp examples
+
+2008-09-10  Sanel <karijes@users.sourceforge.net>
+
+	* Added Listener.{h,cpp} with listener_xxx functions; they should be
+	FLTK loop without FLTK, a bunch of functions that monitors descriptors and
+	via loop report callbacks
+	* Added Sipc.{h,cpp}, implementation of very simple IPC scheme
+	* edelib/econfig.h: added ';' to be a part of EDELIB_NS_USE macro so, when
+	is disable, compiler does not reports how ';' exists without statement
+	* examples/*, test/xdg/*, test/*, tools/edelib-dbus-introspect/*: updates
+	changes in EDELIB_NS_USE macro
+
+2008-09-07  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Nls.h, src/Nls.cpp: refactoring
+	* src/Config.cpp: updated too
+
+2008-09-06  Sanel <karijes@users.sourceforge.net>
+
+	* README, INSTALL: a small update
+
+2008-09-03  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/econfig.h: added EDELIB_NS_USING() macro
+
+2008-09-02  Sanel <karijes@users.sourceforge.net>
+
+	* Jamrules: cleaned commented code left from libtool version;
+	InstallSharedLibrary and UninstalSharedLibrary does not use libtool any
+	more; jam build will also create .la file for libtool when shared library
+	creation was told
+
+2008-08-31  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/econfig.h: s/EDELIB_NAMESPACE_USE/EDELIB_NS_USE; removed unused
+	EDELIB_NAMESPACE macro
+	* test/strutil.cpp: removed unneeded stdio.h inclusion
+	* examples/xsettings_setter.cpp, 
+	examples/xsettings_client.cpp, 
+	examples/font_chooser.cpp, 
+	examples/efile.cpp, 
+	examples/elinks.cpp, 
+	test/xdg/icon-theme.cpp, 
+	test/perf/stringtok.cpp, 
+	test/color.cpp, 
+	test/list.cpp, 
+	test/xml.cpp, 
+	test/resource.cpp, 
+	test/directory.cpp, 
+	test/desktopfile.cpp, 
+	test/dbus.cpp, 
+	test/file.cpp, 
+	test/string.cpp, 
+	test/conf.cpp, 
+	test/mime.cpp, 
+	test/strutil.cpp, 
+	test/xsettings.cpp, 
+	test/regex.cpp, 
+	test/datetime.cpp, 
+	test/util.cpp, 
+	tools/edelib-dbus-introspect/edelib-dbus-introspect.cpp: 
+	s/using namespace edelib/EDELIB_NS_USE
+	* src/IconChooser.cpp: icons will have label and tooltip
+	* src/ExpandableGroup.cpp: let vscroll_cb() be static
+
+2008-08-26  Sanel <karijes@users.sourceforge.net>
+
+	* src/Config.cpp: s/EASSERT/E_ASSERT; save() will not leave blank line at 
+	the end of file; refactored some pieces
+	* examples/combobox.cpp: removed; very old code
+
+2008-08-25  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Sound.h, src/Sound.cpp: removed
+	* src/Jamfile: dumped Sound.cpp
+	* Jamconfig.in, configure.in, test/xdg/Jamfile, test/Jamfile,
+	test/edelib-dbus-introspect/Jamfile: removed SOUND variable and substitute
+	variable
+	* configure.in: remove EDE_SOUND macro
+	* m4/initjamfile.m4: replaced with modified version from ede2 module
+	* configure.in: EDELIB_INIT_JAM moved at the end (before substitutions)
+	so in case values are changed in configure.in, it can catch them
+	* tools/install-sh: removed
+	* configure.in: removed needs for install-sh and AC_PROG_INSTALL, edelib
+	is installed via jam facility; also removed clearing multiple ending
+	slashes in $prefix since m4/initjamfile.m4 already have code doing that
+
+2008-08-24  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/DesktopFile.h, src/DesktopFile.cpp: added create_new()
+	for creating .desktop files from scratch or clearing currently hold data,
+	which was issue before. Also, some code clarifications with E_RETURN_XXX
+	functions.
+
+2008-08-23  Sanel <karijes@users.sourceforge.net>
+
+	* Jamrule: cleaned SymLink rule and SymLink1 action
+
+2008-08-22  Sanel <karijes@users.sourceforge.net>
+
+	* test/examples: moved in source root directory
+	* INSTALL: refreshing
+	* test/old: removed
+	* test/xdg: added; a directory where some XDG specifications are compared
+	with pyxdg for correctnes
+	* m4/libxpm.m4: added missing 'FLTKLIBS_FULL="$FLTKLIBS_FULL -lXpm"'
+	* Jamrule, Jamconfig.in: replaced libtool backed for shared library creating with handcoded
+	* Jamrule: InstallSharedLibrary will install library with .so.X.X.X
+	extension, not .so as before
+	* tools/edelib-dbus-introspect/Jamfile, test/xdg/Jamfile: let missing libraries 
+	be linked if shared library is requested
+
+2008-08-11  Sanel <karijes@users.sourceforge.net>
+
+	* edelib/Nls.h, src/Nls.cpp: added set_locale_to_c() and set_locale_from_c()
+	* src/Config.cpp: replaced TODOs with above functions so locale specific
+	functions can query values expected for C locale
+	* src/Util.cpp: static-fied some internal functions
+
+2008-08-10  Sanel <karijes@users.sourceforge.net>
+
+	* src/Resource.cpp: Some E_RETURN_VAL_IF_FAILED addition
+	* configure.in: added AC_ARG_VAR() to display info for PKG_CONFIG and
+	PKG_CONFIG_PATH
+
+2008-08-09  Sanel <karijes@users.sourceforge.net>
+
+	* ConfigEntry and ConfigSection classes are moved to Config.cpp
+
+2008-08-08  Sanel <karijes@users.sourceforge.net>
+
+	* Added edelib.pc.in and edelib-dbus.pc.in for pkg-config, replacing
+	edelib-config which is pretty broken
+	* Modified Jamfile so above files gets installed and disabled installing
+	of edelib-config
+	* Trim blank characters from tokenized values in Directories key
+	(IconTheme)
+
+2008-08-07  Sanel <karijes@users.sourceforge.net>
+
+	* Added icon_chooser() that can use loaded icon theme
+
+2008-08-06  Sanel <karijes@users.sourceforge.net>
+
+	* Fixed a bug in Resource when malformed data is tried to be read
+	* Added test for that bug too
+	* Added get_all() in IconTheme so one can get all icon filenames with
+	given size and context in current theme
+	* Also added theme_name() to get the name of currently used theme
+
+2008-08-02  Sanel <karijes@users.sourceforge.net>
+
+	* Added file_executable with tests
+	* EdbusConnection.cpp some debug output got newlines
+	* Changed way register_object() in EdbusConnection behaves; now if none
+	object was registered, all data can be listened; otherwise only for that
+	object
+	* TODO entry
+	* Better matching interface for signals and method in EdbusConnection,
+	hopefully
+
+2008-07-29  Sanel <karijes@users.sourceforge.net>
+
+	* Added test/perf/stringtok.ss as comparison against chicken scheme
+	compiler
+
+2008-07-14  Sanel <karijes@users.sourceforge.net>
+
+	* Removed edelib-dbus-xml2cpp
+	* Made edelib-dbus-introspect compileable
+
+2008-06-16  Sanel <karijes@users.sourceforge.net>
+
+	* Fixed a typo with __EDBUSMESSAGE_H__ in EdbusMessage.h
+
+2008-06-04  Sanel <karijes@users.sourceforge.net>
+
+	* Fixed bool value checks in Config class (thanks to Vedran note)
+	* Added that to tests too
+
+2008-05-10  Sanel <karijes@users.sourceforge.net>
+	
+	* Forgot to update Jamrule and it's MakeTest for dbus usage via 
+	"use-dbus" flag
+
+2008-04-5  Sanel <karijes@users.sourceforge.net>
+
+	* Fixed assertion check in is_double() in EdbusData
+	* Fixed remove_all() in EdbusList
+	* Test for dbus code. Not completed....
+
+2008-03-25  Sanel <karijes@users.sourceforge.net>
+
+	* Let 'jam distclean' clean Doxyfile too
+
+2008-03-24  Sanel <karijes@users.sourceforge.net>
+
+	* Rewamped build stuff. Now shared library is build via libtool
+	* EdbusConnection.h and EdbusObjecPath.h docs todo
+
+2008-03-17  Sanel <karijes@users.sourceforge.net>
+
+	* Removed tests for STL
+	* Improved edelib-config
+	* Added FLTKLIBS and FLTKLIBS_FULL expansions
+	* Added dbus flags and libs expansions
+	* Merged dbus code into edelib
+	* Doing some grouping with documentation; things are becommimng messy
+
+2008-03-13  Sanel <karijes@users.sourceforge.net>
+
+	* Added == and != opeators in list with tests
+	* Added const_iterator in list. Changed DesktopFile.cpp to reflect that
+	too
+
+2008-03-06  Sanel <karijes@users.sourceforge.net>
+
+	* Updated test/perf/stringtok.cpp to the latest changes
+	* Added strsplit.{h,cpp} as comparison with stringtok()
+
+2008-03-04  Sanel <karijes@users.sourceforge.net>
+
+	* Added findfile.m4, pkg.m4 and dbus.m4 macros. Mostly for D-BUS
+	detection. D-BUS will be first detected via pkg-config; if pkg-config does
+	not exists, configure will manually scan known places for headers and
+	libraries
+	* Removed dir_remove_rec(). Hoping some day I will add better code.
+	* Replaced DIR_SEPARATOR and DIR_SEPARATOR_STR with E_DIR_SEPARATOR and
+	E_DIR_SEPARATOR_STR all over the code 
+	* Added dir_create_with_parents() with the tests
+
+2008-02-26  Sanel <karijes@users.sourceforge.net>
+
+	* Completed Time class with removal of millisecond member
+	* In tests/util.cpp, before environmet vars are changed, they are saved
+	first and later restored. That also caused removal of warning message
+	* Revised TODO file
+	* Revised DesktopFile.h documentation
+
+2008-02-25  Sanel <karijes@users.sourceforge.net>
+
+	* Documented Time class
+	* Added system_set() in Time class
+	* Time member set() returns nothing now
+	* Small addition in Date's system_set() so settimeofday() don't fail
+
+2008-02-24  Sanel <karijes@users.sourceforge.net>
+
+	* Added E_RETURN_IF_FAIL and E_RETURN_VAL_IF_FAIL macros
+	* Little reformatting in xdgmime.h
+	* Fixed issue with update_settings() in Window.cpp; when client calls this
+	with receiver uid, receiver will get event even if client immediately
+	hides itself. Previously this wasn't the case.
+	* Added double_buffer() member in Window
+	* Revised Window documentation and cleaned unused code in Window.cpp
+
+2008-02-23  Sanel <karijes@users.sourceforge.net>
+
+	* Added _edelib_assert()
+	* Default debug macros are E_DEBUG, E_ASSERT, E_STRLOC, E_FATAL, althought
+	rest of the code need to be changed to reflect this changes
+	* Pretty print when stack is dumped
+	* Efatal (and the rest) is changed to _edelib_fatal() and similar
+
+2008-02-17  Sanel <karijes@users.sourceforge.net>
+
+	* Added edelib_strlcat() with tests
+
+2008-02-16  Sanel <karijes@users.sourceforge.net>
+
+	* Added missing.cpp in test suite so it can test various functions form
+	Missing.{h,cpp}
+	* Added edelib_strlcpy() with tests
+
+2008-02-11  Sanel <karijes@users.sourceforge.net>
+
+	* In Config.cpp made static functions that are visible only inside
+	this file
+	* In Jamrules removed EXEMODE from installation; jam by default set it to
+	711
+
+2008-02-10  Sanel <karijes@users.sourceforge.net>
+
+	* Resource will not add '/ede/' to XDG paths. This should be set via XDG
+	env variables
+	* Modified Resource test too
+	* Removed old comment from color_fltk_to_rgb
+	* Made static hex2int() in Color.cpp
+
+2008-02-09  Sanel <karijes@users.sourceforge.net>
+
+	* Some Config output formating tuning
+	* Added Resource class
+	* Fixed documentation tag in Regex.h
+
+2008-02-02  Sanel <karijes@users.sourceforge.net>
+
+	* Added replace(char, char) in String with tests
+
+2008-02-01  Sanel <karijes@users.sourceforge.net>
+
+	* Improved font chooser both in dialog and font scanning. Dialog contains
+	'styles' for regular/bold/italic/... and font scanning will try to group
+	fonts into families. It is not perfect since can miss some fonts,
+	especailly when there are a huge number of fonts, yielding that regular
+	points to bold face or similar, but I don't know can it be better due bad
+	FLTK font list engine
+	* Added small test for font chooser
+
+2008-01-20  Sanel <karijes@users.sourceforge.net>
+
+	* First changelog entry in 2008 !!! ;)
+	* Fixed crashing in font chooser 
+	* Completed (at some point) font chooser documentation
+	* Added default_name and default_size as parameters for font_chooser()
+	function
+
+2007-12-12  Sanel <karijes@users.sourceforge.net>
+
+	* Added Missing.{h,c} with various functions that are missing on other
+	unix'es beside linux
+	* Added some #ifdefs for __restrict_arr in rx/regex.h since older gcc
+	versions will not correctly resolve 'regmatch_t __pmatch[__restrict_arr]'
+	construct
+
+2007-12-07  Sanel <karijes@users.sourceforge.net>
+	
+	* Removed check for awk
+	* Removed check for kqueue
+
+2007-12-06  Sanel <karijes@users.sourceforge.net>
+
+	* Use LocalDepends and LocalClean in Jamrules
+	* Let mime_type be NULL when new node was created in xdgmimeglob.c. This
+	should assure we don't get odd crashes in xdgmime
+	* Generating README gives more problems than it solves it (especially for
+	platforms without gawk by default) so genreadme and index.dox are removed
+	and README and INSTALL are added
+	* Removed unused files from docs too
+
+2007-12-05  Sanel <karijes@users.sourceforge.net>
+
+	* Better compilation of test suite when edelib was compiled without X11
+	and FLTK support
+	* Fixed uninitialized variable valgrind detected in Window class
+	* jam install now finaly works as should be
+	* Let 'test' use '-z' in mime.m4, Solaris shell don't like 'test ! ...'
+	construct
+
+2007-12-02  Sanel <karijes@users.sourceforge.net>
+
+	* Removed clear parameter from dir_list
+	* Added show_dots parameter in dir_list
+	* dir_list() will clear list before items are added
+
+2007-12-01  Sanel <karijes@users.sourceforge.net>
+
+	* Let daylight variable checks do linking not compiling only since
+	variable is externaly declared
+	* Rewrote dir_list so it does not use scandir() any more due portability
+	* Also fixed bug where previous dir_list() didn't show '.' and '..'
+	directories
+	* Replaced dir_separator() with DIR_SEPARATOR and DIR_SEPARATOR_STR
+
+2007-11-30  Sanel <karijes@users.sourceforge.net>
+
+	* Work on Window class; now it is by default double buffered, inheriting
+	Fl_Double_Window, but can be switched to Fl_Window too
+	* Fixed bug in DirWatchInotify where continuous events would not be
+	reported (two directories are watched, file is moved from one to second
+	watched directory)
+	* Added create_window_xid() which do the same job as Fl_X::make_xid() but
+	with function parameter where can be done work before window is mapped
+	* icon() is now known as window_icon() so to not collide with default
+	icon() member from Fl_Window
+	* Let ALLFLAGS contains FLTKFLAGS (in Jamconfig.in) so jam can pick up
+	correctly X11 paths
+	* Added FontChooser dialog
+
+2007-11-29  Sanel <karijes@users.sourceforge.net>
+
+	* Added checks for daylight variable; FreeBSD does not have it (presumably
+	other BSD's). Is this glibc extension ?
+	* Cleared some old code from Window.cpp
+	* Let SoundSystem be correctly compiled when sounds are disabled
+
+2007-11-28  Sanel <karijes@users.sourceforge.net>
+
+	* Implemented icon() in Window which will correctly set an titlebar icon
+	with transparency. Also added libxpm.m4 for libXpm checks since icon()
+	use it.
+
+2007-11-26  Sanel <karijes@users.sourceforge.net>
+
+	* Let jam distclean remove .jamcache and .jamhcache files
+	* Versioning is done in single place in configure.in
+	* Fixed issue in inotify DirWatch when file is moved in/out watched
+	directory so DirWatch can report DW_REPORT_CREATE/DW_REPORT_DELETE
+	correctly
+
+2007-11-25  Sanel <karijes@users.sourceforge.net>
+
+	* Added mime.m4 which should check presence of XDG MIME database
+	* DirWatchFam.cpp added with FAM/Gamin implementation
+	* DirWatchInotify.cpp returns true if directory already registered, the
+	same behaviour as for DirWatchFam.cpp
+	* Removed DW_DNOTIFY from DirWatch header and dirwatch.cpp example
+	* Removed DirWatchDnotify.cpp file
+	* One less entry in TODO
+	* DirWatchGeneric.cpp will return true for every function, so it can be
+	used in code without interruption, althought will do nothing ;-)
+	* Removed dnotify checks in notify.m4
+	* Made DirWatch be compiled when FLTK is present since it depends on
+	FLTK's descriptor watching code
+	* Handle FAMAcknowledge event too
+	* Removed obsolete comment from IconTheme
+	* Removed obsolete commented code from Directory.cpp
+
+2007-11-23  Sanel <karijes@users.sourceforge.net>
+
+	* In notify.m4 added checks for FAMNoExists and --enable-fam-only option
+	which will force FAM usage (if exists) regardless of present kernel
+	notifier
+	* DirWatchInotify cleanings
+
+2007-11-20  Sanel <karijes@users.sourceforge.net>
+
+	* Updated docs for DirWatch class
+	* Added DirWatchInotify.cpp DirWatchGeneric.cpp and moved old dnotify code
+	in DirWatchDnotify.cpp. Now desired backend will be choosen during compile
+	time. As dummy fallback will be used DirWatchGeneric which will do
+	nothing. dnotify is still not merged into new code and fam/kqueue are
+	pending for implementation
+
+2007-11-19  Sanel <karijes@users.sourceforge.net>
+
+	* Replaced dnotify.m4 with notify.m4 where are (now) performed checks for
+	inotify, dnotify and FAM presence
+	* Replaced EDE_ with EDELIB_ in *.m4 and configure.in files
+	* kqueue checks added in notify.m4
+
+2007-11-13  Sanel <karijes@users.sourceforge.net>
+
+	* Removed old sort() code from list, replacing with new (faster) one
+
+2007-11-11  Sanel <karijes@users.sourceforge.net>
+
+	* In list added sort() method, with tests
+	* TODO entry
+	* ICON_CONTEXT_EMBLEM added to IconTheme
+
+2007-11-5  Sanel <karijes@users.sourceforge.net>
+
+	* In Window added another way of updating data via external (from other
+	programs) calls
+	* test/strutil.cpp use list now
+
+2007-10-31  Sanel <karijes@users.sourceforge.net>
+
+	* XSETTINGS code in Window
+	* puts/printf cleanup from XSettingsClient
+	* manager_running() added to XSettingsClient
+	* More checks in Window code
+
+2007-10-29  Sanel <karijes@users.sourceforge.net>
+
+	* xsettings_manager_delete_setting added in XSettingsCommon.cpp
+	* Small docs for Window class
+	* New settings property in Window class and fixed small color issues
+
+2007-10-25  Sanel <karijes@users.sourceforge.net>
+
+	* In XSettingsManager after set(), notify() must be called. This will
+	(on initial startup) keep serials to zero which is compatible with
+	XSETTINGS referent implementation
+	* The same done for XSettingsClient
+	* Window class added
+
+2007-10-24  Sanel <karijes@users.sourceforge.net>
+
+	* Documented XSettingsClient
+	* Copy ctor and operator= are private in XSettingsClient
+	* setup_driver() guarded with USE_SOUNDS
+	* XSettingsManager added with documentation
+	* XSettingsClient now explicitly accepts Display/screen variables
+
+2007-10-23  Sanel <karijes@users.sourceforge.net>
+
+	* xsettings_list_find in XSettingsCommon.h should accept XSettingsList*
+	not XSettingsList**. Compiler missed this !@#$
+	* Added xsettings.cpp file with tests
+
+2007-10-22  Sanel <karijes@users.sourceforge.net>
+
+	* Added XSETTINGS classes. Manager part missing
+	* Added xsettings_setter.c, xsettings_client.c in examples
+
+2007-09-23  Sanel <karijes@users.sourceforge.net>
+
+	* list have front()/back()
+	* Tests added too
+	* Removed old commented code from MimeType
+	* svg2png can detect either rsvg or inkscape if are installed and use one
+	of them
+	* Added key_exist() in Config
+	* exist() and key_exist() tests in config.cpp
+	* Added getting/setting OnlyShowIn/NotShowIn values in DesktopFile
+	* Detail tests for DesktopFile file class including above addition
+	* Removed few finished entries from TODO
+
+2007-09-17  Sanel <karijes@users.sourceforge.net>
+
+	* sound.m4, disable checks for mad library
+	* Uh... finally fixed odd bug in MessageBox caused due non-resizable group 
+	where readqueue() would miss any event produced by child that was laying
+	outside group bounds (the odd thing was for childs that was partially
+	laying outsid group; part of the child inside group bounds would report
+	event, but part of the same child outside those bounds would not ;P)
+
+2007-09-16  Sanel <karijes@users.sourceforge.net>
+	
+	* In SoundSystem init() driver can be given
+	* init() will return some status
+
+2007-09-14  Sanel <karijes@users.sourceforge.net>
+
+	* UnitTest have clock measurements
+
+2007-09-13  Sanel <karijes@users.sourceforge.net>
+
+	* Made some Date and Time members static
+	* TimeZone fix for correct time retreival for given zone
+	* datetime.cpp test updated too
+	* Assertion in days_in_month() for month parameter
+	* ++ and -- operators in Date
+	* edelib-config.in tweaks
+
+2007-09-11  Sanel <karijes@users.sourceforge.net>
+
+	* Test in datetime.cpp for Vedran's fix in operator>()
+
+2007-09-09  Sanel <karijes@users.sourceforge.net>
+
+	* In MimeType added subclass_of() to check mime parents
+	* In DesktopFile try_exec(), strncpy known stuff ;)
+
+2007-09-03  Sanel <karijes@users.sourceforge.net>
+
+	* Hopefully better scanning in DirWatch. Still sucks, but less than
+	previous version
+
+2007-09-02  Sanel <karijes@users.sourceforge.net>
+
+	* Sound can be run in non-blocking mode via additional thread. Not fully 
+	tested.
+	* One line less in TODO ;)
+
+2007-09-01  Sanel <karijes@users.sourceforge.net>
+
+	* MessageBox run_plain() behaves as old run()
+	* run() now returns button pressed number and closes dialog
+	* set_icon() and set_theme_icon() returns status if icon was set
+	* ask()/message()/etc. are modal
+	* Added fd.o icon names in MessageBox
+	* run() and run_plain() in MessageBox accepts flag for dialog centering
+	* Removed that silly List to list define; now list is used for STL
+	compatibility
+
+2007-08-28  Sanel <karijes@users.sourceforge.net>
+
+	* Added clear parameter to dir_list()
+	* Fixed a bug in Config; multiple load() calls would _append_ data, not
+	clear previous one. Now it will do opposite. Uh...
+
+2007-08-27  Sanel <karijes@users.sourceforge.net>
+
+	* Added MessageBox class
+	* Added inited() to IconTheme and SoundSystem
+	* message(), ask(), input(), alert(), password() in MessageBox.cpp
+	* Dumped Ask.{cpp,h}
+
+2007-08-19  Sanel <karijes@users.sourceforge.net>
+
+	* String code beautify (remove this before commit)
+	* MimeType (likewise)
+	* MimeType will now correctly use XDG_DATA_DIRS to search for comments
+	* Previous MimeType addon sucked; reimplemented better in xdgmime
+	via xdg_mime_find_data(). MimeType changed to reflect this
+	* Added efile as sample
+	* GetOS added to Jamrules
+
+2007-08-18  Sanel <karijes@users.sourceforge.net>
+
+	* Added regex copy (from sed) with few compilation/warning modifications
+	* split() in regex with tests
+	* Documented Regex class
+	* More tests in tests/regex.cpp
+	* rx/regexec.c some warning cleanup
+	* Added test/examples/elinks.cpp as sample of File/list/Regex usage
+
+2007-08-17  Sanel <karijes@users.sourceforge.net>
+
+	* search(), operator bool(), error codes added to Regex
+	* Tests for those too...
+	* shared.m4; removed '-shared' flag for .cpp files; not needed
+	* New MakeSharedLibrary rule; few fixes in rest jam files
+	* autogen.sh --compile option
+	* SharedLibraryFromObjects modified to correct create sonames, but I'm not
+	sure it works correctly
+
+2007-08-16  Sanel <karijes@users.sourceforge.net>
+
+	* Added Regex class with tests
+
+2007-08-15  Sanel <karijes@users.sourceforge.net>
+
+	* user_config_dir(), user_data_dir() and user_cache_dir() will, as
+	fallback, return value peeking inside $HOME env, as required from
+	freedesktop.org. Previous version was using '~/' directly which can cause 
+	problems with functions that don't understaind shell shortcuts. Now, if 
+	dir_home() fails, it will then use '~/'.
+
+	* util.cpp, removed tests for fallbacks in above directories since those
+	depends on HOME
+
+2007-08-13  Sanel <karijes@users.sourceforge.net>
+
+	* stringtok in MimeType uses list now
+	* file_path with list too; also if PATH does not contain anything, it will
+	return empty String
+	* dirwatch.cpp return 0 in main()
+
+2007-08-10  Sanel <karijes@users.sourceforge.net>
+
+	* New List class which is now much more STL conformant (allowing --end()).
+	Looks like it generates few KB less code. Funny :)
+	* Few tests in list.cpp
+
+2007-08-8  Sanel <karijes@users.sourceforge.net>
+
+	* Explicit disable List(const List&) and operator=(const List&)
+	* IconChooser uses list now
+	* DirWatch uses list too; since list have private copy ctor, found that
+	some parts of DirWatch would call it anyway (DirWatchEntry), unneededly copying 
+	container data; fixed with allocation on heap
+	* dir_list now uses list instead vector
+
+2007-07-30  Sanel <karijes@users.sourceforge.net>
+
+	* Added const size() in List
+	* Added operator bool() in List too
+	* Dumped non-const size() and empty() from List
+	* Added const empty() in List
+
+2007-07-28  Sanel <karijes@users.sourceforge.net>
+
+	* List.h now contains own list implementation, altought needs some tests
+	* Doxygen tags throught the code updated, due new doxygen version
+	* Doxyfile updated too
+	* Small replacement, '=' to KV_DELIM in Config
+	* List test added
+	* EDELIB_NAMESPACE replaced with EDELIB_NS_BEGIN/EDELIB_NS_END all over
+	the code
+	* system_data_dirs, system_config_dirs now uses list
+	* Replaced vector in IconTheme with list
+
+2007-07-26  Sanel <karijes@users.sourceforge.net>
+
+	* Added get_allocated() in Config
+	* IconTheme for Directories values now uses get_allocated()
+
+2007-07-25  Sanel <karijes@users.sourceforge.net>
+
+	* Config class is not any more limited with line and value sizes, althought
+	section/key does (can't find any reason why would someone use
+	unlimited sections/keys !)
+	* Small fixup with clear() in Config class
+	* Added tests for config_getline() functions, used internally by Config
+	class
+	* Finished remove_entry() in Config
+	* Fixed strncpy issue when requested size in Config's get() is less than
+	actuall since strncpy() does not terminate string
+	* Sizes for get() are unsigned int now
+
+2007-07-16  Sanel <karijes@users.sourceforge.net>
+
+	* Forced environ outside edelib namespace
+	* Added tests for Vedran's String fix
+	* Added some perftests to watch container(s) behaviours on stringtok
+	* Correct paths for jam cached data
+
+2007-07-11  Sanel <karijes@users.sourceforge.net>
+	* Newer autoconf versions require datarootdir to be present.
+	Jamconfig.in and initjamfile.m4 are modified for that
+
+2007-07-07  Sanel <karijes@users.sourceforge.net>
+	
+	* tests/mime.cpp, removed output from text/html since in newer
+	versions of mime-types distributions, description is changed
+
+2007-07-02  Sanel <karijes@users.sourceforge.net>
+
+	* DirWatch can now return what file was changed and how
+	is changed (created,modified,deleted)
+	* Looks like freebsd keeps lstat/stat defined else
+	* Fixup when dnotify is not detected
+
+2007-07-01  Sanel <karijes@users.sourceforge.net>
+
+	* Added DirWatch with example. inotify usage is still not implemented
+	* TODO entry
+	* Added dnotify.m4
+
+2007-06-26  Sanel <karijes@users.sourceforge.net>
+
+	* Bumped out Item class
+	* Added SevenSeg widget with sample
+	* Ups, IconTheme would not add '/icons/' to XDG dirs
+
+2007-06-25  Sanel <karijes@users.sourceforge.net>
+
+	* Made DesktopFile inherits Config which is much better than
+	previous version
+
+2007-06-24  Sanel <karijes@users.sourceforge.net>
+
+	* Added file_path; tests too
+	* Added DesktopFile for reading .desktop files with tests
+	* In tests name strtok->stringtok
+	* In Config added set_localized() to match get_localized()
+	* ...and tests of course
+	* TODO entry about LC_MESSAGES in Config
+	* Finished saving part of DesktopFile; needs more tests...
+
+2007-06-03  Sanel <karijes@users.sourceforge.net>
+
+	* IconChooser tweaks
+	* index.dox update
+	* rm design.dox
+
+2007-06-02  Sanel <karijes@users.sourceforge.net>
+
+	* Converting to fltk 1.x initiated... :)
+	* ExpandableGroup, IconChooser converted
+	* fltk.m4 checks for 1.x
+	* color_fltk_to_rgb will corectly split fltk colors too, via
+	reused colorman from fltk distribution
+
+2007-05-27  Sanel <karijes@users.sourceforge.net>
+
+	* estnlen(), estrndup()
+	* TODO entry
+	* MimeType will return String reference instead a copy
+	* xdgmime will return 'inode/directory' for folders
+	* MimeType will return for folders name 'folder' (don't ask)
+	* icon_name() in MimeType accept only names in form 'type/name'
+
+2007-05-26  Sanel <karijes@users.sourceforge.net>
+
+	* Code style sync
+	* Added file_remove(), file_copy(), file_rename(), dir_create(),
+	dir_remove(), dir_rename()
+	* Added tests for above functions
+	* file_copy() have option to preserve permissions/atime/mtime
+	* File::write(const char*) added
+	* Basic dir_remove_rec()
+	* xdgmime didn't recognized correctly any other types than files
+	(directories, socket,...). Added that.
+
+2007-05-25  The Carcass  <sanelz@stigmata>
+
+	* Added set in Config to accept const char* since it will
+	generate wrong code and redirect to set(...,...,bool) member. Uh!
+
+2007-05-25  Sanel <karijes@users.sourceforge.net>
+
+	* Added few ESTRLOC to IconTheme
+	* Values returned from splitted Inherits key (IconTheme) are
+	trimmed which will prevent wrong path construction
+	* Some const corecting in Config
+
+2007-05-22  Sanel <karijes@users.sourceforge.net>
+
+	* Completed ComboBox.
+	* Modified comobox example.
+	* Added comobox.jpg inside docs.
+	* Added Item.{h,cpp} with test/example/menuitem.cpp
+	* Added ESTRLOC as shortand for __FILE__ and __LINE__
+	* Updated code for ESTRLOC
+
+2007-05-21  Sanel <karijes@users.sourceforge.net>
+
+	* Added ComboBox.{h,cpp} with test/example/combobox.cpp, althought
+	unfinished yet.
+
+2007-05-11  Sanel <karijes@users.sourceforge.net>
+
+	* MimeType functions will do nothing if mime is not correctly
+	loaded. Updated tests.
+	* Another TODO entry
+
+2007-05-10  Sanel <karijes@users.sourceforge.net>
+
+	* Removed some obsole entries from TODO
+	* Added tinyxml classes
+	* MimeType class with xdgmime backend; needs more work
+	* Finished docs for tinyxml (PITA!)
+	* Added icon_name() to MimeType
+	* Added tests for MimeType
+
+2007-05-09  Sanel <karijes@users.sourceforge.net>
+
+	* Changed find() functions in String to const
+
+2007-05-08  Sanel <karijes@users.sourceforge.net>
+
+	* Work on Time class
+	* String allocation checks
+	* user_xxx_dir() will now return correct XDG paths; returning
+	paths with '/ede' appended is not conforming
+
+2007-05-07  Sanel <karijes@users.sourceforge.net>
+
+	* dir_separator() will return const char* (why the hell it 
+	was returning String?)
+	* removed entry (dir_separator() == "/") in test/directory.cpp
+	* added build_filename() and build_dirname() functions with tests
+	* Added gmtime_r() checks if datetime.m4
+	* Date can be set via local date or UTC
+	* Fixed NULL defines :)
+
+2007-05-06  Sanel <karijes@users.sourceforge.net>
+
+	* Added Date class with tests
+	* Corrected \brief tag for doxygen in rest of the code
+	* Cleaned obsolete modules for doxygen
+	* index.dox s/prepare/autohen.sh
+	* Fixed flawed docs for stringtok; uh!
+	* Assertion will dump stack if apropriate functions are available
+	* MakeTest will by default link with '-rdynamic' flag, so stack dump
+	can be corectly shown
+
+2007-05-05  Sanel <karijes@users.sourceforge.net>
+
+	* Config can accept true/false strings as replacement for 1/0
+	* Config section lookup is now cached, speeding things considerably
+
+2007-05-04  Sanel <karijes@users.sourceforge.net>
+
+	* stringtok can work witout delimiter so delimiter
+	is removed from default entry in system_config_dirs()
+	* More tests for system_xxx_dirs()
+	* Added Run.{h,cpp}
+
+2007-05-04  Sanel <karijes@users.sourceforge.net>
+
+	* Added color_fltk_to_rgb and color_fltk_to_html
+	* More tests for color functions and ones for above
+
+2007-05-02  Sanel <karijes@users.sourceforge.net>
+
+	* Added Color.{h,cpp} with color conversion functions
+	* Added tests for color functions, with some tuning inside them
+
+2007-04-29  Sanel <karijes@users.sourceforge.net>
+
+	* Removed declaration inside loop in IconChooser
+	* Added fallback in dir_home() via getpwuid_r
+
+2007-04-27  Sanel <karijes@users.sourceforge.net>
+
+	* IconChooser will open dialog even when directory does not exists
+	* user_xxx_dir() will not return string ending with dir_separator() 
+	* added system_data_dirs() and system_config_dirs() which represents
+	XDG_DATA_DIRS and XDG_CONFIG_DIRS
+
+2007-04-26  Sanel <karijes@users.sourceforge.net>
+
+	* Added edelib-config.in, which will produce edelib-config
+	* Replaced edelibconf.{h,h.in} with edelib/_conf.{h,h.in}
+	so installed library can correctly find it (it will be in
+	include/edelib/)
+	* Added InstallProgram rule to Jamrules
+
+2007-04-25  Sanel <karijes@users.sourceforge.net>
+
+	* Small fix in Config class for CONFIG_USE_STDIO
+
+2007-04-24  Sanel <karijes@users.sourceforge.net>
+
+	* Added append(num, char) and operator+=(ch) in String
+	with the tests
+	* dir_list() accepts "." as directory parameter
+
+2007-04-21  Sanel <karijes@users.sourceforge.net>
+
+	* Added IconTheme with documentation
+	* string from libstdc++ dies on assign(NULL) so
+	our String's assign will trigger assertion for that case
+	* Recoded Sound so it can be initialized only once during
+	application lifetime
+
+2007-04-17  Sanel <karijes@users.sourceforge.net>
+
+	* Maded data()/substr() in String const, as this is required
+	by Standard
+	* Removed assertion from substr since num parameter
+	represents size of returned characters
+	* Added CONFIG_USE_STDIO in Config class
+	* Increased buffers sizes in Config class so line/values
+	can accepts huge sizes
+	* Added stringtok
+
+2007-04-15  Sanel <karijes@users.sourceforge.net>
+
+	* Added ExpandableGroup
+	* Added test/examples/ directory with few samples
+	* Added dir_list
+	* Fixed flaw in str_ends when test string have only
+	one character
+	* More tests for str_ends :P
+	* Almost complete icon_chooser
+	* Small fix for function module for doxygendocumentation
+	* Leek in Config class cleaned
+	* A small leek in dir_list too ;)
+	* Added get_localized to Config class so locale dependant
+	values can be retreived
+	* ExpandableGroup now loads/handles data much faster
+
+2007-04-11  Sanel <karijes@users.sourceforge.net>
+
+	* Small fix so genreadme can work on FreeBSD
+
+2007-04-09  Sanel <karijes@users.sourceforge.net>
+
+	* Build script tweaks
+	* Removed some warrnings
+	* Added XSet class
+	* Added Sound class
+
+2007-04-06  Sanel <karijes@users.sourceforge.net>
+
+	* Almost done build scripts. For now everything
+	works as expected
+
+2007-04-05  Sanel <karijes@users.sourceforge.net>
+
+	* Rewritten Jamrules
+	* Removed needs for dirname
+
+2007-04-04  Sanel <karijes@users.sourceforge.net>
+
+	* s/vsprintf/vsnprintf in Debug.cpp
+	* Small attempts toward configure integration
+
+2007-04-03  Sanel <karijes@users.sourceforge.net>
+
+	* Documented Nls.h
+	* Now XDG Base Directory functions return String
+	(with that tests discovered few bugs with previous char-only version :P)
+	* Added dir_exists, dir_readable, dir_writeable
+
+2007-04-02  Sanel <karijes@users.sourceforge.net>
+
+	* String self assignement checks added
+	* Added very usefull timer.hpp from boost
+	* At last documented String class, but some functions
+	are left undocumented, mostly becaus of doxygen's stupidity
+	* Added support for locales
+	* Added Ask.{h,cpp} with .fl data and icons for them
+
+2007-04-01  Sanel <karijes@users.sourceforge.net>
+
+	* Added operator+ to String
+	* Added copy ctors for varions operators in String
+	* ...and tests for them
+
+2007-03-29  Sanel <karijes@users.sourceforge.net>
+
+	* Added String::substr with tests
+	* Removed left playing with Cleandir
+
+2007-03-27  Sanel <karijes@users.sourceforge.net>
+
+	* Added functions that should return XDG paths,
+	of EDE_XXX their equivalents.
+	* Added (althought unfinished) installation rules 
+	to Jamrules
+
+2007-03-26  Sanel <karijes@users.sourceforge.net>
+
+	* Added String::printf
+	* String::capacity() behaviour is now more Standard-like
+
+2007-03-25  Sanel <karijes@users.sourceforge.net>
+
+	* A better String class with more methods.
+	* Updated tests too.
+	* Addded str_ends.
+
+2007-03-23  Sanel <karijes@users.sourceforge.net>
+
+	* Added String class.
+	* Fixed str_to(lower/upper) since optimizations flags
+	do funny things with it.
+	* Added more operators to String class and apropriate
+	tests.
+
+2007-03-22  Sanel <karijes@users.sourceforge.net>
+
+	* Added new test suite.
+
+2007-01-11  Sanel <karijes@users.sourceforge.net>
+
+	* Cleaned and documented Debug.h
+	* Small addons to Jamrules
+	* File::readline returns EOF if end of stream is reached
+	* Added File::printf
+
+2007-01-08  Sanel <karijes@users.sourceforge.net>
+
+	* Assertion is now handled via optiona hanler.
+
+2007-01-04  Sanel <karijes@users.sourceforge.net>
+
+	* Finished jam -sSHARED=1 option, so shared library
+	be built.
+	* Small work on File class.
+	* Generator for README (usefull?)
+
+2007-01-03  Sanel <karijes@users.sourceforge.net>
+
+	* More work on File class.
+
+2007-01-01  Sanel <karijes@users.sourceforge.net>
+
+	* test/run.sh - now files are run from this
+	directory explicit, so we don't call system wide
+	command with the same name
+
+2006-12-29  Sanel <karijes@users.sourceforge.net>
+
+	* Added checks if doxygen exists
+
+2006-12-25  Sanel <karijes@users.sourceforge.net>
+
+	* Finished Config class. Probably needs more polishing,
+	but that is comming later.
+
+2006-12-24  Sanel <karijes@users.sourceforge.net>
+
+	* Finished str_trimright, and added test for it
+	* Now documentation can be built not only from doc
+	directory
+	* Added run.sh, script which should run tests.
+
+2006-12-23  Sanel <karijes@users.sourceforge.net>
+
+	* Basic structure, jam builds, doxygen documentation
+	and not yet finished Config class
+	* Added StringUtils(.h,.cpp) with c string functions
+	* Added tests for StringUtils

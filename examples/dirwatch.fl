@@ -1,0 +1,31 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0108 
+header_name {.h} 
+code_name {.cxx}
+Function {} {open selected
+} {
+  Fl_Window {} {
+    label {Directory watch test} open
+    xywh {360 123 380 360} type Double visible
+  } {
+    Fl_Browser {} {
+      label {Watched directories}
+      xywh {10 32 360 175} labelsize 14 align 5 textsize 14
+    }
+    Fl_Text_Display {} {
+      xywh {10 217 360 98} labelsize 14 textsize 14
+    }
+    Fl_Button {} {
+      label {&Close}
+      xywh {280 325 90 25} labelsize 14
+    }
+    Fl_Button {} {
+      label {&Remove}
+      xywh {175 325 90 25} labelsize 14
+    }
+    Fl_Button {} {
+      label {&Add}
+      xywh {80 325 90 25} labelsize 14
+    }
+  }
+} 

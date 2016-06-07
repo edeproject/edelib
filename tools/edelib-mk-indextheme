@@ -1,0 +1,136 @@
+#!/usr/bin/python
+#
+# $Id: edelib-global.h 2785 2009-09-01 13:26:08Z karijes $
+#
+# Part of edelib tools.
+# Copyright (c) 2011 Sanel Zukan
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with this library.  If not, see <http://www.gnu.org/licenses/>.
+
+import sys, stat
+import os, os.path
+
+PROGRAM_NAME = "edelib-mk-indextheme"
+
+NAME_MAPPING = {"filesystems" : "FileSystem",
+				"apps"        : "Applications",
+				"devices"     : "Devices",
+				"actions"     : "Actions",
+				"emblems"     : "Emblems",
+				"mimetypes"   : "MimeTypes",
+				"places"      : "Places",
+				"status"      : "Status",
+				"categories"  : "Categories"}
+
+class IconTypeSection:
+	section = ""
+	size = ""
+	context = ""
+
+def dir_exists(path):
+	"""Check if given directory exists"""
+	if not os.access(path, os.F_OK):
+		return False
+
+	mode = os.stat(path)[stat.ST_MODE]
+	return stat.S_ISDIR(mode)
+
+def extract_context(path):
+	"""Figure out context from given path"""
+	for k,v in NAME_MAPPING.items():
+		if path.find(k) > -1:
+			return v
+	return " # unknown context for path %s" % path
+
+def extract_size(path):
+	"""Figure out size from given path"""
+	# we got this path: some/path/theme/size/context, size is second from back
+	sz = path.split("/")[-2:]
+	sz = sz[0]
+	# we expect to have WxH; everything than that should be ignored (or how to figure size ?)
+	vals = sz.split("x")
+	if len(vals) == 2: return vals
+	return None
+
+def scan_dir(dir):
+	print("# Generated with %s\n" % PROGRAM_NAME)
+	print("[Icon Theme]")
+	print("Name=%s" % dir)
+	print("Comment=%s theme" % dir.capitalize())
+	print("# Inherits=")
+
+	# directory list for 'Directories'
+	dirs = []
+	icon_keys = []
+
+	def visitor(arg, dirname, names):
+		for n in names:
+			dir = "%s/%s" % (dirname, n)
+			if not dir_exists(dir): continue
+
+			# check if we have size
+			size = extract_size(dir)
+			if not size: continue
+
+			# generate key from relative dirname
+			key = dir.split("/")[1:]
+			key = "/".join(key)
+			dirs.append(key)
+
+			w, h = size
+			s = IconTypeSection()
+
+			if w == h:
+				s.size = w
+			else:
+				s.size = "%s    # TODO: check this; width: %s height: %s" % (w, w, h)
+
+			s.context = extract_context(dir)
+			s.section = key
+			icon_keys.append(s)
+
+	os.path.walk(dir, visitor, None)
+
+	print("Directories=%s" % ",".join(dirs))
+	
+	for k in icon_keys:
+		print("\n[%s]" % k.section)
+		print("Size=%s" % k.size)
+		print("Context=%s" % k.context)
+
+def help():
+	print("Usage: %s [dir]" % PROGRAM_NAME)
+	print("Creates index.theme type file from the given directory where content is spit to the stdout")
+
+def main():
+	if len(sys.argv) != 2:
+		help()
+	else:
+		dir = sys.argv[1]
+		if not dir_exists(dir):
+			print("%s does not exists or is not directory")
+		else:
+			# go to location of given dir, so we could construct correct paths
+			parts = dir.split("/")
+
+			if len(parts) > 1:
+				path = "/".join(parts[:-1])
+				os.chdir(path)
+				dir = parts[-1]
+
+			dir = dir.strip("/")
+			scan_dir(dir)
+
+if __name__ == "__main__":
+	main()

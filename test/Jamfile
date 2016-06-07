@@ -1,0 +1,74 @@
+#
+# $Id$
+#
+# Copyright (c) 2005-2007 edelib authors
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with this library. If not, see <http://www.gnu.org/licenses/>.
+
+SubDir TOP test ;
+
+# shared library requires linkage with FLTK
+if $(SHARED) {
+	ADDONLIB = $(FLTK_LIBS_FULL) ;
+}
+
+TEST_FILES = 
+	UnitTest.cpp 
+	utest.cpp 
+	util.cpp
+	missing.cpp
+	strutil.cpp 
+	file.cpp
+	file_test.cpp
+	directory.cpp
+	datetime.cpp
+	conf.cpp
+	resource.cpp
+	desktopfile.cpp
+	string.cpp
+	list.cpp
+	regex.cpp
+	color.cpp
+	colordb.cpp
+	xml.cpp
+	mime.cpp
+	temp_file.cpp
+	functional.cpp
+	run.cpp
+	run_tests.cpp ;
+
+if $(DBUS_LIBS) {
+	TEST_FILES += dbus.cpp ;
+}
+
+# xsettings.cpp depends on X11 and FLTK_LIBS provides needed libraries
+if $(FLTK_LIBS_FULL) {
+	TEST_FILES += xsettings.cpp ;
+	ObjectC++Flags xsettings.cpp : $(FLTK_CFLAGS) ;
+
+	TEST_FILES += theme.cpp ;
+	ObjectC++Flags theme.cpp : $(FLTK_CFLAGS) ;
+
+	if ! $(SHARED) {
+		ADDONLIB = $(FLTK_LIBS_FULL) ;
+	}
+}
+
+MakeTest run_tests : $(TEST_FILES) : $(ADDONLIB) : "use-dbus" ;
+LocalClean clean : [ FFileName $(TOP) test .foo.txt ] ;
+LocalClean clean : [ FFileName $(TOP) test .ede.conf ] ;
+
+#MakeTest perf/stringtok : perf/stringtok.cpp perf/strsplit.cpp ;
+
+SubInclude TOP test xdg ;

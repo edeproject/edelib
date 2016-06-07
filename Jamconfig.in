@@ -1,0 +1,87 @@
+#
+# $Id$
+#
+# Copyright (c) 2005-2007 edelib authors
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with this library. If not, see <http://www.gnu.org/licenses/>.
+
+# directories
+if $(DESTDIR) {
+	prefix ?= "$(DESTDIR)@prefix@" ;
+} else {
+	prefix ?= "@prefix@" ;
+}
+
+exec_prefix ?= "@exec_prefix@" ;
+datarootdir ?= "@datarootdir@" ;
+bindir      ?= "@bindir@" ;
+datadir     ?= "@datadir@" ;
+docdir      ?= "@datadir@/doc" ;
+includedir  ?= "@includedir@" ;
+libdir      ?= "@libdir@" ;
+mandir      ?= "@mandir@" ;
+localedir   ?= "@localedir@" ;
+srcdir      ?= "@abs_srcdir@" ;
+sysconfdir  ?= "@sysconfdir@" ;
+
+# programs
+CC       = "@CC@" ;
+C++      = "@CXX@" ;
+LINK     = $(CC) ;
+DOXYGEN  = "@DOXYGEN@" ;
+XGETTEXT = "@XGETTEXT@" ;
+MSGFMT   = "@MSGFMT@" ;
+SED      = "@SED@" ;
+
+# general flags and libraries
+CFLAGS   ?= "@CFLAGS@" ;
+CXXFLAGS ?= "@CXXFLAGS@" ;
+LDFLAGS  ?= "@LDFLAGS@" ;
+LIBS     ?= "@LIBS@" ;
+
+# standard C++ library we link with; for now is gcc's default, but user can override it from shell
+STDLIB   ?= -lstdc++ ;
+
+# for fltk and X11
+FLTK_CFLAGS    ?= "@FLTK_CFLAGS@" ;
+FLTK_CXXFLAGS  ?= "$(FLTK_CFLAGS)" ;
+FLTK_LIBS      ?= "@FLTK_LIBS@" ;
+FLTK_LIBS_FULL ?= "@FLTK_LIBS_FULL@" ;
+
+# dbus
+DBUS_CFLAGS ?= "@DBUS_CFLAGS@" ;
+DBUS_LIBS   ?= "@DBUS_LIBS@" ;
+
+# for shared library
+SHARED ?= "@SHARED@" ;
+
+# version string
+EDELIB_VERSION ?= "@EDELIB_API_VERSION@" ;
+
+# xdgmime
+XDG_MIME_HAVE_MMAP ?= "@XDG_MIME_HAVE_MMAP@" ;
+
+# flags for tinyscheme
+SCHEME_FLAGS ?= "@SCHEME_FLAGS@" ;
+
+# dmalloc flags; explicit flags are added as dmalloc must be used
+# as last link statement
+DMALLOC_LIBC   ?= "@DMALLOC_LIBC@" ;
+DMALLOC_LIBCXX ?= "@DMALLOC_LIBCXX@" ;
+
+# check if we have Fl_Tree
+HAVE_FL_TREE ?= @HAVE_FL_TREE@ ;
+
+# do not touch this
+JAMCONFIG_READ = "yes" ;

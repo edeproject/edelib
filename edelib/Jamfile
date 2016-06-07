@@ -1,0 +1,108 @@
+#
+# $Id: Jamfile 3413 2012-09-18 15:11:08Z karijes $
+#
+# Copyright (c) 2005-2012 edelib authors
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with this library. If not, see <http://www.gnu.org/licenses/>.
+
+SubDir TOP edelib ;
+
+HEADERS =
+	ColorDb.h
+	Color.h
+	Config.h
+	DateTime.h
+	Debug.h
+	DesktopFile.h
+	Directory.h
+	File.h
+	FileTest.h
+	Functional.h
+	IconTheme.h
+	Listener.h
+	List.h
+	MimeType.h
+	Missing.h
+	Namespace.h
+	Nls.h
+	Pty.h
+	PtyProcess.h
+	Regex.h
+	Resource.h
+	Run.h
+	Scheme.h
+	Sipc.h
+	String.h
+	StrUtil.h
+	TempFile.h
+	TiXml.h
+	Util.h
+	Version.h
+	for-each-macro.h
+	edelib-config.h
+	edelib-global.h ;
+
+HEADERS_GUI =
+	AnimateBox.h
+	DirWatch.h
+	Ede.h
+	ExpandableGroup.h
+	FontCache.h
+	FontChooser.h
+	ForeignCallback.h
+	IconChooser.h
+	IconLoader.h
+	MenuBar.h
+	MenuBase.h
+	MenuButton.h
+	MenuItem.h
+	MenuTooltip.h
+	MessageBox.h
+	Netwm.h
+	SchemeEditor.h
+	SevenSeg.h
+	TableBase.h
+	Theme.h
+	ThemeLoader.h
+	Window.h
+	WindowUtils.h
+	WindowXid.h
+	XSettingsClient.h
+	XSettingsCommon.h
+	XSettingsManager.h ;
+
+HEADERS_TS =
+	ts/scheme.h
+	ts/scheme-private.h
+	ts/opdefines.h ;
+
+EDELIB_INCLUDE_DIR = [ FDirName $(includedir) edelib ] ;
+
+if $(DBUS_LIBS) {
+	HEADERS_DBUS =
+		EdbusConnection.h
+		EdbusContainer.h
+		EdbusData.h
+		EdbusDict.h
+		EdbusError.h
+		EdbusList.h
+		EdbusMessage.h
+		EdbusObjectPath.h ;
+
+	for i in $(HEADERS_DBUS) { InstallFile $(EDELIB_INCLUDE_DIR) : $(i) ; }
+}
+
+for i in $(HEADERS)     { InstallFile $(EDELIB_INCLUDE_DIR) : $(i) ; }
+for i in $(HEADERS_GUI) { InstallFile $(EDELIB_INCLUDE_DIR) : $(i) ; }
+for i in $(HEADERS_TS)  { InstallFile [ FDirName $(EDELIB_INCLUDE_DIR) ts ] : $(i) ; }

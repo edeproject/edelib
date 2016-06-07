@@ -1,0 +1,139 @@
+#
+# $Id$
+#
+# Copyright (c) 2005-2007 edelib authors
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with this library. If not, see <http://www.gnu.org/licenses/>.
+
+SubDir TOP src ;
+
+XDGMIME_SRC = 
+	xdgmime.c
+	xdgmimealias.c
+	xdgmimecache.c
+	xdgmimeglob.c
+	xdgmimeicon.c
+	xdgmimeint.c
+	xdgmimemagic.c
+	xdgmimeparent.c ;
+
+XDGMIME = xdgmime/$(XDGMIME_SRC) ;
+
+LibraryObjectCcFlags $(XDGMIME) : $(XDG_MIME_HAVE_MMAP) ;
+
+PCRE = pcre/pcre.c ;
+
+TINYSCHEME = ts/scheme.c ts/utf8.c ;
+
+SDBM_SRC = 
+	sdbm.c
+	sdbm_hash.c
+	sdbm_pair.c ;
+
+SDBM = sdbm/$(SDBM_SRC) ;
+
+SOURCE = 
+	Missing.c
+	Debug.c
+	Scheme.cpp
+	Color.cpp 
+	ColorDb.cpp 
+	Config.cpp 
+	DateTime.cpp
+	DesktopFile.cpp
+	Directory.cpp
+	File.cpp
+	FileTest.cpp
+	IconTheme.cpp 
+	Listener.cpp
+	MimeType.cpp
+	Nls.cpp
+	Pty.cpp
+	PtyProcess.cpp
+	$(PCRE)
+	Regex.cpp
+	Resource.cpp
+	Run.cpp 
+	Sipc.cpp
+	StrUtil.cpp
+	String.cpp
+	TempFile.cpp
+	TiXml.cpp
+	TiXmlParser.cpp 
+	$(TINYSCHEME)
+	Util.cpp
+	$(XDGMIME) ;
+
+SOURCE_GUI =
+	AnimateBox.cpp
+	DirWatch.cpp
+	Ede.cpp
+	ExpandableGroup.cpp
+	FontCache.cpp
+	FontChooser.cpp
+	ForeignCallback.cpp
+	IconChooser.cpp 
+	IconLoader.cpp
+	MenuBar.cpp  
+	MenuBase.cpp  
+	MenuButton.cpp  
+	MenuItem.cpp
+	Menu_add.cpp  
+	Menu_global.cpp
+	MenuTooltip.cpp
+	MessageBox.cpp
+	Netwm.cpp
+	SchemeEditor.cpp
+	SevenSeg.cpp
+	TableBase.cpp 
+	$(SDBM)
+	Theme.cpp
+	ThemeLoader.cpp
+	Window.cpp
+	WindowUtils.cpp
+	XSettingsClient.cpp
+	XSettingsCommon.cpp
+	XSettingsManager.cpp ;
+
+SOURCE_DBUS = 
+	EdbusConnection.cpp 
+	EdbusData.cpp
+	EdbusDict.cpp
+	EdbusError.cpp
+	EdbusList.cpp
+	EdbusMessage.cpp
+	EdbusObjectPath.cpp ;
+
+# use edelib translation domain
+LibraryObjectCcFlags $(XDGMIME)      : -DUSE_EDELIB_GETTEXT_DOMAIN ;
+LibraryObjectCcFlags $(PCRE)         : -DUSE_EDELIB_GETTEXT_DOMAIN ;
+LibraryObjectCcFlags $(TINYSCHEME)   : -DUSE_EDELIB_GETTEXT_DOMAIN $(SCHEME_FLAGS) ;
+LibraryObjectC++Flags $(SOURCE)      : -DUSE_EDELIB_GETTEXT_DOMAIN ;
+LibraryObjectC++Flags $(SOURCE_GUI)  : -DUSE_EDELIB_GETTEXT_DOMAIN ;
+LibraryObjectC++Flags $(SOURCE_DBUS) : -DUSE_EDELIB_GETTEXT_DOMAIN ;
+
+# libedelib
+MakeLibrary $(EDELIB_NAME) : $(SOURCE) ;
+
+# libedelib_gui
+if $(FLTK_LIBS) {
+	LibraryObjectC++Flags $(SOURCE_GUI) : $(FLTK_CFLAGS) ;
+	MakeLibrary $(EDELIB_GUI_NAME) : $(SOURCE_GUI) ;
+}
+
+# libedelib_dbus
+if $(DBUS_LIBS) {
+	LibraryObjectC++Flags $(SOURCE_DBUS) : $(DBUS_CFLAGS) $(FLTK_CFLAGS) ;
+	MakeLibrary $(EDELIB_DBUS_NAME) : $(SOURCE_DBUS) ;
+}

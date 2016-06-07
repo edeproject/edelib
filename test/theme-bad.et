@@ -1,0 +1,15 @@
+;;
+;; something should not be loaded
+;;
+
+;; do not show errors
+(define (nothing err) 
+)
+
+(define *error-hook* nothing)
+
+
+(theme.style "test_style2"
+  item1   34
+  item1   "you should get this"
+])

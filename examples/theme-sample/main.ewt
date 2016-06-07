@@ -1,0 +1,21 @@
+;; vim:ft=scheme:expandtab
+;; This is sample file for ede widget theme (ewt).
+
+(theme.name   "Sample Theme")
+(theme.author "John Foo <john@foo.com>")
+(theme.sample "img.jpg")
+
+(define (get-sample)
+  "this is an sample"
+)
+
+(theme.style "ede" [
+  scheme             "gtk+"
+  foreground_color   "dark slate gray"
+  background_color   "mint cream"
+  font               "liberation mono 10"
+  icon_theme         "edeneu"
+  sample             (get-sample)
+])
+
+(include "xxx.ewt")

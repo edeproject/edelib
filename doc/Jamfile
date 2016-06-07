@@ -1,0 +1,43 @@
+#
+# $Id$
+#
+# Part of edelib.
+# Copyright (c) 2005-2007 EDE Authors.
+#
+# This program is licenced under terms of the 
+# GNU General Public Licence version 2 or newer.
+# See COPYING for details.
+
+SubDir TOP doc ;
+
+rule MakeApiDocumentation 
+{
+	LocalDepends docs : $(<) ;
+	LocalDepends $(<) : $(>) ;
+	LocalDepends all : docs ;
+
+	NotFile docs ;
+	Always  docs ;
+
+	MakeApiDocumentation1 $(<) : $(>) ;
+	Cleandir clean : $(<) ;
+}
+
+# strip directory path from (example: 'doc/Doxyfile') and
+# go into it so DOXYGEN command can work
+actions piecemeal MakeApiDocumentation1
+{
+	cd $(>:D)
+	$(DOXYGEN) $(>:B) ;
+}
+
+InstallDocumentation [ FDirName $(docdir) $(EDELIB_DOCDIR) ] : [ FFileName $(TOP) README ] ;
+InstallDocumentation [ FDirName $(docdir) $(EDELIB_DOCDIR) ] : [ FFileName $(TOP) INSTALL ] ;
+InstallDocumentation [ FDirName $(docdir) $(EDELIB_DOCDIR) ] : [ FFileName $(TOP) COPYING ] ;
+
+if $(DOXYGEN) {
+	MakeApiDocumentation [ FDirName $(SUBDIR) html ] : [ FFileName $(SUBDIR) Doxyfile ] ;
+	InstallDirectory     [ FDirName $(docdir) $(EDELIB_DOCDIR) ] : [ FDirName $(SUBDIR) html ] ;
+}
+
+LocalClean distclean : Doxyfile ;

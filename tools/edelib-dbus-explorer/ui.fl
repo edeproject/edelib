@@ -1,0 +1,69 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0300 
+header_name {.h} 
+code_name {.cxx}
+Function {} {open
+} {
+  Fl_Window {} {
+    label {DBus Explorer} open
+    xywh {490 279 600 505} type Double resizable visible
+  } {
+    Fl_Menu_Bar {} {open selected
+      xywh {0 0 600 25}
+    } {
+      Submenu {} {
+        label {&File} open
+        xywh {0 0 70 20}
+      } {
+        Submenu {} {
+          label {Connect to} open
+          xywh {0 0 70 20}
+        } {
+          MenuItem {} {
+            label {Session Bus}
+            xywh {0 0 36 20}
+          }
+          MenuItem {} {
+            label {System Bus}
+            xywh {10 10 36 20}
+          }
+        }
+        MenuItem {} {
+          label Disconnect
+          xywh {10 10 36 20} divider
+        }
+        MenuItem {} {
+          label {&Quit}
+          xywh {0 0 36 20} shortcut 0x40071
+        }
+      }
+      Submenu {} {
+        label {&Help} open
+        xywh {10 10 70 20}
+      } {
+        MenuItem {} {
+          label {&About}
+          xywh {0 0 36 20}
+        }
+      }
+    }
+    Fl_Tile {} {
+      xywh {5 30 590 445} resizable
+    } {
+      Fl_Browser {} {
+        label Services
+        xywh {5 50 220 320} align 5
+      }
+      Fl_Browser {} {
+        label Methods
+        xywh {225 50 370 320} align 5
+      }
+      Fl_Text_Editor {} {
+        xywh {5 370 590 105}
+      }
+    }
+    Fl_Output {} {
+      xywh {0 480 600 25} color 48
+    }
+  }
+} 

@@ -1,0 +1,34 @@
+#
+# Valgrind suppression file for edelib.
+#
+# To generate correct suppresions, run first: "valgrind --leak-check=full --gen-suppresions=all --log-file=foo ./file"
+# and inspect 'foo' file for found suppresions
+
+{
+   xft
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/libfontconfig.so.1.4.4
+   obj:/usr/lib/libfontconfig.so.1.4.4
+   obj:/usr/lib/libfontconfig.so.1.4.4
+   obj:/usr/lib/libfontconfig.so.1.4.4
+   obj:/usr/lib/libXft.so.2.3.0
+   obj:/usr/lib/libXft.so.2.3.0
+   obj:/usr/lib/libXft.so.2.3.0
+   obj:/usr/lib/libXft.so.2.3.0
+   fun:XftDefaultHasRender
+   fun:XftDefaultSubstitute
+   fun:XftFontMatch
+}
+
+{
+   fontconfig
+   Memcheck:Leak
+   fun:realloc
+   obj:/usr/lib/libfontconfig.so.1.4.4
+   obj:/usr/lib/libfontconfig.so.1.4.4
+   obj:/usr/lib/libfontconfig.so.1.4.4
+   fun:FcFontRenderPrepare
+   fun:FcFontMatch
+   fun:XftFontMatch
+}

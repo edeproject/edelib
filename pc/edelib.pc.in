@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+edelibdocdir=${prefix}/share/doc/edelib-@EDELIB_API_VERSION@
+
+Name: edelib
+Description: EDE C++ library
+Version: @EDELIB_API_VERSION@
+Requires:
+Libs: -L${libdir} -ledelib
+Cflags: -I${includedir}

@@ -1,0 +1,179 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-02-02 17:25+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/DateTime.cpp:60
+msgid "Sunday"
+msgstr ""
+
+#: src/DateTime.cpp:61
+msgid "Monday"
+msgstr ""
+
+#: src/DateTime.cpp:62
+msgid "Tuesday"
+msgstr ""
+
+#: src/DateTime.cpp:63
+msgid "Wednesday"
+msgstr ""
+
+#: src/DateTime.cpp:64
+msgid "Thursday"
+msgstr ""
+
+#: src/DateTime.cpp:65
+msgid "Friday"
+msgstr ""
+
+#: src/DateTime.cpp:66
+msgid "Saturday"
+msgstr ""
+
+#: src/DateTime.cpp:70
+msgid "January"
+msgstr ""
+
+#: src/DateTime.cpp:71
+msgid "February"
+msgstr ""
+
+#: src/DateTime.cpp:72
+msgid "March"
+msgstr ""
+
+#: src/DateTime.cpp:73
+msgid "April"
+msgstr ""
+
+#: src/DateTime.cpp:74
+msgid "May"
+msgstr ""
+
+#: src/DateTime.cpp:75
+msgid "June"
+msgstr ""
+
+#: src/DateTime.cpp:76
+msgid "July"
+msgstr ""
+
+#: src/DateTime.cpp:77
+msgid "August"
+msgstr ""
+
+#: src/DateTime.cpp:78
+msgid "September"
+msgstr ""
+
+#: src/DateTime.cpp:79
+msgid "October"
+msgstr ""
+
+#: src/DateTime.cpp:80
+msgid "November"
+msgstr ""
+
+#: src/DateTime.cpp:81
+msgid "December"
+msgstr ""
+
+#: src/IconChooser.cpp:92
+msgid "(unknown)"
+msgstr ""
+
+#: src/IconChooser.cpp:186
+msgid "Choose icon directory..."
+msgstr ""
+
+#: src/IconChooser.cpp:201
+msgid "Choose icon..."
+msgstr ""
+
+#: src/IconChooser.cpp:204
+msgid "&Browse..."
+msgstr ""
+
+#: src/IconChooser.cpp:220 src/FontChooser.cpp:395 src/MessageBox.cpp:425
+#: src/MessageBox.cpp:455
+msgid "&OK"
+msgstr ""
+
+#: src/IconChooser.cpp:222 src/FontChooser.cpp:398 src/MessageBox.cpp:424
+#: src/MessageBox.cpp:454
+msgid "&Cancel"
+msgstr ""
+
+#: src/FontChooser.cpp:374
+msgid "Font:"
+msgstr ""
+
+#: src/FontChooser.cpp:378
+msgid "Style:"
+msgstr ""
+
+#: src/FontChooser.cpp:382
+msgid "Size:"
+msgstr ""
+
+#: src/FontChooser.cpp:391
+msgid "Preview:"
+msgstr ""
+
+#: src/MessageBox.cpp:372 src/MessageBox.cpp:386
+msgid "&Close"
+msgstr ""
+
+#: src/MessageBox.cpp:403
+msgid "&No"
+msgstr ""
+
+#: src/MessageBox.cpp:404
+msgid "&Yes"
+msgstr ""
+
+#: src/Config.cpp:493
+msgid "Successful completion"
+msgstr ""
+
+#: src/Config.cpp:495
+msgid "Could not access config file"
+msgstr ""
+
+#: src/Config.cpp:497
+msgid "Malformed config file"
+msgstr ""
+
+#: src/Config.cpp:499
+msgid "Config file section not found"
+msgstr ""
+
+#: src/Config.cpp:501
+msgid "Key not found in section"
+msgstr ""
+
+#: src/Config.cpp:503
+msgid "Could not allocate memory"
+msgstr ""
+
+#: src/Config.cpp:505
+msgid "Invalid value associated with the key"
+msgstr ""
+
+#: src/Config.cpp:507
+msgid "Unknown error"
+msgstr ""

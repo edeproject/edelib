@@ -1,0 +1,50 @@
+#!/bin/sh
+#
+# $Id: edelib-global.h 2785 2009-09-01 13:26:08Z karijes $
+#
+# Part of edelib tools.
+# Copyright (c) 2011 Sanel Zukan
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with this library.  If not, see <http://www.gnu.org/licenses/>.
+
+appname=`basename $0`
+
+inspect() {
+	if test ! -x $1; then
+		echo "'$1' seems to not exists or is not executable file"
+		exit 1
+	fi
+
+	inspector=`which catchsegv`
+	if test "x$inspector" = "x"; then
+		echo "Unable to find 'catchsegv' command! Are you running too old glibc version?"
+		exit 1
+	fi
+
+	$inspector ./$1
+}
+
+if test $# -eq 0; then
+	echo "Usage: $appname [application]"
+	echo "Dumps memory map when application crashes. Works only on Linux"
+	exit 1
+fi
+
+uname | grep "Linux" > /dev/null
+if test $? -eq 1; then
+	echo "This tool works only on Linux :("
+	exit 1
+fi
+
+inspect $1

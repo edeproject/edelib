@@ -1,0 +1,536 @@
+#
+# $Id$
+#
+# Copyright (c) 2005-2015 edelib authors
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with this library. If not, see <http://www.gnu.org/licenses/>.
+
+JAMCONFIG ?= $(TOP)/Jamconfig ;
+include $(JAMCONFIG) ;
+
+if ! $(JAMCONFIG_READ) {
+	Exit "Can't find Jamconfig. Did you run 'configure' first ?" ;
+}
+
+if $(SHARED) = 1 {
+	SUFOBJ_SHARED = ".lo" ;
+	SUFLIB_SHARED = ".so" ;
+	SUFLA_SHARED  = ".la" ;
+}
+
+# only for haiku jam
+JCACHEFILE = $(TOP)/.jamcache ;
+HCACHEFILE = $(TOP)/.jamhcache ;
+
+# jam by default set 711 for executable files which is
+# too restrictive disabling shell scripts to be excuted.
+# Here I'm changing it to default used
+EXEMODE = 755 ;
+
+# these variables should be here (not in Jamconfig) since RMDIR
+# is already defined as 'rm -f' in Jambase, and calling 'jam distclean'
+# will revert it's value when we remove Jamconfig
+RMDIR   = "rm -R" ;
+COPYDIR = "cp -R" ;
+LINKCMD = "ln -s" ;
+MKDIR   = "mkdir -p" ;
+
+# variables used by jam directly
+# OPTIM is cleared so it don't collide with FLAGS
+OPTIM     = ;
+CCFLAGS   = $(CFLAGS) -I$(TOP) -DE_LOG_DOMAIN="\\\"edelib\\\"" ;
+C++FLAGS  = $(CXXFLAGS) -I$(TOP) -DE_LOG_DOMAIN="\\\"edelib\\\"" ;
+LINKFLAGS = $(LDFLAGS) ;
+LINKLIBS  = $(LIBS) ;
+
+# directories used to place final library and 
+# by tests to construct correct paths
+EDELIB_INCLUDEDIR = edelib ;
+EDELIB_LIBDIR     = lib ;
+
+# library names
+EDELIB           = edelib ;
+EDELIB_NAME      = libedelib ;
+
+EDELIB_GUI       = edelib_gui ;
+EDELIB_GUI_NAME  = libedelib_gui ;
+
+EDELIB_DBUS      = edelib_dbus ;
+EDELIB_DBUS_NAME = libedelib_dbus ;
+
+# directory name for installed documentation
+EDELIB_DOCDIR = "$(EDELIB)-$(EDELIB_VERSION)" ;
+
+# Haiku jam have builtin LocalClean and LocalDepends
+if ! $(INVOCATION_SUBDIR_SET) {
+	rule LocalClean { Clean $(1) : $(2) ; }
+	rule LocalDepends { Depends $(1) : $(2) ; }
+}
+
+# same as FDirName, but targeted to files
+rule FFileName
+{
+	return [ FDirName $(<) ] ;
+}
+
+# Cleandir cleandir : <directory> ;
+# Removes directory in 'Clean clean' fashion
+actions piecemeal together existing Cleandir
+{
+	$(RMDIR) $(>)
+}
+
+# SymLink <link> : <source> ;
+# Creates symbolic link <link> pointing at <source>.
+rule SymLink
+{
+	if ! $(LINKCMD) {
+		Echo "LINKCMD wasn't defined, $(<) will not be created" ;
+		return ;
+	}
+
+	LocalDepends $(<) : $(>) ;
+	SEARCH on $(<) = $(SEARCH_SOURCE) ;
+	SymLink1 $(<) : $(>) ;
+	Clean clean : $(<) ;
+}
+
+# LinkAgainst <target> : <libraries> ;
+# The sam as jam's LinkLibraries, but will not mark those libraries 
+# for building. <libraries> should be in form '-lfoo'
+rule LinkAgainst
+{
+	#LINKLIBS on $(1) = -pg [ on $(1) return $(LINKLIBS) ] $(2) ;
+	LINKLIBS on $(1) = [ on $(1) return $(LINKLIBS) ] $(2) ;
+}
+
+# MakeLibrary <library> : <source> ;
+# Create <library> and place it in $(EDELIB_LIBDIR). Library name should
+# be in from 'libexample', without extension
+rule MakeLibrary
+{
+	local path = [ FFileName $(TOP) $(EDELIB_LIBDIR) $(1) ] ;
+
+	if $(SHARED) = 1 {
+		SharedLibrary $(path) : $(2) ;
+	} else {
+		Library $(path) : $(2) ;
+	}
+
+	if $(3) != "noinstall" {
+		if $(SHARED) = 1 {
+			InstallSharedLibrary $(libdir) : $(path) ;
+		} else {
+			InstallStaticLibrary $(libdir) : $(path) ;
+		}
+	}
+}
+
+rule LibraryObjectCcFlags 
+{
+	if $(SHARED) = 1 {
+		CCFLAGS on [ FGristFiles $(<:S=$(SUFOBJ_SHARED)) ] += $(>) ;
+	} else {
+		ObjectCcFlags $(<) : $(>) ;
+	}
+}
+
+rule LibraryObjectC++Flags 
+{
+	if $(SHARED) = 1 {
+		C++FLAGS on [ FGristFiles $(<:S=$(SUFOBJ_SHARED)) ] += $(>) ;
+	} else {
+		ObjectC++Flags $(<) : $(>) ;
+	}
+}
+
+# SharedLibrary <library> : <source> ;
+# Creates shared library with libtool
+rule SharedLibrary
+{
+	if ! $(UNIX)  {
+		Exit "Don't know how to build shared libraries on this platform" ;
+	}
+
+	SharedLibraryFromObjects $(<) : $(>:S=$(SUFOBJ_SHARED)) ;
+	SharedObjects $(>) ;
+}
+
+rule SharedLibraryFromObjects
+{
+	local _i _l _l_so _l_la _s ;
+
+	# Add grist to file names
+	_s = [ FGristFiles $(>) ] ;
+	_l = $(<:S=$(SUFLIB_SHARED).$(EDELIB_VERSION)) ;
+
+	# for sonames; it accept only libname.so
+	_l_so = $(<:S=$(SUFLIB_SHARED)) ;
+	_l_so = $(_l_so:BSR=) ;
+
+	# libname.la file
+	_l_la = $(_l_so:S=$(SUFLA_SHARED)) ;
+
+    # library depends on its member objects
+	if $(KEEPOBJS) {
+		LocalDepends obj : $(_s) ;
+	} else {
+		LocalDepends lib : $(_l) ;
+	}
+
+	# Set LOCATE for the library and its contents.  The bound
+	# value shows up as $(NEEDLIBS) on the Link actions.
+	# For compatibility, we only do this if the library doesn't
+	# already have a path.
+
+	if ! $(_l:D) {
+		MakeLocate $(_l) : $(LOCATE_TARGET) ;
+	}
+
+	# we never scan shared libraries for member objects
+	LocalDepends $(_l) : $(_s) ;
+
+	# clean library
+	LocalClean clean : $(_l) ;
+
+	if $(OS) = "SOLARIS" {
+		# solaris have other options for soname creation
+		LINKFLAGS on $(_l) = -h $(_l_so) -G [ on $(_l) return $(LINKFLAGS) ] ;
+	} else {
+		# let linker knows we are making shared library by adding -shared and -Wl,-soname libname.so flags
+		LINKFLAGS on $(_l) = -shared [ on $(_l) return $(LINKFLAGS) ] ;
+	}
+
+	# make it
+	Link $(_l) : $(_s) ;
+
+	# make a link
+	SymLink $(_l_so) : $(_l) ;
+
+	# let link be created in directory where libname.so.X.X.X exists
+	MakeLocate $(_l_so) : $(_l:D) ;
+	LocalDepends lib : $(_l_so) ;
+
+	# generate libname.la file
+	DLNAME1 on $(_l_la) = $(_l_so) ;
+	DLNAME2 on $(_l_la) = $(_l:BSR=) ;
+	GenLa $(_l_la) ;
+	LocalClean clean : $(_l_la) ;
+	LocalClean clean : $(_l_so) ;
+
+	# let libname.la be created in directory where libname.so.X.X.X exists
+	MakeLocate $(_l_la) : $(_l:D) ;
+	LocalDepends lib : $(_l_la) ;
+}
+
+rule SharedObjects
+{
+	# temporary replace SUFOBJ since Objects rule use it
+	local SUFOBJ = $(SUFOBJ_SHARED) ;
+
+	ObjectCcFlags $(<) : -fPIC ;
+	ObjectC++Flags $(<) : -fPIC ;
+
+	# call the normal Objects rule
+	Objects $(<) ;
+}
+
+# MakeTest <bin> : <source> : <optional-addon-libs> : <option>
+rule MakeTest
+{
+	local lpath ;
+
+	lpath = [ FDirName $(TOP)/$(EDELIB_LIBDIR) ] ;
+
+	Main $(1) : $(2) ;
+
+	if $(SHARED) = 1 {
+		if $(OS) = "SOLARIS" {
+			# network libraries are in libxnet
+			LinkAgainst $(1) : -lxnet ;
+		}
+	}
+
+	if $(4) = "use-dbus" && $(DBUS_CFLAGS) {
+		if $(SHARED) = 1 { 
+			LinkAgainst $(1) : -L$(lpath) -l$(EDELIB_DBUS) -l$(EDELIB_GUI) -l$(EDELIB) $(DBUS_LIBS) ;
+		} else {
+			LinkAgainst $(1) : -L$(lpath) -l$(EDELIB_DBUS) -l$(EDELIB_GUI) -l$(EDELIB) ;
+		}
+	} else {
+		LinkAgainst $(1) : -L$(lpath) -l$(EDELIB_GUI) -l$(EDELIB) ;
+	}
+
+	if $(3) {
+		LinkAgainst $(1) : $(3) ;
+	}
+
+	LinkAgainst $(1) : $(STDLIB) $(DMALLOC_LIBC) $(DMALLOC_LIBCXX) ;
+}
+
+# MakeInstallPrivate <location-dir> : <targets> : <opt-file-mode> : <opt-chown> : <opt-chgrp> : <opt-name> ;
+rule MakeInstallPrivate
+{
+	local i t s ;
+	local dir = $(1) ;
+
+	MkDir $(dir) ;
+
+	# This was pain-in-the-ass to set up (bad docs)
+	# but this is the shortest possible explaination of it:
+	# files must be gristed (or foo/foo will not be build) and _after_
+	# that apply SEARCH on it, consulting SUBDIR. Otherwise
+	# known targets will be compiled, but unknown (icons etc.) will not
+	# be recognized as installable entity.
+	s = [ FGristFiles $(2) ] ;
+	SEARCH on $(s) = $(SUBDIR) ;
+
+	for i in $(s) {
+		# so we can install it as desired name
+		if $(6) { 
+			t = $(6:BSR=$(dir):G=installed) ;
+		} else {
+			t = $(i:BSR=$(dir):G=installed) ;
+		}
+
+		#t = $(i:BSR=$(dir):G=installed) ;
+
+		LocalDepends $(t) : $(i) ;
+		LocalDepends $(t) : $(dir) ;
+
+		LocalDepends install : $(t) ;
+		LocalClean uninstall : $(t) ;
+
+		Install1 $(t) : $(i) ;
+
+		if $(3) {
+			MODE on $(t) = $(3) ;
+			Chmod $(t) ;
+		}
+
+		if $(4) {
+			OWNER on $(t) = $(4) ;
+			Chown $(t) ;
+		}
+
+		if $(5) {
+			GROUP on $(t) = $(5) ;
+			Chgrp $(t) ;
+		}
+	}
+}
+
+# InstallStaticLibrary <location-dir> : <library> ;
+rule InstallStaticLibrary
+{
+	MakeInstallPrivate $(<) : $(>:S=$(SUFLIB)) : $(FILEMODE) ;
+}
+
+# InstallSharedLibrary <location-dir> : <library> ;
+rule InstallSharedLibrary
+{	
+	local i t s sh o ;
+	local dir = $(1) ;
+
+	MkDir $(dir) ;
+
+	s  = [ FGristFiles $(2:S=$(SUFLIB_SHARED).$(EDELIB_VERSION)) ] ;
+	sh = [ FGristFiles $(2:S=$(SUFLIB_SHARED)) ] ;
+	SEARCH on $(s) = $(SUBDIR) ;
+
+	for i in $(s) {
+		t = $(i:BSR=$(dir):G=installed) ;
+		LocalDepends $(t) : $(i) ;
+		LocalDepends $(t) : $(dir) ;
+
+		LocalDepends install : $(t) ;
+		UninstallSharedLibrary1 uninstall : $(t) ;
+
+		InstallSharedLibrary1 $(t) : $(i) ;
+	}
+
+	# install .la file
+	MakeInstallPrivate $(dir) : $(2:S=$(SUFLA_SHARED)) ;
+
+	# install .so by making symbolic link; first remove all those directory parts
+  	# from variables (including grist)
+	#o = $(s:G=) ;
+	#o = $(o:D=) ;
+	#sh = $(sh:D=) ;
+
+  	## mark it as not file since it is just a name (e.g. ln -s foo.so.2 <target>)
+	#NotFile $(o) ;
+	#SymLink $(sh) : $(o) ;
+
+  	## tell jam to put it in installation folder
+	#MakeLocate $(sh) : $(dir) ;
+
+	#LocalDepends install : $(sh) ;
+  	#UninstallSharedLibrary1 uninstall : $(sh) ;
+}
+
+actions InstallSharedLibrary1
+{
+	$(CP) "$(>)" "$(<)" ;
+}
+
+actions piecemeal together existing UninstallSharedLibrary1
+{
+	$(RM) "$(>)" ;
+}
+
+# InstallProgram <location-dir> : <program> ;
+# EXEMODE is not used (jam set it to 711)
+rule InstallProgram
+{
+	MakeInstallPrivate $(<) : $(>) ;
+}
+
+# InstallDocumentation <location-dir> : <file> ;
+rule InstallDocumentation
+{
+	MakeInstallPrivate $(<) : $(>) : $(FILEMODE) ;
+}
+
+# InstallFile <location-dir> : <file> ;
+rule InstallFile
+{
+	MakeInstallPrivate $(<) : $(>) : $(FILEMODE) ;
+}
+
+# InstallFileAs <location-dir> : <file> : <file-as> ;
+rule InstallFileAs
+{
+	MakeInstallPrivate $(1) : $(2) : $(FILEMODE) : : : $(3) ;
+}
+
+# InstallDirectory <location-dir> : <directory> ;
+rule InstallDirectory
+{
+	local dir = $(1) ;
+
+	MkDir $(dir) ;
+
+	s = [ FGristFiles $(2) ] ;
+	SEARCH on $(s) = $(SUBDIR) ;
+
+	for i in $(s) {
+		t = $(i:BSR=$(dir):G=installed) ;
+		LocalDepends $(t) : $(i) ;
+		LocalDepends $(t) : $(dir) ;
+
+		LocalDepends install : $(t) ;
+		Cleandir uninstall : $(t) ;
+
+		CP on $(t) = $(COPYDIR) ;
+		Install1 $(t) : $(i) ;
+	}
+}
+
+actions Install1
+{
+	$(CP) "$(>)" "$(<)"
+}
+
+actions SymLink1 
+{
+	$(RM) "$(<)" && $(LINKCMD) "$(>:D=)" "$(<)"
+}
+
+# .la files are generated by libtool and we emulate that too
+# NOTE: jam will discard comments that should be written to the file
+# so instead plain '#' is used '@@#' and later is replaced with sed
+actions GenLa
+{
+	today=`date`
+
+	cat > "$(<).tmp" <<EOF
+@@# $(<:D=) - a libtool library file
+@@# Generated by 'EDE jam build' on: $today
+
+@@# The name that we can dlopen(3).
+dlname='$(DLNAME1)'
+
+@@# Names of this library.
+library_names='$(DLNAME2) $(DLNAME1)'
+
+@@# The name of the static archive.
+old_library=''
+
+@@# Libraries that this one depends upon.
+dependency_libs=''
+
+@@# Is this already installed library.
+installed=yes
+
+@@# Files to dlopen/dlpreopen.
+dlopen=''
+dlpreopen=''
+
+@@# Directory that this library needs to be installed in:
+libdir='$(libdir)'
+EOF
+
+	cat "$(<).tmp" | $(SED) 's/^@@#/#/g' > "$(<)"
+	$(RM) "$(<).tmp"
+}
+
+NotFile install ;
+
+# Allow 'jam tests' to be executed no matter was edelib compiled
+# as shared library or not. Depending on that, we select appropriate rule.
+actions quietly RunTests
+{
+	cd tests; ./run-all.sh
+}
+
+actions quietly RunTestsShared
+{
+	export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:`pwd`/lib"
+	cd test; ./run-all.sh
+}
+
+if $(SHARED) {
+	RunTestsShared tests ;
+} else {
+	RunTests tests ;
+}
+
+NotFile tests ;
+Always tests ;
+
+# a generated junk
+LocalClean distclean : 
+	$(TOP)/configure 
+	$(TOP)/aclocal.m4 
+	$(TOP)/Jamconfig 
+	$(TOP)/edelib-config
+	$(TOP)/edelib.pc
+	$(TOP)/edelib-dbus.pc
+	$(TOP)/edelib-gui.pc
+	$(TOP)/edelib-gui-no-images.pc
+	$(TOP)/config.log 
+	$(TOP)/config.status 
+	$(TOP)/doc/Doxyfile
+	$(TOP)/edelib/edelib-config.h
+	$(TOP)/config.h.in
+	$(TOP)/config.h
+	$(TOP)/edelib/Version.h 
+	$(TOP)/po/update-messages.sh
+	$(TOP)/sslib/init_ss.h
+	$(TOP)/sslib/theme_ss.h
+	$(JCACHEFILE)
+	$(HCACHEFILE) ;
+
+Cleandir distclean : $(TOP)/autom4te.cache ;

@@ -1,0 +1,70 @@
+#
+# $Id$
+#
+# Copyright (c) 2010 edelib authors
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with this library. If not, see <http://www.gnu.org/licenses/>.
+
+SubDir TOP po ;
+
+MSGFMT = msgfmt ;
+
+# Translation [po-dir] : [file1.po file2.po...] ;
+# Compile translated files into binary representation, so they 
+# can be used by programs. [po-dir] is directory name where
+# to look for translated files (.po) and where will be placed
+# binary ones (.mo). Second parameter is list of .po files.
+rule Translation
+{
+	local moext mofile pofile path i mofile_install_dir ;
+
+	moext = ".mo" ;
+
+	path = $(SEARCH_SOURCE) ;
+	# Assure path name does not match pseudo target name by setting
+	# a specified grist. For example if grist wasn't set, and there is
+	# directory 'foo' with executable 'foo' in it, $(path) will be 'foo'
+	# which will confuse jam to see it as target too, (re)building it.
+	path = $(path:G=translation) ;
+
+	if ! $(MSGFMT) {
+		Echo "MSGFMT wasn't defined; $(moext) files will not be created !" ;
+		return ;
+	}
+
+	for i in $(>) {
+		pofile = [ FFileName $(path) $(<) $(i) ] ;
+		mofile = [ FFileName $(path) $(<) $(i:S=$(moext)) ] ;
+		mofile_install_dir = [ FFileName $(localedir) $(i:S=) LC_MESSAGES ] ;
+
+		LocalDepends $(mofile) : $(pofile) ;
+		LocalDepends all : $(mofile) ;
+		LocalDepends translation : $(mofile) ;
+
+		MakeTranslation1 $(mofile) : $(pofile) ;
+
+		# construct path for installation, based on translated file prefix
+		InstallFileAs $(mofile_install_dir) : $(mofile) : edelib$(moext) ;
+
+		LocalClean clean : $(mofile) ;
+	}
+}
+
+actions MakeTranslation1
+{
+	$(MSGFMT) $(>) -o $(<) ;
+}
+
+# translation files
+# Translation . : NAME.po ;

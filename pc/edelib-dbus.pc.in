@@ -1,0 +1,11 @@
+prefix=@prefix@
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: edelib-dbus
+Description: EDE D-BUS library
+Version: @EDELIB_API_VERSION@
+Requires: edelib dbus-1
+Libs: -L${libdir} -ledelib_dbus
+Cflags: -I${includedir}

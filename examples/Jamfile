@@ -1,0 +1,66 @@
+#
+# $Id$
+#
+# Copyright (c) 2005-2007 edelib authors
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with this library. If not, see <http://www.gnu.org/licenses/>.
+
+SubDir TOP examples ;
+
+ADDONLIB = ;
+
+if $(SHARED) {
+	# required by shared libraries
+	FLTK_LIBS = $(FLTK_LIBS_FULL) ;
+}
+
+if $(FLTK_LIBS) {
+	ObjectC++Flags  egroup.cpp
+					egroup2.cpp
+					icon_chooser.cpp
+					font_chooser.cpp
+					sevenseg.cpp
+					dirwatch.cpp
+					list_view.cpp
+					xsettings_setter.cpp
+					xsettings_client.cpp
+					menu.cpp
+					theme.cpp
+					animate.cpp
+					script_editor.cpp
+					: $(FLTK_CFLAGS) ;
+
+	MakeTest egroup : egroup.cpp : $(FLTK_LIBS) $(ADDONLIB) ;
+	MakeTest egroup2 : egroup2.cpp : $(FLTK_LIBS) $(ADDONLIB) ;
+	MakeTest icon_chooser : icon_chooser.cpp : $(FLTK_LIBS_FULL) $(ADDONLIB) ;
+	MakeTest font_chooser : font_chooser.cpp : $(FLTK_LIBS) $(ADDONLIB) ;
+	MakeTest sevenseg : sevenseg.cpp : $(FLTK_LIBS) $(ADDONLIB) ;
+	MakeTest dirwatch : dirwatch.cpp : $(FLTK_LIBS) $(ADDONLIB) ;
+	MakeTest list_view : list_view.cpp : $(FLTK_LIBS) $(ADDONLIB) ;
+	MakeTest xsettings_setter : xsettings_setter.cpp : $(FLTK_LIBS) $(ADDONLIB) ;
+	MakeTest xsettings_client : xsettings_client.cpp : $(FLTK_LIBS) $(ADDONLIB) ;
+	MakeTest menu : menu.cpp : $(FLTK_LIBS) $(ADDONLIB) ;
+	MakeTest theme : theme.cpp : $(FLTK_LIBS) $(ADDONLIB) ;
+	MakeTest animate : animate.cpp : $(FLTK_LIBS) $(ADDONLIB) ;
+	MakeTest script_editor : script_editor.cpp : $(FLTK_LIBS) $(ADDONLIB) ;
+}
+
+if $(FLTK_LIBS) && $(SHARED) {
+	LIBS_FOR_CMD_SAMPLES = $(FLTK_LIBS) $(ADDONLIB) ;
+}
+
+MakeTest elinks : elinks.cpp : $(LIBS_FOR_CMD_SAMPLES) ;
+MakeTest efile : efile.cpp  : $(LIBS_FOR_CMD_SAMPLES) ;
+MakeTest sipc_client : sipc_client.cpp  : $(LIBS_FOR_CMD_SAMPLES) ;
+MakeTest sipc_server : sipc_server.cpp  : $(LIBS_FOR_CMD_SAMPLES) ;

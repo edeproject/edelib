@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<start>
+	<node1 param="value1" />
+	<node2 param="value2" />
+
+	<sub>
+		<s1 p1="2" p2="3" />
+		<s2 p1="2" p2="3" />
+	</sub>
+
+	<text>this is some text</text>
+</start>

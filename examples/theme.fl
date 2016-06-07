@@ -1,0 +1,95 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0300 
+header_name {.h} 
+code_name {.cxx}
+Function {} {open
+} {
+  Fl_Window {} {
+    label {Theme demo} open selected
+    xywh {754 252 455 485} type Double visible
+  } {
+    Fl_Button {} {
+      label Load
+      tooltip {Load predefined theme} xywh {355 450 90 25}
+    }
+    Fl_Menu_Bar {} {
+      xywh {0 0 455 25}
+    } {
+      Submenu {} {
+        label {&File} open
+        xywh {0 0 70 20}
+      } {
+        MenuItem {} {
+          label {&Quit}
+          xywh {0 0 36 20} shortcut 0x40071
+        }
+      }
+      Submenu {} {
+        label {&Edit} open
+        xywh {10 10 70 20}
+      } {
+        MenuItem {} {
+          label {item 1}
+          xywh {0 0 36 20}
+        }
+        MenuItem {} {
+          label {item 2}
+          xywh {10 10 36 20} divider
+        }
+        MenuItem {} {
+          label {item 3}
+          xywh {20 20 36 20}
+        }
+      }
+    }
+    Fl_Round_Button {} {
+      label round
+      xywh {5 285 90 25} down_box ROUND_DOWN_BOX
+    }
+    Fl_Return_Button {} {
+      label button
+      xywh {5 195 90 25}
+    }
+    Fl_Input {} {
+      label {input:}
+      xywh {160 196 285 25}
+    }
+    Fl_Output {} {
+      label {output:}
+      xywh {160 225 285 25}
+    }
+    Fl_File_Browser {} {
+      xywh {5 30 210 125}
+    }
+    Fl_Check_Browser {} {
+      xywh {220 30 225 125}
+    }
+    Fl_Progress {} {
+      label {progress bar}
+      xywh {5 160 210 25}
+    }
+    Fl_Slider {} {
+      xywh {220 160 225 25} type Horizontal align 5
+    }
+    Fl_Light_Button {} {
+      label button
+      xywh {5 225 90 25}
+    }
+    Fl_Check_Button {} {
+      label check
+      xywh {5 255 90 25} down_box DOWN_BOX
+    }
+    Fl_File_Input {} {
+      label {file:}
+      xywh {160 256 285 35}
+    }
+    Fl_Text_Editor {} {
+      label {Text editor}
+      xywh {160 325 285 115}
+    }
+    Fl_Box {} {
+      label image
+      xywh {25 328 80 80}
+    }
+  }
+} 

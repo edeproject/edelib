@@ -1,0 +1,26 @@
+# data file for the FLTK User Interface Designer (FLUID)
+version 2.1000 
+header_name {.h} 
+code_name {.cxx} 
+gridx 5 
+gridy 5 
+snap 1
+Function {} {open
+} {
+  {fltk::Window} {} {
+    label {Icon chooser test} open selected
+    xywh {531 349 290 180} visible
+  } {
+    {fltk::InvisibleBox} {} {
+      xywh {80 10 135 110} box THIN_DOWN_BOX
+    }
+    {fltk::Button} {} {
+      label {&Close}
+      xywh {190 145 90 25}
+    }
+    {fltk::Button} {} {
+      label {&Run}
+      xywh {95 145 90 25}
+    }
+  }
+} 

@@ -1,0 +1,160 @@
+Introduction
+============
+
+edelib-dbus-explorer is handy tool for exploring, inspecting and calling DBus
+services, their methods, signals and properties. Before you start using it, make
+sure to familiarize yourself with DBus (http://www.freedesktop.org/wiki/Software/dbus)
+at least on basic level.
+
+To start using it, first connect session or service bus. To do so, from the menu choose
+File -> Connect To -> (Session Bus | Service Bus), and you will be shown with all
+available services on given connection. After selecting service, you will get service
+objects and interfaces with methods.
+
+Editor and language basics
+==========================
+
+The text you are reading now is in so called 'script editor'. This is place where you can
+write and evaluate Scheme code; by simply pointing cursor to open or closed parenthesis, you
+will get highlighted region. Pressing SHIFT-Enter will evaluate it and print the result if
+is possible. To evaluate and force print any value, you can use ALT-Enter.
+
+To see it in action, select below example and press ALT-Enter:
+
+ (: 1 + 2)
+
+or maybe:
+
+ (println "Hello world")
+
+you will see results immediately.
+
+Many of Scheme functions are self-documentable and to see it for below example, press
+SHIFT-Enter.
+
+ (doc 'println)
+
+Interacting with DBus
+=====================
+
+edelib-dbus-explorer comes with almost complete Scheme binding for DBus. Returned values
+from DBus will be converted to Scheme objects and sent arguments will be used from
+Scheme objects, with additional type hints.
+
+Two main functions are provided, 'dbus-signal' and 'dbus-call' for invoking DBus signals
+and methods respectively.
+
+dbus-signal
+-----------
+
+The prototype for this call looks like:
+
+  (dbus-signal *object-path* *interface* *signal* [arguments])
+
+*object-path* is DBus object path in Scheme string form. Valid object paths are, e.g.
+"/org/freedesktop/DBus" or "/foo" or "/". Invalid object paths are "/org/", "baz" or
+anything else containing non-ascii characters without backslash.
+
+If you set invalid object path, you will get error and signal will not be sent.
+
+*interface* is interface name for given service. Unless interface does not exists, signal
+will not be sent and the error will be reported.
+
+*signal* is valid signal name for this service and interface.
+
+If [arguments] are provided, the signal will be sent with them. Check bellow about argument
+types to see what can be sent and in which form.
+
+This function will return #t if signal was sent to bus without problems or #f if something
+fails in the mean time.
+
+dbus-call
+---------
+
+The prototype for this call looks like:
+
+  (dbus-call *service* *object-path* *interface* *method* [arguments])
+
+*service* is known DBus service, since DBus method calls can be sent to any existing service
+on connected bus. The rest of arguments are the same as for 'dbus-signal'.
+
+Contrary to 'dbus-signal', 'dbus-call' can return other values than #t or #f. As noted at the
+beginning, those values will be converted to Scheme objects and it will be done according to
+this table:
+
+  DBUS_TYPE_BYTE         integer (1 or 0)
+  DBUS_TYPE_BOOL         integer (1 or 0)
+  DBUS_TYPE_INT16        integer
+  DBUS_TYPE_UINT16       integer
+  DBUS_TYPE_INT32        integer
+  DBUS_TYPE_UINT32       integer
+  DBUS_TYPE_INT64        integer
+  DBUS_TYPE_UINT64       integer
+  DBUS_TYPE_DOUBLE       double
+  DBUS_TYPE_STRING       string
+  DBUS_TYPE_OBJECT_PATH  string
+  DBUS_TYPE_ARRAY        vector
+  DBUS_TYPE_STRUCT       list
+  DBUS_TYPE_VARIANT      any scheme object
+  DBUS_TYPE_DICT         list of lists, e.g. ((key value) (key value) ...)
+
+Argument types
+--------------
+
+Because DBus have many similar argument types (which are the same from Scheme point of view),
+explicit typing of arguments is needed, so edelib-dbus-explorer knows how to construct DBus message.
+For example, Scheme knows about integer to represent general number(s), but DBus have int16, int32 and
+so on.
+
+Here is example how to call 'DemoMember' with string argument:
+
+  (dbus-call "my.service" "/my/service" "my.service.Interface" "DemoMember" :string "String argument")
+
+This is the table of types, converted to corresponding DBus type and appropriate Scheme type:
+
+  :byte         DBUS_TYPE_BYTE          integer (1 or 0)
+  :bool         DBUS_TYPE_BOOL          integer (1 or 0)
+  :int16        DBUS_TYPE_INT16         integer
+  :uint16       DBUS_TYPE_UINT16        integer
+  :int32        DBUS_TYPE_INT32         integer
+  :uint32       DBUS_TYPE_UINT32        integer
+  :int64        DBUS_TYPE_INT64         integer
+  :uint64       DBUS_TYPE_UINT64        integer
+  :double       DBUS_TYPE_DOUBLE        double 
+  :string       DBUS_TYPE_STRING        string
+  :object-path  DBUS_TYPE_OBJECT_PATH   string
+  :array        DBUS_TYPE_ARRAY         list
+  :struct       DBUS_TYPE_STRUCT        list
+  :variant      DBUS_TYPE_VARIANT       any scheme object
+  :dict         DBUS_TYPE_DICT          list of lists, e.g. ((key value) (key value) ...)
+
+Note however how array, list and dictionary entries (keys and values) must also have types. To see all
+above in action, here are few examples with their descriptions:
+
+* call service with string and int32 arguments 
+
+  (dbus-call "my.service" "/my/service" "my.service.Interface" "DemoMember"
+             :string "my string"
+             :int32  4)
+
+* call service with array of booleans
+
+  (dbus-call "my.service" "/my/service" "my.service.Interface" "DemoMember"
+             :array '(:bool 1 :bool 0 :bool 1 :bool 1))
+
+* call service with dictionary
+
+  (dbus-call "my.service" "/my/service" "my.service.Interface" "DemoMember"
+             :dict '((:string "key"  :int32 1)
+                     (:string "key2" :int32 3)))
+
+Generating calls
+================
+
+Since writing DBus calls, especially with complex arguments can be quite cumbersome, edelib-dbus-explorer
+can generate DBus call for you: just select desired method, hit right mouse click and choose
+'Send to editor'; the function call with all needed arguments (including correct service name, object path
+and etc.) will be written in script editor.
+
+The written call will also contain 'REPLACE_ME' strings: these you must replace with desired values that
+matches given type. You can jump from those unreplaced values with Tab-SHIFT shortcut.

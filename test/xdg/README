@@ -1,0 +1,2 @@
+This directory contains tests against some XDG specifications.
+Make sure you have python and pyxdg package installed.

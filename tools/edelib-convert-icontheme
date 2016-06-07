@@ -1,0 +1,148 @@
+#!/usr/bin/python
+#
+# $Id: edelib-global.h 2785 2009-09-01 13:26:08Z karijes $
+#
+# Part of edelib tools.
+# Copyright (c) 2011 Sanel Zukan
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with this library.  If not, see <http://www.gnu.org/licenses/>.
+
+import os, os.path
+import sys, stat
+
+SIZES        = ["16x16", "22x22", "32x32", "48x48", "64x64", "128x128"]
+PROGRAM_NAME = "edelib-convert-icontheme"
+
+inkscape_path     = None
+rsvg_path         = None
+rsvg_convert_path = None
+
+def find_binary(name):
+	"""Find named binary in $PATH"""
+	env_list = os.environ["PATH"].split(":")
+
+	for i in env_list:
+		path = "%s/%s" % (i, name)
+		if os.access(path, os.F_OK) and os.access(path, os.X_OK):
+			return path
+	return None
+
+def find_converter():
+	"""Find either inkscape or rsvg tools"""
+	global inkscape_path, rsvg_path, rsvg_convert_path
+
+	cpath = find_binary("inkscape")
+	if cpath:
+		inkscape_path = cpath
+		return True
+
+	cpath = find_binary("rsvg")
+	if cpath:
+		rsvg_path = cpath
+		return True
+
+	cpath = find_binary("rsvg-convert")
+	if cpath:
+		rsvg_convert_path = cpath
+		return True
+
+	return False
+
+def convert_ext(name):
+	"""Swap extensions"""
+	if name[-4:] == ".svg":
+		return name.replace(".svg", ".png")
+	else:
+		return name
+
+def dir_exists(path):
+	# first use this since stat() scream if not exists
+	if not os.access(path, os.F_OK): return False
+	mode = os.stat(path)[stat.ST_MODE]
+	return stat.S_ISDIR(mode)
+
+def skip_base(path):
+	"""With given path base/sub/sub, remove 'base/'"""
+	all = path.split("/")[1:]
+	return "/".join(all)
+
+def visit(arg, dirname, names):
+	destdir = skip_base(dirname)
+	for name in names:
+		if name[-4:] != ".svg": continue
+
+		# os.walk will first walk on the top of source directory before 
+		# enters it's childs; we are interested only in childs
+		if len(destdir) == 0:
+			continue
+
+		for sz in SIZES:
+			w, h = sz.split("x")
+			srcicon = "%s/%s" % (dirname, name)
+
+			# calculate relative destination by stealing latest part
+			destdir = destdir.split("/")[-1]
+			findir  = "%s/%s/%s" % (arg, sz, destdir)
+
+			if not dir_exists(findir):
+				os.makedirs(findir)
+
+			dsticon = "%s/%s" % (findir, convert_ext(name))
+
+			if inkscape_path:
+				cmd = "%s -e %s -w %s -h %s %s" % (inkscape_path, dsticon, w, h, srcicon)
+			elif rsvg_path:
+				cmd = "%s -w %s -h %s %s %s" % (rsvg_path, w, h, srcicon, dsticon)
+			elif rsvg_convert_path:
+				cmd = "%s -w %s -h %s -o %s %s" % (rsvg_convert_path, w, h, dsticon, srcicon)
+			else:
+				print("Unable to find any (inkscape/rsvg/rsvg-convert) tool.")
+				sys.exit(1)
+
+			print("Making %s..." % dsticon)
+			if os.system(cmd) != 0:
+				print("*** Failed to convert %s" % srcicon)
+				return
+
+def convert(srcdir, dstdir):
+	os.path.walk(srcdir, visit, dstdir) 
+
+def help():
+	print("Usage: %s [svgdir] [dstdir]" % PROGRAM_NAME)
+	print("Convert svg icon theme from [svgdir] to png equivalent one")
+
+def main():
+	if len(sys.argv) != 3:
+		help()
+		return
+
+	if not find_converter():
+		print("Unable to find either inkscape or rsvg. If you have installed one of them, please append ")
+		print("location directory path to PATH environment.")
+		return
+
+	src = sys.argv[1]
+	dst = sys.argv[2]
+	if not dir_exists(src):
+		print("%s does not exists. What to convert?" % src)
+		return
+
+	if dir_exists(dst):
+		print("%s exists. Remove it or chose another name" % dst)
+		return
+
+	convert(src, dst)
+
+if __name__ == "__main__":
+	main()
