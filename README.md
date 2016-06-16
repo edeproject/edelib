@@ -1,5 +1,7 @@
 # edelib
 
+[![Build Status](https://travis-ci.org/edeproject/edelib.svg?branch=master)](https://travis-ci.org/edeproject/edelib)
+
 `edelib` is small and portable C++ library for [EDE Desktop](http://edeproject.org).
 
 Goal is to provide enough background for easier EDE components
