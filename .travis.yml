@@ -1,0 +1,11 @@
+language: cpp
+
+compiler:
+  - gcc
+
+before_install:
+  - sudo apt-get install -y fltk-dev jam
+
+install: true
+
+script: ./autogen.sh --compile && jam tests
