@@ -4,7 +4,7 @@ compiler:
   - gcc
 
 before_install:
-  - sudo apt-get install -y fltk1.3-dev jam
+  - sudo apt-get install -y fltk1.3-dev jam libdbus-1-dev
 
 install: true
 
