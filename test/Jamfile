@@ -1,4 +1,4 @@
-#
+G#
 # $Id$
 #
 # Copyright (c) 2005-2007 edelib authors
@@ -62,11 +62,10 @@ if $(FLTK_LIBS_FULL) {
 
 	if ! $(SHARED) {
 		ADDONLIB = $(FLTK_LIBS_FULL) ;
-		ADDONLIB += -lXext -lXft -lfontconfig -lXinerama -lpthread -ldl -lm -lX11 ;	  
 	}
 }
 
-MakeTest run_tests : $(TEST_FILES) : $(ADDONLIB) : "use-dbus" ;
+MakeTest run_tests : $(TEST_FILES) : $(ADDONLIB) -lX11 : "use-dbus" ;
 LocalClean clean : [ FFileName $(TOP) test .foo.txt ] ;
 LocalClean clean : [ FFileName $(TOP) test .ede.conf ] ;
 
