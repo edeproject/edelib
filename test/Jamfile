@@ -62,6 +62,7 @@ if $(FLTK_LIBS_FULL) {
 
 	if ! $(SHARED) {
 		ADDONLIB = $(FLTK_LIBS_FULL) ;
+		ADDONLIB += -lXext -lXft -lfontconfig -lXinerama -lpthread -ldl -lm -lX11 ;	  
 	}
 }
 
