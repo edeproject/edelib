@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * File IO stream
  * Copyright (c) 2005-2007 edelib authors
  *

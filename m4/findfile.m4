@@ -1,6 +1,4 @@
 dnl
-dnl $Id$
-dnl
 dnl Stolen from KDE configure script. Original authors are below.
 dnl Copyright (C) 1997 Janos Farkas (chexum@shadow.banki.hu)
 dnl           (C) 1997,98,99 Stephan Kulow (coolo@kde.org)

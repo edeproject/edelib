@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * Foreign callbacks
  * Copyright (c) 2005-2009 edelib authors
  *

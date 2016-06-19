@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * Functions for easier communication with window managers
  * Copyright (c) 2009-2013 edelib authors
  *

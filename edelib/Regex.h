@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * Regex class
  * Copyright (c) 2007-2009 edelib authors
  *

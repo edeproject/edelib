@@ -1,6 +1,4 @@
 dnl
-dnl $Id$
-dnl
 dnl Copyright (c) 2009 edelib authors
 dnl Copyright 1998-2007 by Bill Spitzak and others.
 dnl

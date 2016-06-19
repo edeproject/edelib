@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * Run external program
  * Copyright (c) 2005-2009 edelib authors
  * Part of the code was based on GLib's gspawn.c, copyright (c) 2000 Red Hat

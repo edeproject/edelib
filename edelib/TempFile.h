@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * Temporary file handler
  * Copyright (c) 2005-2007 edelib authors
  *

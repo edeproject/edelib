@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * Icon loader via IconTheme
  * Copyright (c) 2009 edelib authors
  *

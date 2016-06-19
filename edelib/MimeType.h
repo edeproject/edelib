@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * Mime handling class
  * Copyright (c) 2005-2007 edelib authors
  *

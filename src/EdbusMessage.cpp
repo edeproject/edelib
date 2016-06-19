@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * D-BUS stuff
  * Copyright (c) 2008-2012 edelib authors
  *

@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * Window utils
  * Copyright (c) 1998-2006 by Bill Spitzak and others
  * Copyright (c) 2009-2011 edelib authors

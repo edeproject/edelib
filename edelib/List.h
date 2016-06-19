@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * STL-like list class
  * Copyright (c) 2005-2007 edelib authors
  *

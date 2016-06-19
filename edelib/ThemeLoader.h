@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * Theming stuff
  * Copyright (c) 2009 edelib authors
  *

@@ -1,6 +1,4 @@
 dnl
-dnl $Id$
-dnl
 dnl Copyright (c) 2009 edelib authors
 dnl Checker code was stolen from glib configure.in
 dnl

@@ -1,6 +1,4 @@
 /*
- * $Id: String.h 2839 2009-09-28 11:36:20Z karijes $
- *
  * Widget with animation support
  * Copyright (c) 2005-2012 edelib authors
  *

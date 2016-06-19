@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * s7 segment number widget
  * Copyright (c) 2005-2007 edelib authors
  *

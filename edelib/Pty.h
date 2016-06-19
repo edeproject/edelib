@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * A class for handling pseudoterminals (PTYs)
  * Copyright (c) 2006-2008 edelib authors
  *

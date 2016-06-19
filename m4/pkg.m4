@@ -1,6 +1,4 @@
 dnl
-dnl $Id$
-dnl
 dnl Modified a little bit so returned values does not have ending spaces. (Sanel)
 dnl Note: if you do not set 'action-not', if package not found, it will stop configure
 dnl script with "Library XY requirements not met..." message

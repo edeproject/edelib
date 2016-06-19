@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * Basic functions for C string handling
  * Copyright (c) 2005-2007 edelib authors
  *

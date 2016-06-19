@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * Icon theme
  * Copyright (c) 2005-2014 edelib authors
  *

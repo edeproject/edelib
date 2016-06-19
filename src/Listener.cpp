@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * Descriptor monitoring functions
  * Copyright (c) Bill Spitzak and the others
  * Copyright (c) 2008 edelib authors

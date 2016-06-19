@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * Client part of XSETTINGS protocol
  * Based on implementation from Owen Tylor, copyright (c) 2001 Red Hat, inc.
  * Copyright (c) 2005-2007 edelib authors

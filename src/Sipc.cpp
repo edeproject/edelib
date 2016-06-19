@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * A very simple IPC
  * Copyright (c) 2008 edelib authors
  *

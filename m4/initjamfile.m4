@@ -1,6 +1,4 @@
 dnl
-dnl $Id$
-dnl
 dnl Part of Equinox Desktop Environment (EDE).
 dnl Based on code from Autojam (c) Matze Braun <matze@braunis.de>
 

@@ -1,6 +1,4 @@
 /*
- * $Id: List.h 2839 2009-09-28 11:36:20Z karijes $
- *
  * Functional approach for lists
  * Copyright (c) 2005-2011 edelib authors
  *

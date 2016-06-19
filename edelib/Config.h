@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * Config file reader and writer
  * Copyright (c) 2005-2007 edelib authors
  *

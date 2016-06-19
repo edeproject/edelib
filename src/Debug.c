@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * Debug functions
  * Copyright (c) 2005-2011 edelib authors
  *

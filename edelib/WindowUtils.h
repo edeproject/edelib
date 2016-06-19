@@ -1,6 +1,4 @@
 /*
- * $Id: WindowXid.h 2839 2009-09-28 11:36:20Z karijes $
- *
  * Window utils
  * Copyright (c) 2009-2011 edelib authors
  *

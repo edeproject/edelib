@@ -24,7 +24,6 @@ UT_FUNC(File, "Test File")
 UT_FUNC(FileFunctions, "Test File functions")
 {
 	UT_VERIFY( file_path("gcc") == "/usr/bin/gcc" );
-	UT_VERIFY( file_path("gdb") == "/usr/bin/gdb" );
 	UT_VERIFY( file_path("/bin/mkdir") == "/bin/mkdir" );
 
 #if defined(sun) || defined(__sun)

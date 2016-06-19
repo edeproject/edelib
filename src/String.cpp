@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * A simple string class
  * Copyright (c) 2005-2007 edelib authors
  *

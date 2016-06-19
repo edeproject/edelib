@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * File info facility
  * Copyright (c) 2009 edelib authors
  *

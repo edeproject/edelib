@@ -1,6 +1,4 @@
 dnl
-dnl $Id$
-dnl
 dnl Copyright (c) 2005-2009 edelib authors
 dnl
 dnl This library is free software; you can redistribute it and/or

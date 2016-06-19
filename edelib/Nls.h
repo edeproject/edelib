@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * Locale functions
  * Copyright (c) 2005-2010 edelib authors
  *

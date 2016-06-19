@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * Window xid creator
  * Copyright (c) 2009 edelib authors
  *

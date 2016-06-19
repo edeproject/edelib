@@ -1,6 +1,4 @@
 /*
- * $Id: edelib-global.h 3065 2011-10-06 15:52:09Z karijes $
- *
  * Base defs for edelib
  * Copyright (c) 2005-2011 edelib authors
  *

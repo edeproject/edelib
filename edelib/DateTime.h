@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * Classes related to date/time and timezones.
  * Copyright (c) 2005-2007 edelib authors
  *

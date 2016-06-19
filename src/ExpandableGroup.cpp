@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * Group with applied layout on childs
  * Copyright (c) 2005-2013 edelib authors
  *

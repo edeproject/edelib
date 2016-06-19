@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Menu utilities for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2005 by Bill Spitzak and others.

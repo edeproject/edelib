@@ -1,6 +1,4 @@
 //
-// "$Id$"
-//
 // Menu code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2006 by Bill Spitzak and others.

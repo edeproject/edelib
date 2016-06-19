@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * This class enables to "chat" with terminal programs synchronously
  * Copyright (c) 2006-2009 edelib authors
  *

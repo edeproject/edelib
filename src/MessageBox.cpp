@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * Message dialog
  * Copyright (c) 2005-2007 edelib authors
  *

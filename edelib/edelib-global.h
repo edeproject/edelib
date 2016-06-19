@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * Base defs for edelib
  * Copyright (c) 2005-2009 edelib authors
  *

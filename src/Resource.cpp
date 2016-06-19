@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * Resource reader and writer
  * Copyright (c) 2008-2009 edelib authors
  *

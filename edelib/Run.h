@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * Run external program
  * Copyright (c) 2005-2013 edelib authors
  *
