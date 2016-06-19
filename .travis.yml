@@ -1,10 +1,11 @@
+dist: trusty
 language: cpp
 
 compiler:
   - gcc
 
 before_install:
-  - sudo apt-get install -y fltk1.3-dev jam libdbus-1-dev shared-mime-info
+  - sudo apt-get install -y fltk1.3-dev jam libdbus-1-dev
 
 install: true
 
