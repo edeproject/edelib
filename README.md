@@ -9,7 +9,7 @@ construction and development.
 
 ## Installation
 
-See the file 'INSTALL'.
+See [INSTALL.md](./INSTALL.md).
 
 ## How to report bugs
 
