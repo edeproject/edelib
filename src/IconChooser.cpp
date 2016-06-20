@@ -50,9 +50,8 @@ class IconChooser;
 
 class IconBox : public Fl_Button {
 private: 
-	char    *icon_name;
-	String   icon_path;
-	Fl_Color saved_color;
+	char        *icon_name;
+	String      icon_path;
 	IconChooser *chooser;
 
 public:
