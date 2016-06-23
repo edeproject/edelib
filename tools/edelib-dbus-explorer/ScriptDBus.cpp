@@ -519,11 +519,28 @@ either #t or #f depending if signal successfully sent.");
 "Call DBus method with given arguments in list form. Use 'dbus-call' instead of this function.");
 
 	const char *scheme_code =
-"(add-macro-doc \"dbus-call\" \"Call DBus method with given arguments. This call will wait for reply and return result as scheme object.\") \
-(define-macro (dbus-call service path interface name . args) \
-  `(if (empty? ',args) \
-     (dbus-call-raw ,service ,path ,interface ,name) \
-	 (dbus-call-raw ,service ,path ,interface ,name ',args))) \
+"\
+(define :byte        ':byte) \
+(define :bool        ':bool) \
+(define :int16       ':int16) \
+(define :uint16      ':uint16) \
+(define :int32       ':int32) \
+(define :uint32      ':uint32) \
+(define :int64       ':int64) \
+(define :uint64      ':uint64) \
+(define :double      ':double) \
+(define :string      ':string) \
+(define :object-path ':object-path) \
+(define :array       ':array) \
+(define :struct      ':struct) \
+(define :variant     ':variant) \
+(define :dict        ':dict) \
+\
+(add-macro-doc \"dbus-call\" \"Call DBus method with given arguments. This call will wait for reply and return result as scheme object.\") \
+(define (dbus-call service path interface name . args) \
+  (if (empty? args) \
+     (dbus-call-raw service path interface name) \
+     (dbus-call-raw service path interface name args))) \
 \
 (add-doc \"dbus-property-list\" \"List all properties on given service, object path and interface.\") \
 (define (dbus-property-list service path interface) \
