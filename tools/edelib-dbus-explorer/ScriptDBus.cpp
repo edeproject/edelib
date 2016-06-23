@@ -536,7 +536,7 @@ either #t or #f depending if signal successfully sent.");
 (define :variant     ':variant) \
 (define :dict        ':dict) \
 \
-(add-macro-doc \"dbus-call\" \"Call DBus method with given arguments. This call will wait for reply and return result as scheme object.\") \
+(add-doc \"dbus-call\" \"Call DBus method with given arguments. This call will wait for reply and return result as scheme object.\") \
 (define (dbus-call service path interface name . args) \
   (if (empty? args) \
      (dbus-call-raw service path interface name) \
