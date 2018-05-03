@@ -37,8 +37,8 @@ actions piecemeal MakeApiDocumentation1
 	$(DOXYGEN) $(>:B) ;
 }
 
-InstallDocumentation [ FDirName $(docdir) $(EDELIB_DOCDIR) ] : [ FFileName $(TOP) README ] ;
-InstallDocumentation [ FDirName $(docdir) $(EDELIB_DOCDIR) ] : [ FFileName $(TOP) INSTALL ] ;
+InstallDocumentation [ FDirName $(docdir) $(EDELIB_DOCDIR) ] : [ FFileName $(TOP) README.md ] ;
+InstallDocumentation [ FDirName $(docdir) $(EDELIB_DOCDIR) ] : [ FFileName $(TOP) INSTALL.md ] ;
 InstallDocumentation [ FDirName $(docdir) $(EDELIB_DOCDIR) ] : [ FFileName $(TOP) COPYING ] ;
 
 if $(DOXYGEN) {
