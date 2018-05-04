@@ -1,6 +1,4 @@
 /*
- * $Id: String.h 2594 2009-03-25 14:54:54Z karijes $
- *
  * EDE specific code
  * Copyright (c) 2010-2012 edelib authors
  *

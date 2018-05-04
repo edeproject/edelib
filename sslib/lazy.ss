@@ -1,5 +1,3 @@
-;; vim:ft=scheme:expandtab
-;; $Id: String.h 2839 2009-09-28 11:36:20Z karijes $
 ;;
 ;; Copyright (c) 2012 edelib authors
 ;;

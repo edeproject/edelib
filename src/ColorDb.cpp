@@ -1,6 +1,4 @@
 /*
- * $Id: String.cpp 2953 2009-11-20 15:42:16Z karijes $
- *
  * X11 color database reader
  * Copyright (c) 2005-2011 edelib authors
  *

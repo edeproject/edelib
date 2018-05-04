@@ -1,6 +1,4 @@
 /*
- * $Id: File.h 2967 2009-12-02 14:31:34Z karijes $
- *
  * Font database and cache facility
  * Copyright (c) 2005-2011 edelib authors
  *

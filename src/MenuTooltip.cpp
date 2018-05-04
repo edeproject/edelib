@@ -1,6 +1,4 @@
 /*
- * $Id: String.h 2839 2009-09-28 11:36:20Z karijes $
- *
  * Tooltip support for menus
  * Copyright (c) 2012 edelib authors
  * Copyright 1998-2011 by Bill Spitzak and others.

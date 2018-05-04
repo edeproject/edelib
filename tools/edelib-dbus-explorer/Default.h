@@ -1,6 +1,4 @@
 /*
- * $Id: String.h 2839 2009-09-28 11:36:20Z karijes $
- *
  * Copyright (c) 2005-2012 edelib authors
  *
  * This library is free software; you can redistribute it and/or

@@ -1,6 +1,4 @@
 dnl
-dnl $Id: dbus.m4 2833 2009-09-24 16:38:32Z karijes $
-dnl
 dnl Inspired from glib varargs macros
 dnl Copyright (c) 2005-2011 edelib authors
 dnl

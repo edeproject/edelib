@@ -1,6 +1,4 @@
 #
-# $Id: Jamfile 3233 2012-04-03 11:48:19Z karijes $
-#
 # Copyright (c) 2005-2012 edelib authors
 #
 # This library is free software; you can redistribute it and/or
