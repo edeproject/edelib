@@ -61,7 +61,7 @@
          if-not when-not if= if-not=
          defvar defun
          for while
-         -> ->>
+         -> ->> as->
          nth
          sort-with-operator sort sort-vector
          filter range
@@ -312,6 +312,12 @@ is the same as:
     (if (list? form)
       `(,(car form) ,@(cdr form) ,x)
       (list form x) )))
+
+(add-macro-doc "as->" "Same as 'as->' from Clojure.")
+(define-macro (as-> expr name . forms)
+  (let ((x (gensym)))
+    `(let* ((,name ,expr) ,@(map (lambda (x) (list name x)) forms))
+       ,name)))
 
 (add-doc "nth" "Returns index 'n' at given collection. Collection can be list, vector or string. In case of vector
 or string, access is in constant time. For list, it is linear.")
