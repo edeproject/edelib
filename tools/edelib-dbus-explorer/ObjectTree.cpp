@@ -152,6 +152,8 @@ static void scan_object(EdbusConnection *conn, EdbusMessage &msg, const char *se
 				name = sel->ToElement()->Attribute("name");
 				snprintf(buf2, sizeof(buf2), "%s/%s", buf, name);
 				titem = self->add(buf2);
+				/* possibly a duplicate path, ignore it as titem will be NULL */
+				if(!titem) continue;
 				titem->usericon(icon);
 				self->close(titem);
 
