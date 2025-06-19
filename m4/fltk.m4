@@ -28,14 +28,15 @@ AC_DEFUN([EDELIB_FLTK], [
 		fltk_version=`$FLTK_CONFIG --version`
 
 		AC_MSG_CHECKING([for FLTK version >= 1.1.7])
-		case "$fltk_version" in ["1.1."[789]])
+		case "$fltk_version" in
+			["1.1."[789]])
 			AC_MSG_RESULT(yes)
 			;;
 			["1.1.10"])
 			AC_MSG_RESULT(yes)
 			;;
 			dnl check for FLTK 1.3.x branch
-			["1.3."[0123456789]])
+			[1.3.*])
 			HAVE_FL_TREE=1
 			AC_MSG_RESULT(yes)
 			;;
