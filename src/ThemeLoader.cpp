@@ -114,7 +114,7 @@ static void update_fonts_on_group(Fl_Group *g, int sz) {
 static void update_fonts(int sz) {
 #ifdef EDELIB_HAVE_RTTI
 	for(Fl_Window *i = Fl::first_window(); i; i = Fl::next_window(i))
-		update_fonts_on_group(i, sz);
+		update_fonts_on_group((Fl_Group*)i, sz);
 #else
 	Fl::redraw();
 #endif

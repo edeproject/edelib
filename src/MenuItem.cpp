@@ -42,6 +42,12 @@
 # include <Carbon/Carbon.h>
 #endif
 
+#if (FL_MAJOR_VERSION >= 1) && (FL_MINOR_VERSION > 3)
+# define CLEAR_OVERLAY set_flag(NO_OVERLAY)
+#else
+# define CLEAR_OVERLAY clear_overlay()
+#endif
+
 /* do not allow arrows to stretch; looks bad */
 #define FLTK_FIXED_ARROW_SIZE 1
 
@@ -303,7 +309,7 @@ menutitle::menutitle(int X, int Y, int W, int H, const MenuItem* L) :
   set_modal();
   clear_border();
   menu = L;
-  if (L->labelcolor_ || Fl::scheme() || L->labeltype_ > FL_NO_LABEL) clear_overlay();
+  if (L->labelcolor_ || Fl::scheme() || L->labeltype_ > FL_NO_LABEL) CLEAR_OVERLAY;
 }
 
 menuwindow::menuwindow(const MenuItem* m, int X, int Y, int Wp, int Hp,
@@ -392,7 +398,7 @@ menuwindow::menuwindow(const MenuItem* m, int X, int Y, int Wp, int Hp,
       w1 = int(fl_width(fl_shortcut_label(m->shortcut_))) + 8;
       if (w1 > hotKeysw) hotKeysw = w1;
     }
-    if (m->labelcolor_ || Fl::scheme() || m->labeltype_ > FL_NO_LABEL) clear_overlay();
+    if (m->labelcolor_ || Fl::scheme() || m->labeltype_ > FL_NO_LABEL) CLEAR_OVERLAY;
   }
 
   if (selected >= 0 && !Wp) X -= W/2;
@@ -401,7 +407,8 @@ menuwindow::menuwindow(const MenuItem* m, int X, int Y, int Wp, int Hp,
   if (Wp > W) W = Wp;
   if (Wtitle > W) W = Wtitle;
 
-  if (X < scr_x) X = scr_x; if (X > scr_x+scr_w-W) X= scr_x+scr_w-W;
+  if (X < scr_x) X = scr_x;
+  if (X > scr_x+scr_w-W) X = scr_x+scr_w-W;
   x(X); w(W);
 
   h((numitems ? itemheight*numitems-LEADING : 0)+2*BW+3);

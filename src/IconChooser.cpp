@@ -34,6 +34,8 @@
 #include <edelib/StrUtil.h>
 #include <edelib/Missing.h>
 
+#include <stdlib.h>
+
 /* max icon sizes */
 #define MAX_ICON_W  128
 #define MAX_ICON_H  128

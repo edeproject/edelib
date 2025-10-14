@@ -36,7 +36,7 @@ AC_DEFUN([EDELIB_FLTK], [
 			AC_MSG_RESULT(yes)
 			;;
 			dnl check for FLTK 1.3.x branch
-			[1.3.*])
+			[1.[3456].*])
 			HAVE_FL_TREE=1
 			AC_MSG_RESULT(yes)
 			;;

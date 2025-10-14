@@ -94,7 +94,7 @@ int edelib_setenv(const char* name, const char* value, int overwrite) {
 #else
 	char* nval;
 
-	if(!name || name == '\0' || strchr(name, '=') != NULL) {
+	if(!name || *name == '\0' || strchr(name, '=') != NULL) {
 		errno = EINVAL;
 		return -1;
 	}

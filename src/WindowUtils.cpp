@@ -140,9 +140,10 @@ void window_xid_create(Fl_Window* win, void (*before_map_func)(Fl_Window*), int 
 
 		XChangeProperty(fl_display, xp->xid, WM_PROTOCOLS, XA_ATOM, 32, 0, (unsigned char*)&WM_DELETE_WINDOW, 1);
 
+#if (FL_MAJOR_VERSION >= 1) && (FL_MINOR_VERSION <= 3)
 		// send size limits and border:
 		xp->sendxjunk();
-
+#endif
 		// set the class property, which controls the icon used:
 		if(win->xclass()) {
 			char buffer[1024];
