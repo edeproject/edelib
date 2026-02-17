@@ -1,6 +1,6 @@
 prefix=@prefix@
 exec_prefix=${prefix}
-libdir=${exec_prefix}/lib
+libdir=${libdir}
 includedir=${prefix}/include
 edelibdocdir=${prefix}/share/doc/edelib-@EDELIB_API_VERSION@
 
